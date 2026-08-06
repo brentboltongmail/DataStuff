@@ -1007,461 +1007,461 @@
   pointer-events: none;
   opacity: 0.92;
   will-change: transform;
-}
-
-/* Original Custom Sci-Fi Vessels (High-detail multi-module capital ships & fighters) */
-.spaceship-atmosphere .distant-ship {
-  position: absolute;
-  pointer-events: none;
-  opacity: 0.55;
-  will-change: transform;
   transform-style: preserve-3d;
+  filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 12px rgba(56, 189, 248, 0.3));
 }
 
-/* Ship 1: Astral Dreadnought */
+/* Engine Pulse & LED Strobe Animations */
+@keyframes engine-pulse-glow {
+  0%, 100% { opacity: 0.85; filter: drop-shadow(-8px 0 12px rgba(56, 189, 248, 0.7)); }
+  50% { opacity: 1; filter: drop-shadow(-14px 0 24px rgba(125, 211, 252, 0.95)); }
+}
+
+@keyframes nav-beacon-strobe {
+  0%, 88%, 100% { opacity: 0.2; box-shadow: 0 0 2px #ffffff; }
+  92%, 96% { opacity: 1; box-shadow: 0 0 12px #ffffff, 0 0 20px #38bdf8; }
+}
+
+/* Ship 1: Astral Dreadnought Flagship */
 .spaceship-atmosphere .ship-astral-dreadnought {
   top: 18%;
   left: -280px;
-  width: 190px;
-  height: 85px;
-  filter: drop-shadow(0 12px 10px rgba(0, 0, 0, 0.65));
-  animation: distant-ship-cruise-1 42s linear 0s infinite;
+  width: 210px;
+  height: 95px;
+  animation: distant-ship-3d-1 38s linear 0s infinite;
 }
 
 .ship-astral-dreadnought .ship-ring-module {
   position: absolute;
   right: 20px;
   top: 8px;
-  width: 68px;
-  height: 68px;
-  border: 7px solid #475569;
-  border-top-color: #cbd5e1;
-  border-bottom-color: #1e293b;
+  width: 76px;
+  height: 76px;
+  border: 8px solid #475569;
+  border-top-color: #f1f5f9;
+  border-bottom-color: #0f172a;
   border-radius: 50%;
-  transform: translateZ(28px) rotateX(25deg);
-  box-shadow: inset 0 6px 8px rgba(255, 255, 255, 0.3), inset 0 -6px 8px rgba(0, 0, 0, 0.7), 0 8px 12px rgba(0, 0, 0, 0.6);
+  transform: translateZ(32px) rotateX(25deg);
+  box-shadow: inset 0 8px 10px rgba(255, 255, 255, 0.4), inset 0 -8px 10px rgba(0, 0, 0, 0.8), 0 10px 16px rgba(0, 0, 0, 0.7);
 }
 
 .ship-astral-dreadnought .ship-ring-inner {
   position: absolute;
-  right: 32px;
-  top: 20px;
-  width: 44px;
-  height: 44px;
-  border: 3px solid #cbd5e1;
+  right: 34px;
+  top: 22px;
+  width: 48px;
+  height: 48px;
+  border: 3.5px solid #38bdf8;
   border-radius: 50%;
-  transform: translateZ(18px) rotateX(25deg);
-  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.6);
-  opacity: 0.85;
+  transform: translateZ(22px) rotateX(25deg);
+  box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.8), 0 0 12px rgba(56, 189, 248, 0.6);
+  opacity: 0.9;
 }
 
 .ship-astral-dreadnought .ship-ring-spokes {
   position: absolute;
-  right: 28px;
-  top: 16px;
-  width: 52px;
-  height: 52px;
-  border: 1.5px solid rgba(148, 163, 184, 0.6);
-  transform: translateZ(22px) rotate(45deg);
+  right: 30px;
+  top: 18px;
+  width: 56px;
+  height: 56px;
+  border: 2px dashed rgba(224, 242, 254, 0.85);
+  border-radius: 50%;
+  transform: translateZ(26px) rotate(45deg);
 }
 
 .ship-astral-dreadnought .ship-spine {
   position: absolute;
   left: 25px;
-  top: 38px;
-  width: 145px;
-  height: 10px;
-  background: linear-gradient(180deg, #cbd5e1 0%, #64748b 30%, #334155 70%, #0f172a 100%);
-  border-radius: 3px;
+  top: 42px;
+  width: 160px;
+  height: 12px;
+  background: linear-gradient(180deg, #f1f5f9 0%, #94a3b8 25%, #334155 65%, #0f172a 100%);
+  border-radius: 4px;
   transform: translateZ(0px);
-  box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.5), 0 6px 10px rgba(0, 0, 0, 0.8);
+  box-shadow: inset 0 3px 4px rgba(255, 255, 255, 0.6), 0 8px 14px rgba(0, 0, 0, 0.9);
 }
 
 .ship-astral-dreadnought .ship-primary-hull {
   position: absolute;
-  left: 60px;
-  top: 26px;
-  width: 75px;
-  height: 34px;
-  background: linear-gradient(180deg, #94a3b8 0%, #64748b 30%, #334155 70%, #0f172a 100%);
-  border-radius: 12px 25px 25px 12px;
-  border: 1px solid #475569;
-  transform: translateZ(20px);
-  box-shadow: inset 0 4px 6px rgba(255, 255, 255, 0.6), inset 0 -6px 8px rgba(0, 0, 0, 0.9), 0 10px 18px rgba(0, 0, 0, 0.85);
+  left: 65px;
+  top: 28px;
+  width: 85px;
+  height: 40px;
+  background: linear-gradient(180deg, #cbd5e1 0%, #64748b 30%, #334155 70%, #0f172a 100%);
+  border-radius: 14px 28px 28px 14px;
+  border: 1px solid #64748b;
+  transform: translateZ(24px);
+  box-shadow: inset 0 5px 8px rgba(255, 255, 255, 0.7), inset 0 -8px 10px rgba(0, 0, 0, 0.9), 0 12px 22px rgba(0, 0, 0, 0.9);
 }
 
 .ship-astral-dreadnought .ship-armor-plating-top {
   position: absolute;
-  left: 70px;
-  top: 28px;
-  width: 55px;
-  height: 8px;
-  background: linear-gradient(180deg, #cbd5e1, #64748b);
-  border-radius: 4px;
-  transform: translateZ(26px);
-  box-shadow: inset 0 1px 2px #ffffff;
+  left: 78px;
+  top: 30px;
+  width: 60px;
+  height: 10px;
+  background: linear-gradient(180deg, #ffffff, #94a3b8);
+  border-radius: 5px;
+  transform: translateZ(30px);
+  box-shadow: inset 0 2px 3px #ffffff;
 }
 
 .ship-astral-dreadnought .ship-armor-plating-bottom {
   position: absolute;
-  left: 70px;
-  bottom: 28px;
-  width: 55px;
-  height: 8px;
+  left: 78px;
+  bottom: 30px;
+  width: 60px;
+  height: 10px;
   background: linear-gradient(180deg, #64748b, #1e293b);
-  border-radius: 4px;
-  transform: translateZ(14px);
+  border-radius: 5px;
+  transform: translateZ(16px);
 }
 
 .ship-astral-dreadnought .ship-core-pod {
   position: absolute;
-  left: 85px;
-  top: 18px;
-  width: 38px;
-  height: 22px;
-  background: linear-gradient(180deg, #94a3b8 0%, #475569 60%, #1e293b 100%);
-  border-radius: 6px;
-  border: 1px solid #cbd5e1;
-  transform: translateZ(32px);
-  box-shadow: inset 0 3px 4px rgba(255, 255, 255, 0.5), 0 6px 10px rgba(0, 0, 0, 0.7);
+  left: 92px;
+  top: 20px;
+  width: 42px;
+  height: 26px;
+  background: linear-gradient(180deg, #e2e8f0 0%, #64748b 60%, #1e293b 100%);
+  border-radius: 8px;
+  border: 1px solid #ffffff;
+  transform: translateZ(36px);
+  box-shadow: inset 0 4px 5px rgba(255, 255, 255, 0.7), 0 8px 12px rgba(0, 0, 0, 0.8);
 }
 
 .ship-astral-dreadnought .ship-bridge-tower {
   position: absolute;
-  right: 50px;
+  right: 55px;
   top: 2px;
-  width: 24px;
-  height: 18px;
-  background: linear-gradient(180deg, #64748b, #1e293b);
+  width: 28px;
+  height: 22px;
+  background: linear-gradient(180deg, #94a3b8, #1e293b);
   clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
-  border-top: 2px solid #e2e8f0;
-  transform: translateZ(42px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.7);
+  border-top: 2.5px solid #38bdf8;
+  transform: translateZ(48px);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
 }
 
 .ship-astral-dreadnought .ship-sensor-array {
   position: absolute;
-  right: 58px;
-  top: -4px;
-  width: 8px;
-  height: 8px;
-  background: #cbd5e1;
+  right: 64px;
+  top: -5px;
+  width: 10px;
+  height: 10px;
+  background: #ffffff;
   border-radius: 50%;
-  transform: translateZ(48px);
-  box-shadow: 0 0 6px #ffffff;
+  transform: translateZ(54px);
+  animation: nav-beacon-strobe 3s ease-in-out infinite;
 }
 
 .ship-astral-dreadnought .ship-hangar-deck {
   position: absolute;
-  left: 70px;
-  top: 56px;
-  width: 32px;
-  height: 10px;
+  left: 78px;
+  top: 64px;
+  width: 38px;
+  height: 12px;
   background: linear-gradient(180deg, #334155, #0f172a);
-  border-radius: 0 0 6px 6px;
-  transform: translateZ(-16px);
-  box-shadow: inset 0 -2px 4px #0f172a, 0 4px 6px rgba(0, 0, 0, 0.8);
+  border-radius: 0 0 8px 8px;
+  transform: translateZ(-18px);
+  box-shadow: inset 0 -3px 5px #0f172a, 0 6px 8px rgba(0, 0, 0, 0.9);
 }
 
 .ship-astral-dreadnought .ship-hangar-forcefield {
   position: absolute;
-  left: 74px;
-  top: 60px;
-  width: 24px;
-  height: 3px;
+  left: 82px;
+  top: 68px;
+  width: 30px;
+  height: 4px;
   background: #38bdf8;
-  transform: translateZ(-12px);
-  box-shadow: 0 0 6px #38bdf8;
+  transform: translateZ(-14px);
+  box-shadow: 0 0 10px #38bdf8, 0 0 18px #0284c7;
 }
 
 .ship-astral-dreadnought .ship-solar-fin {
   position: absolute;
-  left: 45px;
-  width: 55px;
-  height: 6px;
-  background: linear-gradient(180deg, #cbd5e1, #64748b, #1e293b);
-  border-radius: 3px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
+  left: 50px;
+  width: 65px;
+  height: 8px;
+  background: linear-gradient(180deg, #ffffff, #94a3b8, #1e293b);
+  border-radius: 4px;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.7);
 }
 
 .ship-astral-dreadnought .fin-top {
   top: 10px;
-  transform: translateZ(15px) rotate(-28deg) rotateX(15deg);
+  transform: translateZ(18px) rotate(-30deg) rotateX(15deg);
 }
 
 .ship-astral-dreadnought .fin-bottom {
   bottom: 10px;
-  transform: translateZ(-15px) rotate(28deg) rotateX(-15deg);
+  transform: translateZ(-18px) rotate(30deg) rotateX(-15deg);
 }
 
 .ship-astral-dreadnought .ship-turret-port {
   position: absolute;
-  left: 100px;
+  left: 110px;
   top: 10px;
-  width: 10px;
-  height: 6px;
-  background: #334155;
-  border-radius: 2px;
-  transform: translateZ(28px) rotate(-15deg);
-  border-right: 2px solid #cbd5e1;
+  width: 12px;
+  height: 8px;
+  background: #475569;
+  border-radius: 3px;
+  transform: translateZ(32px) rotate(-15deg);
+  border-right: 3px solid #38bdf8;
 }
 
 .ship-astral-dreadnought .ship-turret-starboard {
   position: absolute;
-  left: 100px;
+  left: 110px;
   bottom: 10px;
-  width: 10px;
-  height: 6px;
-  background: #334155;
-  border-radius: 2px;
-  transform: translateZ(10px) rotate(15deg);
-  border-right: 2px solid #cbd5e1;
+  width: 12px;
+  height: 8px;
+  background: #475569;
+  border-radius: 3px;
+  transform: translateZ(12px) rotate(15deg);
+  border-right: 3px solid #38bdf8;
 }
 
 .ship-astral-dreadnought .ship-plasma-drive {
   position: absolute;
   left: 0;
-  width: 30px;
-  height: 18px;
-  background: radial-gradient(circle, #38bdf8 0%, #0284c7 60%, transparent 100%);
+  width: 36px;
+  height: 22px;
+  background: radial-gradient(circle, #7dd3fc 0%, #38bdf8 40%, #0284c7 80%, transparent 100%);
   border-radius: 50% 0 0 50%;
-  transform: translateZ(8px);
-  box-shadow: -10px 0 14px rgba(56, 189, 248, 0.6), -4px 0 8px rgba(103, 232, 249, 0.8);
+  transform: translateZ(10px);
+  animation: engine-pulse-glow 2.5s ease-in-out infinite;
 }
 
 .ship-astral-dreadnought .ship-engine-nozzle-top {
   position: absolute;
-  left: 20px;
-  top: 20px;
-  width: 12px;
-  height: 22px;
-  border-left: 3px solid #64748b;
-  transform: translateZ(12px);
+  left: 22px;
+  top: 22px;
+  width: 14px;
+  height: 26px;
+  border-left: 4px solid #cbd5e1;
+  transform: translateZ(14px);
 }
 
 .ship-astral-dreadnought .ship-engine-nozzle-bottom {
   position: absolute;
-  left: 20px;
-  bottom: 20px;
-  width: 12px;
-  height: 22px;
-  border-left: 3px solid #64748b;
+  left: 22px;
+  bottom: 22px;
+  width: 14px;
+  height: 26px;
+  border-left: 4px solid #cbd5e1;
   transform: translateZ(4px);
 }
 
 .ship-astral-dreadnought .drive-upper {
-  top: 22px;
+  top: 24px;
 }
 
 .ship-astral-dreadnought .drive-lower {
-  bottom: 22px;
+  bottom: 24px;
 }
 
-/* Ship 2: Quantum Interceptor */
+/* Ship 2: Quantum Interceptor Starfighter */
 .spaceship-atmosphere .ship-quantum-interceptor {
   top: 38%;
   left: -300px;
-  width: 200px;
-  height: 95px;
-  filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.65));
-  animation: distant-ship-cruise-2 48s linear 4s infinite;
+  width: 220px;
+  height: 105px;
+  animation: distant-ship-3d-2 42s linear 4s infinite;
 }
 
 .ship-quantum-interceptor .qi-delta-hull {
   position: absolute;
-  left: 25px;
-  top: 15px;
-  width: 160px;
-  height: 65px;
-  background: linear-gradient(180deg, #64748b 0%, #475569 40%, #1e293b 80%, #0f172a 100%);
+  left: 28px;
+  top: 16px;
+  width: 175px;
+  height: 72px;
+  background: linear-gradient(180deg, #94a3b8 0%, #64748b 40%, #1e293b 80%, #0f172a 100%);
   clip-path: polygon(0% 50%, 35% 0%, 100% 25%, 82% 50%, 100% 75%, 35% 100%);
-  transform: translateZ(10px);
-  box-shadow: inset 0 4px 6px rgba(255, 255, 255, 0.3);
+  transform: translateZ(12px);
+  box-shadow: inset 0 5px 8px rgba(255, 255, 255, 0.4);
 }
 
 .ship-quantum-interceptor .qi-mid-fuselage {
   position: absolute;
-  left: 50px;
-  top: 25px;
-  width: 95px;
-  height: 45px;
-  background: linear-gradient(180deg, #94a3b8 0%, #475569 50%, #1e293b 100%);
+  left: 55px;
+  top: 28px;
+  width: 105px;
+  height: 50px;
+  background: linear-gradient(180deg, #cbd5e1 0%, #64748b 50%, #1e293b 100%);
   clip-path: polygon(0% 50%, 40% 10%, 100% 30%, 80% 50%, 100% 70%, 40% 90%);
-  transform: translateZ(24px);
-  box-shadow: inset 0 3px 5px rgba(255, 255, 255, 0.4), 0 6px 10px rgba(0, 0, 0, 0.6);
+  transform: translateZ(28px);
+  box-shadow: inset 0 4px 6px rgba(255, 255, 255, 0.5), 0 8px 14px rgba(0, 0, 0, 0.7);
 }
 
 .ship-quantum-interceptor .qi-command-canopy {
   position: absolute;
-  left: 85px;
-  top: 33px;
-  width: 45px;
-  height: 28px;
-  background: linear-gradient(180deg, #f1f5f9 0%, #cbd5e1 50%, #64748b 100%);
+  left: 92px;
+  top: 36px;
+  width: 50px;
+  height: 32px;
+  background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 50%, #38bdf8 100%);
   clip-path: polygon(0% 50%, 65% 0%, 100% 50%, 65% 100%);
-  border: 1px solid #ffffff;
-  transform: translateZ(36px);
-  box-shadow: inset 0 3px 4px rgba(255, 255, 255, 0.8), 0 8px 12px rgba(0, 0, 0, 0.7);
+  border: 1.5px solid #ffffff;
+  transform: translateZ(42px);
+  box-shadow: inset 0 4px 6px rgba(255, 255, 255, 0.9), 0 0 14px rgba(56, 189, 248, 0.7);
 }
 
 .ship-quantum-interceptor .qi-wing-port {
   position: absolute;
-  left: 30px;
+  left: 32px;
   top: 2px;
-  width: 75px;
-  height: 18px;
-  background: linear-gradient(180deg, #64748b, #334155);
+  width: 82px;
+  height: 20px;
+  background: linear-gradient(180deg, #94a3b8, #334155);
   clip-path: polygon(20% 0%, 100% 40%, 80% 100%, 0% 60%);
-  border-top: 2px solid #cbd5e1;
-  transform: translateZ(18px) rotateX(12deg);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  border-top: 2.5px solid #e2e8f0;
+  transform: translateZ(20px) rotateX(12deg);
 }
 
 .ship-quantum-interceptor .qi-wing-starboard {
   position: absolute;
-  left: 30px;
+  left: 32px;
   bottom: 2px;
-  width: 75px;
-  height: 18px;
-  background: linear-gradient(180deg, #64748b, #334155);
+  width: 82px;
+  height: 20px;
+  background: linear-gradient(180deg, #94a3b8, #334155);
   clip-path: polygon(0% 40%, 80% 0%, 100% 60%, 20% 100%);
-  border-bottom: 2px solid #cbd5e1;
-  transform: translateZ(-12px) rotateX(-12deg);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  border-bottom: 2.5px solid #e2e8f0;
+  transform: translateZ(-14px) rotateX(-12deg);
 }
 
 .ship-quantum-interceptor .qi-forward-prongs {
   position: absolute;
   right: 0;
-  top: 20px;
-  width: 55px;
-  height: 55px;
-  border-top: 4px solid #94a3b8;
-  border-bottom: 4px solid #94a3b8;
-  transform: translateZ(28px);
-  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.6));
+  top: 22px;
+  width: 60px;
+  height: 60px;
+  border-top: 5px solid #cbd5e1;
+  border-bottom: 5px solid #cbd5e1;
+  transform: translateZ(32px);
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6));
 }
 
 .ship-quantum-interceptor .qi-shield-generator {
   position: absolute;
-  left: 60px;
-  top: 36px;
-  width: 22px;
-  height: 22px;
-  background: radial-gradient(circle at 35% 35%, #e2e8f0 0%, #94a3b8 40%, #334155 100%);
+  left: 65px;
+  top: 40px;
+  width: 25px;
+  height: 25px;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #cbd5e1 40%, #334155 100%);
   border-radius: 50%;
-  transform: translateZ(30px);
-  box-shadow: inset 0 2px 3px #ffffff, 0 4px 8px rgba(0, 0, 0, 0.6);
+  transform: translateZ(34px);
+  box-shadow: inset 0 3px 4px #ffffff, 0 0 10px rgba(56, 189, 248, 0.6);
 }
 
 .ship-quantum-interceptor .qi-ion-thruster {
   position: absolute;
   left: 0;
-  width: 28px;
-  height: 26px;
+  width: 32px;
+  height: 28px;
   background: linear-gradient(90deg, #f472b6, #ec4899);
   clip-path: polygon(0% 15%, 100% 0%, 100% 100%, 0% 85%);
-  transform: translateZ(10px);
-  box-shadow: -10px 0 14px rgba(244, 114, 182, 0.6), -4px 0 8px rgba(236, 72, 153, 0.8);
+  transform: translateZ(12px);
+  animation: engine-pulse-glow 2s ease-in-out infinite;
 }
 
 .ship-quantum-interceptor .thruster-top {
-  top: 16px;
+  top: 18px;
 }
 
 .ship-quantum-interceptor .thruster-bottom {
-  bottom: 16px;
+  bottom: 18px;
 }
 
 /* Ship 3: Solar Corvette */
 .spaceship-atmosphere .ship-solar-corvette {
   top: 66%;
   right: -250px;
-  width: 180px;
-  height: 90px;
-  filter: drop-shadow(0 12px 12px rgba(0, 0, 0, 0.7));
-  animation: distant-ship-cruise-3 40s linear 8s infinite;
+  width: 200px;
+  height: 100px;
+  animation: distant-ship-3d-3 36s linear 8s infinite;
 }
 
 .ship-solar-corvette .sc-catamaran-left {
   position: absolute;
   right: 0;
   top: 8px;
-  width: 150px;
-  height: 18px;
-  background: linear-gradient(180deg, #94a3b8 0%, #475569 50%, #0f172a 100%);
-  border-radius: 8px 3px 3px 8px;
-  transform: translateZ(15px);
-  box-shadow: inset 0 3px 4px rgba(255, 255, 255, 0.4), 0 6px 10px rgba(0, 0, 0, 0.6);
+  width: 165px;
+  height: 20px;
+  background: linear-gradient(180deg, #cbd5e1 0%, #64748b 50%, #0f172a 100%);
+  border-radius: 10px 4px 4px 10px;
+  transform: translateZ(18px);
+  box-shadow: inset 0 4px 5px rgba(255, 255, 255, 0.5), 0 8px 12px rgba(0, 0, 0, 0.7);
 }
 
 .ship-solar-corvette .sc-catamaran-right {
   position: absolute;
   right: 0;
   bottom: 8px;
-  width: 150px;
-  height: 18px;
-  background: linear-gradient(180deg, #94a3b8 0%, #475569 50%, #0f172a 100%);
-  border-radius: 8px 3px 3px 8px;
-  transform: translateZ(-15px);
-  box-shadow: inset 0 3px 4px rgba(255, 255, 255, 0.4), 0 6px 10px rgba(0, 0, 0, 0.6);
+  width: 165px;
+  height: 20px;
+  background: linear-gradient(180deg, #cbd5e1 0%, #64748b 50%, #0f172a 100%);
+  border-radius: 10px 4px 4px 10px;
+  transform: translateZ(-18px);
+  box-shadow: inset 0 4px 5px rgba(255, 255, 255, 0.5), 0 8px 12px rgba(0, 0, 0, 0.7);
 }
 
 .ship-solar-corvette .sc-center-deck {
   position: absolute;
-  right: 30px;
-  top: 24px;
-  width: 90px;
-  height: 42px;
-  background: linear-gradient(180deg, #64748b 0%, #334155 50%, #1e293b 100%);
-  border-radius: 8px;
-  border: 1px solid #94a3b8;
-  transform: translateZ(25px);
-  box-shadow: inset 0 4px 6px rgba(255, 255, 255, 0.3), 0 8px 12px rgba(0, 0, 0, 0.7);
+  right: 32px;
+  top: 26px;
+  width: 100px;
+  height: 48px;
+  background: linear-gradient(180deg, #94a3b8 0%, #475569 50%, #1e293b 100%);
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  transform: translateZ(28px);
+  box-shadow: inset 0 5px 7px rgba(255, 255, 255, 0.4), 0 10px 16px rgba(0, 0, 0, 0.8);
 }
 
 .ship-solar-corvette .sc-bridge-bridge {
   position: absolute;
-  right: 45px;
-  top: 30px;
-  width: 55px;
-  height: 30px;
-  background: linear-gradient(180deg, #cbd5e1, #64748b);
-  border-radius: 6px;
-  transform: translateZ(38px);
-  box-shadow: inset 0 2px 4px #ffffff, 0 6px 10px rgba(0, 0, 0, 0.8);
+  right: 48px;
+  top: 32px;
+  width: 60px;
+  height: 34px;
+  background: linear-gradient(180deg, #ffffff, #94a3b8);
+  border-radius: 8px;
+  transform: translateZ(42px);
+  box-shadow: inset 0 3px 5px #ffffff, 0 0 12px rgba(251, 191, 36, 0.5);
 }
 
 .ship-solar-corvette .sc-solar-sail {
   position: absolute;
-  right: 70px;
-  width: 24px;
-  height: 42px;
-  background: linear-gradient(180deg, #cbd5e1, #64748b, #334155);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+  right: 75px;
+  width: 28px;
+  height: 48px;
+  background: linear-gradient(180deg, #fef08a, #f59e0b, #78350f);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
 }
 
 .ship-solar-corvette .sail-top {
   top: 0;
   clip-path: polygon(0% 100%, 100% 0%, 100% 100%);
-  transform: translateZ(20px) rotateX(-20deg);
+  transform: translateZ(24px) rotateX(-22deg);
 }
 
 .ship-solar-corvette .sail-bottom {
   bottom: 0;
   clip-path: polygon(0% 0%, 100% 100%, 100% 0%);
-  transform: translateZ(-20px) rotateX(20deg);
+  transform: translateZ(-24px) rotateX(22deg);
 }
 
 .ship-solar-corvette .sc-fusion-drive {
   position: absolute;
   left: 0;
-  width: 32px;
-  height: 22px;
-  background: #38bdf8;
-  border-radius: 6px;
-  transform: translateZ(8px);
-  box-shadow: 10px 0 14px rgba(56, 189, 248, 0.6), 4px 0 8px rgba(2, 132, 199, 0.8);
+  width: 36px;
+  height: 24px;
+  background: radial-gradient(circle, #fcd34d 0%, #f59e0b 60%, #b45309 100%);
+  border-radius: 8px;
+  transform: translateZ(10px);
+  animation: engine-pulse-glow 2.2s ease-in-out infinite;
 }
 
 .ship-solar-corvette .drive-left {
@@ -1472,82 +1472,260 @@
   bottom: 6px;
 }
 
-/* Ship 4: Void Harvester */
+/* Ship 4: Void Harvester Mining Dreadnought */
 .spaceship-atmosphere .ship-void-harvester {
   top: 12%;
   right: -240px;
-  width: 175px;
-  height: 85px;
-  filter: drop-shadow(0 14px 12px rgba(0, 0, 0, 0.75));
-  animation: distant-ship-cruise-4 46s linear 2s infinite;
+  width: 195px;
+  height: 95px;
+  animation: distant-ship-3d-4 44s linear 2s infinite;
 }
 
 .ship-void-harvester .vh-hex-core {
   position: absolute;
-  right: 30px;
-  top: 20px;
-  width: 58px;
-  height: 45px;
-  background: linear-gradient(180deg, #64748b 0%, #334155 50%, #0f172a 100%);
+  right: 32px;
+  top: 22px;
+  width: 65px;
+  height: 50px;
+  background: linear-gradient(180deg, #94a3b8 0%, #475569 50%, #0f172a 100%);
   clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-  transform: translateZ(28px);
-  box-shadow: inset 0 4px 6px rgba(255, 255, 255, 0.3), 0 8px 12px rgba(0, 0, 0, 0.7);
+  transform: translateZ(32px);
+  box-shadow: inset 0 5px 7px rgba(255, 255, 255, 0.4), 0 10px 16px rgba(0, 0, 0, 0.8);
 }
 
 .ship-void-harvester .vh-upper-deck {
   position: absolute;
-  right: 48px;
-  top: 28px;
-  width: 32px;
-  height: 28px;
-  background: linear-gradient(180deg, #cbd5e1, #64748b);
+  right: 52px;
+  top: 30px;
+  width: 36px;
+  height: 32px;
+  background: linear-gradient(180deg, #ffffff, #94a3b8);
   clip-path: polygon(30% 0%, 100% 20%, 100% 80%, 30% 100%, 0% 50%);
-  transform: translateZ(40px);
-  box-shadow: inset 0 2px 3px #ffffff, 0 6px 10px rgba(0, 0, 0, 0.8);
+  transform: translateZ(45px);
+  box-shadow: inset 0 3px 4px #ffffff, 0 8px 14px rgba(0, 0, 0, 0.9);
 }
 
 .ship-void-harvester .vh-mandible-upper {
   position: absolute;
   left: 0;
   top: 6px;
-  width: 105px;
-  height: 22px;
-  background: linear-gradient(180deg, #94a3b8 0%, #475569 50%, #1e293b 100%);
+  width: 115px;
+  height: 25px;
+  background: linear-gradient(180deg, #cbd5e1 0%, #64748b 50%, #1e293b 100%);
   clip-path: polygon(0% 0%, 100% 40%, 100% 100%, 25% 65%);
-  transform: translateZ(16px) rotateY(-8deg);
-  box-shadow: inset 0 3px 4px rgba(255, 255, 255, 0.35);
+  transform: translateZ(18px) rotateY(-8deg);
 }
 
 .ship-void-harvester .vh-mandible-lower {
   position: absolute;
   left: 0;
   bottom: 6px;
-  width: 105px;
-  height: 22px;
-  background: linear-gradient(180deg, #94a3b8 0%, #475569 50%, #1e293b 100%);
+  width: 115px;
+  height: 25px;
+  background: linear-gradient(180deg, #cbd5e1 0%, #64748b 50%, #1e293b 100%);
   clip-path: polygon(0% 100%, 100% 60%, 100% 0%, 25% 35%);
-  transform: translateZ(-10px) rotateY(-8deg);
-  box-shadow: inset 0 3px 4px rgba(255, 255, 255, 0.35);
+  transform: translateZ(-12px) rotateY(-8deg);
 }
 
 .ship-void-harvester .vh-collector-beam {
   position: absolute;
-  left: 10px;
-  top: 28px;
-  width: 50px;
-  height: 28px;
-  background: radial-gradient(ellipse at left, #fbbf24 0%, #d97706 50%, transparent 100%);
-  opacity: 0.7;
-  transform: translateZ(18px);
-  box-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
+  left: 12px;
+  top: 30px;
+  width: 58px;
+  height: 32px;
+  background: radial-gradient(ellipse at left, #fef08a 0%, #f59e0b 50%, transparent 100%);
+  opacity: 0.85;
+  transform: translateZ(20px);
+  box-shadow: 0 0 16px rgba(251, 191, 36, 0.8);
 }
 
 .ship-void-harvester .vh-radiator-panels {
   position: absolute;
-  width: 18px;
-  height: 85px;
-  background: linear-gradient(180deg, #cbd5e1, #64748b, #1e293b);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
+  width: 20px;
+  height: 95px;
+  background: linear-gradient(180deg, #ffffff, #94a3b8, #1e293b);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.7);
+}
+
+/* Ship 5: Chrono Battlecruiser */
+.spaceship-atmosphere .ship-chrono-battlecruiser {
+  top: 50%;
+  left: -320px;
+  width: 230px;
+  height: 105px;
+  animation: distant-ship-3d-5 40s linear 6s infinite;
+}
+
+/* Ship 6: Apex Stealth Corvette */
+.spaceship-atmosphere .ship-apex-corvette {
+  top: 28%;
+  right: -280px;
+  width: 210px;
+  height: 98px;
+  animation: distant-ship-3d-6 34s linear 12s infinite;
+}
+
+/* Ship 7: Titan Carrier */
+.spaceship-atmosphere .ship-titan-carrier {
+  top: 74%;
+  left: -340px;
+  width: 260px;
+  height: 120px;
+  animation: distant-ship-3d-7 46s linear 10s infinite;
+}
+
+/* ── Multi-Waypoint 3D Flight Trajectories (In and Out of Screen with Yaw/Pitch/Roll) ── */
+
+@keyframes distant-ship-3d-1 {
+  0% {
+    transform: translate3d(-200px, -60px, -1400px) rotateY(-35deg) rotateX(15deg) rotateZ(8deg) scale(0.18);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.95;
+    transform: translate3d(calc(20vw + 40px), 140px, -600px) rotateY(-18deg) rotateX(10deg) rotateZ(-10deg) scale(0.42);
+  }
+  50% {
+    transform: translate3d(calc(52vw + 80px), -60px, 520px) rotateY(32deg) rotateX(-20deg) rotateZ(22deg) scale(1.65);
+    opacity: 1;
+  }
+  80% {
+    transform: translate3d(calc(82vw + 140px), 180px, -350px) rotateY(-14deg) rotateX(12deg) rotateZ(-8deg) scale(0.5);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate3d(calc(100vw + 380px), 260px, -1300px) rotateY(-32deg) rotateX(22deg) rotateZ(14deg) scale(0.18);
+    opacity: 0;
+  }
+}
+
+@keyframes distant-ship-3d-2 {
+  0% {
+    transform: translate3d(-180px, 260px, 550px) rotateY(44deg) rotateX(-30deg) rotateZ(-24deg) scale(1.7);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  40% {
+    transform: translate3d(calc(35vw + 40px), 80px, -350px) rotateY(-20deg) rotateX(14deg) rotateZ(16deg) scale(0.48);
+    opacity: 0.95;
+  }
+  72% {
+    transform: translate3d(calc(68vw + 120px), -140px, -1600px) rotateY(-48deg) rotateX(32deg) rotateZ(-28deg) scale(0.13);
+    opacity: 0.65;
+  }
+  100% {
+    transform: translate3d(calc(100vw + 400px), 190px, 400px) rotateY(35deg) rotateX(-22deg) rotateZ(-18deg) scale(1.3);
+    opacity: 0;
+  }
+}
+
+@keyframes distant-ship-3d-3 {
+  0% {
+    transform: translate3d(200px, -150px, -1600px) rotateY(48deg) rotateX(-28deg) rotateZ(20deg) scale(0.14);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.95;
+  }
+  45% {
+    transform: translate3d(calc(-42vw - 80px), 160px, 420px) rotateY(-25deg) rotateX(18deg) rotateZ(-16deg) scale(1.48);
+    opacity: 1;
+  }
+  78% {
+    transform: translate3d(calc(-75vw - 160px), -90px, -550px) rotateY(-38deg) rotateX(26deg) rotateZ(22deg) scale(0.38);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(calc(-100vw - 380px), -240px, -1500px) rotateY(32deg) rotateX(-20deg) rotateZ(-14deg) scale(0.16);
+    opacity: 0;
+  }
+}
+
+@keyframes distant-ship-3d-4 {
+  0% {
+    transform: translate3d(220px, 240px, 500px) rotateY(-40deg) rotateX(26deg) rotateZ(-20deg) scale(1.5);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.95;
+  }
+  45% {
+    transform: translate3d(calc(-45vw - 60px), -100px, -650px) rotateY(30deg) rotateX(-20deg) rotateZ(14deg) scale(0.32);
+  }
+  80% {
+    transform: translate3d(calc(-80vw - 140px), 200px, -1600px) rotateY(50deg) rotateX(-34deg) rotateZ(-24deg) scale(0.12);
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate3d(calc(-100vw - 350px), 50px, -220px) rotateY(-24deg) rotateX(16deg) rotateZ(10deg) scale(0.55);
+    opacity: 0;
+  }
+}
+
+@keyframes distant-ship-3d-5 {
+  0% {
+    transform: translate3d(-220px, -130px, -1600px) rotateY(-45deg) rotateX(30deg) rotateZ(-20deg) scale(0.13);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.95;
+  }
+  40% {
+    transform: translate3d(calc(35vw + 80px), 180px, -500px) rotateY(25deg) rotateX(-16deg) rotateZ(16deg) scale(0.42);
+  }
+  68% {
+    transform: translate3d(calc(68vw + 140px), -120px, 550px) rotateY(-35deg) rotateX(25deg) rotateZ(-22deg) scale(1.75);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(calc(100vw + 400px), 240px, -1300px) rotateY(-48deg) rotateX(32deg) rotateZ(-25deg) scale(0.16);
+    opacity: 0;
+  }
+}
+
+@keyframes distant-ship-3d-6 {
+  0% {
+    transform: translate3d(220px, -200px, 520px) rotateY(40deg) rotateX(-30deg) rotateZ(24deg) scale(1.6);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.95;
+  }
+  42% {
+    transform: translate3d(calc(-42vw - 90px), 160px, -400px) rotateY(-26deg) rotateX(20deg) rotateZ(-14deg) scale(0.42);
+  }
+  80% {
+    transform: translate3d(calc(-80vw - 180px), -140px, -1700px) rotateY(-50deg) rotateX(34deg) rotateZ(26deg) scale(0.11);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate3d(calc(-100vw - 360px), -70px, 220px) rotateY(30deg) rotateX(-20deg) rotateZ(-16deg) scale(0.8);
+    opacity: 0;
+  }
+}
+
+@keyframes distant-ship-3d-7 {
+  0% {
+    transform: translate3d(-260px, 240px, -1500px) rotateY(35deg) rotateX(-24deg) rotateZ(16deg) scale(0.15);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.95;
+  }
+  40% {
+    transform: translate3d(calc(40vw + 80px), -160px, 480px) rotateY(-38deg) rotateX(26deg) rotateZ(-20deg) scale(1.6);
+    opacity: 1;
+  }
+  75% {
+    transform: translate3d(calc(75vw + 160px), 140px, -500px) rotateY(28deg) rotateX(-18deg) rotateZ(14deg) scale(0.38);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(calc(100vw + 400px), -130px, -1600px) rotateY(-44deg) rotateX(30deg) rotateZ(-22deg) scale(0.12);
+    opacity: 0;
+  }
 }
 
 .ship-void-harvester .radiator-left {
