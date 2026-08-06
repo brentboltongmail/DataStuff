@@ -7,3 +7,4 @@ jdbc/classes
 *.log
 .env
 .env.*
+._*
