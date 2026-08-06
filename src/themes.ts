@@ -19,9 +19,9 @@ export const THEME_KEY = "oracle-ide.theme";
 export const APP_THEMES: AppThemeOption[] = [
   { id: "default", label: "Default", monacoTheme: "datastuff-default" },
   { id: "brass", label: "Brass", monacoTheme: "datastuff-brass" },
-  { id: "spaceship", label: "Spaceship", monacoTheme: "datastuff-spaceship" },
+  { id: "spaceship", label: "Space", monacoTheme: "datastuff-spaceship" },
   { id: "aetherium", label: "Aetherium", monacoTheme: "datastuff-aetherium" },
-  { id: "racecar", label: "Race Car", monacoTheme: "datastuff-racecar" },
+  { id: "racecar", label: "Race", monacoTheme: "datastuff-racecar" },
   { id: "lava", label: "Lava", monacoTheme: "datastuff-lava" },
   { id: "ice", label: "Ice", monacoTheme: "datastuff-ice" },
   { id: "nuclear", label: "Nuclear Silo [PROD]", monacoTheme: "datastuff-nuclear" },

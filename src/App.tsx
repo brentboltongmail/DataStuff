@@ -2049,94 +2049,155 @@ export default function App() {
       ) : null}
       {themeId === "ice" ? (
         <div className="ice-atmosphere">
-          {/* Backlight Horizon Ambient & Sunburst Glow (matching reference image) */}
+          {/* Backlight Horizon Ambient & Sunburst Glow */}
           <div className="ice-backlight-horizon" />
           <div className="ice-sun-halo" />
 
-          {/* Master SVG Organic Ice Ledge & Icicle Stalactite Curtain */}
-          <svg className="ice-cave-svg" viewBox="0 0 1920 650" preserveAspectRatio="none">
+          {/* Master 3D Layered SVG Ice Cave Roof & Stalactite Curtain */}
+          <svg className="ice-cave-svg" viewBox="0 0 1920 700" preserveAspectRatio="none">
             <defs>
-              {/* Primary Ice Core Crystal Gradient */}
-              <linearGradient id="ice-crystal-body" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
-                <stop offset="12%" stopColor="#e0f2fe" stopOpacity="0.85" />
-                <stop offset="40%" stopColor="#7dd3fc" stopOpacity="0.65" />
-                <stop offset="75%" stopColor="#0284c7" stopOpacity="0.45" />
-                <stop offset="100%" stopColor="#0369a1" stopOpacity="0.15" />
+              {/* Far Background Ice Gradient */}
+              <linearGradient id="ice-far-body" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#bae6fd" stopOpacity="0.7" />
+                <stop offset="50%" stopColor="#0284c7" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="#0369a1" stopOpacity="0.1" />
               </linearGradient>
 
-              {/* Sunlit Golden Rim Gradient (matches the top sun edge in photo) */}
+              {/* Mid-Distance Ice Gradient */}
+              <linearGradient id="ice-mid-body" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+                <stop offset="20%" stopColor="#e0f2fe" stopOpacity="0.75" />
+                <stop offset="60%" stopColor="#38bdf8" stopOpacity="0.5" />
+                <stop offset="100%" stopColor="#0284c7" stopOpacity="0.2" />
+              </linearGradient>
+
+              {/* Foreground Crystal Clear Ice Gradient */}
+              <linearGradient id="ice-fore-body" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.98" />
+                <stop offset="15%" stopColor="#f0f9ff" stopOpacity="0.9" />
+                <stop offset="45%" stopColor="#7dd3fc" stopOpacity="0.75" />
+                <stop offset="80%" stopColor="#0284c7" stopOpacity="0.5" />
+                <stop offset="100%" stopColor="#0369a1" stopOpacity="0.2" />
+              </linearGradient>
+
+              {/* Sunlit Golden Crest Rim Gradient */}
               <linearGradient id="sunlit-ice-rim" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#fef08a" stopOpacity="0.85" />
-                <stop offset="25%" stopColor="#ffffff" stopOpacity="0.95" />
-                <stop offset="50%" stopColor="#e0f2fe" stopOpacity="0.9" />
-                <stop offset="75%" stopColor="#fef08a" stopOpacity="0.8" />
-                <stop offset="100%" stopColor="#ffffff" stopOpacity="0.95" />
+                <stop offset="0%" stopColor="#fef08a" stopOpacity="0.9" />
+                <stop offset="20%" stopColor="#ffffff" stopOpacity="0.98" />
+                <stop offset="50%" stopColor="#e0f2fe" stopOpacity="0.95" />
+                <stop offset="80%" stopColor="#fef08a" stopOpacity="0.85" />
+                <stop offset="100%" stopColor="#ffffff" stopOpacity="0.98" />
               </linearGradient>
 
-              {/* Refraction & Specular Spine Gradient */}
+              {/* Spine Specular Highlight Gradient */}
               <linearGradient id="specular-spine-grad" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-                <stop offset="35%" stopColor="#ffffff" stopOpacity="0.85" />
-                <stop offset="70%" stopColor="#bae6fd" stopOpacity="0.5" />
+                <stop offset="40%" stopColor="#ffffff" stopOpacity="0.9" />
+                <stop offset="75%" stopColor="#bae6fd" stopOpacity="0.6" />
                 <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
               </linearGradient>
 
+              <filter id="bg-depth-blur" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" />
+              </filter>
+
               <filter id="ice-glow-heavy" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feGaussianBlur stdDeviation="7" result="blur" />
                 <feComposite in="SourceGraphic" in2="blur" operator="over" />
               </filter>
 
-              <filter id="crystal-drop-shadow" x="-10%" y="-10%" width="120%" height="120%">
-                <feDropShadow dx="0" dy="8" stdDeviation="10" floodColor="#0284c7" floodOpacity="0.6" />
+              <filter id="heavy-3d-drop-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="4" dy="12" stdDeviation="12" floodColor="#0284c7" floodOpacity="0.7" />
+                <feDropShadow dx="-2" dy="6" stdDeviation="6" floodColor="#0369a1" floodOpacity="0.4" />
               </filter>
             </defs>
 
-            {/* Layer 1: Background Dense Needle Curtain (Subtle & Layered) */}
+            {/* TIER 1: Far Background Miniature Ice Needle Grid */}
             <path
-              className="ice-layer-back"
-              fill="url(#ice-crystal-body)"
-              opacity="0.4"
-              d="M 0,0 L 1920,0 L 1920,60 
-                 Q 1900,120 1890,200 Q 1880,120 1860,70 
-                 Q 1840,150 1830,240 Q 1820,150 1800,65
-                 Q 1780,180 1770,290 Q 1760,180 1740,75
-                 Q 1720,130 1710,190 Q 1700,130 1680,60
-                 Q 1660,160 1650,260 Q 1640,160 1620,70
-                 Q 1600,140 1590,220 Q 1580,140 1560,65
-                 Q 1540,190 1530,310 Q 1520,190 1500,80
-                 Q 1480,130 1470,200 Q 1460,130 1440,60
-                 Q 1420,170 1410,270 Q 1400,170 1380,75
-                 Q 1360,120 1350,180 Q 1340,120 1320,65
-                 Q 1300,180 1290,295 Q 1280,180 1260,70
-                 Q 1240,140 1230,210 Q 1220,140 1200,60
-                 Q 1180,190 1170,320 Q 1160,190 1140,80
-                 Q 1120,130 1110,190 Q 1100,130 1080,65
-                 Q 1060,160 1050,260 Q 1040,160 1020,70
-                 Q 1000,150 990,230 Q 980,150 960,60
-                 Q 940,200 930,330 Q 920,200 900,75
-                 Q 880,130 870,190 Q 860,130 840,65
-                 Q 820,170 810,280 Q 800,170 780,70
-                 Q 760,140 750,220 Q 740,140 720,60
-                 Q 700,190 690,300 Q 680,190 660,75
-                 Q 640,130 630,190 Q 620,130 600,65
-                 Q 580,160 570,250 Q 560,160 540,70
-                 Q 520,140 510,210 Q 500,140 480,60
-                 Q 460,200 450,320 Q 440,200 420,80
-                 Q 400,130 390,190 Q 380,130 360,65
-                 Q 340,170 330,270 Q 320,170 300,70
-                 Q 280,140 270,220 Q 260,140 240,60
-                 Q 220,190 210,310 Q 200,190 180,75
-                 Q 160,130 150,190 Q 140,130 120,65
-                 Q 100,160 90,260 Q 80,160 60,70
-                 Q 40,120 30,180 Q 20,120 0,60 Z"
+              className="ice-layer-far-back"
+              fill="url(#ice-far-body)"
+              filter="url(#bg-depth-blur)"
+              opacity="0.35"
+              d="M 0,0 L 1920,0 L 1920,40 
+                 Q 1910,90 1900,160 Q 1890,90 1880,45
+                 Q 1860,110 1850,190 Q 1840,110 1820,40
+                 Q 1800,130 1790,210 Q 1780,130 1760,45
+                 Q 1740,100 1730,170 Q 1720,100 1700,40
+                 Q 1680,120 1670,200 Q 1660,120 1640,45
+                 Q 1620,90 1610,150 Q 1600,90 1580,40
+                 Q 1560,140 1550,220 Q 1540,140 1520,45
+                 Q 1500,100 1490,180 Q 1480,100 1460,40
+                 Q 1440,130 1430,210 Q 1420,130 1400,45
+                 Q 1380,90 1370,160 Q 1360,90 1340,40
+                 Q 1320,120 1310,195 Q 1300,120 1280,45
+                 Q 1260,100 1250,170 Q 1240,100 1220,40
+                 Q 1200,140 1190,230 Q 1180,140 1160,45
+                 Q 1140,90 1130,160 Q 1120,90 1100,40
+                 Q 1080,120 1070,200 Q 1060,120 1040,45
+                 Q 1020,100 1010,170 Q 1000,100 980,40
+                 Q 960,130 950,220 Q 940,130 920,45
+                 Q 900,90 890,160 Q 880,90 860,40
+                 Q 840,120 830,200 Q 820,120 800,45
+                 Q 780,100 770,170 Q 760,100 740,40
+                 Q 720,130 710,210 Q 700,130 680,45
+                 Q 660,90 650,160 Q 640,90 620,40
+                 Q 600,120 590,195 Q 580,120 560,45
+                 Q 540,100 530,170 Q 520,100 500,40
+                 Q 480,140 470,230 Q 460,140 440,45
+                 Q 420,90 410,160 Q 400,90 380,40
+                 Q 360,120 350,200 Q 340,120 320,45
+                 Q 300,100 290,170 Q 280,100 260,40
+                 Q 240,130 230,210 Q 220,130 200,45
+                 Q 180,90 170,160 Q 160,90 140,40
+                 Q 120,120 110,190 Q 100,120 80,45
+                 Q 60,90 50,150 Q 40,90 0,40 Z"
             />
 
-            {/* Layer 2: Main Organic Flared Stalactites & Smooth Translucent Ice Ledge */}
+            {/* TIER 2: Mid-Distance Secondary Stalactite Fringe */}
             <path
-              className="ice-layer-mid"
-              fill="url(#ice-crystal-body)"
-              filter="url(#crystal-drop-shadow)"
+              className="ice-layer-back"
+              fill="url(#ice-mid-body)"
+              opacity="0.6"
+              d="M 0,0 L 1920,0 L 1920,60 
+                 Q 1900,120 1890,210 Q 1880,120 1860,70 
+                 Q 1840,160 1830,270 Q 1820,160 1800,65
+                 Q 1780,190 1770,310 Q 1760,190 1740,75
+                 Q 1720,140 1710,210 Q 1700,140 1680,60
+                 Q 1660,170 1650,290 Q 1640,170 1620,70
+                 Q 1600,150 1590,240 Q 1580,150 1560,65
+                 Q 1540,200 1530,340 Q 1520,200 1500,80
+                 Q 1480,140 1470,220 Q 1460,140 1440,60
+                 Q 1420,180 1410,300 Q 1400,180 1380,75
+                 Q 1360,130 1350,200 Q 1340,130 1320,65
+                 Q 1300,190 1290,320 Q 1280,190 1260,70
+                 Q 1240,150 1230,230 Q 1220,150 1200,60
+                 Q 1180,200 1170,350 Q 1160,200 1140,80
+                 Q 1120,140 1110,210 Q 1100,140 1080,65
+                 Q 1060,170 1050,290 Q 1040,170 1020,70
+                 Q 1000,160 990,250 Q 980,160 960,60
+                 Q 940,210 930,360 Q 920,210 900,75
+                 Q 880,140 870,210 Q 860,140 840,65
+                 Q 820,180 810,310 Q 800,180 780,70
+                 Q 760,150 750,240 Q 740,150 720,60
+                 Q 700,200 690,330 Q 680,200 660,75
+                 Q 640,140 630,210 Q 620,140 600,65
+                 Q 580,170 570,280 Q 560,170 540,70
+                 Q 520,150 510,230 Q 500,150 480,60
+                 Q 460,210 450,350 Q 440,210 420,80
+                 Q 400,140 390,210 Q 380,140 360,65
+                 Q 340,180 330,300 Q 320,180 300,70
+                 Q 280,150 270,240 Q 260,150 240,60
+                 Q 220,200 210,340 Q 200,200 180,75
+                 Q 160,140 150,210 Q 140,140 120,65
+                 Q 100,170 90,280 Q 80,170 60,70
+                 Q 40,130 30,200 Q 20,130 0,60 Z"
+            />
+
+            {/* TIER 3: Primary Foreground Mammoth Stalactites with Heavy 3D Drop Shadow */}
+            <path
+              className="ice-layer-fore"
+              fill="url(#ice-fore-body)"
+              filter="url(#heavy-3d-drop-shadow)"
               d="M 0,0 L 1920,0 L 1920,80
                  C 1900,95 1880,160 1870,280 C 1865,340 1860,400 1855,400 C 1850,400 1845,340 1840,280 C 1830,160 1810,95 1790,80
                  C 1775,90 1760,140 1750,220 C 1745,260 1740,310 1736,310 C 1732,310 1728,260 1722,220 C 1712,140 1695,90 1680,80
@@ -2156,8 +2217,51 @@ export default function App() {
                  C 25,88 12,120 0,160 L 0,0 Z"
             />
 
-            {/* Layer 3: Specular Ridge Highlights (Brilliant White Spine Paths) */}
-            <g className="ice-specular-spines" stroke="url(#specular-spine-grad)" strokeWidth="4.5" strokeLinecap="round" opacity="0.95">
+            {/* TIER 4: 3D Refraction Facet Highlights & Shadow Overlays */}
+            <g className="ice-3d-facets">
+              {/* Highlight facets on left flank of stalactite shafts */}
+              <path fill="rgba(255, 255, 255, 0.45)" d="M 1855,100 L 1855,400 L 1845,280 L 1840,160 Z" />
+              <path fill="rgba(255, 255, 255, 0.45)" d="M 1610,100 L 1610,500 L 1598,340 L 1590,180 Z" />
+              <path fill="rgba(255, 255, 255, 0.45)" d="M 1360,100 L 1360,520 L 1347,380 L 1340,190 Z" />
+              <path fill="rgba(255, 255, 255, 0.45)" d="M 1110,100 L 1110,480 L 1097,330 L 1090,170 Z" />
+              <path fill="rgba(255, 255, 255, 0.45)" d="M 860,100 L 860,560 L 848,410 L 840,200 Z" />
+              <path fill="rgba(255, 255, 255, 0.45)" d="M 610,100 L 610,510 L 598,350 L 590,175 Z" />
+              <path fill="rgba(255, 255, 255, 0.45)" d="M 360,100 L 360,540 L 347,390 L 340,190 Z" />
+              <path fill="rgba(255, 255, 255, 0.45)" d="M 110,100 L 110,490 L 98,350 L 90,175 Z" />
+
+              {/* Shadow refraction facets on right flank of stalactite shafts */}
+              <path fill="rgba(2, 132, 199, 0.35)" d="M 1855,100 L 1855,400 L 1865,340 L 1870,280 Z" />
+              <path fill="rgba(2, 132, 199, 0.35)" d="M 1610,100 L 1610,500 L 1622,420 L 1630,340 Z" />
+              <path fill="rgba(2, 132, 199, 0.35)" d="M 1360,100 L 1360,520 L 1373,450 L 1380,380 Z" />
+              <path fill="rgba(2, 132, 199, 0.35)" d="M 1110,100 L 1110,480 L 1123,400 L 1130,330 Z" />
+              <path fill="rgba(2, 132, 199, 0.35)" d="M 860,100 L 860,560 L 872,490 L 880,410 Z" />
+              <path fill="rgba(2, 132, 199, 0.35)" d="M 610,100 L 610,510 L 622,430 L 630,350 Z" />
+              <path fill="rgba(2, 132, 199, 0.35)" d="M 360,100 L 360,540 L 373,460 L 380,390 Z" />
+              <path fill="rgba(2, 132, 199, 0.35)" d="M 110,100 L 110,490 L 122,430 L 130,350 Z" />
+            </g>
+
+            {/* TIER 5: 3D Horizontal Freeze-Thaw Rib Rings & Specular Central Spines */}
+            <g className="ice-3d-rib-rings" stroke="rgba(255, 255, 255, 0.7)" strokeWidth="2.5" fill="none">
+              <path d="M 1845,180 Q 1855,190 1865,180" />
+              <path d="M 1848,270 Q 1855,280 1862,270" />
+              <path d="M 1600,200 Q 1610,210 1620,200" />
+              <path d="M 1603,320 Q 1610,330 1617,320" />
+              <path d="M 1350,220 Q 1360,230 1370,220" />
+              <path d="M 1353,360 Q 1360,370 1367,360" />
+              <path d="M 1100,200 Q 1110,210 1120,200" />
+              <path d="M 1103,320 Q 1110,330 1117,320" />
+              <path d="M 850,230 Q 860,240 870,230" />
+              <path d="M 853,380 Q 860,390 867,380" />
+              <path d="M 600,210 Q 610,220 620,210" />
+              <path d="M 603,340 Q 610,350 617,340" />
+              <path d="M 350,220 Q 360,230 370,220" />
+              <path d="M 353,370 Q 360,380 367,370" />
+              <path d="M 100,210 Q 110,220 120,210" />
+              <path d="M 103,330 Q 110,340 117,330" />
+            </g>
+
+            {/* Specular Central Ridge Spine Paths */}
+            <g className="ice-specular-spines" stroke="url(#specular-spine-grad)" strokeWidth="5" strokeLinecap="round" opacity="0.95">
               <path d="M 1855,100 L 1855,395" />
               <path d="M 1736,95 L 1736,305" />
               <path d="M 1610,100 L 1610,495" />
@@ -2175,12 +2279,12 @@ export default function App() {
               <path d="M 110,100 L 110,485" />
             </g>
 
-            {/* Layer 4: Golden Sunlight Top Edge Crest (Matches top edge of photo) */}
+            {/* TIER 6: Golden Sunlight Top Edge Crest (Front Rim) */}
             <path
               className="sunlit-ice-crest"
               fill="url(#sunlit-ice-rim)"
               filter="url(#ice-glow-heavy)"
-              d="M 0,0 L 1920,0 L 1920,35 Q 960,55 0,35 Z"
+              d="M 0,0 L 1920,0 L 1920,38 Q 960,58 0,38 Z"
             />
           </svg>
 

@@ -3765,14 +3765,41 @@
   pointer-events: none;
 }
 
+.ice-atmosphere .ice-caustic-beam {
+  position: absolute;
+  top: -50px;
+  left: 30%;
+  width: 600px;
+  height: 500px;
+  background: radial-gradient(ellipse 60% 80% at 50% 0%, rgba(255, 255, 255, 0.35) 0%, rgba(125, 211, 252, 0.15) 50%, transparent 100%);
+  transform: rotate(-15deg);
+  filter: blur(20px);
+  pointer-events: none;
+}
+
 .ice-atmosphere .ice-cave-svg {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 320px;
+  height: 340px;
   pointer-events: none;
-  filter: drop-shadow(0 15px 25px rgba(2, 132, 199, 0.45));
+  filter: drop-shadow(0 18px 30px rgba(2, 132, 199, 0.55));
+}
+
+.ice-atmosphere .ice-layer-far-back {
+  transform: translate3d(0, -10px, 0);
+  filter: drop-shadow(0 4px 10px rgba(3, 105, 161, 0.4));
+}
+
+.ice-atmosphere .ice-layer-back {
+  transform: translate3d(0, -4px, 0);
+  filter: drop-shadow(0 8px 18px rgba(2, 132, 199, 0.5));
+}
+
+.ice-atmosphere .ice-layer-fore {
+  transform: translate3d(0, 0, 0);
+  filter: drop-shadow(0 14px 28px rgba(2, 132, 199, 0.75));
 }
 
 /* Water Drips falling from Stalactite Needle Tips */
