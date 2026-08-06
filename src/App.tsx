@@ -1,0 +1,2720 @@
+import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import Editor, { type BeforeMount, type OnMount } from "@monaco-editor/react";
+import type { editor as MonacoEditor } from "monaco-editor";
+import HistoryPanel from "./components/HistoryPanel";
+import ObjectBrowser from "./components/ObjectBrowser";
+import ResultsGrid, {
+  cellEditKey,
+  type CellEdit,
+} from "./components/ResultsGrid";
+import SqlTabs from "./components/SqlTabs";
+import { formatCell, isNullCell, resultToCsv } from "./csv";
+import {
+  buildUpdate,
+  detectSingleSourceTable,
+  hasRowIdColumn,
+  injectRowId,
+  isRowIdColumn,
+} from "./editableQuery";
+import { formatElapsed } from "./formatElapsed";
+import { sqlToExecute } from "./sqlStatement";
+import {
+  APP_THEMES,
+  THEME_KEY,
+  applyThemeToDocument,
+  loadTheme,
+  themeOption,
+  type AppThemeId,
+} from "./themes";
+import type {
+  ConnectionConfig,
+  ConnectionState,
+  HistoryEntry,
+  QueryResult,
+  SqlTab,
+} from "./types";
+
+interface EditMeta {
+  table: string;
+  pkColumns: string[];
+  editable: boolean;
+}
+
+function cellValuesEqual(a: unknown, b: unknown): boolean {
+  if (isNullCell(a) && isNullCell(b)) return true;
+  return formatCell(a) === formatCell(b);
+}
+
+function visibleColumnCount(result: QueryResult): number {
+  return result.columns.filter((col) => !isRowIdColumn(col.name)).length;
+}
+
+function resultWithoutRowId(result: QueryResult): QueryResult {
+  const keep = result.columns
+    .map((col, index) => ({ col, index }))
+    .filter(({ col }) => !isRowIdColumn(col.name));
+  return {
+    ...result,
+    columns: keep.map(({ col }) => col),
+    rows: result.rows.map((row) => keep.map(({ index }) => row[index])),
+  };
+}
+
+const EMPTY_CONNECTION: ConnectionConfig = {
+  user: "",
+  password: "",
+  host: "localhost",
+  port: "1521",
+  service: "ORCLPDB1",
+  tcps: false,
+};
+
+const HISTORY_KEY = "oracle-ide.history";
+const MAX_ROWS_KEY = "oracle-ide.maxRows";
+const DENSITY_KEY = "oracle-ide.gridDensity";
+const FONT_SCALE_KEY = "oracle-ide.fontScale";
+const EDITOR_SPLIT_KEY = "oracle-ide.editorSplit";
+const SIDEBAR_WIDTH_KEY = "oracle-ide.sidebarWidth";
+const REMEMBER_PASSWORD_KEY = "oracle-ide.rememberPassword";
+const MAX_HISTORY = 100;
+const DEFAULT_MAX_ROWS = 1000;
+const DEFAULT_FONT_SCALE = 1;
+const MIN_FONT_SCALE = 0.75;
+const MAX_FONT_SCALE = 1.75;
+const FONT_SCALE_STEP = 0.1;
+const EDITOR_BASE_FONT_SIZE = 13;
+const SAVE_DEBOUNCE_MS = 10_000;
+const PASSWORD_SAVE_DEBOUNCE_MS = 400;
+const DEFAULT_EDITOR_SPLIT = 0.42;
+const MIN_EDITOR_SPLIT = 0.18;
+const MAX_EDITOR_SPLIT = 0.82;
+const DEFAULT_SIDEBAR_WIDTH = 240;
+const MIN_SIDEBAR_WIDTH = 120;
+const MAX_SIDEBAR_WIDTH = 600;
+/** Fixed workspace chrome above/below the editor↔results split (tabs + splitter + toolbar). */
+const WORKSPACE_FIXED_CHROME_PX = 34 + 4 + 36;
+/** How often to probe a live Oracle session while connected. */
+const CONNECTION_HEARTBEAT_MS = 30_000;
+
+type GridDensity = "normal" | "compact" | "crammed";
+
+const DENSITY_ORDER: GridDensity[] = ["normal", "compact", "crammed"];
+
+function loadDensity(): GridDensity {
+  const raw = localStorage.getItem(DENSITY_KEY);
+  if (raw === "compact" || raw === "crammed" || raw === "normal") return raw;
+  return "normal";
+}
+
+function nextDensity(current: GridDensity): GridDensity {
+  const index = DENSITY_ORDER.indexOf(current);
+  return DENSITY_ORDER[(index + 1) % DENSITY_ORDER.length];
+}
+
+function densityLabel(density: GridDensity): string {
+  switch (density) {
+    case "compact":
+      return "Compact";
+    case "crammed":
+      return "Crammed";
+    default:
+      return "Normal";
+  }
+}
+
+function loadMaxRows(): number {
+  const raw = localStorage.getItem(MAX_ROWS_KEY);
+  const parsed = raw ? Number.parseInt(raw, 10) : DEFAULT_MAX_ROWS;
+  if (!Number.isFinite(parsed) || parsed < 1) return DEFAULT_MAX_ROWS;
+  return Math.min(parsed, 100_000);
+}
+
+function loadFontScale(): number {
+  const raw = localStorage.getItem(FONT_SCALE_KEY);
+  const parsed = raw ? Number.parseFloat(raw) : DEFAULT_FONT_SCALE;
+  if (!Number.isFinite(parsed)) return DEFAULT_FONT_SCALE;
+  return Math.min(MAX_FONT_SCALE, Math.max(MIN_FONT_SCALE, parsed));
+}
+
+function roundScale(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
+function loadEditorSplit(): number {
+  const raw = localStorage.getItem(EDITOR_SPLIT_KEY);
+  const parsed = raw ? Number.parseFloat(raw) : DEFAULT_EDITOR_SPLIT;
+  if (!Number.isFinite(parsed)) return DEFAULT_EDITOR_SPLIT;
+  return Math.min(MAX_EDITOR_SPLIT, Math.max(MIN_EDITOR_SPLIT, parsed));
+}
+
+function loadSidebarWidth(): number {
+  const raw = localStorage.getItem(SIDEBAR_WIDTH_KEY);
+  const parsed = raw ? Number.parseInt(raw, 10) : DEFAULT_SIDEBAR_WIDTH;
+  if (!Number.isFinite(parsed)) return DEFAULT_SIDEBAR_WIDTH;
+  return Math.min(MAX_SIDEBAR_WIDTH, Math.max(MIN_SIDEBAR_WIDTH, parsed));
+}
+
+function loadRememberPassword(): boolean {
+  const raw = localStorage.getItem(REMEMBER_PASSWORD_KEY);
+  if (raw === null) return true;
+  return raw === "true";
+}
+
+const SAVED_CONNECTIONS_KEY = "oracle-ide.saved-connections";
+const LAST_CONNECTION_ID_KEY = "oracle-ide.last-connection-id";
+
+export interface SavedConnection {
+  id: string;
+  name: string;
+  user: string;
+  host: string;
+  port: string;
+  service: string;
+  tcps?: boolean;
+  isProd?: boolean;
+}
+
+function loadSavedConnections(): SavedConnection[] {
+  try {
+    const raw = localStorage.getItem(SAVED_CONNECTIONS_KEY);
+    return raw ? (JSON.parse(raw) as SavedConnection[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function loadInitialConnectionState(savedConns: SavedConnection[]) {
+  const lastId = localStorage.getItem(LAST_CONNECTION_ID_KEY);
+  let matched = savedConns.find((c) => c.id === lastId);
+
+  if (!matched && savedConns.length > 0) {
+    try {
+      const savedConfigRaw = localStorage.getItem("oracle-ide.connection");
+      if (savedConfigRaw) {
+        const parsed = JSON.parse(savedConfigRaw);
+        matched = savedConns.find(
+          (c) =>
+            c.user === parsed.user &&
+            c.host === parsed.host &&
+            c.service === parsed.service &&
+            (c.port ?? "1521") === (parsed.port ?? "1521"),
+        );
+      }
+    } catch {
+      // ignore
+    }
+    if (!matched) {
+      matched = savedConns[0];
+    }
+  }
+
+  if (matched) {
+    return {
+      selectedConnectionId: matched.id,
+      connectionName: matched.name,
+      isProd: !!matched.isProd,
+      config: {
+        user: matched.user,
+        password: "",
+        host: matched.host,
+        port: matched.port,
+        service: matched.service,
+        tcps: !!matched.tcps,
+      },
+    };
+  }
+
+  let fallbackConfig = EMPTY_CONNECTION;
+  try {
+    const saved = localStorage.getItem("oracle-ide.connection");
+    if (saved) {
+      fallbackConfig = { ...EMPTY_CONNECTION, ...JSON.parse(saved), password: "" };
+    }
+  } catch {
+    // ignore
+  }
+
+  return {
+    selectedConnectionId: "",
+    connectionName: "",
+    isProd: false,
+    config: fallbackConfig,
+  };
+}
+
+function loadHistory(): HistoryEntry[] {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    return raw ? (JSON.parse(raw) as HistoryEntry[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+export default function App() {
+  const [savedConnections, setSavedConnections] = useState<SavedConnection[]>(() => loadSavedConnections());
+  const initialConnState = useMemo(
+    () => loadInitialConnectionState(savedConnections),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  const [config, setConfig] = useState<ConnectionConfig>(initialConnState.config);
+  const [status, setStatus] = useState<ConnectionState>({ connected: false });
+  const [tabs, setTabs] = useState<SqlTab[]>([]);
+  const [activeTabId, setActiveTabId] = useState("");
+  const [sqlDir, setSqlDir] = useState("~/sql");
+  const [workspaceHydrated, setWorkspaceHydrated] = useState(false);
+  const [history, setHistory] = useState<HistoryEntry[]>(() => loadHistory());
+  const [result, setResult] = useState<QueryResult | null>(null);
+  const [explainResult, setExplainResult] = useState<QueryResult | null>(null);
+  const [explainError, setExplainError] = useState<string | null>(null);
+  const [editMeta, setEditMeta] = useState<EditMeta | null>(null);
+  const [pendingEdits, setPendingEdits] = useState<Record<string, CellEdit>>({});
+  const [bottomTab, setBottomTab] = useState<"results" | "history" | "explain">("results");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("Ready");
+  const [error, setError] = useState<string | null>(null);
+  const [objectsRefresh, setObjectsRefresh] = useState(0);
+  const [maxRows, setMaxRows] = useState(loadMaxRows);
+  const [density, setDensity] = useState<GridDensity>(loadDensity);
+  const [fontScale, setFontScale] = useState(loadFontScale);
+  const [themeId, setThemeId] = useState<AppThemeId>(loadTheme);
+  const [editorSplit, setEditorSplit] = useState(loadEditorSplit);
+  const [sidebarWidth, setSidebarWidth] = useState(loadSidebarWidth);
+  const [rememberPassword, setRememberPassword] = useState(loadRememberPassword);
+  const [passwordStorageAvailable, setPasswordStorageAvailable] = useState(false);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [selectedConnectionId, setSelectedConnectionId] = useState<string>(initialConnState.selectedConnectionId);
+  const [connectionName, setConnectionName] = useState<string>(initialConnState.connectionName);
+  const [isProd, setIsProd] = useState<boolean>(initialConnState.isProd);
+  const [preProdThemeId, setPreProdThemeId] = useState<AppThemeId>("default");
+  const [showManageModal, setShowManageModal] = useState<boolean>(false);
+  const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor | null>(null);
+  const monacoApiRef = useRef<Parameters<BeforeMount>[0] | null>(null);
+  const workspaceRef = useRef<HTMLElement | null>(null);
+  const splitDragRef = useRef<{
+    startY: number;
+    startSplit: number;
+    available: number;
+  } | null>(null);
+  const sidebarDragRef = useRef<{
+    startX: number;
+    startWidth: number;
+  } | null>(null);
+  const passwordSaveTimerRef = useRef<number | null>(null);
+  const rememberPasswordRef = useRef(rememberPassword);
+  const tabsRef = useRef(tabs);
+  const activeTabIdRef = useRef(activeTabId);
+  const saveTimerRef = useRef<number | null>(null);
+  const hydratedRef = useRef(false);
+  const skipNextSaveRef = useRef(false);
+  const busyRef = useRef(busy);
+
+  tabsRef.current = tabs;
+  activeTabIdRef.current = activeTabId;
+  rememberPasswordRef.current = rememberPassword;
+  busyRef.current = busy;
+
+  const isNotConnectedError = useCallback((err: unknown) => {
+    const text = err instanceof Error ? err.message : String(err);
+    return /not connected to oracle/i.test(text);
+  }, []);
+
+  const forceDisconnect = useCallback(
+    async (reason: string) => {
+      try {
+        await window.oracle.disconnect();
+      } catch {
+        // ignore — already gone
+      }
+      setStatus({ connected: false, mode: "jdbc" });
+      setPendingEdits({});
+      setEditMeta(null);
+      if (isProd && preProdThemeId) {
+        setThemeId(preProdThemeId);
+      }
+      setError(reason);
+      setMessage("Connection lost — disconnected");
+    },
+    [isProd, preProdThemeId],
+  );
+
+  const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0];
+  const sql = activeTab?.sql ?? "";
+
+  const persistPassword = useCallback(async (password: string, remember: boolean) => {
+    try {
+      if (!remember || !password) {
+        await window.oracle.clearPassword();
+        return;
+      }
+      await window.oracle.savePassword(password);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  }, []);
+
+  const schedulePasswordSave = useCallback(
+    (password: string) => {
+      if (passwordSaveTimerRef.current != null) {
+        window.clearTimeout(passwordSaveTimerRef.current);
+      }
+      passwordSaveTimerRef.current = window.setTimeout(() => {
+        passwordSaveTimerRef.current = null;
+        void persistPassword(password, rememberPasswordRef.current);
+      }, PASSWORD_SAVE_DEBOUNCE_MS);
+    },
+    [persistPassword],
+  );
+
+  const persistWorkspace = useCallback(async (immediate = false) => {
+    if (!hydratedRef.current) return;
+
+    const payload = {
+      tabs: tabsRef.current,
+      activeTabId: activeTabIdRef.current,
+    };
+
+    const runSave = async () => {
+      setSaveState("saving");
+      try {
+        const saved = await window.oracle.saveWorkspace(payload);
+        if (saved.path) {
+          setSqlDir(saved.path);
+        }
+        const nextTabs = saved.tabs;
+        const prev = tabsRef.current;
+        const changed =
+          prev.length !== nextTabs.length ||
+          prev.some(
+            (tab, index) =>
+              tab.fileName !== nextTabs[index]?.fileName ||
+              tab.id !== nextTabs[index]?.id ||
+              tab.title !== nextTabs[index]?.title,
+          );
+        if (changed) {
+          skipNextSaveRef.current = true;
+          setTabs(nextTabs);
+          const stillActive = nextTabs.find(
+            (tab) =>
+              tab.id === activeTabIdRef.current ||
+              tab.fileName === activeTabIdRef.current,
+          );
+          if (stillActive) {
+            setActiveTabId(stillActive.id);
+          } else if (nextTabs[0]) {
+            setActiveTabId(nextTabs[0].id);
+          }
+        }
+        setSaveState("saved");
+      } catch {
+        setSaveState("error");
+      }
+    };
+
+    if (saveTimerRef.current != null) {
+      window.clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
+
+    if (immediate) {
+      await runSave();
+      return;
+    }
+
+    saveTimerRef.current = window.setTimeout(() => {
+      saveTimerRef.current = null;
+      void runSave();
+    }, SAVE_DEBOUNCE_MS);
+  }, []);
+
+  useEffect(() => {
+    window.oracle.getStatus().then(setStatus).catch(() => undefined);
+  }, []);
+
+  // While connected, periodically verify the session is still alive.
+  // If the probe fails, force a disconnect and restore non-PROD theme.
+  useEffect(() => {
+    if (!status.connected) return;
+
+    let cancelled = false;
+
+    const tick = async () => {
+      if (cancelled || busyRef.current) return;
+      try {
+        const next = await window.oracle.getStatus();
+        if (cancelled) return;
+        if (!next.connected) {
+          await forceDisconnect("Oracle session is no longer valid");
+        }
+      } catch (err) {
+        if (cancelled) return;
+        await forceDisconnect(
+          err instanceof Error ? err.message : "Connection check failed",
+        );
+      }
+    };
+
+    const timer = window.setInterval(() => {
+      void tick();
+    }, CONNECTION_HEARTBEAT_MS);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [status.connected, forceDisconnect]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const available = await window.oracle.isPasswordStorageAvailable();
+        if (cancelled) return;
+        setPasswordStorageAvailable(available);
+        if (!available || !loadRememberPassword()) return;
+        const password = await window.oracle.loadPassword();
+        if (!cancelled && password) {
+          setConfig((prev) => ({ ...prev, password }));
+        }
+      } catch {
+        // leave password empty
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(REMEMBER_PASSWORD_KEY, String(rememberPassword));
+  }, [rememberPassword]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const disk = await window.oracle.loadWorkspace();
+        if (cancelled) return;
+        skipNextSaveRef.current = true;
+        const nextTabs = disk?.tabs ?? [];
+        setTabs(nextTabs);
+        setActiveTabId(
+          disk?.activeTabId && nextTabs.some((tab) => tab.id === disk.activeTabId)
+            ? disk.activeTabId
+            : (nextTabs[0]?.id ?? ""),
+        );
+        if (disk?.sqlDir) setSqlDir(disk.sqlDir);
+        setSaveState("saved");
+        const count = nextTabs.length;
+        setMessage(
+          count > 0
+            ? `Restored ${count} SQL page${count === 1 ? "" : "s"} · ${disk?.sqlDir ?? "~/sql"}`
+            : `No open SQL pages · ${disk?.sqlDir ?? "~/sql"} · Cmd+O to open · Cmd+T for new`,
+        );
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : String(err));
+          setMessage("Could not restore SQL pages");
+        }
+      } finally {
+        if (!cancelled) {
+          hydratedRef.current = true;
+          setWorkspaceHydrated(true);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hydratedRef.current) return;
+    if (skipNextSaveRef.current) {
+      skipNextSaveRef.current = false;
+      return;
+    }
+    void persistWorkspace(false);
+  }, [tabs, activeTabId, persistWorkspace]);
+
+  useEffect(() => {
+    const flush = () => {
+      void persistWorkspace(true);
+    };
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") flush();
+    };
+    window.addEventListener("beforeunload", flush);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.removeEventListener("beforeunload", flush);
+      document.removeEventListener("visibilitychange", onVisibility);
+      if (saveTimerRef.current != null) {
+        window.clearTimeout(saveTimerRef.current);
+      }
+    };
+  }, [persistWorkspace]);
+
+  useEffect(() => {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, MAX_HISTORY)));
+  }, [history]);
+
+  useEffect(() => {
+    localStorage.setItem(MAX_ROWS_KEY, String(maxRows));
+  }, [maxRows]);
+
+  useEffect(() => {
+    localStorage.setItem(DENSITY_KEY, density);
+  }, [density]);
+
+  useEffect(() => {
+    localStorage.setItem(FONT_SCALE_KEY, String(fontScale));
+    document.documentElement.style.setProperty("--font-scale", String(fontScale));
+    editorRef.current?.updateOptions({
+      fontSize: Math.round(EDITOR_BASE_FONT_SIZE * fontScale),
+    });
+  }, [fontScale]);
+
+  useEffect(() => {
+    localStorage.setItem(THEME_KEY, themeId);
+    applyThemeToDocument(themeId);
+    monacoApiRef.current?.editor.setTheme(themeOption(themeId).monacoTheme);
+  }, [themeId]);
+
+  useEffect(() => {
+    localStorage.setItem(EDITOR_SPLIT_KEY, String(editorSplit));
+  }, [editorSplit]);
+
+  useEffect(() => {
+    localStorage.setItem(SIDEBAR_WIDTH_KEY, String(sidebarWidth));
+  }, [sidebarWidth]);
+
+  const handleSelectConnection = useCallback(
+    (connId: string) => {
+      setSelectedConnectionId(connId);
+      if (!connId) {
+        setConnectionName("");
+        setIsProd(false);
+        localStorage.removeItem(LAST_CONNECTION_ID_KEY);
+        return;
+      }
+      const match = savedConnections.find((item) => item.id === connId);
+      if (match) {
+        setConnectionName(match.name);
+        setIsProd(!!match.isProd);
+        setConfig((prev) => ({
+          ...prev,
+          user: match.user,
+          host: match.host,
+          port: match.port,
+          service: match.service,
+          tcps: !!match.tcps,
+        }));
+        localStorage.setItem(LAST_CONNECTION_ID_KEY, match.id);
+        localStorage.setItem(
+          "oracle-ide.connection",
+          JSON.stringify({
+            user: match.user,
+            host: match.host,
+            port: match.port,
+            service: match.service,
+            tcps: !!match.tcps,
+          }),
+        );
+      }
+    },
+    [savedConnections],
+  );
+
+  const handleSaveConnection = useCallback(() => {
+    if (!config.user || !config.host || !config.service) return;
+    const defaultName = `${config.user}@${config.host}/${config.service}`;
+    const nameToSave = connectionName.trim() || defaultName;
+
+    setSavedConnections((prev) => {
+      let updated: SavedConnection[];
+      const existing = prev.find((item) => item.id === selectedConnectionId);
+      let targetId = selectedConnectionId;
+      if (existing) {
+        updated = prev.map((item) =>
+          item.id === selectedConnectionId
+            ? {
+                ...item,
+                name: nameToSave,
+                user: config.user,
+                host: config.host,
+                port: config.port,
+                service: config.service,
+                tcps: config.tcps,
+                isProd,
+              }
+            : item,
+        );
+      } else {
+        const newConn: SavedConnection = {
+          id: crypto.randomUUID(),
+          name: nameToSave,
+          user: config.user,
+          host: config.host,
+          port: config.port,
+          service: config.service,
+          tcps: config.tcps,
+          isProd,
+        };
+        updated = [newConn, ...prev];
+        targetId = newConn.id;
+        setSelectedConnectionId(newConn.id);
+      }
+      localStorage.setItem(SAVED_CONNECTIONS_KEY, JSON.stringify(updated));
+      if (targetId) {
+        localStorage.setItem(LAST_CONNECTION_ID_KEY, targetId);
+      }
+      return updated;
+    });
+    setMessage(`Connection "${nameToSave}" saved`);
+  }, [config, connectionName, isProd, selectedConnectionId]);
+
+  const handleDeleteConnection = useCallback(() => {
+    if (!selectedConnectionId) return;
+    const remaining = savedConnections.filter((item) => item.id !== selectedConnectionId);
+    setSavedConnections(remaining);
+    localStorage.setItem(SAVED_CONNECTIONS_KEY, JSON.stringify(remaining));
+
+    if (remaining.length > 0) {
+      handleSelectConnection(remaining[0].id);
+    } else {
+      setSelectedConnectionId("");
+      setConnectionName("");
+      setIsProd(false);
+      localStorage.removeItem(LAST_CONNECTION_ID_KEY);
+    }
+    setMessage("Connection profile deleted");
+  }, [selectedConnectionId, savedConnections, handleSelectConnection]);
+
+  const updateField = useCallback(
+    (field: keyof ConnectionConfig, value: string | boolean) => {
+      setConfig((prev) => {
+        const next = { ...prev, [field]: value } as ConnectionConfig;
+        if (field === "tcps" && value === true && (!prev.port || prev.port === "1521")) {
+          next.port = "2484";
+        }
+        if (field === "tcps" && value === false && prev.port === "2484") {
+          next.port = "1521";
+        }
+        if (field !== "password") {
+          localStorage.setItem(
+            "oracle-ide.connection",
+            JSON.stringify({
+              user: next.user,
+              host: next.host,
+              port: next.port,
+              service: next.service,
+              tcps: !!next.tcps,
+            }),
+          );
+        } else {
+          schedulePasswordSave(String(value));
+        }
+        return next;
+      });
+    },
+    [schedulePasswordSave],
+  );
+
+  const setActiveSql = useCallback(
+    (nextSql: string, syncEditor = false) => {
+      setTabs((prev) =>
+        prev.map((tab) =>
+          tab.id === activeTabId ? { ...tab, sql: nextSql } : tab,
+        ),
+      );
+      if (syncEditor && editorRef.current) {
+        const current = editorRef.current.getValue();
+        if (current !== nextSql) {
+          editorRef.current.setValue(nextSql);
+        }
+      }
+    },
+    [activeTabId],
+  );
+
+  const pushHistory = useCallback(
+    (entrySql: string, ok: boolean, summary: string) => {
+      setHistory((prev) => [
+        {
+          id: crypto.randomUUID(),
+          sql: entrySql,
+          ranAt: new Date().toISOString(),
+          ok,
+          summary,
+        },
+        ...prev,
+      ].slice(0, MAX_HISTORY));
+    },
+    [],
+  );
+
+  const onConnect = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const next = await window.oracle.connect(config);
+      setStatus(next);
+      setObjectsRefresh((n) => n + 1);
+      if (selectedConnectionId) {
+        localStorage.setItem(LAST_CONNECTION_ID_KEY, selectedConnectionId);
+      }
+      if (isProd) {
+        setPreProdThemeId(themeId);
+        setThemeId("nuclear");
+      }
+      setMessage(
+        `Connected as ${next.user}@${next.connectString} (${next.mode ?? "thin"})`,
+      );
+      await persistPassword(config.password, rememberPassword);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+      setMessage("Connection failed");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const onDisconnect = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const next = await window.oracle.disconnect();
+      setStatus(next);
+      setPendingEdits({});
+      setEditMeta(null);
+      if (isProd && preProdThemeId) {
+        setThemeId(preProdThemeId);
+      }
+      setMessage("Disconnected");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const resolveExecutableSql = useCallback(() => {
+    const editor = editorRef.current;
+    const model = editor?.getModel();
+    const position = editor?.getPosition();
+    const selection = editor?.getSelection();
+    const text = model?.getValue() ?? sql;
+
+    let selectedText = "";
+    if (model && selection && !selection.isEmpty()) {
+      selectedText = model.getValueInRange(selection);
+    }
+
+    const cursorLine = position?.lineNumber ?? 1;
+    return sqlToExecute(text, cursorLine, selectedText);
+  }, [sql]);
+
+  const onExecute = useCallback(async () => {
+    if (!status.connected) {
+      setError("Connect to Oracle first");
+      return;
+    }
+
+    const statement = resolveExecutableSql();
+    if (!statement) {
+      setError("No statement under the cursor (separate statements with a blank line)");
+      setMessage("Nothing to run");
+      return;
+    }
+
+    setBusy(true);
+    setError(null);
+    setBottomTab("results");
+    setPendingEdits({});
+    setEditMeta(null);
+    try {
+      const table = detectSingleSourceTable(statement);
+      let next: QueryResult;
+      let meta: EditMeta | null = null;
+
+      if (table) {
+        try {
+          next = await window.oracle.execute(injectRowId(statement), maxRows);
+          const hasRowId = hasRowIdColumn(next.columns);
+          let pkColumns: string[] = [];
+          if (!hasRowId) {
+            pkColumns = await window.oracle.listPrimaryKeys(table);
+          }
+          meta = {
+            table,
+            pkColumns,
+            editable: hasRowId || pkColumns.length > 0,
+          };
+        } catch (err) {
+          if (isNotConnectedError(err)) throw err;
+          next = await window.oracle.execute(statement, maxRows);
+          const pkColumns = next.isSelect
+            ? await window.oracle.listPrimaryKeys(table)
+            : [];
+          meta = {
+            table,
+            pkColumns,
+            editable: next.isSelect && pkColumns.length > 0,
+          };
+        }
+      } else {
+        next = await window.oracle.execute(statement, maxRows);
+      }
+
+      setResult(next);
+      setEditMeta(next.isSelect ? meta : null);
+      let summary: string;
+      if (next.isSelect) {
+        const note = next.truncated ? " (truncated)" : "";
+        const editNote =
+          meta?.editable
+            ? " · double-click cells to edit"
+            : table
+              ? " · not editable (need ROWID or PK)"
+              : "";
+        summary = `${next.rows.length} row${next.rows.length === 1 ? "" : "s"}${note} in ${formatElapsed(next.elapsedMs)}${editNote}`;
+      } else {
+        summary = `${next.rowsAffected} row${next.rowsAffected === 1 ? "" : "s"} affected in ${formatElapsed(next.elapsedMs)}`;
+      }
+      setMessage(
+        next.isSelect
+          ? summary
+          : `${summary} — commit or rollback to finish`,
+      );
+      pushHistory(statement, true, summary);
+    } catch (err) {
+      const text = err instanceof Error ? err.message : String(err);
+      if (isNotConnectedError(err)) {
+        await forceDisconnect(text);
+      } else {
+        setError(text);
+        setMessage("Execute failed");
+      }
+      pushHistory(statement, false, text.split("\n")[0] ?? "Error");
+    } finally {
+      setBusy(false);
+    }
+  }, [
+    status.connected,
+    pushHistory,
+    resolveExecutableSql,
+    maxRows,
+    isNotConnectedError,
+    forceDisconnect,
+  ]);
+
+  const onExplainPlan = useCallback(async () => {
+    if (!status.connected) {
+      setError("Connect to Oracle first");
+      return;
+    }
+
+    const statement = resolveExecutableSql();
+    if (!statement) {
+      setError("No statement under the cursor (separate statements with a blank line)");
+      setMessage("Nothing to explain");
+      return;
+    }
+
+    setBusy(true);
+    setError(null);
+    setExplainError(null);
+    setBottomTab("explain");
+    try {
+      const next = await window.oracle.explain(statement);
+      setExplainResult(next);
+      const indexes = next.indexes ?? [];
+      const indexSummary =
+        indexes.length > 0
+          ? `Indexes: ${indexes.join(", ")}`
+          : "No indexes used (full table scan or other access path)";
+      const summary = `Explain plan · ${next.rows.length} step${next.rows.length === 1 ? "" : "s"} in ${formatElapsed(next.elapsedMs)} · ${indexSummary}`;
+      setMessage(summary);
+      pushHistory(`EXPLAIN PLAN FOR\n${statement}`, true, summary);
+    } catch (err) {
+      const text = err instanceof Error ? err.message : String(err);
+      if (isNotConnectedError(err)) {
+        await forceDisconnect(text);
+      } else {
+        setExplainError(text);
+        setError(text);
+        setMessage("Explain plan failed");
+      }
+      pushHistory(`EXPLAIN PLAN FOR\n${statement}`, false, text.split("\n")[0] ?? "Error");
+    } finally {
+      setBusy(false);
+    }
+  }, [
+    status.connected,
+    pushHistory,
+    resolveExecutableSql,
+    isNotConnectedError,
+    forceDisconnect,
+  ]);
+
+  const onExecuteRef = useRef(onExecute);
+  onExecuteRef.current = onExecute;
+
+  const onEditorBeforeMount: BeforeMount = useCallback((monaco) => {
+    monacoApiRef.current = monaco;
+    monaco.editor.defineTheme("datastuff-default", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "6B7A90" },
+        { token: "keyword", foreground: "3D8BFD" },
+        { token: "number", foreground: "3DD68C" },
+        { token: "string", foreground: "C084FC" },
+        { token: "string.sql", foreground: "C084FC" },
+        { token: "string.escape", foreground: "D8B4FE" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#E8EAED",
+        "editorLineNumber.foreground": "#5A6578",
+        "editorLineNumber.activeForeground": "#9AA3B2",
+        "editorCursor.foreground": "#3D8BFD",
+        "editor.selectionBackground": "#3D8BFD44",
+        "editor.lineHighlightBackground": "#22262E88",
+        "editorIndentGuide.background": "#323843",
+        "editorIndentGuide.activeBackground": "#445064",
+        "editorWidget.background": "#1E2229",
+        "editorWidget.border": "#323843",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-brass", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "string", foreground: "D4B56E" },
+        { token: "string.sql", foreground: "D4B56E" },
+        { token: "string.escape", foreground: "E8D5A3" },
+        { token: "comment", foreground: "7A7168" },
+        { token: "keyword", foreground: "C4A35A" },
+        { token: "number", foreground: "6FAF8A" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#F0EBE3",
+        "editorLineNumber.foreground": "#5A5348",
+        "editorLineNumber.activeForeground": "#A89F92",
+        "editorCursor.foreground": "#C4A35A",
+        "editor.selectionBackground": "#3A334466",
+        "editor.lineHighlightBackground": "#1C182288",
+        "editorIndentGuide.background": "#2A2433",
+        "editorIndentGuide.activeBackground": "#3A3344",
+        "editorWidget.background": "#1A1620",
+        "editorWidget.border": "#3A3344",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-spaceship", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "5A7190" },
+        { token: "keyword", foreground: "22D3EE" },
+        { token: "number", foreground: "34D399" },
+        { token: "string", foreground: "A78BFA" },
+        { token: "string.sql", foreground: "A78BFA" },
+        { token: "string.escape", foreground: "C4B5FD" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#E8F4FF",
+        "editorLineNumber.foreground": "#3D5575",
+        "editorLineNumber.activeForeground": "#7A93B5",
+        "editorCursor.foreground": "#67E8F9",
+        "editor.selectionBackground": "#22D3EE33",
+        "editor.lineHighlightBackground": "#0E1C3088",
+        "editorIndentGuide.background": "#1A3358",
+        "editorIndentGuide.activeBackground": "#22D3EE55",
+        "editorWidget.background": "#0A1220",
+        "editorWidget.border": "#1A3358",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-aetherium", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "7A7288" },
+        { token: "keyword", foreground: "FF9B7A" },
+        { token: "number", foreground: "5EEAD4" },
+        { token: "string", foreground: "F0D78C" },
+        { token: "string.sql", foreground: "F0D78C" },
+        { token: "string.escape", foreground: "FFC4A8" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#F4EFE6",
+        "editorLineNumber.foreground": "#5A5368",
+        "editorLineNumber.activeForeground": "#A39AAB",
+        "editorCursor.foreground": "#FFC4A8",
+        "editor.selectionBackground": "#FF9B7A33",
+        "editor.lineHighlightBackground": "#1A162488",
+        "editorIndentGuide.background": "#2A2436",
+        "editorIndentGuide.activeBackground": "#5EEAD455",
+        "editorWidget.background": "#12101A",
+        "editorWidget.border": "#3A3148",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-racecar", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "6B7280" },
+        { token: "keyword", foreground: "EF4444" },
+        { token: "number", foreground: "F59E0B" },
+        { token: "string", foreground: "10B981" },
+        { token: "string.sql", foreground: "10B981" },
+        { token: "string.escape", foreground: "34D399" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#F3F4F6",
+        "editorLineNumber.foreground": "#4B5563",
+        "editorLineNumber.activeForeground": "#9CA3AF",
+        "editorCursor.foreground": "#EF4444",
+        "editor.selectionBackground": "#EF444433",
+        "editor.lineHighlightBackground": "#1F293788",
+        "editorIndentGuide.background": "#374151",
+        "editorIndentGuide.activeBackground": "#EF444455",
+        "editorWidget.background": "#111827",
+        "editorWidget.border": "#374151",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-lava", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "78350F" },
+        { token: "keyword", foreground: "F97316" },
+        { token: "number", foreground: "FBBF24" },
+        { token: "string", foreground: "F43F5E" },
+        { token: "string.sql", foreground: "F43F5E" },
+        { token: "string.escape", foreground: "FB7185" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#FEF3C7",
+        "editorLineNumber.foreground": "#78350F",
+        "editorLineNumber.activeForeground": "#F59E0B",
+        "editorCursor.foreground": "#F97316",
+        "editor.selectionBackground": "#F9731644",
+        "editor.lineHighlightBackground": "#2A0E0A88",
+        "editorIndentGuide.background": "#451A03",
+        "editorIndentGuide.activeBackground": "#F9731666",
+        "editorWidget.background": "#1C0A0A",
+        "editorWidget.border": "#451A03",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-ice", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "475569" },
+        { token: "keyword", foreground: "38BDF8" },
+        { token: "number", foreground: "34D399" },
+        { token: "string", foreground: "A78BFA" },
+        { token: "string.sql", foreground: "A78BFA" },
+        { token: "string.escape", foreground: "C4B5FD" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#f0f9ff",
+        "editorLineNumber.foreground": "#334155",
+        "editorLineNumber.activeForeground": "#7dd3fc",
+        "editorCursor.foreground": "#38bdf8",
+        "editor.selectionBackground": "#38bdf833",
+        "editor.lineHighlightBackground": "#13233888",
+        "editorIndentGuide.background": "#1e293b",
+        "editorIndentGuide.activeBackground": "#38bdf855",
+        "editorWidget.background": "#0f172a",
+        "editorWidget.border": "#1e293b",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-nuclear", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "991B1B" },
+        { token: "keyword", foreground: "EF4444" },
+        { token: "number", foreground: "F59E0B" },
+        { token: "string", foreground: "F87171" },
+        { token: "string.sql", foreground: "F87171" },
+        { token: "string.escape", foreground: "FCA5A5" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#FEF2F2",
+        "editorLineNumber.foreground": "#7F1D1D",
+        "editorLineNumber.activeForeground": "#EF4444",
+        "editorCursor.foreground": "#EF4444",
+        "editor.selectionBackground": "#EF444444",
+        "editor.lineHighlightBackground": "#290D0988",
+        "editorIndentGuide.background": "#38120D",
+        "editorIndentGuide.activeBackground": "#EF444466",
+        "editorWidget.background": "#170705f0",
+        "editorWidget.border": "#38120D",
+      },
+    });
+  }, []);
+
+  const onEditorMount: OnMount = useCallback((ed, monaco) => {
+    editorRef.current = ed;
+    monaco.editor.setTheme(themeOption(themeId).monacoTheme);
+    ed.updateOptions({
+      fontSize: Math.round(EDITOR_BASE_FONT_SIZE * loadFontScale()),
+    });
+
+    const runStatement = () => {
+      void onExecuteRef.current();
+    };
+
+    ed.addAction({
+      id: "oracle-ide.run-statement",
+      label: "Run Statement at Cursor",
+      keybindings: [
+        monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
+        monaco.KeyMod.Shift | monaco.KeyCode.Enter,
+      ],
+      run: runStatement,
+    });
+
+    // addCommand overrides the default Shift+Enter binding (needs editContext: false).
+    ed.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, runStatement);
+
+    // Belt-and-suspenders: Native EditContext inserts newlines via beforeinput
+    // (insertLineBreak / insertParagraph), which bypasses keybindings entirely.
+    const dom = ed.getDomNode();
+    const onBeforeInput = (event: Event) => {
+      if (!(event instanceof InputEvent)) return;
+      if (
+        event.inputType !== "insertLineBreak" &&
+        event.inputType !== "insertParagraph"
+      ) {
+        return;
+      }
+      // Only Shift+Enter — plain Enter must still insert a newline.
+      if ((event as unknown as { getModifierState?: (k: string) => boolean }).getModifierState?.("Shift") !== true) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      runStatement();
+    };
+    dom?.addEventListener("beforeinput", onBeforeInput, true);
+  }, []);
+
+  const bumpFontScale = (delta: number) => {
+    setFontScale((prev) =>
+      roundScale(
+        Math.min(MAX_FONT_SCALE, Math.max(MIN_FONT_SCALE, prev + delta)),
+      ),
+    );
+  };
+
+  const endSplitDrag = useCallback(() => {
+    if (!splitDragRef.current) return;
+    splitDragRef.current = null;
+    document.body.classList.remove("is-row-resizing");
+  }, []);
+
+  const endSidebarDrag = useCallback(() => {
+    if (!sidebarDragRef.current) return;
+    sidebarDragRef.current = null;
+    document.body.classList.remove("is-col-resizing");
+  }, []);
+
+  const onSidebarPointerDown = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (event.button !== 0) return;
+      sidebarDragRef.current = {
+        startX: event.clientX,
+        startWidth: sidebarWidth,
+      };
+      document.body.classList.add("is-col-resizing");
+      event.currentTarget.setPointerCapture(event.pointerId);
+      event.preventDefault();
+    },
+    [sidebarWidth],
+  );
+
+  const onSidebarPointerMove = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      const drag = sidebarDragRef.current;
+      if (!drag) return;
+      const next = drag.startWidth + (event.clientX - drag.startX);
+      setSidebarWidth(
+        Math.min(MAX_SIDEBAR_WIDTH, Math.max(MIN_SIDEBAR_WIDTH, next)),
+      );
+    },
+    [],
+  );
+
+  const onSidebarPointerUp = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (sidebarDragRef.current) {
+        try {
+          event.currentTarget.releasePointerCapture(event.pointerId);
+        } catch {
+          // already released
+        }
+      }
+      endSidebarDrag();
+    },
+    [endSidebarDrag],
+  );
+
+  const onSplitPointerDown = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (event.button !== 0) return;
+      const workspace = workspaceRef.current;
+      if (!workspace) return;
+      const available = Math.max(
+        200,
+        workspace.getBoundingClientRect().height - WORKSPACE_FIXED_CHROME_PX,
+      );
+      splitDragRef.current = {
+        startY: event.clientY,
+        startSplit: editorSplit,
+        available,
+      };
+      document.body.classList.add("is-row-resizing");
+      event.currentTarget.setPointerCapture(event.pointerId);
+      event.preventDefault();
+    },
+    [editorSplit],
+  );
+
+  const onSplitPointerMove = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      const drag = splitDragRef.current;
+      if (!drag) return;
+      const next =
+        drag.startSplit + (event.clientY - drag.startY) / drag.available;
+      setEditorSplit(
+        Math.min(MAX_EDITOR_SPLIT, Math.max(MIN_EDITOR_SPLIT, next)),
+      );
+    },
+    [],
+  );
+
+  const onSplitPointerUp = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (splitDragRef.current) {
+        try {
+          event.currentTarget.releasePointerCapture(event.pointerId);
+        } catch {
+          // already released
+        }
+      }
+      endSplitDrag();
+    },
+    [endSplitDrag],
+  );
+
+  const onCellEdit = useCallback((edit: CellEdit) => {
+    const key = cellEditKey(edit.rowIndex, edit.columnIndex);
+    setPendingEdits((prev) => {
+      const next = { ...prev };
+      if (cellValuesEqual(edit.newValue, edit.oldValue)) {
+        delete next[key];
+      } else {
+        next[key] = edit;
+      }
+      return next;
+    });
+  }, []);
+
+  const applyPendingUpdates = async () => {
+    if (!result || !editMeta?.editable) return 0;
+    const edits = Object.values(pendingEdits);
+    if (edits.length === 0) return 0;
+
+    const rowIdIndex = result.columns.findIndex((col) => isRowIdColumn(col.name));
+    const pkIndexes = editMeta.pkColumns.map((name) => {
+      const index = result.columns.findIndex(
+        (col) => col.name.replace(/^"+|"+$/g, "").toUpperCase() === name.toUpperCase(),
+      );
+      if (index < 0) {
+        throw new Error(`Primary key column ${name} not in result set`);
+      }
+      return { name, index };
+    });
+
+    for (const edit of edits) {
+      const row = result.rows[edit.rowIndex];
+      if (!row) throw new Error(`Missing row ${edit.rowIndex + 1}`);
+
+      const rowId =
+        rowIdIndex >= 0 && row[rowIdIndex] != null
+          ? String(row[rowIdIndex])
+          : undefined;
+      const pkColumns =
+        !rowId && pkIndexes.length > 0
+          ? pkIndexes.map(({ name, index }) => ({
+              name,
+              value: row[index],
+            }))
+          : undefined;
+
+      const colMeta = result.columns.find(
+        (c) => c.name.replace(/^"+|"+$/g, "").toUpperCase() === edit.columnName.replace(/^"+|"+$/g, "").toUpperCase(),
+      );
+
+      const { sql, binds } = buildUpdate(
+        editMeta.table,
+        edit.columnName,
+        edit.newValue,
+        rowId,
+        pkColumns,
+        colMeta?.type,
+      );
+      await window.oracle.execute(sql, maxRows, binds);
+    }
+    return edits.length;
+  };
+
+  const onCommit = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const editCount = await applyPendingUpdates();
+      await window.oracle.commit();
+      if (editCount > 0 && result) {
+        setResult((prev) => {
+          if (!prev) return prev;
+          const rows = prev.rows.map((row) => [...row]);
+          for (const edit of Object.values(pendingEdits)) {
+            rows[edit.rowIndex][edit.columnIndex] = edit.newValue;
+          }
+          return { ...prev, rows };
+        });
+        setPendingEdits({});
+        setMessage(
+          `Applied ${editCount} cell update${editCount === 1 ? "" : "s"} and committed`,
+        );
+      } else {
+        setMessage("Transaction committed");
+      }
+    } catch (err) {
+      if (isNotConnectedError(err)) {
+        await forceDisconnect(
+          err instanceof Error ? err.message : String(err),
+        );
+      } else {
+        setError(err instanceof Error ? err.message : String(err));
+        setMessage("Commit failed");
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const onRollback = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const discarded = Object.keys(pendingEdits).length;
+      setPendingEdits({});
+      await window.oracle.rollback();
+      setMessage(
+        discarded > 0
+          ? `Rolled back · discarded ${discarded} unsaved cell edit${discarded === 1 ? "" : "s"}`
+          : "Transaction rolled back",
+      );
+    } catch (err) {
+      if (isNotConnectedError(err)) {
+        await forceDisconnect(
+          err instanceof Error ? err.message : String(err),
+        );
+      } else {
+        setError(err instanceof Error ? err.message : String(err));
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const onExportCsv = async () => {
+    if (!result?.isSelect || result.columns.length === 0) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const csv = resultToCsv(resultWithoutRowId(result));
+      const saved = await window.oracle.saveCsv(csv, "query-results.csv");
+      if (saved.saved) {
+        setMessage(`Exported CSV to ${saved.filePath}`);
+      } else {
+        setMessage("CSV export cancelled");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const addTab = useCallback(async (sqlText = "", title = "query") => {
+    try {
+      const tab = await window.oracle.createSqlPage(title, sqlText);
+      skipNextSaveRef.current = true;
+      setTabs((prev) => [...prev, tab]);
+      setActiveTabId(tab.id);
+      setSaveState("saved");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  }, []);
+
+  const openTabs = useCallback(async () => {
+    try {
+      const result = await window.oracle.openSqlPages();
+      if (!result.opened || result.tabs.length === 0) return;
+      skipNextSaveRef.current = true;
+      setTabs((prev) => {
+        const byId = new Map(prev.map((tab) => [tab.id, tab]));
+        for (const tab of result.tabs) {
+          byId.set(tab.id, tab);
+        }
+        const existingIds = new Set(prev.map((tab) => tab.id));
+        const merged = prev.map((tab) => byId.get(tab.id)!);
+        for (const tab of result.tabs) {
+          if (!existingIds.has(tab.id)) merged.push(tab);
+        }
+        return merged;
+      });
+      const last = result.tabs[result.tabs.length - 1];
+      setActiveTabId(last.id);
+      setSaveState("saved");
+      setMessage(
+        result.tabs.length === 1
+          ? `Opened ${last.fileName}`
+          : `Opened ${result.tabs.length} SQL files`,
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  }, []);
+
+  const closeTab = async (id: string) => {
+    const tab = tabs.find((entry) => entry.id === id);
+    if (!tab) return;
+    const index = tabs.findIndex((entry) => entry.id === id);
+    const next = tabs.filter((entry) => entry.id !== id);
+    const nextActive =
+      activeTabId === id
+        ? (next[Math.max(0, index - 1)] ?? next[0])?.id ?? ""
+        : activeTabId;
+    try {
+      await window.oracle.closeSqlPage(tab.fileName);
+      // Keep refs in sync before any save — otherwise persistWorkspace would
+      // write the closed tab back from the stale tabsRef.
+      skipNextSaveRef.current = true;
+      tabsRef.current = next;
+      activeTabIdRef.current = nextActive;
+      setTabs(next);
+      setActiveTabId(nextActive);
+      await persistWorkspace(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  };
+
+  const renameTab = async (id: string, title: string) => {
+    const tab = tabs.find((entry) => entry.id === id);
+    if (!tab) return;
+    try {
+      await persistWorkspace(true);
+      const renamed = await window.oracle.renameSqlPage(tab.fileName, title);
+      skipNextSaveRef.current = true;
+      setTabs((prev) =>
+        prev.map((entry) => (entry.id === id || entry.fileName === tab.fileName ? renamed : entry)),
+      );
+      if (activeTabId === id || activeTabId === tab.fileName) {
+        setActiveTabId(renamed.id);
+      }
+      setSaveState("saved");
+      setMessage(`Renamed to ${renamed.fileName}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  };
+
+  const openSelectForObject = (objectName: string) => {
+    const statement = `SELECT * FROM ${objectName}\n`;
+    void addTab(statement, objectName);
+  };
+
+  const insertObjectName = (objectName: string) => {
+    const current = editorRef.current?.getValue() ?? sql;
+    const prefix = current.endsWith("\n") || current.length === 0 ? "" : "\n";
+    setActiveSql(`${current}${prefix}${objectName}`, true);
+  };
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      // Monaco handles Ctrl/Cmd+Enter and Shift+Enter inside the editor; this covers focus elsewhere.
+      if (
+        event.key === "Enter" &&
+        (event.metaKey || event.ctrlKey || event.shiftKey) &&
+        !event.altKey
+      ) {
+        const target = event.target as HTMLElement | null;
+        const inMonaco = target?.closest?.(".monaco-editor");
+        if (inMonaco) return;
+        // Don't steal Shift+Enter from inputs (e.g. rename / connection fields).
+        if (
+          event.shiftKey &&
+          !event.metaKey &&
+          !event.ctrlKey &&
+          target &&
+          (target.tagName === "INPUT" ||
+            target.tagName === "TEXTAREA" ||
+            target.isContentEditable)
+        ) {
+          return;
+        }
+        event.preventDefault();
+        void onExecute();
+      }
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "t") {
+        event.preventDefault();
+        void addTab();
+      }
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "o") {
+        event.preventDefault();
+        void openTabs();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onExecute, addTab, openTabs]);
+
+  const pendingEditCount = Object.keys(pendingEdits).length;
+
+  const resultSummary = useMemo(() => {
+    if (!result) return "No results yet";
+    if (result.isSelect) {
+      const cols = visibleColumnCount(result);
+      const dirty =
+        pendingEditCount > 0
+          ? ` · ${pendingEditCount} unsaved edit${pendingEditCount === 1 ? "" : "s"}`
+          : "";
+      return `${result.rows.length} rows · ${cols} columns · ${formatElapsed(result.elapsedMs)}${dirty}`;
+    }
+    return `${result.rowsAffected} rows affected · ${formatElapsed(result.elapsedMs)}`;
+  }, [result, pendingEditCount]);
+
+  const explainSummary = useMemo(() => {
+    if (!explainResult) return "No explain plan yet";
+    const indexes = explainResult.indexes ?? [];
+    const indexNote =
+      indexes.length > 0
+        ? ` · Indexes: ${indexes.join(", ")}`
+        : " · No indexes used";
+    return `${explainResult.rows.length} step${explainResult.rows.length === 1 ? "" : "s"} · ${formatElapsed(explainResult.elapsedMs)}${indexNote}`;
+  }, [explainResult]);
+
+  const explainCellTitle = useCallback(
+    (
+      rowIndex: number,
+      _columnIndex: number,
+      columnName: string,
+      value: unknown,
+      text: string,
+    ) => {
+      if (!explainResult || columnName.toUpperCase() !== "OBJECT_NAME") {
+        return undefined;
+      }
+      if (value == null || text === "" || text === "NULL") return undefined;
+      const row = explainResult.rows[rowIndex];
+      if (!row) return undefined;
+      const typeIdx = explainResult.columns.findIndex(
+        (c) => c.name.toUpperCase() === "OBJECT_TYPE",
+      );
+      const opIdx = explainResult.columns.findIndex(
+        (c) => c.name.toUpperCase() === "OPERATION",
+      );
+      const ownerIdx = explainResult.columns.findIndex(
+        (c) => c.name.toUpperCase() === "OBJECT_OWNER",
+      );
+      const objectType = typeIdx >= 0 ? String(row[typeIdx] ?? "") : "";
+      const operation = opIdx >= 0 ? String(row[opIdx] ?? "") : "";
+      if (
+        !/INDEX/i.test(objectType) &&
+        !/INDEX/i.test(operation)
+      ) {
+        return undefined;
+      }
+      const owner = ownerIdx >= 0 ? String(row[ownerIdx] ?? "").trim() : "";
+      const bare = String(value).trim();
+      const qualified = owner ? `${owner}.${bare}` : bare;
+      const defs = explainResult.indexDefinitions ?? {};
+      return (
+        defs[qualified] ??
+        defs[bare] ??
+        defs[qualified.toUpperCase()] ??
+        defs[bare.toUpperCase()] ??
+        undefined
+      );
+    },
+    [explainResult],
+  );
+
+  const canExport =
+    !!result?.isSelect && result.columns.length > 0;
+  const gridEditable = !!editMeta?.editable;
+
+  return (
+    <div className="app">
+      {themeId === "aetherium" ? (
+        <div className="theme-atmosphere aetherium-atmosphere" aria-hidden="true">
+          <span className="aetherium-prism" />
+          <span className="aetherium-aurora" />
+          <span className="aetherium-caustic" />
+          <span className="aetherium-motes" />
+          <span className="aetherium-veil" />
+        </div>
+      ) : null}
+      {themeId === "spaceship" ? (
+        <div className="theme-atmosphere spaceship-atmosphere" aria-hidden="true">
+          <span className="space-celestial celestial-planet" />
+          <span className="space-celestial celestial-moon" />
+          <span className="space-celestial celestial-lava-planet" />
+          <span className="space-celestial celestial-purple-giant" />
+          <span className="shooting-star shooting-star-1" />
+          <span className="shooting-star shooting-star-2" />
+          <div className="distant-ship distant-ship-1 ship-astral-dreadnought">
+            <span className="ship-ring-module" />
+            <span className="ship-ring-inner" />
+            <span className="ship-ring-spokes" />
+            <span className="ship-spine" />
+            <span className="ship-primary-hull" />
+            <span className="ship-armor-plating-top" />
+            <span className="ship-armor-plating-bottom" />
+            <span className="ship-core-pod" />
+            <span className="ship-bridge-tower" />
+            <span className="ship-sensor-array" />
+            <span className="ship-hangar-deck" />
+            <span className="ship-hangar-forcefield" />
+            <span className="ship-solar-fin fin-top" />
+            <span className="ship-solar-fin fin-bottom" />
+            <span className="ship-turret-port" />
+            <span className="ship-turret-starboard" />
+            <span className="ship-plasma-drive drive-upper" />
+            <span className="ship-plasma-drive drive-lower" />
+            <span className="ship-engine-nozzle-top" />
+            <span className="ship-engine-nozzle-bottom" />
+          </div>
+          <div className="distant-ship distant-ship-2 ship-quantum-interceptor">
+            <span className="qi-delta-hull" />
+            <span className="qi-armor-panel-left" />
+            <span className="qi-armor-panel-right" />
+            <span className="qi-mid-fuselage" />
+            <span className="qi-command-canopy" />
+            <span className="qi-canopy-strut" />
+            <span className="qi-wing-port" />
+            <span className="qi-wing-starboard" />
+            <span className="qi-winglet-port" />
+            <span className="qi-winglet-starboard" />
+            <span className="qi-forward-prongs" />
+            <span className="qi-shield-generator" />
+            <span className="qi-targeting-laser" />
+            <span className="qi-ion-thruster thruster-top" />
+            <span className="qi-ion-thruster thruster-bottom" />
+            <span className="qi-afterburner-ring" />
+          </div>
+          <div className="distant-ship distant-ship-3 ship-solar-corvette">
+            <span className="sc-catamaran-left" />
+            <span className="sc-catamaran-right" />
+            <span className="sc-hull-ribs" />
+            <span className="sc-center-deck" />
+            <span className="sc-bridge-bridge" />
+            <span className="sc-nav-beacon" />
+            <span className="sc-solar-sail sail-top" />
+            <span className="sc-solar-sail sail-bottom" />
+            <span className="sc-sail-truss-left" />
+            <span className="sc-sail-truss-right" />
+            <span className="sc-fusion-drive drive-left" />
+            <span className="sc-fusion-drive drive-right" />
+            <span className="sc-fusion-drive drive-center" />
+          </div>
+          <div className="distant-ship distant-ship-4 ship-void-harvester">
+            <span className="vh-hex-core" />
+            <span className="vh-core-lattice" />
+            <span className="vh-upper-deck" />
+            <span className="vh-mandible-upper" />
+            <span className="vh-mandible-lower" />
+            <span className="vh-plasma-cutter" />
+            <span className="vh-collector-beam" />
+            <span className="vh-radiator-panels radiator-left" />
+            <span className="vh-radiator-panels radiator-right" />
+            <span className="vh-cargo-pod-left" />
+            <span className="vh-cargo-pod-right" />
+            <span className="vh-hyper-drive drive-top" />
+            <span className="vh-hyper-drive drive-bottom" />
+          </div>
+          {/* Ship 5: Chrono Battlecruiser */}
+          <div className="distant-ship distant-ship-5 ship-chrono-battlecruiser">
+            <span className="cb-main-spine" />
+            <span className="cb-forward-prow" />
+            <span className="cb-prow-ram" />
+            <span className="cb-sensor-dish" />
+            <span className="cb-dish-spindle" />
+            <span className="cb-outrigger-left" />
+            <span className="cb-outrigger-right" />
+            <span className="cb-outrigger-pod-left" />
+            <span className="cb-outrigger-pod-right" />
+            <span className="cb-command-citadel" />
+            <span className="cb-citadel-viewports" />
+            <span className="cb-ventral-fin" />
+            <span className="cb-thruster-array" />
+            <span className="cb-thruster-casing" />
+          </div>
+          {/* Ship 6: Apex Stealth Corvette */}
+          <div className="distant-ship distant-ship-6 ship-apex-corvette">
+            <span className="ac-diamond-hull" />
+            <span className="ac-chined-edge-left" />
+            <span className="ac-chined-edge-right" />
+            <span className="ac-dorsal-ridge" />
+            <span className="ac-stealth-wing-left" />
+            <span className="ac-stealth-wing-right" />
+            <span className="ac-wing-tip-left" />
+            <span className="ac-wing-tip-right" />
+            <span className="ac-pulse-core" />
+            <span className="ac-heat-sink" />
+            <span className="ac-twin-exhausts" />
+          </div>
+          {/* Ship 7: Titan Carrier */}
+          <div className="distant-ship distant-ship-7 ship-titan-carrier">
+            <span className="tc-lower-deck" />
+            <span className="tc-upper-deck" />
+            <span className="tc-superstructure" />
+            <span className="tc-flight-deck-left" />
+            <span className="tc-flight-deck-right" />
+            <span className="tc-runway-lights-left" />
+            <span className="tc-runway-lights-right" />
+            <span className="tc-hangar-bay" />
+            <span className="tc-hangar-crane" />
+            <span className="tc-command-bridge" />
+            <span className="tc-radar-array" />
+            <span className="tc-quad-engines" />
+            <span className="tc-engine-cowling" />
+          </div>
+        </div>
+      ) : null}
+      {themeId === "racecar" ? (
+        <div className="racecar-atmosphere">
+          {/* Complex Full-Screen Grand Prix Circuit */}
+          <div className="track-loop-container">
+            <svg className="gp-circuit-svg" viewBox="0 0 1600 900" preserveAspectRatio="none">
+              {/* Outer Runoff Edge */}
+              <path
+                className="gp-track-edge"
+                d="M 150,150 L 750,120 Q 950,110 1050,220 L 1150,350 Q 1250,480 1420,400 Q 1520,350 1480,220 Q 1420,80 1200,80 L 400,80 Q 200,80 100,250 L 80,600 Q 60,780 250,820 L 850,840 Q 1050,850 1250,750 Q 1450,650 1350,520 L 1000,520 Q 820,520 720,650 Q 620,780 420,720 Q 250,660 220,480 Z"
+              />
+              {/* Main Asphalt Circuit Track */}
+              <path
+                className="gp-track-asphalt"
+                d="M 150,150 L 750,120 Q 950,110 1050,220 L 1150,350 Q 1250,480 1420,400 Q 1520,350 1480,220 Q 1420,80 1200,80 L 400,80 Q 200,80 100,250 L 80,600 Q 60,780 250,820 L 850,840 Q 1050,850 1250,750 Q 1450,650 1350,520 L 1000,520 Q 820,520 720,650 Q 620,780 420,720 Q 250,660 220,480 Z"
+              />
+              {/* White Dashed Center Line */}
+              <path
+                className="gp-track-centerline"
+                d="M 150,150 L 750,120 Q 950,110 1050,220 L 1150,350 Q 1250,480 1420,400 Q 1520,350 1480,220 Q 1420,80 1200,80 L 400,80 Q 200,80 100,250 L 80,600 Q 60,780 250,820 L 850,840 Q 1050,850 1250,750 Q 1450,650 1350,520 L 1000,520 Q 820,520 720,650 Q 620,780 420,720 Q 250,660 220,480 Z"
+              />
+            </svg>
+
+            {/* Race Car 1: Red Formula Supercar */}
+            <div className="race-car race-car-1 car-f1-red">
+              <span className="rc-chassis" />
+              <span className="rc-racing-stripe" />
+              <span className="rc-livery-number">01</span>
+              <span className="rc-nose" />
+              <span className="rc-wing-front" />
+              <span className="rc-wing-rear" />
+              <span className="rc-cockpit" />
+              <span className="rc-halo-bar" />
+              <span className="rc-driver-helmet" />
+              <span className="rc-pod-left" />
+              <span className="rc-pod-right" />
+              <span className="rc-wheel wheel-fl" />
+              <span className="rc-wheel wheel-fr" />
+              <span className="rc-wheel wheel-rl" />
+              <span className="rc-wheel wheel-rr" />
+              <span className="rc-exhaust-glow" />
+            </div>
+
+            {/* Race Car 2: Electric Cyan Endurance GT */}
+            <div className="race-car race-car-2 car-gt-cyan">
+              <span className="rc-chassis" />
+              <span className="rc-racing-stripe" />
+              <span className="rc-livery-number">24</span>
+              <span className="rc-roof" />
+              <span className="rc-windshield" />
+              <span className="rc-spoiler" />
+              <span className="rc-diffuser" />
+              <span className="rc-wheel wheel-fl" />
+              <span className="rc-wheel wheel-fr" />
+              <span className="rc-wheel wheel-rl" />
+              <span className="rc-wheel wheel-rr" />
+              <span className="rc-headlights" />
+              <span className="rc-taillights" />
+            </div>
+
+            {/* Race Car 3: Solar Gold Hypercar */}
+            <div className="race-car race-car-3 car-hyper-gold">
+              <span className="rc-chassis" />
+              <span className="rc-racing-stripe" />
+              <span className="rc-livery-number">77</span>
+              <span className="rc-fin" />
+              <span className="rc-canopy" />
+              <span className="rc-side-air-intake-left" />
+              <span className="rc-side-air-intake-right" />
+              <span className="rc-wing-rear" />
+              <span className="rc-wheel wheel-fl" />
+              <span className="rc-wheel wheel-fr" />
+              <span className="rc-wheel wheel-rl" />
+              <span className="rc-wheel wheel-rr" />
+              <span className="rc-exhaust-glow" />
+            </div>
+
+            {/* Race Car 4: Emerald Green Prototype */}
+            <div className="race-car race-car-4 car-proto-green">
+              <span className="rc-chassis" />
+              <span className="rc-racing-stripe" />
+              <span className="rc-livery-number">09</span>
+              <span className="rc-fender-left" />
+              <span className="rc-fender-right" />
+              <span className="rc-cockpit" />
+              <span className="rc-wheel wheel-fl" />
+              <span className="rc-wheel wheel-fr" />
+              <span className="rc-wheel wheel-rl" />
+              <span className="rc-wheel wheel-rr" />
+              <span className="rc-headlights" />
+              <span className="rc-taillights" />
+            </div>
+
+            {/* Race Car 5: Midnight Purple Speedster */}
+            <div className="race-car race-car-5 car-drift-purple">
+              <span className="rc-chassis" />
+              <span className="rc-racing-stripe" />
+              <span className="rc-livery-number">88</span>
+              <span className="rc-widebody" />
+              <span className="rc-ducktail" />
+              <span className="rc-windshield" />
+              <span className="rc-wheel wheel-fl" />
+              <span className="rc-wheel wheel-fr" />
+              <span className="rc-wheel wheel-rl" />
+              <span className="rc-wheel wheel-rr" />
+              <span className="rc-exhaust-glow" />
+              <span className="rc-taillights" />
+            </div>
+          </div>
+        </div>
+      ) : null}
+      {themeId === "lava" ? (
+        <div className="lava-atmosphere">
+          {/* Molten Lava River Basins & Magma Flows */}
+          <div className="lava-magma-pool pool-1" />
+          <div className="lava-magma-pool pool-2" />
+          <div className="lava-river river-left" />
+          <div className="lava-river river-right" />
+          <div className="lava-crust-cracks" />
+
+          {/* Magma Bubbles & Eruptions */}
+          <div className="lava-bubble bubble-1" />
+          <div className="lava-bubble bubble-2" />
+          <div className="lava-bubble bubble-3" />
+          <div className="lava-bubble bubble-4" />
+
+          {/* Irregular Fire Columns Spread Across the Floor */}
+          <div className="fire-column column-pos-1">
+            <span className="fire-core" />
+            <span className="fire-flame flame-jagged-1" />
+            <span className="fire-flame flame-tongue-left" />
+            <span className="fire-flame flame-spark-tip" />
+          </div>
+          <div className="fire-column column-pos-2">
+            <span className="fire-core" />
+            <span className="fire-flame flame-jagged-2" />
+            <span className="fire-flame flame-tongue-right" />
+          </div>
+          <div className="fire-column column-pos-3">
+            <span className="fire-core" />
+            <span className="fire-flame flame-jagged-3" />
+            <span className="fire-flame flame-tongue-left" />
+            <span className="fire-flame flame-spark-tip" />
+          </div>
+          <div className="fire-column column-pos-4">
+            <span className="fire-core" />
+            <span className="fire-flame flame-jagged-1" />
+            <span className="fire-flame flame-tongue-right" />
+          </div>
+          <div className="fire-column column-pos-5">
+            <span className="fire-core" />
+            <span className="fire-flame flame-jagged-2" />
+            <span className="fire-flame flame-tongue-left" />
+            <span className="fire-flame flame-spark-tip" />
+          </div>
+          <div className="fire-column column-pos-6">
+            <span className="fire-core" />
+            <span className="fire-flame flame-jagged-3" />
+            <span className="fire-flame flame-tongue-right" />
+          </div>
+          <div className="fire-column column-pos-7">
+            <span className="fire-core" />
+            <span className="fire-flame flame-jagged-1" />
+            <span className="fire-flame flame-tongue-left" />
+            <span className="fire-flame flame-spark-tip" />
+          </div>
+
+          <div className="lava-ember ember-1" />
+          <div className="lava-ember ember-2" />
+          <div className="lava-ember ember-3" />
+          <div className="lava-ember ember-4" />
+          <div className="lava-ember ember-5" />
+          <div className="lava-ember ember-6" />
+          <div className="lava-ember ember-7" />
+          <div className="lava-ember ember-8" />
+        </div>
+      ) : null}
+      {themeId === "nuclear" ? (
+        <div className="nuclear-atmosphere">
+          {/* Silo Reinforced Steel Hangar & Blast Doors */}
+          <div className="silo-blast-hatch left-hatch" />
+          <div className="silo-blast-hatch right-hatch" />
+          <div className="silo-hazard-stripe top-stripe" />
+          <div className="silo-hazard-stripe bottom-stripe" />
+
+          {/* Radiation Trefoil Emblem & Status Lights */}
+          <div className="radiation-trefoil">
+            <span className="trefoil-center" />
+            <span className="trefoil-blade blade-1" />
+            <span className="trefoil-blade blade-2" />
+            <span className="trefoil-blade blade-3" />
+          </div>
+
+          {/* Rotating Warning Strobe Lights & Beacon Sweeps */}
+          <div className="warning-beacon beacon-left" />
+          <div className="warning-beacon beacon-right" />
+          <div className="nuclear-status-banner">DEFCON 1 · PRODUCTION LIVE DATABASE SILO</div>
+
+          {/* Steam Vents & Geiger Spark Particles */}
+          <div className="steam-vent vent-left" />
+          <div className="steam-vent vent-right" />
+          <div className="radiation-particle spark-1" />
+          <div className="radiation-particle spark-2" />
+          <div className="radiation-particle spark-3" />
+          <div className="radiation-particle spark-4" />
+        </div>
+      ) : null}
+      {themeId === "ice" ? (
+        <div className="ice-atmosphere">
+          {/* Hanging Icicle Fringe Array */}
+          <div className="icicle-roof">
+            <div className="icicle icicle-1 icicle-twisted">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-sub-spike" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-rib-2" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-2 icicle-curved-left">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-3 icicle-forked">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-sub-spike" />
+              <span className="icicle-sub-spike-2" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-rib-2" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-4 icicle-curved-right">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-5 icicle-double-fork">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-sub-spike" />
+              <span className="icicle-sub-spike-2" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-rib-2" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-6 icicle-spiraled">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-rib-2" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-7 icicle-forked">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-sub-spike" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-8 icicle-curved-left">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-9 icicle-twisted">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-sub-spike" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-rib-2" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-10 icicle-curved-right">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-11 icicle-forked">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-sub-spike" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-12 icicle-spiraled">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+          </div>
+
+          {/* Falling Water Melt Drops */}
+          <div className="melt-drop drop-1" />
+          <div className="melt-drop drop-2" />
+          <div className="melt-drop drop-3" />
+          <div className="melt-drop drop-4" />
+          <div className="melt-drop drop-5" />
+
+          {/* Frost Crystals & Snow Flakes */}
+          <div className="frost-overlay" />
+          <div className="snow-flake flake-1" />
+          <div className="snow-flake flake-2" />
+          <div className="snow-flake flake-3" />
+          <div className="snow-flake flake-4" />
+        </div>
+      ) : null}
+      <header className="titlebar">
+        <h1>
+          <span className="brand">DataStuff 1.0</span>
+        </h1>
+        <div className="titlebar-spacer" />
+        <div className="theme-picker">
+          <label htmlFor="app-theme">Theme</label>
+          <select
+            id="app-theme"
+            value={themeId}
+            disabled={status.connected && isProd}
+            title={status.connected && isProd ? "Theme locked to Nuclear Silo while connected to Production" : "Select app theme"}
+            onChange={(e) => setThemeId(e.target.value as AppThemeId)}
+          >
+            {APP_THEMES.map((theme) => (
+              <option key={theme.id} value={theme.id}>
+                {theme.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="font-controls" title="App font size">
+          <button
+            type="button"
+            onClick={() => bumpFontScale(-FONT_SCALE_STEP)}
+            disabled={fontScale <= MIN_FONT_SCALE}
+            aria-label="Decrease font size"
+          >
+            A−
+          </button>
+          <span className="font-scale-label">{Math.round(fontScale * 100)}%</span>
+          <button
+            type="button"
+            onClick={() => bumpFontScale(FONT_SCALE_STEP)}
+            disabled={fontScale >= MAX_FONT_SCALE}
+            aria-label="Increase font size"
+          >
+            A+
+          </button>
+        </div>
+      </header>
+
+      <section className="connection-bar">
+        <div className="field saved-profiles">
+          <label htmlFor="saved-connections">Connection</label>
+          <div className="saved-profile-select-row">
+            <select
+              id="saved-connections"
+              value={selectedConnectionId}
+              onChange={(e) => handleSelectConnection(e.target.value)}
+              disabled={status.connected || busy}
+            >
+              <option value="">— Select Saved Connection —</option>
+              {savedConnections.map((conn) => (
+                <option key={conn.id} value={conn.id}>
+                  {conn.name} ({conn.user}@{conn.host})
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="connection-actions">
+          {status.connected ? (
+            <button type="button" onClick={onDisconnect} disabled={busy}>
+              Disconnect
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="primary"
+              onClick={onConnect}
+              disabled={
+                busy ||
+                !selectedConnectionId ||
+                !config.user ||
+                !config.host ||
+                !config.service
+              }
+              title={
+                !selectedConnectionId
+                  ? "Select a saved connection first"
+                  : "Connect to the selected profile"
+              }
+            >
+              Connect
+            </button>
+          )}
+          <span className="status-pill">
+            <span className={`status-dot ${status.connected ? "on" : ""}`} />
+            {status.connected
+              ? `${connectionName.trim() ? `${connectionName.trim()} (` : ""}${status.user}@${status.connectString}${connectionName.trim() ? ")" : ""} · jdbc${config.tcps ? " · tcps" : ""}`
+              : `Not connected · jdbc${config.tcps ? " · tcps" : ""}`}
+          </span>
+          <button
+            type="button"
+            className="secondary manage-conn-btn"
+            onClick={() => setShowManageModal(true)}
+            disabled={busy}
+            title="Manage saved connection profiles and credentials"
+          >
+            Manage Connections...
+          </button>
+        </div>
+      </section>
+
+      <div className="body" style={{ gridTemplateColumns: `${sidebarWidth}px 4px 1fr` }}>
+        <ObjectBrowser
+          connected={status.connected}
+          refreshKey={objectsRefresh}
+          onInsertSql={insertObjectName}
+          onOpenSelect={openSelectForObject}
+        />
+
+        <div
+          className="sidebar-split"
+          title="Drag to resize object browser · double-click to reset"
+          onPointerDown={onSidebarPointerDown}
+          onPointerMove={onSidebarPointerMove}
+          onPointerUp={onSidebarPointerUp}
+          onPointerCancel={endSidebarDrag}
+          onDoubleClick={() => setSidebarWidth(DEFAULT_SIDEBAR_WIDTH)}
+        />
+
+        <main
+          className="workspace"
+          ref={workspaceRef}
+          style={{
+            gridTemplateRows: `34px minmax(120px, ${editorSplit}fr) 4px 36px minmax(120px, ${1 - editorSplit}fr)`,
+          }}
+        >
+          <SqlTabs
+            tabs={tabs}
+            activeId={activeTabId}
+            onSelect={setActiveTabId}
+            onClose={(id) => {
+              void closeTab(id);
+            }}
+            onAdd={() => {
+              void addTab();
+            }}
+            onOpen={() => {
+              void openTabs();
+            }}
+            onRename={(id, title) => {
+              void renameTab(id, title);
+            }}
+          />
+
+          <div className="editor-pane">
+            {activeTab ? (
+              <Editor
+                key={activeTabId}
+                height="100%"
+                defaultLanguage="sql"
+                theme={themeOption(themeId).monacoTheme}
+                defaultValue={sql}
+                onChange={(value) => setActiveSql(value ?? "")}
+                beforeMount={onEditorBeforeMount}
+                onMount={onEditorMount}
+                options={{
+                  fontSize: Math.round(EDITOR_BASE_FONT_SIZE * fontScale),
+                  fontFamily: "IBM Plex Mono, SF Mono, Menlo, Monaco, Consolas, monospace",
+                  minimap: { enabled: false },
+                  scrollBeyondLastLine: false,
+                  wordWrap: "on",
+                  automaticLayout: true,
+                  tabSize: 2,
+                  padding: { top: 12 },
+                  // Required so Shift+Enter keybindings are not bypassed by
+                  // Native EditContext's beforeinput newline insertion.
+                  editContext: false,
+                  // Keep typing snappy — no autocomplete / word completion.
+                  quickSuggestions: false,
+                  suggestOnTriggerCharacters: false,
+                  acceptSuggestionOnCommitCharacter: false,
+                  acceptSuggestionOnEnter: "off",
+                  tabCompletion: "off",
+                  wordBasedSuggestions: "off",
+                  parameterHints: { enabled: false },
+                  snippetSuggestions: "none",
+                  hover: { enabled: "off" },
+                  inlayHints: { enabled: "off" },
+                }}
+              />
+            ) : (
+              <div className="empty-state">
+                {!workspaceHydrated ? (
+                  "Restoring SQL pages…"
+                ) : (
+                  <>
+                    No SQL pages open.
+                    <br />
+                    Press <kbd>Cmd+O</kbd> to open a file from {sqlDir}, or{" "}
+                    <kbd>Cmd+T</kbd> / <strong>+</strong> for a new tab.
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div
+            className="workspace-split"
+            role="separator"
+            aria-orientation="horizontal"
+            aria-label="Resize editor and results"
+            aria-valuemin={Math.round(MIN_EDITOR_SPLIT * 100)}
+            aria-valuemax={Math.round(MAX_EDITOR_SPLIT * 100)}
+            aria-valuenow={Math.round(editorSplit * 100)}
+            title="Drag to resize editor / results · double-click to reset"
+            onPointerDown={onSplitPointerDown}
+            onPointerMove={onSplitPointerMove}
+            onPointerUp={onSplitPointerUp}
+            onPointerCancel={endSplitDrag}
+            onDoubleClick={() => setEditorSplit(DEFAULT_EDITOR_SPLIT)}
+          />
+
+          <div className="toolbar">
+            <button
+              type="button"
+              className="primary"
+              onClick={onExecute}
+              disabled={!status.connected || busy}
+            >
+              Run
+            </button>
+            <button
+              type="button"
+              onClick={onExplainPlan}
+              disabled={!status.connected || busy}
+              title="Show Oracle explain plan and which indexes the statement uses"
+            >
+              Explain Plan
+            </button>
+            <button
+              type="button"
+              className="success"
+              onClick={onCommit}
+              disabled={!status.connected || busy}
+              title={
+                pendingEditCount > 0
+                  ? `Apply ${pendingEditCount} cell update(s) then commit the transaction`
+                  : "Commit the current transaction"
+              }
+            >
+              Commit{pendingEditCount > 0 ? ` (${pendingEditCount})` : ""}
+            </button>
+            <button
+              type="button"
+              className="danger"
+              onClick={onRollback}
+              disabled={!status.connected || busy}
+              title={
+                pendingEditCount > 0
+                  ? "Discard cell edits and roll back the transaction"
+                  : "Roll back the current transaction"
+              }
+            >
+              Rollback
+            </button>
+            <button
+              type="button"
+              onClick={onExportCsv}
+              disabled={!canExport || busy}
+              title="Export current result grid to CSV"
+            >
+              Export CSV
+            </button>
+            <label className="toolbar-field" htmlFor="maxRows">
+              Max rows
+              <input
+                id="maxRows"
+                type="number"
+                min={1}
+                max={100000}
+                value={maxRows}
+                onChange={(e) => {
+                  const next = Number.parseInt(e.target.value, 10);
+                  if (!Number.isFinite(next)) return;
+                  setMaxRows(Math.min(Math.max(next, 1), 100_000));
+                }}
+              />
+            </label>
+            <button
+              type="button"
+              className={density !== "normal" ? "active-toggle" : ""}
+              onClick={() => setDensity((prev) => nextDensity(prev))}
+              title="Cycle grid density: Normal → Compact → Crammed"
+            >
+              {densityLabel(density)}
+            </button>
+            <span className="hint">
+              Ctrl/Cmd+Enter or Shift+Enter run · double-click cell to edit · Commit applies
+            </span>
+          </div>
+
+          <section className="results-pane">
+            <div className="results-header">
+              <div className="bottom-tabs">
+                <button
+                  type="button"
+                  className={bottomTab === "results" ? "active" : ""}
+                  onClick={() => setBottomTab("results")}
+                >
+                  Results
+                </button>
+                <button
+                  type="button"
+                  className={bottomTab === "explain" ? "active" : ""}
+                  onClick={() => setBottomTab("explain")}
+                >
+                  Explain Plan
+                </button>
+                <button
+                  type="button"
+                  className={bottomTab === "history" ? "active" : ""}
+                  onClick={() => setBottomTab("history")}
+                >
+                  History ({history.length})
+                </button>
+              </div>
+              {bottomTab === "results" ? (
+                <span>
+                  <strong>{resultSummary}</strong>
+                  {result?.truncated ? ` · first ${maxRows.toLocaleString()} rows` : ""}
+                </span>
+              ) : null}
+              {bottomTab === "explain" ? (
+                <span>
+                  <strong>{explainSummary}</strong>
+                </span>
+              ) : null}
+            </div>
+
+            <div className="grid-wrap">
+              {bottomTab === "history" ? (
+                <HistoryPanel
+                  entries={history}
+                  onRestore={(restored) => {
+                    setActiveSql(restored, true);
+                    setBottomTab("results");
+                  }}
+                  onClear={() => setHistory([])}
+                />
+              ) : bottomTab === "explain" ? (
+                explainError ? (
+                  <div className="error-state">{explainError}</div>
+                ) : !explainResult ? (
+                  <div className="empty-state">
+                    Click Explain Plan to see the execution plan and indexes for the
+                    statement under the cursor.
+                  </div>
+                ) : explainResult.columns.length > 0 ? (
+                  <ResultsGrid
+                    result={explainResult}
+                    density={density}
+                    editable={false}
+                    pendingEdits={{}}
+                    onEdit={() => undefined}
+                    fontScale={fontScale}
+                    fitColumnsToContent
+                    getCellTitle={explainCellTitle}
+                  />
+                ) : (
+                  <div className="empty-state">Explain plan returned no rows.</div>
+                )
+              ) : error ? (
+                <div className="error-state">{error}</div>
+              ) : !result ? (
+                <div className="empty-state">
+                  Connect, write SQL, then Run to see rows here.
+                </div>
+              ) : result.isSelect && result.columns.length > 0 ? (
+                <ResultsGrid
+                  result={result}
+                  density={density}
+                  editable={gridEditable}
+                  pendingEdits={pendingEdits}
+                  onEdit={onCellEdit}
+                  fontScale={fontScale}
+                />
+              ) : (
+                <div className="empty-state">
+                  Statement completed. {result.rowsAffected} row
+                  {result.rowsAffected === 1 ? "" : "s"} affected.
+                  <br />
+                  Use Commit or Rollback to finish the transaction.
+                </div>
+              )}
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <footer className="status-bar">
+        <span className={error ? "error" : "ok"}>{message}</span>
+        {busy ? <span>Working…</span> : null}
+        <span className="save-status">
+          {saveState === "saving"
+            ? "Saving…"
+            : saveState === "saved"
+              ? `Saved · ${activeTab?.fileName ?? ""} · ${sqlDir}`
+              : saveState === "error"
+                ? "Save failed"
+                : null}
+        </span>
+      </footer>
+
+      {showManageModal ? (
+        <div className="modal-backdrop" onClick={() => setShowManageModal(false)}>
+          <div className="modal connection-manage-modal" onClick={(e) => e.stopPropagation()}>
+            <h2>Manage Connection Profiles</h2>
+            <p className="subtitle">
+              Configure parameters, connection profiles, and PROD security options.
+            </p>
+
+            <div className="manage-modal-body">
+              <div className="modal-field-group">
+                <div className="field saved-profiles">
+                  <label htmlFor="modal-saved-connections">Saved Profiles</label>
+                  <div className="saved-profile-select-row">
+                    <select
+                      id="modal-saved-connections"
+                      value={selectedConnectionId}
+                      onChange={(e) => handleSelectConnection(e.target.value)}
+                    >
+                      <option value="">— New / Unsaved Connection —</option>
+                      {savedConnections.map((conn) => (
+                        <option key={conn.id} value={conn.id}>
+                          {conn.name} ({conn.user}@{conn.host})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="field connection-name">
+                  <label htmlFor="modal-connection-name-input">Profile Name</label>
+                  <input
+                    id="modal-connection-name-input"
+                    value={connectionName}
+                    placeholder="e.g. Prod DB, Dev PDB..."
+                    onChange={(e) => setConnectionName(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="modal-field-grid">
+                <div className="field user">
+                  <label htmlFor="modal-user">User</label>
+                  <input
+                    id="modal-user"
+                    value={config.user}
+                    onChange={(e) => updateField("user", e.target.value)}
+                    autoComplete="username"
+                  />
+                </div>
+                <div className="field password">
+                  <label htmlFor="modal-password">Password</label>
+                  <input
+                    id="modal-password"
+                    type="password"
+                    value={config.password}
+                    onChange={(e) => updateField("password", e.target.value)}
+                    autoComplete="current-password"
+                  />
+                </div>
+                <div className="field host">
+                  <label htmlFor="modal-host">Host</label>
+                  <input
+                    id="modal-host"
+                    value={config.host}
+                    onChange={(e) => updateField("host", e.target.value)}
+                  />
+                </div>
+                <div className="field port">
+                  <label htmlFor="modal-port">Port</label>
+                  <input
+                    id="modal-port"
+                    value={config.port}
+                    onChange={(e) => updateField("port", e.target.value)}
+                  />
+                </div>
+                <div className="field service">
+                  <label htmlFor="modal-service">Service</label>
+                  <input
+                    id="modal-service"
+                    value={config.service}
+                    onChange={(e) => updateField("service", e.target.value)}
+                    placeholder="ORCLPDB1"
+                  />
+                </div>
+                <div className="field tcps">
+                  <label htmlFor="modal-tcps">TLS</label>
+                  <label className="checkbox-row" htmlFor="modal-tcps">
+                    <input
+                      id="modal-tcps"
+                      type="checkbox"
+                      checked={!!config.tcps}
+                      onChange={(e) => updateField("tcps", e.target.checked)}
+                    />
+                    TCPS
+                  </label>
+                </div>
+              </div>
+
+              <div className="modal-field-group">
+                <label
+                  className="field remember-password"
+                  title={
+                    passwordStorageAvailable
+                      ? "Store password encrypted with the macOS Keychain"
+                      : "Secure storage unavailable"
+                  }
+                >
+                  <input
+                    type="checkbox"
+                    checked={rememberPassword && passwordStorageAvailable}
+                    disabled={!passwordStorageAvailable}
+                    onChange={(e) => {
+                      const next = e.target.checked;
+                      setRememberPassword(next);
+                      void persistPassword(config.password, next);
+                    }}
+                  />
+                  Remember Password in Keychain
+                </label>
+
+                <div className="field prod-flag">
+                  <label className={`checkbox-row prod-checkbox-label ${isProd ? "is-prod" : ""}`} htmlFor="modal-is-prod-toggle">
+                    <input
+                      id="modal-is-prod-toggle"
+                      type="checkbox"
+                      checked={isProd}
+                      onChange={(e) => setIsProd(e.target.checked)}
+                    />
+                    {isProd ? "PROD (SILO LOCK)" : "PROD Environment"}
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="secondary"
+                onClick={handleSaveConnection}
+                disabled={!config.user || !config.host || !config.service}
+              >
+                Save Profile
+              </button>
+              {selectedConnectionId ? (
+                <button
+                  type="button"
+                  className="danger"
+                  onClick={handleDeleteConnection}
+                >
+                  Delete Profile
+                </button>
+              ) : null}
+              <button
+                type="button"
+                className="primary"
+                onClick={() => setShowManageModal(false)}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}

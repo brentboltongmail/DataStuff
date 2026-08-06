@@ -1,0 +1,35 @@
+{
+  "name": "oracle-ide",
+  "version": "0.1.0",
+  "description": "Simple macOS Oracle query IDE",
+  "main": "dist-electron/main.js",
+  "private": true,
+  "scripts": {
+    "setup:jdbc": "node scripts/setup-jdbc.mjs",
+    "predev": "npm run setup:jdbc",
+    "dev": "vite",
+    "prebuild": "npm run setup:jdbc",
+    "build": "tsc -p tsconfig.node.json && vite build",
+    "preview": "vite preview",
+    "start": "electron ."
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.1",
+    "electron": "^35.7.5",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.3",
+    "vite-plugin-electron": "^0.29.0",
+    "vite-plugin-electron-renderer": "^0.14.6"
+  },
+  "allowScripts": {
+    "electron@35.7.5": true
+  }
+}
