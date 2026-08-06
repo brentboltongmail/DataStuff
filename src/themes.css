@@ -770,10 +770,10 @@
   position: absolute;
   top: 1vh;
   right: 2vw;
-  width: 950px;
-  height: 950px;
+  width: 475px;
+  height: 475px;
   pointer-events: none;
-  transform: rotateX(80deg) rotateY(16deg) rotateZ(80deg) translateZ(-8500px) scale(0.22);
+  transform: rotateX(80deg) rotateY(16deg) rotateZ(80deg) translateZ(-8500px) scale(0.11);
   transform-style: preserve-3d;
   opacity: 0.38;
   mix-blend-mode: screen;
@@ -789,10 +789,10 @@
 
 @keyframes spiral-galaxy-spin {
   0% {
-    transform: rotateX(80deg) rotateY(16deg) rotateZ(80deg) translateZ(-8500px) scale(0.22);
+    transform: rotateX(80deg) rotateY(16deg) rotateZ(80deg) translateZ(-8500px) scale(0.11);
   }
   100% {
-    transform: rotateX(80deg) rotateY(16deg) rotateZ(440deg) translateZ(-8500px) scale(0.22);
+    transform: rotateX(80deg) rotateY(16deg) rotateZ(440deg) translateZ(-8500px) scale(0.11);
   }
 }
 
