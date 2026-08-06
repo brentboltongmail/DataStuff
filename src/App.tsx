@@ -280,6 +280,30 @@ export default function App() {
   const [density, setDensity] = useState<GridDensity>(loadDensity);
   const [fontScale, setFontScale] = useState(loadFontScale);
   const [themeId, setThemeId] = useState<AppThemeId>(loadTheme);
+
+  // Space theme initial on-screen planets randomization (always starts with 2 planets on screen)
+  const initialSpaceDelays = useMemo(() => {
+    if (themeId !== "spaceship") return [];
+    // 4 celestial bodies: 0=Gas Giant, 1=Ice Moon, 2=Lava Planet, 3=Purple Giant
+    // Pick 2 at random to start on-screen immediately via negative animation delays
+    const indices = [0, 1, 2, 3].sort(() => 0.5 - Math.random());
+    const onScreenSet = new Set([indices[0], indices[1]]);
+
+    const planetSpecs = [
+      { defaultDelay: "12s", minOnScreen: 80, maxOnScreen: 200 }, // Gas Giant (320s)
+      { defaultDelay: "70s", minOnScreen: 60, maxOnScreen: 150 }, // Ice Moon (240s)
+      { defaultDelay: "95s", minOnScreen: 70, maxOnScreen: 180 }, // Lava Planet (280s)
+      { defaultDelay: "40s", minOnScreen: 90, maxOnScreen: 220 }, // Purple Giant (360s)
+    ];
+
+    return planetSpecs.map((spec, i) => {
+      if (onScreenSet.has(i)) {
+        const randomNegativeSeconds = Math.floor(spec.minOnScreen + Math.random() * (spec.maxOnScreen - spec.minOnScreen));
+        return `-${randomNegativeSeconds}s`;
+      }
+      return spec.defaultDelay;
+    });
+  }, [themeId]);
   const [editorSplit, setEditorSplit] = useState(loadEditorSplit);
   const [sidebarWidth, setSidebarWidth] = useState(loadSidebarWidth);
   const [rememberPassword, setRememberPassword] = useState(loadRememberPassword);
@@ -1685,10 +1709,22 @@ export default function App() {
       ) : null}
       {themeId === "spaceship" ? (
         <div className="theme-atmosphere spaceship-atmosphere" aria-hidden="true">
-          <span className="space-celestial celestial-planet" />
-          <span className="space-celestial celestial-moon" />
-          <span className="space-celestial celestial-lava-planet" />
-          <span className="space-celestial celestial-purple-giant" />
+          <span
+            className="space-celestial celestial-planet"
+            style={initialSpaceDelays[0] ? { animationDelay: initialSpaceDelays[0] } : undefined}
+          />
+          <span
+            className="space-celestial celestial-moon"
+            style={initialSpaceDelays[1] ? { animationDelay: initialSpaceDelays[1] } : undefined}
+          />
+          <span
+            className="space-celestial celestial-lava-planet"
+            style={initialSpaceDelays[2] ? { animationDelay: initialSpaceDelays[2] } : undefined}
+          />
+          <span
+            className="space-celestial celestial-purple-giant"
+            style={initialSpaceDelays[3] ? { animationDelay: initialSpaceDelays[3] } : undefined}
+          />
           <span className="shooting-star shooting-star-1" />
           <span className="shooting-star shooting-star-2" />
           <div className="distant-ship distant-ship-1 ship-astral-dreadnought">
