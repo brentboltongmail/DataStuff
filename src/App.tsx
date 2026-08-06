@@ -1739,6 +1739,80 @@ export default function App() {
       ) : null}
       {themeId === "spaceship" ? (
         <div className="theme-atmosphere spaceship-atmosphere" aria-hidden="true">
+          {/* Large Deep-Space 3D Spiral Galaxy */}
+          <div className="spiral-galaxy-container">
+            <svg className="spiral-galaxy-svg" viewBox="0 0 800 800" preserveAspectRatio="xMidYMid meet">
+              <defs>
+                {/* Galactic Core Bright White/Yellow Nucleus */}
+                <radialGradient id="galaxy-core-glow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+                  <stop offset="15%" stopColor="#fef08a" stopOpacity="0.95" />
+                  <stop offset="35%" stopColor="#f472b6" stopOpacity="0.8" />
+                  <stop offset="60%" stopColor="#c084fc" stopOpacity="0.5" />
+                  <stop offset="85%" stopColor="#6366f1" stopOpacity="0.2" />
+                  <stop offset="100%" stopColor="#0f172a" stopOpacity="0" />
+                </radialGradient>
+
+                {/* Spiral Arm 1 Gradient (Electric Magenta to Cyan Dust) */}
+                <linearGradient id="spiral-arm-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+                  <stop offset="25%" stopColor="#f472b6" stopOpacity="0.85" />
+                  <stop offset="60%" stopColor="#818cf8" stopOpacity="0.55" />
+                  <stop offset="90%" stopColor="#38bdf8" stopOpacity="0.25" />
+                  <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
+                </linearGradient>
+
+                {/* Spiral Arm 2 Gradient (Solar Gold to Violet Dust) */}
+                <linearGradient id="spiral-arm-grad-2" x1="100%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+                  <stop offset="30%" stopColor="#fbbf24" stopOpacity="0.8" />
+                  <stop offset="65%" stopColor="#c084fc" stopOpacity="0.5" />
+                  <stop offset="95%" stopColor="#4f46e5" stopOpacity="0.2" />
+                </linearGradient>
+
+                <filter id="galaxy-blur-glow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="8" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+
+              {/* Galactic Core Light Beam & Radial Glare */}
+              <circle cx="400" cy="400" r="180" fill="url(#galaxy-core-glow)" filter="url(#galaxy-blur-glow)" />
+
+              {/* Logarithmic Spiral Arm Pair 1 */}
+              <path
+                className="galaxy-arm arm-primary"
+                fill="none"
+                stroke="url(#spiral-arm-grad-1)"
+                strokeWidth="48"
+                strokeLinecap="round"
+                filter="url(#galaxy-blur-glow)"
+                d="M 400,400 C 460,380 500,320 480,260 C 450,180 340,160 260,220 C 160,300 150,470 240,580 C 350,710 580,720 710,590 C 820,450 780,200 580,90"
+              />
+
+              {/* Logarithmic Spiral Arm Pair 2 */}
+              <path
+                className="galaxy-arm arm-secondary"
+                fill="none"
+                stroke="url(#spiral-arm-grad-2)"
+                strokeWidth="44"
+                strokeLinecap="round"
+                filter="url(#galaxy-blur-glow)"
+                d="M 400,400 C 340,420 300,480 320,540 C 350,620 460,640 540,580 C 640,500 650,330 560,220 C 450,90 220,80 90,210 C -20,350 20,600 220,710"
+              />
+
+              {/* Interstellar Dust Lanes & Outer Star Cluster Clusters */}
+              <circle cx="480" cy="260" r="12" fill="#ffffff" opacity="0.9" />
+              <circle cx="260" cy="220" r="8" fill="#bae6fd" opacity="0.8" />
+              <circle cx="240" cy="580" r="14" fill="#fef08a" opacity="0.85" />
+              <circle cx="710" cy="590" r="10" fill="#f472b6" opacity="0.75" />
+              <circle cx="320" cy="540" r="11" fill="#ffffff" opacity="0.9" />
+              <circle cx="540" cy="580" r="9" fill="#c084fc" opacity="0.8" />
+              <circle cx="560" cy="220" r="13" fill="#bae6fd" opacity="0.85" />
+              <circle cx="90" cy="210" r="7" fill="#fef08a" opacity="0.7" />
+            </svg>
+          </div>
+
           <span
             className="space-celestial celestial-planet"
             style={initialSpaceDelays[0] ? { animationDelay: initialSpaceDelays[0] } : undefined}
