@@ -1812,110 +1812,141 @@ export default function App() {
       ) : null}
       {themeId === "racecar" ? (
         <div className="racecar-atmosphere">
-          {/* Complex Full-Screen Grand Prix Circuit */}
-          <div className="track-loop-container">
-            <svg className="gp-circuit-svg" viewBox="0 0 1600 900" preserveAspectRatio="none">
-              {/* Outer Runoff Edge */}
-              <path
-                className="gp-track-edge"
-                d="M 150,150 L 750,120 Q 950,110 1050,220 L 1150,350 Q 1250,480 1420,400 Q 1520,350 1480,220 Q 1420,80 1200,80 L 400,80 Q 200,80 100,250 L 80,600 Q 60,780 250,820 L 850,840 Q 1050,850 1250,750 Q 1450,650 1350,520 L 1000,520 Q 820,520 720,650 Q 620,780 420,720 Q 250,660 220,480 Z"
-              />
-              {/* Main Asphalt Circuit Track */}
-              <path
-                className="gp-track-asphalt"
-                d="M 150,150 L 750,120 Q 950,110 1050,220 L 1150,350 Q 1250,480 1420,400 Q 1520,350 1480,220 Q 1420,80 1200,80 L 400,80 Q 200,80 100,250 L 80,600 Q 60,780 250,820 L 850,840 Q 1050,850 1250,750 Q 1450,650 1350,520 L 1000,520 Q 820,520 720,650 Q 620,780 420,720 Q 250,660 220,480 Z"
-              />
-              {/* White Dashed Center Line */}
-              <path
-                className="gp-track-centerline"
-                d="M 150,150 L 750,120 Q 950,110 1050,220 L 1150,350 Q 1250,480 1420,400 Q 1520,350 1480,220 Q 1420,80 1200,80 L 400,80 Q 200,80 100,250 L 80,600 Q 60,780 250,820 L 850,840 Q 1050,850 1250,750 Q 1450,650 1350,520 L 1000,520 Q 820,520 720,650 Q 620,780 420,720 Q 250,660 220,480 Z"
-              />
-            </svg>
+          <div className="track-3d-stage">
+            <div className="track-loop-container">
+              <svg className="gp-circuit-svg" viewBox="0 0 1600 900" preserveAspectRatio="none">
+                {/* 1. Gravel Safety Runoff Perimeter */}
+                <path
+                  className="gp-track-runoff"
+                  d="M 150,150 L 750,120 Q 950,110 1050,220 L 1150,350 Q 1250,480 1420,400 Q 1520,350 1480,220 Q 1420,80 1200,80 L 400,80 Q 200,80 100,250 L 80,600 Q 60,780 250,820 L 850,840 Q 1050,850 1250,750 Q 1450,650 1350,520 L 1000,520 Q 820,520 720,650 Q 620,780 420,720 Q 250,660 220,480 Z"
+                />
+                {/* 2. Red & White Racing Curbs (Apex Rumble Strips) */}
+                <path
+                  className="gp-track-curbs-red"
+                  d="M 150,150 L 750,120 Q 950,110 1050,220 L 1150,350 Q 1250,480 1420,400 Q 1520,350 1480,220 Q 1420,80 1200,80 L 400,80 Q 200,80 100,250 L 80,600 Q 60,780 250,820 L 850,840 Q 1050,850 1250,750 Q 1450,650 1350,520 L 1000,520 Q 820,520 720,650 Q 620,780 420,720 Q 250,660 220,480 Z"
+                />
+                <path
+                  className="gp-track-curbs-white"
+                  d="M 150,150 L 750,120 Q 950,110 1050,220 L 1150,350 Q 1250,480 1420,400 Q 1520,350 1480,220 Q 1420,80 1200,80 L 400,80 Q 200,80 100,250 L 80,600 Q 60,780 250,820 L 850,840 Q 1050,850 1250,750 Q 1450,650 1350,520 L 1000,520 Q 820,520 720,650 Q 620,780 420,720 Q 250,660 220,480 Z"
+                />
+                {/* 3. Main Dark Asphalt Surface */}
+                <path
+                  className="gp-track-asphalt"
+                  d="M 150,150 L 750,120 Q 950,110 1050,220 L 1150,350 Q 1250,480 1420,400 Q 1520,350 1480,220 Q 1420,80 1200,80 L 400,80 Q 200,80 100,250 L 80,600 Q 60,780 250,820 L 850,840 Q 1050,850 1250,750 Q 1450,650 1350,520 L 1000,520 Q 820,520 720,650 Q 620,780 420,720 Q 250,660 220,480 Z"
+                />
+                {/* 4. Rubbered Racing Line Overlay */}
+                <path
+                  className="gp-track-racingline"
+                  d="M 150,150 L 750,120 Q 950,110 1050,220 L 1150,350 Q 1250,480 1420,400 Q 1520,350 1480,220 Q 1420,80 1200,80 L 400,80 Q 200,80 100,250 L 80,600 Q 60,780 250,820 L 850,840 Q 1050,850 1250,750 Q 1450,650 1350,520 L 1000,520 Q 820,520 720,650 Q 620,780 420,720 Q 250,660 220,480 Z"
+                />
+                {/* 5. Outer Track Boundary White Lines */}
+                <path
+                  className="gp-track-boundary"
+                  d="M 150,150 L 750,120 Q 950,110 1050,220 L 1150,350 Q 1250,480 1420,400 Q 1520,350 1480,220 Q 1420,80 1200,80 L 400,80 Q 200,80 100,250 L 80,600 Q 60,780 250,820 L 850,840 Q 1050,850 1250,750 Q 1450,650 1350,520 L 1000,520 Q 820,520 720,650 Q 620,780 420,720 Q 250,660 220,480 Z"
+                />
+                {/* 6. Yellow Dashed Center Line */}
+                <path
+                  className="gp-track-centerline"
+                  d="M 150,150 L 750,120 Q 950,110 1050,220 L 1150,350 Q 1250,480 1420,400 Q 1520,350 1480,220 Q 1420,80 1200,80 L 400,80 Q 200,80 100,250 L 80,600 Q 60,780 250,820 L 850,840 Q 1050,850 1250,750 Q 1450,650 1350,520 L 1000,520 Q 820,520 720,650 Q 620,780 420,720 Q 250,660 220,480 Z"
+                />
+              </svg>
 
-            {/* Race Car 1: Red Formula Supercar */}
-            <div className="race-car race-car-1 car-f1-red">
-              <span className="rc-chassis" />
-              <span className="rc-racing-stripe" />
-              <span className="rc-livery-number">01</span>
-              <span className="rc-nose" />
-              <span className="rc-wing-front" />
-              <span className="rc-wing-rear" />
-              <span className="rc-cockpit" />
-              <span className="rc-halo-bar" />
-              <span className="rc-driver-helmet" />
-              <span className="rc-pod-left" />
-              <span className="rc-pod-right" />
-              <span className="rc-wheel wheel-fl" />
-              <span className="rc-wheel wheel-fr" />
-              <span className="rc-wheel wheel-rl" />
-              <span className="rc-wheel wheel-rr" />
-              <span className="rc-exhaust-glow" />
-            </div>
+              {/* Race Car 1: Red Scuderia F1 Supercar */}
+              <div className="race-car race-car-1 car-f1-red">
+                <span className="rc-underglow" />
+                <span className="rc-headlight-beam" />
+                <span className="rc-chassis" />
+                <span className="rc-racing-stripe" />
+                <span className="rc-livery-number">01</span>
+                <span className="rc-nose" />
+                <span className="rc-wing-front" />
+                <span className="rc-wing-rear" />
+                <span className="rc-cockpit" />
+                <span className="rc-halo-bar" />
+                <span className="rc-driver-helmet" />
+                <span className="rc-pod-left" />
+                <span className="rc-pod-right" />
+                <span className="rc-wheel wheel-fl" />
+                <span className="rc-wheel wheel-fr" />
+                <span className="rc-wheel wheel-rl" />
+                <span className="rc-wheel wheel-rr" />
+                <span className="rc-taillights" />
+                <span className="rc-exhaust-glow" />
+              </div>
 
-            {/* Race Car 2: Electric Cyan Endurance GT */}
-            <div className="race-car race-car-2 car-gt-cyan">
-              <span className="rc-chassis" />
-              <span className="rc-racing-stripe" />
-              <span className="rc-livery-number">24</span>
-              <span className="rc-roof" />
-              <span className="rc-windshield" />
-              <span className="rc-spoiler" />
-              <span className="rc-diffuser" />
-              <span className="rc-wheel wheel-fl" />
-              <span className="rc-wheel wheel-fr" />
-              <span className="rc-wheel wheel-rl" />
-              <span className="rc-wheel wheel-rr" />
-              <span className="rc-headlights" />
-              <span className="rc-taillights" />
-            </div>
+              {/* Race Car 2: Electric Cyan Endurance GT3 */}
+              <div className="race-car race-car-2 car-gt-cyan">
+                <span className="rc-underglow" />
+                <span className="rc-headlight-beam" />
+                <span className="rc-chassis" />
+                <span className="rc-racing-stripe" />
+                <span className="rc-livery-number">24</span>
+                <span className="rc-roof" />
+                <span className="rc-windshield" />
+                <span className="rc-spoiler" />
+                <span className="rc-diffuser" />
+                <span className="rc-wheel wheel-fl" />
+                <span className="rc-wheel wheel-fr" />
+                <span className="rc-wheel wheel-rl" />
+                <span className="rc-wheel wheel-rr" />
+                <span className="rc-headlights" />
+                <span className="rc-taillights" />
+              </div>
 
-            {/* Race Car 3: Solar Gold Hypercar */}
-            <div className="race-car race-car-3 car-hyper-gold">
-              <span className="rc-chassis" />
-              <span className="rc-racing-stripe" />
-              <span className="rc-livery-number">77</span>
-              <span className="rc-fin" />
-              <span className="rc-canopy" />
-              <span className="rc-side-air-intake-left" />
-              <span className="rc-side-air-intake-right" />
-              <span className="rc-wing-rear" />
-              <span className="rc-wheel wheel-fl" />
-              <span className="rc-wheel wheel-fr" />
-              <span className="rc-wheel wheel-rl" />
-              <span className="rc-wheel wheel-rr" />
-              <span className="rc-exhaust-glow" />
-            </div>
+              {/* Race Car 3: Solar Gold Hypercar */}
+              <div className="race-car race-car-3 car-hyper-gold">
+                <span className="rc-underglow" />
+                <span className="rc-headlight-beam" />
+                <span className="rc-chassis" />
+                <span className="rc-racing-stripe" />
+                <span className="rc-livery-number">77</span>
+                <span className="rc-fin" />
+                <span className="rc-canopy" />
+                <span className="rc-side-air-intake-left" />
+                <span className="rc-side-air-intake-right" />
+                <span className="rc-wing-rear" />
+                <span className="rc-wheel wheel-fl" />
+                <span className="rc-wheel wheel-fr" />
+                <span className="rc-wheel wheel-rl" />
+                <span className="rc-wheel wheel-rr" />
+                <span className="rc-exhaust-glow" />
+              </div>
 
-            {/* Race Car 4: Emerald Green Prototype */}
-            <div className="race-car race-car-4 car-proto-green">
-              <span className="rc-chassis" />
-              <span className="rc-racing-stripe" />
-              <span className="rc-livery-number">09</span>
-              <span className="rc-fender-left" />
-              <span className="rc-fender-right" />
-              <span className="rc-cockpit" />
-              <span className="rc-wheel wheel-fl" />
-              <span className="rc-wheel wheel-fr" />
-              <span className="rc-wheel wheel-rl" />
-              <span className="rc-wheel wheel-rr" />
-              <span className="rc-headlights" />
-              <span className="rc-taillights" />
-            </div>
+              {/* Race Car 4: Emerald Green Prototype */}
+              <div className="race-car race-car-4 car-proto-green">
+                <span className="rc-underglow" />
+                <span className="rc-headlight-beam" />
+                <span className="rc-chassis" />
+                <span className="rc-racing-stripe" />
+                <span className="rc-livery-number">09</span>
+                <span className="rc-fender-left" />
+                <span className="rc-fender-right" />
+                <span className="rc-cockpit" />
+                <span className="rc-wheel wheel-fl" />
+                <span className="rc-wheel wheel-fr" />
+                <span className="rc-wheel wheel-rl" />
+                <span className="rc-wheel wheel-rr" />
+                <span className="rc-headlights" />
+                <span className="rc-taillights" />
+              </div>
 
-            {/* Race Car 5: Midnight Purple Speedster */}
-            <div className="race-car race-car-5 car-drift-purple">
-              <span className="rc-chassis" />
-              <span className="rc-racing-stripe" />
-              <span className="rc-livery-number">88</span>
-              <span className="rc-widebody" />
-              <span className="rc-ducktail" />
-              <span className="rc-windshield" />
-              <span className="rc-wheel wheel-fl" />
-              <span className="rc-wheel wheel-fr" />
-              <span className="rc-wheel wheel-rl" />
-              <span className="rc-wheel wheel-rr" />
-              <span className="rc-exhaust-glow" />
-              <span className="rc-taillights" />
+              {/* Race Car 5: Midnight Purple Speedster */}
+              <div className="race-car race-car-5 car-drift-purple">
+                <span className="rc-underglow" />
+                <span className="rc-headlight-beam" />
+                <span className="rc-chassis" />
+                <span className="rc-racing-stripe" />
+                <span className="rc-livery-number">88</span>
+                <span className="rc-widebody" />
+                <span className="rc-ducktail" />
+                <span className="rc-windshield" />
+                <span className="rc-wheel wheel-fl" />
+                <span className="rc-wheel wheel-fr" />
+                <span className="rc-wheel wheel-rl" />
+                <span className="rc-wheel wheel-rr" />
+                <span className="rc-exhaust-glow" />
+                <span className="rc-taillights" />
+              </div>
             </div>
           </div>
         </div>
@@ -2018,27 +2049,9 @@ export default function App() {
       ) : null}
       {themeId === "ice" ? (
         <div className="ice-atmosphere">
-          {/* Hanging Icicle Fringe Array */}
+          {/* Hanging Icicle Fringe Array with Mammoth & Micro Spikes */}
           <div className="icicle-roof">
-            <div className="icicle icicle-1 icicle-twisted">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-sub-spike" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-rib-2" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-2 icicle-curved-left">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-3 icicle-forked">
+            <div className="icicle icicle-1 icicle-mammoth icicle-twisted">
               <span className="icicle-core" />
               <span className="icicle-ridge" />
               <span className="icicle-sub-spike" />
@@ -2049,7 +2062,12 @@ export default function App() {
               <span className="icicle-refraction" />
               <span className="water-drip" />
             </div>
-            <div className="icicle icicle-4 icicle-curved-right">
+            <div className="icicle icicle-2 icicle-needle">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-refraction" />
+            </div>
+            <div className="icicle icicle-3 icicle-medium icicle-curved-left">
               <span className="icicle-core" />
               <span className="icicle-ridge" />
               <span className="icicle-rib-1" />
@@ -2057,7 +2075,7 @@ export default function App() {
               <span className="icicle-refraction" />
               <span className="water-drip" />
             </div>
-            <div className="icicle icicle-5 icicle-double-fork">
+            <div className="icicle icicle-4 icicle-mammoth icicle-forked">
               <span className="icicle-core" />
               <span className="icicle-ridge" />
               <span className="icicle-sub-spike" />
@@ -2068,33 +2086,13 @@ export default function App() {
               <span className="icicle-refraction" />
               <span className="water-drip" />
             </div>
-            <div className="icicle icicle-6 icicle-spiraled">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-rib-2" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-7 icicle-forked">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-sub-spike" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-8 icicle-curved-left">
+            <div className="icicle icicle-5 icicle-small icicle-spiraled">
               <span className="icicle-core" />
               <span className="icicle-ridge" />
               <span className="icicle-rib-1" />
               <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
             </div>
-            <div className="icicle icicle-9 icicle-twisted">
+            <div className="icicle icicle-6 icicle-large icicle-curved-right">
               <span className="icicle-core" />
               <span className="icicle-ridge" />
               <span className="icicle-sub-spike" />
@@ -2104,7 +2102,21 @@ export default function App() {
               <span className="icicle-refraction" />
               <span className="water-drip" />
             </div>
-            <div className="icicle icicle-10 icicle-curved-right">
+            <div className="icicle icicle-7 icicle-needle">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+            </div>
+            <div className="icicle icicle-8 icicle-mammoth icicle-spiraled">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-sub-spike" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-rib-2" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-9 icicle-medium icicle-twisted">
               <span className="icicle-core" />
               <span className="icicle-ridge" />
               <span className="icicle-rib-1" />
@@ -2112,7 +2124,38 @@ export default function App() {
               <span className="icicle-refraction" />
               <span className="water-drip" />
             </div>
-            <div className="icicle icicle-11 icicle-forked">
+            <div className="icicle icicle-10 icicle-large icicle-double-fork">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-sub-spike" />
+              <span className="icicle-sub-spike-2" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-rib-2" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-11 icicle-needle">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-refraction" />
+            </div>
+            <div className="icicle icicle-12 icicle-mammoth icicle-curved-left">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-sub-spike" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-rib-2" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-13 icicle-small icicle-curved-right">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-frost-facet" />
+            </div>
+            <div className="icicle icicle-14 icicle-large icicle-twisted">
               <span className="icicle-core" />
               <span className="icicle-ridge" />
               <span className="icicle-sub-spike" />
@@ -2121,9 +2164,98 @@ export default function App() {
               <span className="icicle-refraction" />
               <span className="water-drip" />
             </div>
-            <div className="icicle icicle-12 icicle-spiraled">
+            <div className="icicle icicle-15 icicle-mammoth icicle-forked">
               <span className="icicle-core" />
               <span className="icicle-ridge" />
+              <span className="icicle-sub-spike" />
+              <span className="icicle-sub-spike-2" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-rib-2" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-16 icicle-needle">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+            </div>
+            <div className="icicle icicle-17 icicle-medium icicle-spiraled">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-18 icicle-mammoth icicle-double-fork">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-sub-spike" />
+              <span className="icicle-sub-spike-2" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-rib-2" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-19 icicle-small icicle-curved-left">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-frost-facet" />
+            </div>
+            <div className="icicle icicle-20 icicle-large icicle-curved-right">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-sub-spike" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-21 icicle-needle">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-refraction" />
+            </div>
+            <div className="icicle icicle-22 icicle-mammoth icicle-twisted">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-sub-spike" />
+              <span className="icicle-sub-spike-2" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-rib-2" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-23 icicle-medium icicle-forked">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-sub-spike" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-24 icicle-mammoth icicle-spiraled">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-sub-spike" />
+              <span className="icicle-rib-1" />
+              <span className="icicle-rib-2" />
+              <span className="icicle-frost-facet" />
+              <span className="icicle-refraction" />
+              <span className="water-drip" />
+            </div>
+            <div className="icicle icicle-25 icicle-needle">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+            </div>
+            <div className="icicle icicle-26 icicle-large icicle-curved-left">
+              <span className="icicle-core" />
+              <span className="icicle-ridge" />
+              <span className="icicle-sub-spike" />
               <span className="icicle-rib-1" />
               <span className="icicle-frost-facet" />
               <span className="icicle-refraction" />
