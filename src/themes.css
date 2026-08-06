@@ -1574,156 +1574,164 @@
   animation: distant-ship-3d-7 46s linear 10s infinite;
 }
 
-/* ── Multi-Waypoint 3D Flight Trajectories (In and Out of Screen with Yaw/Pitch/Roll) ── */
-
+/* Ship 1: Left to Right (Astral Dreadnought Flagship) */
 @keyframes distant-ship-3d-1 {
   0% {
-    transform: translate3d(-200px, -60px, -1400px) rotateY(-35deg) rotateX(15deg) rotateZ(8deg) scale(0.18);
+    transform: translate3d(-350px, -60px, -1400px) rotateY(15deg) rotateX(10deg) rotateZ(5deg) scale(0.18);
     opacity: 0;
   }
   15% {
     opacity: 0.95;
-    transform: translate3d(calc(20vw + 40px), 140px, -600px) rotateY(-18deg) rotateX(10deg) rotateZ(-10deg) scale(0.42);
+    transform: translate3d(calc(20vw + 40px), 120px, -600px) rotateY(12deg) rotateX(6deg) rotateZ(-6deg) scale(0.42);
   }
   50% {
-    transform: translate3d(calc(52vw + 80px), -60px, 520px) rotateY(32deg) rotateX(-20deg) rotateZ(22deg) scale(1.65);
+    transform: translate3d(calc(52vw + 80px), -40px, 500px) rotateY(18deg) rotateX(-12deg) rotateZ(12deg) scale(1.6);
     opacity: 1;
   }
   80% {
-    transform: translate3d(calc(82vw + 140px), 180px, -350px) rotateY(-14deg) rotateX(12deg) rotateZ(-8deg) scale(0.5);
+    transform: translate3d(calc(82vw + 140px), 160px, -350px) rotateY(14deg) rotateX(8deg) rotateZ(-4deg) scale(0.5);
     opacity: 0.95;
   }
   100% {
-    transform: translate3d(calc(100vw + 380px), 260px, -1300px) rotateY(-32deg) rotateX(22deg) rotateZ(14deg) scale(0.18);
+    transform: translate3d(calc(100vw + 450px), 240px, -1300px) rotateY(16deg) rotateX(12deg) rotateZ(8deg) scale(0.18);
     opacity: 0;
   }
 }
 
+/* Ship 2: Left to Right (Quantum Interceptor Starfighter) */
 @keyframes distant-ship-3d-2 {
   0% {
-    transform: translate3d(-180px, 260px, 550px) rotateY(44deg) rotateX(-30deg) rotateZ(-24deg) scale(1.7);
+    transform: translate3d(-350px, 240px, 500px) rotateY(18deg) rotateX(-15deg) rotateZ(-12deg) scale(1.65);
     opacity: 0;
   }
   12% {
     opacity: 1;
   }
-  40% {
-    transform: translate3d(calc(35vw + 40px), 80px, -350px) rotateY(-20deg) rotateX(14deg) rotateZ(16deg) scale(0.48);
+  45% {
+    transform: translate3d(calc(42vw + 40px), 60px, -300px) rotateY(14deg) rotateX(8deg) rotateZ(8deg) scale(0.52);
     opacity: 0.95;
   }
-  72% {
-    transform: translate3d(calc(68vw + 120px), -140px, -1600px) rotateY(-48deg) rotateX(32deg) rotateZ(-28deg) scale(0.13);
-    opacity: 0.65;
+  80% {
+    transform: translate3d(calc(82vw + 120px), -120px, -1400px) rotateY(16deg) rotateX(-10deg) rotateZ(-14deg) scale(0.18);
+    opacity: 0.7;
   }
   100% {
-    transform: translate3d(calc(100vw + 400px), 190px, 400px) rotateY(35deg) rotateX(-22deg) rotateZ(-18deg) scale(1.3);
+    transform: translate3d(calc(100vw + 450px), -180px, -1800px) rotateY(18deg) rotateX(-12deg) rotateZ(-16deg) scale(0.12);
     opacity: 0;
   }
 }
 
+/* Ship 3: Right to Left (Solar Corvette) */
 @keyframes distant-ship-3d-3 {
   0% {
-    transform: translate3d(200px, -150px, -1600px) rotateY(48deg) rotateX(-28deg) rotateZ(20deg) scale(0.14);
+    transform: translate3d(calc(100vw + 380px), -140px, -1600px) rotateY(-18deg) rotateX(-12deg) rotateZ(-8deg) scale(0.14);
     opacity: 0;
   }
   15% {
     opacity: 0.95;
   }
-  45% {
-    transform: translate3d(calc(-42vw - 80px), 160px, 420px) rotateY(-25deg) rotateX(18deg) rotateZ(-16deg) scale(1.48);
+  50% {
+    transform: translate3d(calc(48vw - 80px), 160px, 420px) rotateY(-16deg) rotateX(10deg) rotateZ(12deg) scale(1.48);
     opacity: 1;
   }
-  78% {
-    transform: translate3d(calc(-75vw - 160px), -90px, -550px) rotateY(-38deg) rotateX(26deg) rotateZ(22deg) scale(0.38);
+  82% {
+    transform: translate3d(calc(18vw - 160px), -90px, -550px) rotateY(-14deg) rotateX(-8deg) rotateZ(-10deg) scale(0.38);
     opacity: 0.9;
   }
   100% {
-    transform: translate3d(calc(-100vw - 380px), -240px, -1500px) rotateY(32deg) rotateX(-20deg) rotateZ(-14deg) scale(0.16);
+    transform: translate3d(-450px, -220px, -1500px) rotateY(-16deg) rotateX(-12deg) rotateZ(-12deg) scale(0.16);
     opacity: 0;
   }
 }
 
+/* Ship 4: Right to Left (Void Harvester Mining Dreadnought) */
 @keyframes distant-ship-3d-4 {
   0% {
-    transform: translate3d(220px, 240px, 500px) rotateY(-40deg) rotateX(26deg) rotateZ(-20deg) scale(1.5);
+    transform: translate3d(calc(100vw + 380px), 220px, 480px) rotateY(-16deg) rotateX(12deg) rotateZ(-10deg) scale(1.5);
     opacity: 0;
   }
   12% {
     opacity: 0.95;
   }
-  45% {
-    transform: translate3d(calc(-45vw - 60px), -100px, -650px) rotateY(30deg) rotateX(-20deg) rotateZ(14deg) scale(0.32);
+  50% {
+    transform: translate3d(calc(45vw - 60px), -80px, -600px) rotateY(-14deg) rotateX(-8deg) rotateZ(8deg) scale(0.35);
   }
-  80% {
-    transform: translate3d(calc(-80vw - 140px), 200px, -1600px) rotateY(50deg) rotateX(-34deg) rotateZ(-24deg) scale(0.12);
-    opacity: 0.55;
+  82% {
+    transform: translate3d(calc(15vw - 140px), 180px, -1500px) rotateY(-18deg) rotateX(-14deg) rotateZ(-12deg) scale(0.14);
+    opacity: 0.6;
   }
   100% {
-    transform: translate3d(calc(-100vw - 350px), 50px, -220px) rotateY(-24deg) rotateX(16deg) rotateZ(10deg) scale(0.55);
+    transform: translate3d(-450px, 240px, -1800px) rotateY(-20deg) rotateX(-16deg) rotateZ(-14deg) scale(0.1);
     opacity: 0;
   }
 }
 
+/* Ship 5: Left to Right (Chrono Battlecruiser) */
 @keyframes distant-ship-3d-5 {
   0% {
-    transform: translate3d(-220px, -130px, -1600px) rotateY(-45deg) rotateX(30deg) rotateZ(-20deg) scale(0.13);
+    transform: translate3d(-350px, -120px, -1500px) rotateY(16deg) rotateX(12deg) rotateZ(-10deg) scale(0.14);
     opacity: 0;
   }
   15% {
-    opacity: 0.95;
-  }
-  40% {
-    transform: translate3d(calc(35vw + 80px), 180px, -500px) rotateY(25deg) rotateX(-16deg) rotateZ(16deg) scale(0.42);
-  }
-  68% {
-    transform: translate3d(calc(68vw + 140px), -120px, 550px) rotateY(-35deg) rotateX(25deg) rotateZ(-22deg) scale(1.75);
-    opacity: 1;
-  }
-  100% {
-    transform: translate3d(calc(100vw + 400px), 240px, -1300px) rotateY(-48deg) rotateX(32deg) rotateZ(-25deg) scale(0.16);
-    opacity: 0;
-  }
-}
-
-@keyframes distant-ship-3d-6 {
-  0% {
-    transform: translate3d(220px, -200px, 520px) rotateY(40deg) rotateX(-30deg) rotateZ(24deg) scale(1.6);
-    opacity: 0;
-  }
-  12% {
     opacity: 0.95;
   }
   42% {
-    transform: translate3d(calc(-42vw - 90px), 160px, -400px) rotateY(-26deg) rotateX(20deg) rotateZ(-14deg) scale(0.42);
+    transform: translate3d(calc(42vw + 80px), 160px, -450px) rotateY(14deg) rotateX(-8deg) rotateZ(8deg) scale(0.45);
   }
-  80% {
-    transform: translate3d(calc(-80vw - 180px), -140px, -1700px) rotateY(-50deg) rotateX(34deg) rotateZ(26deg) scale(0.11);
-    opacity: 0.5;
+  72% {
+    transform: translate3d(calc(72vw + 140px), -100px, 520px) rotateY(18deg) rotateX(-15deg) rotateZ(-14deg) scale(1.68);
+    opacity: 1;
   }
   100% {
-    transform: translate3d(calc(-100vw - 360px), -70px, 220px) rotateY(30deg) rotateX(-20deg) rotateZ(-16deg) scale(0.8);
+    transform: translate3d(calc(100vw + 450px), -180px, 800px) rotateY(20deg) rotateX(-18deg) rotateZ(-16deg) scale(1.9);
     opacity: 0;
   }
 }
 
+/* Ship 6: Right to Left (Apex Stealth Corvette) */
+@keyframes distant-ship-3d-6 {
+  0% {
+    transform: translate3d(calc(100vw + 380px), -180px, 480px) rotateY(-18deg) rotateX(-14deg) rotateZ(12deg) scale(1.55);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.95;
+  }
+  45% {
+    transform: translate3d(calc(48vw - 90px), 140px, -350px) rotateY(-14deg) rotateX(10deg) rotateZ(-8deg) scale(0.45);
+  }
+  80% {
+    transform: translate3d(calc(18vw - 180px), -110px, -1600px) rotateY(-16deg) rotateX(14deg) rotateZ(14deg) scale(0.12);
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate3d(-450px, -160px, -1900px) rotateY(-18deg) rotateX(16deg) rotateZ(16deg) scale(0.08);
+    opacity: 0;
+  }
+}
+
+/* Ship 7: Left to Right (Titan Carrier) */
 @keyframes distant-ship-3d-7 {
   0% {
-    transform: translate3d(-260px, 240px, -1500px) rotateY(35deg) rotateX(-24deg) rotateZ(16deg) scale(0.15);
+    transform: translate3d(-380px, 220px, -1400px) rotateY(15deg) rotateX(-12deg) rotateZ(8deg) scale(0.16);
     opacity: 0;
   }
   15% {
     opacity: 0.95;
   }
-  40% {
-    transform: translate3d(calc(40vw + 80px), -160px, 480px) rotateY(-38deg) rotateX(26deg) rotateZ(-20deg) scale(1.6);
+  45% {
+    transform: translate3d(calc(45vw + 80px), -140px, 450px) rotateY(18deg) rotateX(14deg) rotateZ(-12deg) scale(1.55);
     opacity: 1;
   }
-  75% {
-    transform: translate3d(calc(75vw + 160px), 140px, -500px) rotateY(28deg) rotateX(-18deg) rotateZ(14deg) scale(0.38);
+  78% {
+    transform: translate3d(calc(78vw + 160px), 120px, -450px) rotateY(14deg) rotateX(-8deg) rotateZ(8deg) scale(0.4);
     opacity: 0.9;
   }
   100% {
-    transform: translate3d(calc(100vw + 400px), -130px, -1600px) rotateY(-44deg) rotateX(30deg) rotateZ(-22deg) scale(0.12);
+    transform: translate3d(calc(100vw + 450px), 180px, -1500px) rotateY(16deg) rotateX(-12deg) rotateZ(10deg) scale(0.14);
+    opacity: 0;
+  }
+}ale(0.12);
     opacity: 0;
   }
 }
