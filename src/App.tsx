@@ -122,6 +122,30 @@ function densityLabel(density: GridDensity): string {
   }
 }
 
+const CIRCUIT_PRESETS = [
+  // Preset 1: Silverstone Sweeping Loop
+  "M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z",
+  // Preset 2: Monaco Coastal Loop
+  "M 180,320 C 350,150 700,120 1000,150 C 1300,180 1480,260 1450,420 C 1420,580 1250,720 1050,780 C 850,840 550,820 380,720 C 210,620 120,480 180,320 Z",
+  // Preset 3: Spa Francorchamps High-Speed Loop
+  "M 250,200 C 580,100 920,140 1200,220 C 1480,300 1520,480 1380,620 C 1240,760 980,820 720,780 C 460,740 180,700 140,520 C 100,340 120,240 250,200 Z",
+  // Preset 4: Suzuka Technical Loop
+  "M 200,400 C 250,200 550,140 850,220 C 1150,300 1420,180 1480,340 C 1540,500 1320,680 1100,600 C 880,520 700,750 450,820 C 200,890 120,600 200,400 Z",
+  // Preset 5: Nürburgring Endurance Loop
+  "M 300,180 C 650,120 1000,160 1350,220 C 1500,360 1450,560 1280,720 C 1110,880 750,850 480,780 C 210,710 120,520 160,340 C 200,160 180,220 300,180 Z",
+  // Preset 6: Red Bull Ring Speedway
+  "M 220,180 C 600,120 1050,100 1420,200 C 1520,380 1380,580 1180,680 C 980,780 620,840 340,760 C 140,680 100,420 140,280 C 160,180 150,220 220,180 Z",
+];
+
+function generateRandomRaceTrack(): string {
+  const basePreset = CIRCUIT_PRESETS[Math.floor(Math.random() * CIRCUIT_PRESETS.length)];
+  return basePreset.replace(/-?\d+(\.\d+)?/g, (match) => {
+    const num = Number.parseFloat(match);
+    const delta = Math.floor((Math.random() - 0.5) * 30);
+    return String(Math.max(40, num + delta));
+  });
+}
+
 function loadMaxRows(): number {
   const raw = localStorage.getItem(MAX_ROWS_KEY);
   const parsed = raw ? Number.parseInt(raw, 10) : DEFAULT_MAX_ROWS;
@@ -303,6 +327,12 @@ export default function App() {
       }
       return spec.defaultDelay;
     });
+  }, [themeId]);
+
+  // Randomized 3D Race Track circuit layout generated on app load / theme selection
+  const raceTrackPath = useMemo(() => {
+    if (themeId !== "racecar") return CIRCUIT_PRESETS[0];
+    return generateRandomRaceTrack();
   }, [themeId]);
   const [editorSplit, setEditorSplit] = useState(loadEditorSplit);
   const [sidebarWidth, setSidebarWidth] = useState(loadSidebarWidth);
@@ -1847,44 +1877,26 @@ export default function App() {
         </div>
       ) : null}
       {themeId === "racecar" ? (
-        <div className="racecar-atmosphere">
+        <div
+          className="racecar-atmosphere"
+          style={{ "--circuit-path": `path("${raceTrackPath}")` } as React.CSSProperties}
+        >
           <div className="track-3d-stage">
             <div className="track-loop-container">
               <svg className="gp-circuit-svg" viewBox="0 0 1600 900" preserveAspectRatio="none">
                 {/* 1. Gravel Safety Runoff Perimeter */}
-                <path
-                  className="gp-track-runoff"
-                  d="M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z"
-                />
+                <path className="gp-track-runoff" d={raceTrackPath} />
                 {/* 2. Red & White Racing Curbs (Apex Rumble Strips) */}
-                <path
-                  className="gp-track-curbs-red"
-                  d="M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z"
-                />
-                <path
-                  className="gp-track-curbs-white"
-                  d="M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z"
-                />
+                <path className="gp-track-curbs-red" d={raceTrackPath} />
+                <path className="gp-track-curbs-white" d={raceTrackPath} />
                 {/* 3. Main Dark Asphalt Surface */}
-                <path
-                  className="gp-track-asphalt"
-                  d="M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z"
-                />
+                <path className="gp-track-asphalt" d={raceTrackPath} />
                 {/* 4. Rubbered Racing Line Overlay */}
-                <path
-                  className="gp-track-racingline"
-                  d="M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z"
-                />
+                <path className="gp-track-racingline" d={raceTrackPath} />
                 {/* 5. Outer Track Boundary White Lines */}
-                <path
-                  className="gp-track-boundary"
-                  d="M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z"
-                />
+                <path className="gp-track-boundary" d={raceTrackPath} />
                 {/* 6. Yellow Dashed Center Line */}
-                <path
-                  className="gp-track-centerline"
-                  d="M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z"
-                />
+                <path className="gp-track-centerline" d={raceTrackPath} />
               </svg>
 
               {/* Race Car 1: Red Scuderia F1 Supercar */}
