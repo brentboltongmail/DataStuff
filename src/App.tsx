@@ -2049,238 +2049,161 @@ export default function App() {
       ) : null}
       {themeId === "ice" ? (
         <div className="ice-atmosphere">
-          {/* Hanging Icicle Fringe Array with Mammoth & Micro Spikes */}
-          <div className="icicle-roof">
-            <div className="icicle icicle-1 icicle-mammoth icicle-twisted">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-sub-spike" />
-              <span className="icicle-sub-spike-2" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-rib-2" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-2 icicle-needle">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-refraction" />
-            </div>
-            <div className="icicle icicle-3 icicle-medium icicle-curved-left">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-4 icicle-mammoth icicle-forked">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-sub-spike" />
-              <span className="icicle-sub-spike-2" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-rib-2" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-5 icicle-small icicle-spiraled">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-frost-facet" />
-            </div>
-            <div className="icicle icicle-6 icicle-large icicle-curved-right">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-sub-spike" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-rib-2" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-7 icicle-needle">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-            </div>
-            <div className="icicle icicle-8 icicle-mammoth icicle-spiraled">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-sub-spike" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-rib-2" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-9 icicle-medium icicle-twisted">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-10 icicle-large icicle-double-fork">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-sub-spike" />
-              <span className="icicle-sub-spike-2" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-rib-2" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-11 icicle-needle">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-refraction" />
-            </div>
-            <div className="icicle icicle-12 icicle-mammoth icicle-curved-left">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-sub-spike" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-rib-2" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-13 icicle-small icicle-curved-right">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-frost-facet" />
-            </div>
-            <div className="icicle icicle-14 icicle-large icicle-twisted">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-sub-spike" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-15 icicle-mammoth icicle-forked">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-sub-spike" />
-              <span className="icicle-sub-spike-2" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-rib-2" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-16 icicle-needle">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-            </div>
-            <div className="icicle icicle-17 icicle-medium icicle-spiraled">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-18 icicle-mammoth icicle-double-fork">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-sub-spike" />
-              <span className="icicle-sub-spike-2" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-rib-2" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-19 icicle-small icicle-curved-left">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-frost-facet" />
-            </div>
-            <div className="icicle icicle-20 icicle-large icicle-curved-right">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-sub-spike" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-21 icicle-needle">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-refraction" />
-            </div>
-            <div className="icicle icicle-22 icicle-mammoth icicle-twisted">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-sub-spike" />
-              <span className="icicle-sub-spike-2" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-rib-2" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-23 icicle-medium icicle-forked">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-sub-spike" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-24 icicle-mammoth icicle-spiraled">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-sub-spike" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-rib-2" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-            <div className="icicle icicle-25 icicle-needle">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-            </div>
-            <div className="icicle icicle-26 icicle-large icicle-curved-left">
-              <span className="icicle-core" />
-              <span className="icicle-ridge" />
-              <span className="icicle-sub-spike" />
-              <span className="icicle-rib-1" />
-              <span className="icicle-frost-facet" />
-              <span className="icicle-refraction" />
-              <span className="water-drip" />
-            </div>
-          </div>
+          {/* Backlight Horizon Ambient & Sunburst Glow (matching reference image) */}
+          <div className="ice-backlight-horizon" />
+          <div className="ice-sun-halo" />
 
-          {/* Falling Water Melt Drops */}
-          <div className="melt-drop drop-1" />
-          <div className="melt-drop drop-2" />
-          <div className="melt-drop drop-3" />
-          <div className="melt-drop drop-4" />
-          <div className="melt-drop drop-5" />
+          {/* Master SVG Organic Ice Ledge & Icicle Stalactite Curtain */}
+          <svg className="ice-cave-svg" viewBox="0 0 1920 650" preserveAspectRatio="none">
+            <defs>
+              {/* Primary Ice Core Crystal Gradient */}
+              <linearGradient id="ice-crystal-body" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+                <stop offset="12%" stopColor="#e0f2fe" stopOpacity="0.85" />
+                <stop offset="40%" stopColor="#7dd3fc" stopOpacity="0.65" />
+                <stop offset="75%" stopColor="#0284c7" stopOpacity="0.45" />
+                <stop offset="100%" stopColor="#0369a1" stopOpacity="0.15" />
+              </linearGradient>
 
-          {/* Frost Crystals & Snow Flakes */}
+              {/* Sunlit Golden Rim Gradient (matches the top sun edge in photo) */}
+              <linearGradient id="sunlit-ice-rim" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#fef08a" stopOpacity="0.85" />
+                <stop offset="25%" stopColor="#ffffff" stopOpacity="0.95" />
+                <stop offset="50%" stopColor="#e0f2fe" stopOpacity="0.9" />
+                <stop offset="75%" stopColor="#fef08a" stopOpacity="0.8" />
+                <stop offset="100%" stopColor="#ffffff" stopOpacity="0.95" />
+              </linearGradient>
+
+              {/* Refraction & Specular Spine Gradient */}
+              <linearGradient id="specular-spine-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+                <stop offset="35%" stopColor="#ffffff" stopOpacity="0.85" />
+                <stop offset="70%" stopColor="#bae6fd" stopOpacity="0.5" />
+                <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
+              </linearGradient>
+
+              <filter id="ice-glow-heavy" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+
+              <filter id="crystal-drop-shadow" x="-10%" y="-10%" width="120%" height="120%">
+                <feDropShadow dx="0" dy="8" stdDeviation="10" floodColor="#0284c7" floodOpacity="0.6" />
+              </filter>
+            </defs>
+
+            {/* Layer 1: Background Dense Needle Curtain (Subtle & Layered) */}
+            <path
+              className="ice-layer-back"
+              fill="url(#ice-crystal-body)"
+              opacity="0.4"
+              d="M 0,0 L 1920,0 L 1920,60 
+                 Q 1900,120 1890,200 Q 1880,120 1860,70 
+                 Q 1840,150 1830,240 Q 1820,150 1800,65
+                 Q 1780,180 1770,290 Q 1760,180 1740,75
+                 Q 1720,130 1710,190 Q 1700,130 1680,60
+                 Q 1660,160 1650,260 Q 1640,160 1620,70
+                 Q 1600,140 1590,220 Q 1580,140 1560,65
+                 Q 1540,190 1530,310 Q 1520,190 1500,80
+                 Q 1480,130 1470,200 Q 1460,130 1440,60
+                 Q 1420,170 1410,270 Q 1400,170 1380,75
+                 Q 1360,120 1350,180 Q 1340,120 1320,65
+                 Q 1300,180 1290,295 Q 1280,180 1260,70
+                 Q 1240,140 1230,210 Q 1220,140 1200,60
+                 Q 1180,190 1170,320 Q 1160,190 1140,80
+                 Q 1120,130 1110,190 Q 1100,130 1080,65
+                 Q 1060,160 1050,260 Q 1040,160 1020,70
+                 Q 1000,150 990,230 Q 980,150 960,60
+                 Q 940,200 930,330 Q 920,200 900,75
+                 Q 880,130 870,190 Q 860,130 840,65
+                 Q 820,170 810,280 Q 800,170 780,70
+                 Q 760,140 750,220 Q 740,140 720,60
+                 Q 700,190 690,300 Q 680,190 660,75
+                 Q 640,130 630,190 Q 620,130 600,65
+                 Q 580,160 570,250 Q 560,160 540,70
+                 Q 520,140 510,210 Q 500,140 480,60
+                 Q 460,200 450,320 Q 440,200 420,80
+                 Q 400,130 390,190 Q 380,130 360,65
+                 Q 340,170 330,270 Q 320,170 300,70
+                 Q 280,140 270,220 Q 260,140 240,60
+                 Q 220,190 210,310 Q 200,190 180,75
+                 Q 160,130 150,190 Q 140,130 120,65
+                 Q 100,160 90,260 Q 80,160 60,70
+                 Q 40,120 30,180 Q 20,120 0,60 Z"
+            />
+
+            {/* Layer 2: Main Organic Flared Stalactites & Smooth Translucent Ice Ledge */}
+            <path
+              className="ice-layer-mid"
+              fill="url(#ice-crystal-body)"
+              filter="url(#crystal-drop-shadow)"
+              d="M 0,0 L 1920,0 L 1920,80
+                 C 1900,95 1880,160 1870,280 C 1865,340 1860,400 1855,400 C 1850,400 1845,340 1840,280 C 1830,160 1810,95 1790,80
+                 C 1775,90 1760,140 1750,220 C 1745,260 1740,310 1736,310 C 1732,310 1728,260 1722,220 C 1712,140 1695,90 1680,80
+                 C 1660,100 1640,180 1630,340 C 1622,420 1615,500 1610,500 C 1605,500 1598,420 1590,340 C 1580,180 1560,100 1540,80
+                 C 1525,92 1510,140 1500,230 C 1495,275 1490,320 1486,320 C 1482,320 1478,275 1472,230 C 1462,140 1445,92 1430,80
+                 C 1410,105 1390,190 1380,380 C 1373,450 1366,520 1360,520 C 1354,520 1347,450 1340,380 C 1330,190 1310,105 1290,80
+                 C 1275,90 1260,135 1250,210 C 1245,250 1240,290 1236,290 C 1232,290 1228,250 1222,210 C 1212,135 1195,90 1180,80
+                 C 1160,100 1140,170 1130,330 C 1123,400 1116,480 1110,480 C 1104,480 1097,400 1090,330 C 1080,170 1060,100 1040,80
+                 C 1025,92 1010,145 1000,240 C 995,290 990,340 986,340 C 982,340 978,290 972,240 C 962,145 945,92 930,80
+                 C 910,110 890,200 880,410 C 872,490 865,560 860,560 C 855,560 848,490 840,410 C 830,200 810,110 790,80
+                 C 775,90 760,140 750,220 C 745,260 740,300 736,300 C 732,300 728,260 722,220 C 712,140 695,90 680,80
+                 C 660,100 640,175 630,350 C 622,430 615,510 610,510 C 605,510 598,430 590,350 C 580,175 560,100 540,80
+                 C 525,92 510,140 500,230 C 495,275 490,320 486,320 C 482,320 478,275 472,230 C 462,140 445,92 430,80
+                 C 410,105 390,190 380,390 C 373,460 366,540 360,540 C 354,540 347,460 340,390 C 330,190 310,105 290,80
+                 C 275,90 260,140 250,220 C 245,260 240,300 236,300 C 232,300 228,260 222,220 C 212,140 195,90 180,80
+                 C 160,100 140,175 130,350 C 122,430 115,490 110,490 C 105,490 98,430 90,350 C 80,175 60,100 40,80
+                 C 25,88 12,120 0,160 L 0,0 Z"
+            />
+
+            {/* Layer 3: Specular Ridge Highlights (Brilliant White Spine Paths) */}
+            <g className="ice-specular-spines" stroke="url(#specular-spine-grad)" strokeWidth="4.5" strokeLinecap="round" opacity="0.95">
+              <path d="M 1855,100 L 1855,395" />
+              <path d="M 1736,95 L 1736,305" />
+              <path d="M 1610,100 L 1610,495" />
+              <path d="M 1486,95 L 1486,315" />
+              <path d="M 1360,100 L 1360,515" />
+              <path d="M 1236,95 L 1236,285" />
+              <path d="M 1110,100 L 1110,475" />
+              <path d="M 986,95 L 986,335" />
+              <path d="M 860,100 L 860,555" />
+              <path d="M 736,95 L 736,295" />
+              <path d="M 610,100 L 610,505" />
+              <path d="M 486,95 L 486,315" />
+              <path d="M 360,100 L 360,535" />
+              <path d="M 236,95 L 236,295" />
+              <path d="M 110,100 L 110,485" />
+            </g>
+
+            {/* Layer 4: Golden Sunlight Top Edge Crest (Matches top edge of photo) */}
+            <path
+              className="sunlit-ice-crest"
+              fill="url(#sunlit-ice-rim)"
+              filter="url(#ice-glow-heavy)"
+              d="M 0,0 L 1920,0 L 1920,35 Q 960,55 0,35 Z"
+            />
+          </svg>
+
+          {/* Animated Water Drips Falling From Stalactite Tips */}
+          <div className="ice-svg-drip drip-tip-1" />
+          <div className="ice-svg-drip drip-tip-2" />
+          <div className="ice-svg-drip drip-tip-3" />
+          <div className="ice-svg-drip drip-tip-4" />
+          <div className="ice-svg-drip drip-tip-5" />
+          <div className="ice-svg-drip drip-tip-6" />
+
+          {/* Falling Snowflakes & Ambient Frost Overlay */}
           <div className="frost-overlay" />
           <div className="snow-flake flake-1" />
           <div className="snow-flake flake-2" />
           <div className="snow-flake flake-3" />
           <div className="snow-flake flake-4" />
+          <div className="snow-flake flake-5" />
+          <div className="snow-flake flake-6" />
         </div>
       ) : null}
       <header className="titlebar">
         <h1>
-          <span className="brand">DataStuff 1.0</span>
         </h1>
         <div className="titlebar-spacer" />
         <div className="theme-picker">

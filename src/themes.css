@@ -3685,221 +3685,57 @@
   background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.12) 0%, transparent 65%);
 }
 
-/* Hanging Icicle Roof Fringe with Irregular Positioning */
-.ice-atmosphere .icicle-roof {
+/* Glacial Ice Cave Backdrop & Master SVG Icicle Curtain (Matches User Reference Image) */
+
+.ice-atmosphere .ice-backlight-horizon {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 180px;
-  filter: drop-shadow(0 4px 10px rgba(56, 189, 248, 0.35));
+  height: 60vh;
+  background: radial-gradient(ellipse 90% 60% at 50% 10%, rgba(224, 242, 254, 0.45) 0%, rgba(56, 189, 248, 0.2) 50%, transparent 100%);
+  pointer-events: none;
 }
 
-.ice-atmosphere .icicle {
+.ice-atmosphere .ice-sun-halo {
   position: absolute;
-  top: 0;
-  width: 28px;
-  height: 130px;
-  opacity: 0.45;
-  filter: drop-shadow(0 4px 8px rgba(56, 189, 248, 0.35));
-}
-
-/* Organic Sub-spikes, Rib Rings & Facets */
-.ice-atmosphere .icicle-sub-spike {
-  position: absolute;
-  top: 35%;
-  right: -10px;
-  width: 16px;
-  height: 48px;
-  background: linear-gradient(200deg, rgba(240, 249, 255, 0.7) 0%, rgba(56, 189, 248, 0.3) 70%, transparent 100%);
-  clip-path: polygon(0% 0%, 100% 20%, 65% 60%, 0% 100%);
-  transform: rotate(18deg);
-  opacity: 0.75;
-}
-
-.ice-atmosphere .icicle-sub-spike-2 {
-  position: absolute;
-  top: 45%;
-  left: -12px;
-  width: 18px;
-  height: 52px;
-  background: linear-gradient(160deg, rgba(240, 249, 255, 0.7) 0%, rgba(56, 189, 248, 0.3) 70%, transparent 100%);
-  clip-path: polygon(100% 0%, 0% 20%, 35% 60%, 100% 100%);
-  transform: rotate(-22deg);
-  opacity: 0.75;
-}
-
-.ice-atmosphere .icicle-rib-1 {
-  position: absolute;
-  top: 22%;
-  left: 5%;
-  width: 90%;
-  height: 6px;
+  top: -120px;
+  left: 42%;
+  width: 450px;
+  height: 350px;
   border-radius: 50%;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.7);
-  box-shadow: 0 2px 4px rgba(56, 189, 248, 0.3);
-  transform: rotate(-8deg);
+  background: radial-gradient(circle, rgba(254, 240, 138, 0.5) 0%, rgba(255, 255, 255, 0.4) 30%, rgba(56, 189, 248, 0.15) 65%, transparent 100%);
+  filter: blur(30px);
+  pointer-events: none;
 }
 
-.ice-atmosphere .icicle-rib-2 {
-  position: absolute;
-  top: 48%;
-  left: 10%;
-  width: 80%;
-  height: 5px;
-  border-radius: 50%;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 2px 4px rgba(56, 189, 248, 0.3);
-  transform: rotate(6deg);
-}
-
-/* Organic Asymmetric Icicle Class Variations */
-.ice-atmosphere .icicle-curved-left .icicle-core {
-  clip-path: polygon(0% 0%, 100% 0%, 90% 20%, 78% 45%, 60% 70%, 25% 100%, 22% 72%, 12% 45%, 8% 20%);
-}
-
-.ice-atmosphere .icicle-curved-right .icicle-core {
-  clip-path: polygon(0% 0%, 100% 0%, 92% 20%, 88% 45%, 75% 72%, 78% 100%, 40% 70%, 22% 45%, 10% 20%);
-}
-
-.ice-atmosphere .icicle-twisted .icicle-core {
-  clip-path: polygon(0% 0%, 100% 0%, 80% 18%, 92% 38%, 65% 62%, 82% 82%, 50% 100%, 28% 82%, 45% 62%, 12% 38%, 22% 18%);
-}
-
-.ice-atmosphere .icicle-spiraled .icicle-core {
-  clip-path: polygon(0% 0%, 100% 0%, 88% 22%, 70% 42%, 82% 65%, 48% 88%, 52% 100%, 30% 88%, 42% 65%, 20% 42%, 32% 22%);
-}
-
-.ice-atmosphere .icicle-forked .icicle-core {
-  clip-path: polygon(0% 0%, 100% 0%, 85% 25%, 90% 50%, 75% 72%, 85% 92%, 65% 100%, 55% 82%, 45% 100%, 25% 92%, 35% 72%, 10% 50%, 15% 25%);
-}
-
-.ice-atmosphere .icicle-double-fork .icicle-core {
-  clip-path: polygon(0% 0%, 100% 0%, 85% 20%, 95% 42%, 80% 68%, 92% 88%, 70% 100%, 60% 82%, 50% 100%, 40% 82%, 30% 100%, 0% 88%, 20% 68%, 5% 42%, 15% 20%);
-}
-
-.ice-atmosphere .icicle-core {
+.ice-atmosphere .ice-cave-svg {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(224, 242, 254, 0.6) 20%, rgba(125, 211, 252, 0.4) 55%, rgba(56, 189, 248, 0.25) 85%, transparent 100%);
-  clip-path: polygon(0% 0%, 100% 0%, 82% 25%, 90% 48%, 68% 70%, 50% 100%, 32% 70%, 10% 48%, 18% 25%);
-  box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.8), 0 0 10px rgba(186, 230, 253, 0.4);
+  height: 320px;
+  pointer-events: none;
+  filter: drop-shadow(0 15px 25px rgba(2, 132, 199, 0.45));
 }
 
-.ice-atmosphere .icicle-ridge {
+/* Water Drips falling from Stalactite Needle Tips */
+.ice-atmosphere .ice-svg-drip {
   position: absolute;
-  top: 0;
-  left: 42%;
-  width: 16%;
-  height: 92%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(186, 230, 253, 0.7) 40%, rgba(56, 189, 248, 0.2) 80%, transparent 100%);
-  clip-path: polygon(0% 0%, 100% 0%, 75% 60%, 50% 100%, 25% 60%);
-  filter: drop-shadow(0 0 3px #ffffff);
-  opacity: 0.85;
-}
-
-.ice-atmosphere .icicle-frost-facet {
-  position: absolute;
-  top: 12%;
-  left: 8%;
-  width: 42%;
-  height: 65%;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.75), rgba(186, 230, 253, 0.2) 60%, transparent);
-  clip-path: polygon(0% 0%, 100% 15%, 55% 100%, 0% 85%);
-  opacity: 0.7;
-}
-
-.ice-atmosphere .icicle-refraction {
-  position: absolute;
-  top: 25%;
-  right: 10%;
-  width: 38%;
-  height: 55%;
-  background: linear-gradient(225deg, rgba(255, 255, 255, 0.85), rgba(56, 189, 248, 0.15) 70%, transparent);
-  clip-path: polygon(15% 0%, 100% 12%, 75% 100%, 0% 75%);
-  opacity: 0.65;
-}
-
-/* Size Category Utility Overrides */
-.ice-atmosphere .icicle-mammoth {
-  filter: drop-shadow(0 8px 16px rgba(56, 189, 248, 0.5));
-  opacity: 0.85;
-}
-
-.ice-atmosphere .icicle-large {
-  filter: drop-shadow(0 6px 12px rgba(56, 189, 248, 0.4));
-  opacity: 0.75;
-}
-
-.ice-atmosphere .icicle-medium {
-  opacity: 0.65;
-}
-
-.ice-atmosphere .icicle-small {
-  opacity: 0.5;
-}
-
-.ice-atmosphere .icicle-needle {
-  opacity: 0.8;
-  filter: drop-shadow(0 2px 6px rgba(255, 255, 255, 0.6));
-}
-
-/* Organic Horizontally Clustered Icicle Array across Roof Fringe */
-.ice-atmosphere .icicle-1 { left: 0.5%; height: 340px; width: 62px; top: -5px; z-index: 3; }
-.ice-atmosphere .icicle-2 { left: 4.2%; height: 55px; width: 12px; top: -15px; z-index: 1; }
-.ice-atmosphere .icicle-3 { left: 5.8%; height: 165px; width: 32px; top: -2px; z-index: 2; }
-.ice-atmosphere .icicle-4 { left: 9.5%; height: 310px; width: 58px; top: 0px; z-index: 3; }
-.ice-atmosphere .icicle-5 { left: 13.8%; height: 85px; width: 18px; top: -10px; z-index: 1; }
-.ice-atmosphere .icicle-6 { left: 15.5%; height: 230px; width: 44px; top: -3px; z-index: 2; }
-.ice-atmosphere .icicle-7 { left: 19.2%; height: 60px; width: 11px; top: -12px; z-index: 1; }
-.ice-atmosphere .icicle-8 { left: 21.0%; height: 360px; width: 66px; top: -4px; z-index: 3; }
-.ice-atmosphere .icicle-9 { left: 26.2%; height: 145px; width: 28px; top: -2px; z-index: 2; }
-.ice-atmosphere .icicle-10 { left: 29.5%; height: 250px; width: 46px; top: -1px; z-index: 2; }
-.ice-atmosphere .icicle-11 { left: 33.8%; height: 70px; width: 13px; top: -8px; z-index: 1; }
-.ice-atmosphere .icicle-12 { left: 37.0%; height: 325px; width: 60px; top: -6px; z-index: 3; }
-.ice-atmosphere .icicle-13 { left: 42.2%; height: 95px; width: 19px; top: -14px; z-index: 1; }
-.ice-atmosphere .icicle-14 { left: 45.0%; height: 220px; width: 42px; top: -2px; z-index: 2; }
-.ice-atmosphere .icicle-15 { left: 49.5%; height: 370px; width: 68px; top: -3px; z-index: 3; }
-.ice-atmosphere .icicle-16 { left: 54.8%; height: 50px; width: 10px; top: -16px; z-index: 1; }
-.ice-atmosphere .icicle-17 { left: 57.2%; height: 175px; width: 34px; top: -4px; z-index: 2; }
-.ice-atmosphere .icicle-18 { left: 61.5%; height: 330px; width: 64px; top: -5px; z-index: 3; }
-.ice-atmosphere .icicle-19 { left: 66.8%; height: 90px; width: 17px; top: -10px; z-index: 1; }
-.ice-atmosphere .icicle-20 { left: 70.0%; height: 240px; width: 45px; top: -2px; z-index: 2; }
-.ice-atmosphere .icicle-21 { left: 75.2%; height: 65px; width: 12px; top: -12px; z-index: 1; }
-.ice-atmosphere .icicle-22 { left: 78.5%; height: 350px; width: 65px; top: -4px; z-index: 3; }
-.ice-atmosphere .icicle-23 { left: 84.0%; height: 155px; width: 30px; top: -3px; z-index: 2; }
-.ice-atmosphere .icicle-24 { left: 88.5%; height: 320px; width: 58px; top: -6px; z-index: 3; }
-.ice-atmosphere .icicle-25 { left: 94.0%; height: 75px; width: 14px; top: -10px; z-index: 1; }
-.ice-atmosphere .icicle-26 { left: 96.2%; height: 210px; width: 40px; top: -2px; z-index: 2; }
-
-/* Water Drips forming at icicle tips & slowly melting/falling */
-.ice-atmosphere .water-drip {
-  position: absolute;
-  bottom: -4px;
-  left: 50%;
-  margin-left: -3px;
   width: 6px;
-  height: 8px;
+  height: 9px;
   border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
   background: radial-gradient(circle at 35% 35%, #ffffff 0%, #38bdf8 80%);
-  box-shadow: 0 0 8px #7dd3fc;
+  box-shadow: 0 0 10px #7dd3fc, 0 0 15px #ffffff;
   animation: icicle-melt-drip 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-.ice-atmosphere .icicle-1 .water-drip { animation-delay: 0.5s; animation-duration: 3.8s; }
-.ice-atmosphere .icicle-3 .water-drip { animation-delay: 1.8s; animation-duration: 4.5s; }
-.ice-atmosphere .icicle-4 .water-drip { animation-delay: 0.8s; animation-duration: 3.4s; }
-.ice-atmosphere .icicle-6 .water-drip { animation-delay: 2.1s; animation-duration: 4.1s; }
-.ice-atmosphere .icicle-8 .water-drip { animation-delay: 0.2s; animation-duration: 3.2s; }
-.ice-atmosphere .icicle-10 .water-drip { animation-delay: 2.7s; animation-duration: 4.6s; }
-.ice-atmosphere .icicle-12 .water-drip { animation-delay: 1.1s; animation-duration: 3.6s; }
-.ice-atmosphere .icicle-15 .water-drip { animation-delay: 0.4s; animation-duration: 3.3s; }
-.ice-atmosphere .icicle-18 .water-drip { animation-delay: 2.4s; animation-duration: 4.7s; }
-.ice-atmosphere .icicle-22 .water-drip { animation-delay: 1.5s; animation-duration: 3.9s; }
-.ice-atmosphere .icicle-24 .water-drip { animation-delay: 3.0s; animation-duration: 4.2s; }
+.ice-atmosphere .drip-tip-1 { left: 96.6%; top: 195px; animation-delay: 0.5s; animation-duration: 3.8s; }
+.ice-atmosphere .drip-tip-2 { left: 83.8%; top: 245px; animation-delay: 1.8s; animation-duration: 4.5s; }
+.ice-atmosphere .drip-tip-3 { left: 70.8%; top: 255px; animation-delay: 0.8s; animation-duration: 3.4s; }
+.ice-atmosphere .drip-tip-4 { left: 44.8%; top: 275px; animation-delay: 2.1s; animation-duration: 4.1s; }
+.ice-atmosphere .drip-tip-5 { left: 31.7%; top: 250px; animation-delay: 0.2s; animation-duration: 3.2s; }
+.ice-atmosphere .drip-tip-6 { left: 18.7%; top: 265px; animation-delay: 2.7s; animation-duration: 4.6s; }
 
 @keyframes icicle-melt-drip {
   0% { transform: scale(0.2) translateY(0); opacity: 0; }
