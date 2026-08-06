@@ -768,15 +768,15 @@
 /* Deep-Space 3D Spiral Galaxy Backdrop */
 .spaceship-atmosphere .spiral-galaxy-container {
   position: absolute;
-  top: 8vh;
-  right: 14vw;
-  width: 160px;
-  height: 160px;
+  top: 6vh;
+  right: 10vw;
+  width: 240px;
+  height: 240px;
   pointer-events: none;
-  z-index: -1;
-  opacity: 0.55;
+  z-index: 1;
+  opacity: 0.85;
   mix-blend-mode: screen;
-  transform: rotateX(80deg) rotateZ(80deg);
+  transform: rotateX(80deg) rotateZ(80deg) scale(0.5);
   transform-style: preserve-3d;
   animation: spiral-galaxy-spin 600s linear infinite;
 }
@@ -785,15 +785,15 @@
   width: 100%;
   height: 100%;
   overflow: visible;
-  filter: drop-shadow(0 0 15px rgba(192, 132, 252, 0.4)) drop-shadow(0 0 25px rgba(56, 189, 248, 0.3));
+  filter: drop-shadow(0 0 20px rgba(192, 132, 252, 0.6)) drop-shadow(0 0 40px rgba(56, 189, 248, 0.4));
 }
 
 @keyframes spiral-galaxy-spin {
   0% {
-    transform: rotateX(80deg) rotateZ(80deg);
+    transform: rotateX(80deg) rotateZ(80deg) scale(0.5);
   }
   100% {
-    transform: rotateX(80deg) rotateZ(440deg);
+    transform: rotateX(80deg) rotateZ(440deg) scale(0.5);
   }
 }
 
