@@ -2666,14 +2666,14 @@
 
 [data-theme="racecar"] {
   --bg-app: #0b0e14;
-  --bg-surface: #111622;
-  --bg-elevated: #1a202c;
-  --bg-hover: #262f3e;
-  --border-subtle: #232d3f;
+  --bg-surface: rgba(20, 26, 40, 0.94);
+  --bg-elevated: rgba(28, 36, 56, 0.96);
+  --bg-hover: #2e3a52;
+  --border-subtle: #3a4a66;
   --border-strong: #ef4444;
-  --text-main: #f3f4f6;
-  --text-muted: #9ca3af;
-  --text-faint: #6b7280;
+  --text-main: #ffffff;
+  --text-muted: #e2e8f0;
+  --text-faint: #cbd5e1;
 
   --border-bright: #ef4444;
   --accent: #ef4444;
@@ -2688,10 +2688,10 @@
   --status-ok: #10b981;
   --status-err: #ef4444;
 
-  --sql-tab-active-bg: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+  --sql-tab-active-bg: linear-gradient(180deg, #2a364d 0%, #1a2233 100%);
   --sql-tab-active-border: #ef4444;
 
-  --editor-bg: rgba(13, 17, 23, 0.58);
+  --editor-bg: rgba(14, 19, 30, 0.78);
   --editor-gutter: #161b22;
   --grid-header: #1f2937;
   --grid-zebra: rgba(239, 68, 68, 0.02);
@@ -2737,18 +2737,18 @@
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
-  perspective: 1400px;
-  perspective-origin: 50% 35%;
-  background: radial-gradient(ellipse 90% 70% at 50% 30%, #161b26 0%, #0a0d14 60%, #030508 100%);
+  perspective: 700px;
+  perspective-origin: 50% 18%;
+  background: radial-gradient(ellipse 110% 80% at 50% 15%, #182030 0%, #0d121c 55%, #030508 100%);
 }
 
 .racecar-atmosphere .track-3d-stage {
   position: absolute;
-  inset: -10% -10%;
+  inset: -25% -25%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: rotateX(46deg) rotateZ(-3deg) translateY(-30px) scale(1.15);
+  transform: rotateX(64deg) rotateZ(-4deg) translateY(-110px) scale(1.45);
   transform-style: preserve-3d;
 }
 
@@ -2853,7 +2853,7 @@
   opacity: 0.95;
   will-change: transform, offset-distance;
   transform-style: preserve-3d;
-  offset-path: path("M 150,150 L 750,120 Q 950,110 1050,220 L 1150,350 Q 1250,480 1420,400 Q 1520,350 1480,220 Q 1420,80 1200,80 L 400,80 Q 200,80 100,250 L 80,600 Q 60,780 250,820 L 850,840 Q 1050,850 1250,750 Q 1450,650 1350,520 L 1000,520 Q 820,520 720,650 Q 620,780 420,720 Q 250,660 220,480 Z");
+  offset-path: path("M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z");
   offset-rotate: auto 0deg;
   filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.95));
 }
@@ -3298,6 +3298,62 @@
   font-family: var(--font-display);
   letter-spacing: 0.05em;
   text-transform: uppercase;
+}
+
+/* High-Contrast Legibility & Menu Visibility Overrides for Racecar Theme */
+[data-theme="racecar"] select,
+[data-theme="racecar"] input,
+[data-theme="racecar"] textarea,
+[data-theme="racecar"] button,
+[data-theme="racecar"] .saved-profile-select-row select,
+[data-theme="racecar"] .theme-picker select {
+  background-color: #141a26 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(239, 68, 68, 0.7) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.15);
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+}
+
+[data-theme="racecar"] select option,
+[data-theme="racecar"] .saved-profile-select-row select option {
+  background-color: #0f141f !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  padding: 8px;
+}
+
+[data-theme="racecar"] label,
+[data-theme="racecar"] .field label,
+[data-theme="racecar"] .connection-bar label,
+[data-theme="racecar"] .input-label,
+[data-theme="racecar"] .sidebar-pane .pane-header,
+[data-theme="racecar"] .tree-item,
+[data-theme="racecar"] .sql-tab {
+  color: #ffffff !important;
+  font-weight: 600;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
+}
+
+[data-theme="racecar"] .titlebar,
+[data-theme="racecar"] .connection-bar,
+[data-theme="racecar"] .sidebar-pane,
+[data-theme="racecar"] .editor-pane,
+[data-theme="racecar"] .result-pane,
+[data-theme="racecar"] .status-bar,
+[data-theme="racecar"] .modal-overlay,
+[data-theme="racecar"] .dialog-content {
+  background-color: rgba(14, 18, 28, 0.88) !important;
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.85);
+  border-color: rgba(239, 68, 68, 0.4) !important;
+}
+
+[data-theme="racecar"] .monaco-editor,
+[data-theme="racecar"] .monaco-editor .margin,
+[data-theme="racecar"] .monaco-editor-background {
+  color: #f8fafc !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
