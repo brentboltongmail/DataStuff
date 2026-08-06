@@ -3338,7 +3338,6 @@
 [data-theme="racecar"] .titlebar,
 [data-theme="racecar"] .connection-bar,
 [data-theme="racecar"] .sidebar-pane,
-[data-theme="racecar"] .editor-pane,
 [data-theme="racecar"] .result-pane,
 [data-theme="racecar"] .status-bar,
 [data-theme="racecar"] .modal-overlay,
@@ -3346,6 +3345,14 @@
   background-color: rgba(14, 18, 28, 0.88) !important;
   backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.85);
+  border-color: rgba(239, 68, 68, 0.4) !important;
+}
+
+[data-theme="racecar"] .editor-pane {
+  background-color: rgba(14, 18, 28, 0.75) !important;
+  backdrop-filter: blur(2px) saturate(110%) !important;
+  -webkit-backdrop-filter: blur(2px) saturate(110%) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.85);
   border-color: rgba(239, 68, 68, 0.4) !important;
 }

@@ -684,8 +684,8 @@ body.is-row-resizing .monaco-editor {
 .editor-pane {
   min-height: 0;
   background: var(--editor-bg);
-  backdrop-filter: blur(8px) saturate(120%);
-  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  backdrop-filter: blur(2px) saturate(110%);
+  -webkit-backdrop-filter: blur(2px) saturate(110%);
   overflow: hidden;
   box-shadow: inset 0 8px 24px rgba(0, 0, 0, 0.35);
 }
