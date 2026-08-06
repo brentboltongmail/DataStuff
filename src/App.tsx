@@ -146,6 +146,79 @@ function generateRandomRaceTrack(): string {
   });
 }
 
+interface SpiralStar {
+  cx: number;
+  cy: number;
+  r: number;
+  fill: string;
+  opacity: number;
+  animationClass: string;
+}
+
+function generateSpiralGalaxyStars(): SpiralStar[] {
+  const stars: SpiralStar[] = [];
+  const arms = 2;
+  const starsPerArm = 120;
+  const colors = [
+    "#ffffff", "#fef08a", "#bae6fd", "#7dd3fc", 
+    "#f472b6", "#c084fc", "#a855f7", "#38bdf8", "#fbbf24"
+  ];
+  const animations = ["star-twinkle-1", "star-twinkle-2", "star-twinkle-3", ""];
+
+  // 1. Core Cluster (65 stars)
+  for (let i = 0; i < 65; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const dist = Math.pow(Math.random(), 1.8) * 85;
+    const x = 400 + Math.cos(angle) * dist;
+    const y = 400 + Math.sin(angle) * dist;
+    const size = 1.5 + Math.random() * 4.2;
+    const color = colors[Math.floor(Math.random() * 4)];
+    stars.push({
+      cx: Math.round(x * 10) / 10,
+      cy: Math.round(y * 10) / 10,
+      r: Math.round(size * 10) / 10,
+      fill: color,
+      opacity: Math.round((0.65 + Math.random() * 0.35) * 100) / 100,
+      animationClass: animations[Math.floor(Math.random() * animations.length)],
+    });
+  }
+
+  // 2. Logarithmic Spiral Arm Stars (2 arms x 120 stars = 240 stars)
+  for (let arm = 0; arm < arms; arm++) {
+    const baseAngle = (arm * Math.PI * 2) / arms;
+    for (let i = 0; i < starsPerArm; i++) {
+      const progress = i / starsPerArm;
+      const theta = baseAngle + progress * Math.PI * 2.8;
+      const radius = 35 + Math.pow(progress, 1.15) * 330;
+      
+      const scatterR = (Math.random() - 0.5) * (16 + progress * 42);
+      const scatterTheta = (Math.random() - 0.5) * 0.22;
+      
+      const rFinal = radius + scatterR;
+      const thetaFinal = theta + scatterTheta;
+      
+      const x = 400 + Math.cos(thetaFinal) * rFinal;
+      const y = 400 + Math.sin(thetaFinal) * rFinal;
+      
+      const isSupergiant = Math.random() < 0.08;
+      const size = isSupergiant ? (2.8 + Math.random() * 2.4) : (1.2 + Math.random() * 2.2);
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const opacity = Math.round((0.4 + Math.random() * 0.55) * 100) / 100;
+      
+      stars.push({
+        cx: Math.round(x * 10) / 10,
+        cy: Math.round(y * 10) / 10,
+        r: Math.round(size * 10) / 10,
+        fill: color,
+        opacity,
+        animationClass: animations[Math.floor(Math.random() * animations.length)],
+      });
+    }
+  }
+
+  return stars;
+}
+
 function loadMaxRows(): number {
   const raw = localStorage.getItem(MAX_ROWS_KEY);
   const parsed = raw ? Number.parseInt(raw, 10) : DEFAULT_MAX_ROWS;
@@ -333,6 +406,12 @@ export default function App() {
   const raceTrackPath = useMemo(() => {
     if (themeId !== "racecar") return CIRCUIT_PRESETS[0];
     return generateRandomRaceTrack();
+  }, [themeId]);
+
+  // Procedurally generated stellar particle spiral galaxy stars
+  const galaxyStars = useMemo(() => {
+    if (themeId !== "spaceship") return [];
+    return generateSpiralGalaxyStars();
   }, [themeId]);
   const [editorSplit, setEditorSplit] = useState(loadEditorSplit);
   const [sidebarWidth, setSidebarWidth] = useState(loadSidebarWidth);
@@ -1739,77 +1818,47 @@ export default function App() {
       ) : null}
       {themeId === "spaceship" ? (
         <div className="theme-atmosphere spaceship-atmosphere" aria-hidden="true">
-          {/* Large Deep-Space 3D Spiral Galaxy */}
+          {/* Large Deep-Space 3D Spiral Galaxy (300+ Individual Star Particles) */}
           <div className="spiral-galaxy-container">
             <svg className="spiral-galaxy-svg" viewBox="0 0 800 800" preserveAspectRatio="xMidYMid meet">
               <defs>
                 {/* Galactic Core Bright White/Yellow Nucleus */}
                 <radialGradient id="galaxy-core-glow" cx="50%" cy="50%" r="50%">
                   <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-                  <stop offset="15%" stopColor="#fef08a" stopOpacity="0.95" />
-                  <stop offset="35%" stopColor="#f472b6" stopOpacity="0.8" />
-                  <stop offset="60%" stopColor="#c084fc" stopOpacity="0.5" />
-                  <stop offset="85%" stopColor="#6366f1" stopOpacity="0.2" />
+                  <stop offset="20%" stopColor="#fef08a" stopOpacity="0.9" />
+                  <stop offset="45%" stopColor="#f472b6" stopOpacity="0.65" />
+                  <stop offset="75%" stopColor="#c084fc" stopOpacity="0.3" />
                   <stop offset="100%" stopColor="#0f172a" stopOpacity="0" />
                 </radialGradient>
 
-                {/* Spiral Arm 1 Gradient (Electric Magenta to Cyan Dust) */}
-                <linearGradient id="spiral-arm-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
-                  <stop offset="25%" stopColor="#f472b6" stopOpacity="0.85" />
-                  <stop offset="60%" stopColor="#818cf8" stopOpacity="0.55" />
-                  <stop offset="90%" stopColor="#38bdf8" stopOpacity="0.25" />
-                  <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
-                </linearGradient>
-
-                {/* Spiral Arm 2 Gradient (Solar Gold to Violet Dust) */}
-                <linearGradient id="spiral-arm-grad-2" x1="100%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
-                  <stop offset="30%" stopColor="#fbbf24" stopOpacity="0.8" />
-                  <stop offset="65%" stopColor="#c084fc" stopOpacity="0.5" />
-                  <stop offset="95%" stopColor="#4f46e5" stopOpacity="0.2" />
-                </linearGradient>
-
-                <filter id="galaxy-blur-glow" x="-30%" y="-30%" width="160%" height="160%">
-                  <feGaussianBlur stdDeviation="8" result="blur" />
+                <filter id="galaxy-core-blur" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="16" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+                <filter id="star-glare-filter" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
                   <feComposite in="SourceGraphic" in2="blur" operator="over" />
                 </filter>
               </defs>
 
-              {/* Galactic Core Light Beam & Radial Glare */}
-              <circle cx="400" cy="400" r="180" fill="url(#galaxy-core-glow)" filter="url(#galaxy-blur-glow)" />
+              {/* Central Nucleus Core Glow */}
+              <circle cx="400" cy="400" r="160" fill="url(#galaxy-core-glow)" filter="url(#galaxy-core-blur)" />
 
-              {/* Logarithmic Spiral Arm Pair 1 */}
-              <path
-                className="galaxy-arm arm-primary"
-                fill="none"
-                stroke="url(#spiral-arm-grad-1)"
-                strokeWidth="48"
-                strokeLinecap="round"
-                filter="url(#galaxy-blur-glow)"
-                d="M 400,400 C 460,380 500,320 480,260 C 450,180 340,160 260,220 C 160,300 150,470 240,580 C 350,710 580,720 710,590 C 820,450 780,200 580,90"
-              />
-
-              {/* Logarithmic Spiral Arm Pair 2 */}
-              <path
-                className="galaxy-arm arm-secondary"
-                fill="none"
-                stroke="url(#spiral-arm-grad-2)"
-                strokeWidth="44"
-                strokeLinecap="round"
-                filter="url(#galaxy-blur-glow)"
-                d="M 400,400 C 340,420 300,480 320,540 C 350,620 460,640 540,580 C 640,500 650,330 560,220 C 450,90 220,80 90,210 C -20,350 20,600 220,710"
-              />
-
-              {/* Interstellar Dust Lanes & Outer Star Cluster Clusters */}
-              <circle cx="480" cy="260" r="12" fill="#ffffff" opacity="0.9" />
-              <circle cx="260" cy="220" r="8" fill="#bae6fd" opacity="0.8" />
-              <circle cx="240" cy="580" r="14" fill="#fef08a" opacity="0.85" />
-              <circle cx="710" cy="590" r="10" fill="#f472b6" opacity="0.75" />
-              <circle cx="320" cy="540" r="11" fill="#ffffff" opacity="0.9" />
-              <circle cx="540" cy="580" r="9" fill="#c084fc" opacity="0.8" />
-              <circle cx="560" cy="220" r="13" fill="#bae6fd" opacity="0.85" />
-              <circle cx="90" cy="210" r="7" fill="#fef08a" opacity="0.7" />
+              {/* 300+ Individual Star Particles tracing logarithmic spiral arms */}
+              <g className="galaxy-stars-group">
+                {galaxyStars.map((star, idx) => (
+                  <circle
+                    key={idx}
+                    cx={star.cx}
+                    cy={star.cy}
+                    r={star.r}
+                    fill={star.fill}
+                    opacity={star.opacity}
+                    className={star.animationClass}
+                    filter={star.r > 3.2 ? "url(#star-glare-filter)" : undefined}
+                  />
+                ))}
+              </g>
             </svg>
           </div>
 
