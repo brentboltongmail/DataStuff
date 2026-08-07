@@ -114,6 +114,7 @@ public final class OracleBridge {
     Properties props = new Properties();
     props.setProperty("user", user);
     props.setProperty("password", password == null ? "" : password);
+    props.setProperty("oracle.net.CONNECT_TIMEOUT", "5000");
     if (tcps) {
       // Prefer verifying the server certificate DN when the listener presents a proper cert.
       props.setProperty("oracle.net.ssl_server_dn_match", "true");

@@ -212,7 +212,8 @@ async function send(
 }
 
 export async function connect(config: ConnectionConfig): Promise<ConnectionState> {
-  const result = (await send({
+  let timerId: ReturnType<typeof setTimeout> | null = null;
+  const connectPromise = send({
     cmd: "connect",
     user: config.user,
     password: config.password,
@@ -220,16 +221,41 @@ export async function connect(config: ConnectionConfig): Promise<ConnectionState
     port: config.port || (config.tcps ? "2484" : "1521"),
     service: config.service,
     tcps: !!config.tcps,
-  })) as ConnectionState;
-  connectedState = {
-    connected: true,
-    user: result.user ?? config.user,
-    connectString:
-      result.connectString ??
-      `${config.tcps ? "tcps://" : ""}${config.host}:${config.port || (config.tcps ? "2484" : "1521")}/${config.service}`,
-    mode: "jdbc",
-  };
-  return connectedState;
+  }) as Promise<ConnectionState>;
+
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timerId = setTimeout(() => {
+      reject(new Error("Connection attempt timed out after 5 seconds"));
+    }, 5000);
+  });
+
+  try {
+    const result = await Promise.race([connectPromise, timeoutPromise]);
+    if (timerId) clearTimeout(timerId);
+    connectedState = {
+      connected: true,
+      user: result.user ?? config.user,
+      connectString:
+        result.connectString ??
+        `${config.tcps ? "tcps://" : ""}${config.host}:${config.port || (config.tcps ? "2484" : "1521")}/${config.service}`,
+      mode: "jdbc",
+    };
+    return connectedState;
+  } catch (err) {
+    if (timerId) clearTimeout(timerId);
+    if (err instanceof Error && err.message.includes("timed out")) {
+      if (bridge) {
+        try {
+          bridge.kill();
+        } catch {
+          // ignore
+        }
+        bridge = null;
+      }
+    }
+    connectedState = { connected: false, mode: "jdbc" };
+    throw err;
+  }
 }
 
 export async function disconnect(): Promise<ConnectionState> {

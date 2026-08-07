@@ -892,8 +892,23 @@ export default function App() {
   const onConnect = async () => {
     setBusy(true);
     setError(null);
+    setMessage("Connecting...");
+
+    let hasTimedOut = false;
+    const timeoutTimer = setTimeout(() => {
+      hasTimedOut = true;
+      setBusy(false);
+      setError("Connection cancelled: Database server did not respond within 5 seconds");
+      setMessage("Connection cancelled (5s timeout)");
+    }, 5000);
+
     try {
       const next = await window.oracle.connect(config);
+      if (hasTimedOut) {
+        await window.oracle.disconnect().catch(() => {});
+        return;
+      }
+      clearTimeout(timeoutTimer);
       setStatus(next);
       setObjectsRefresh((n) => n + 1);
       if (selectedConnectionId) {
@@ -908,9 +923,14 @@ export default function App() {
       );
       await persistPassword(config.password, rememberPassword);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-      setMessage("Connection failed");
+      if (!hasTimedOut) {
+        clearTimeout(timeoutTimer);
+        const errText = err instanceof Error ? err.message : String(err);
+        setError(errText);
+        setMessage(errText.includes("5 seconds") ? "Connection cancelled (5s timeout)" : "Connection failed");
+      }
     } finally {
+      clearTimeout(timeoutTimer);
       setBusy(false);
     }
   };
