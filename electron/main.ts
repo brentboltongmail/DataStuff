@@ -2,6 +2,7 @@ import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import fs from "node:fs/promises";
 import path from "node:path";
 import {
+  cancelQuery,
   commit,
   connect,
   disconnect,
@@ -76,6 +77,7 @@ function registerIpc() {
     return connect(config);
   });
   ipcMain.handle("oracle:disconnect", async () => disconnect());
+  ipcMain.handle("oracle:cancel", async () => cancelQuery());
   ipcMain.handle("oracle:status", async () => getStatus());
   ipcMain.handle(
     "oracle:execute",
@@ -126,6 +128,10 @@ function registerIpc() {
     const tabs = await openSqlPagesFromPaths(result.filePaths);
     return { opened: true, tabs };
   });
+  ipcMain.handle("connections:load", async () => loadConnectionsFromDisk());
+  ipcMain.handle("connections:save", async (_event, connections: unknown[]) =>
+    saveConnectionsToDisk(connections),
+  );
   ipcMain.handle("secrets:isAvailable", () => isPasswordStorageAvailable());
   ipcMain.handle("secrets:savePassword", async (_event, password: string) =>
     savePassword(password ?? ""),
@@ -149,6 +155,31 @@ function registerIpc() {
       return { saved: true, filePath: result.filePath };
     },
   );
+}
+
+function getConnectionsFilePath(): string {
+  return path.join(app.getPath("userData"), "saved-connections.json");
+}
+
+async function loadConnectionsFromDisk(): Promise<unknown[]> {
+  try {
+    const file = getConnectionsFilePath();
+    const raw = await fs.readFile(file, "utf8");
+    return JSON.parse(raw) as unknown[];
+  } catch {
+    return [];
+  }
+}
+
+async function saveConnectionsToDisk(connections: unknown[]): Promise<{ saved: boolean }> {
+  try {
+    const file = getConnectionsFilePath();
+    await fs.mkdir(path.dirname(file), { recursive: true });
+    await fs.writeFile(file, JSON.stringify(connections, null, 2), "utf8");
+    return { saved: true };
+  } catch {
+    return { saved: false };
+  }
 }
 
 app.whenReady().then(() => {

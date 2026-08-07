@@ -81,6 +81,7 @@ export interface OpenSqlResult {
 export interface OracleApi {
   connect: (config: ConnectionConfig) => Promise<ConnectionState>;
   disconnect: () => Promise<ConnectionState>;
+  cancelQuery: () => Promise<{ cancelled: boolean; message: string }>;
   getStatus: () => Promise<ConnectionState>;
   execute: (sql: string, maxRows?: number, binds?: unknown[]) => Promise<QueryResult>;
   explain: (sql: string) => Promise<QueryResult>;
@@ -102,4 +103,6 @@ export interface OracleApi {
   savePassword: (password: string) => Promise<{ saved: boolean }>;
   loadPassword: () => Promise<string>;
   clearPassword: () => Promise<void>;
+  loadSavedConnections: <T = unknown>() => Promise<T[]>;
+  saveSavedConnections: <T = unknown>(connections: T[]) => Promise<{ saved: boolean }>;
 }

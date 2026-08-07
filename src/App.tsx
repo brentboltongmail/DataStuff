@@ -826,6 +826,7 @@ export default function App() {
         setSelectedConnectionId(newConn.id);
       }
       localStorage.setItem(SAVED_CONNECTIONS_KEY, JSON.stringify(updated));
+      void window.oracle?.saveSavedConnections?.(updated);
       if (targetId) {
         localStorage.setItem(LAST_CONNECTION_ID_KEY, targetId);
       }
@@ -834,11 +835,24 @@ export default function App() {
     setMessage(`Connection "${nameToSave}" saved`);
   }, [config, connectionName, isProd, selectedConnectionId]);
 
+  // Synchronize saved connections from disk JSON file on mount
+  useEffect(() => {
+    window.oracle?.loadSavedConnections?.<SavedConnection>()
+      .then((diskConns) => {
+        if (diskConns && Array.isArray(diskConns) && diskConns.length > 0) {
+          setSavedConnections(diskConns);
+          localStorage.setItem(SAVED_CONNECTIONS_KEY, JSON.stringify(diskConns));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const handleDeleteConnection = useCallback(() => {
     if (!selectedConnectionId) return;
     const remaining = savedConnections.filter((item) => item.id !== selectedConnectionId);
     setSavedConnections(remaining);
     localStorage.setItem(SAVED_CONNECTIONS_KEY, JSON.stringify(remaining));
+    void window.oracle?.saveSavedConnections?.(remaining);
 
     if (remaining.length > 0) {
       handleSelectConnection(remaining[0].id);

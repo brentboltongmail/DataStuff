@@ -5,6 +5,7 @@ const api: OracleApi = {
   connect: (config: ConnectionConfig) =>
     ipcRenderer.invoke("oracle:connect", config),
   disconnect: () => ipcRenderer.invoke("oracle:disconnect"),
+  cancelQuery: () => ipcRenderer.invoke("oracle:cancel"),
   getStatus: () => ipcRenderer.invoke("oracle:status"),
   execute: (sql: string, maxRows?: number, binds?: unknown[]) =>
     ipcRenderer.invoke("oracle:execute", sql, maxRows, binds),
@@ -33,6 +34,9 @@ const api: OracleApi = {
     ipcRenderer.invoke("secrets:savePassword", password),
   loadPassword: () => ipcRenderer.invoke("secrets:loadPassword"),
   clearPassword: () => ipcRenderer.invoke("secrets:clearPassword"),
+  loadSavedConnections: () => ipcRenderer.invoke("connections:load"),
+  saveSavedConnections: (connections: unknown[]) =>
+    ipcRenderer.invoke("connections:save", connections),
 };
 
 contextBridge.exposeInMainWorld("oracle", api);
