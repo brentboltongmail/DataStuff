@@ -119,6 +119,7 @@ function failAll(err: unknown) {
 
 function request(
   body: Record<string, unknown> & { cmd: string },
+  timeoutMs = 0,
 ): Promise<unknown> {
   if (!bridge?.stdin.writable) {
     throw new Error("JDBC bridge is not running");
@@ -126,14 +127,17 @@ function request(
 
   const id = nextId++;
   return new Promise<unknown>((resolve, reject) => {
-    const timer = setTimeout(() => {
-      pending.delete(id);
-      reject(new Error(`JDBC bridge timed out on ${body.cmd}`));
-    }, 120_000);
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    if (timeoutMs > 0) {
+      timer = setTimeout(() => {
+        pending.delete(id);
+        reject(new Error(`JDBC bridge timed out on ${body.cmd}`));
+      }, timeoutMs);
+    }
 
     pending.set(id, {
       resolve: (value) => {
-        clearTimeout(timer);
+        if (timer) clearTimeout(timer);
         if (!value.ok) {
           reject(new Error(value.error || "JDBC bridge error"));
           return;
@@ -141,7 +145,7 @@ function request(
         resolve(value.result);
       },
       reject: (reason) => {
-        clearTimeout(timer);
+        if (timer) clearTimeout(timer);
         reject(reason);
       },
     });
@@ -292,6 +296,47 @@ export async function getStatus(): Promise<ConnectionState> {
     }
     connectedState = { connected: false, mode: "jdbc" };
     return connectedState;
+  }
+}
+
+export async function cancelQuery(): Promise<{ cancelled: boolean; message: string }> {
+  if (!bridge) {
+    return { cancelled: false, message: "No active database bridge" };
+  }
+
+  const cancelPromise = send({ cmd: "cancel" }) as Promise<{ cancelled?: boolean; message?: string }>;
+  const timeoutPromise = new Promise<{ cancelled: boolean; message: string }>((resolve) => {
+    setTimeout(() => {
+      if (bridge) {
+        try {
+          bridge.kill();
+        } catch {
+          // ignore
+        }
+        bridge = null;
+        connectedState = { connected: false, mode: "jdbc" };
+      }
+      resolve({ cancelled: true, message: "Query forcibly cancelled (bridge process reset)" });
+    }, 1500);
+  });
+
+  try {
+    const res = await Promise.race([cancelPromise, timeoutPromise]);
+    return {
+      cancelled: res.cancelled ?? true,
+      message: res.message ?? "Query execution cancelled by user",
+    };
+  } catch {
+    if (bridge) {
+      try {
+        bridge.kill();
+      } catch {
+        // ignore
+      }
+      bridge = null;
+      connectedState = { connected: false, mode: "jdbc" };
+    }
+    return { cancelled: true, message: "Query execution cancelled" };
   }
 }
 

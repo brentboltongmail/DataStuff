@@ -1316,3 +1316,51 @@ body.is-col-resizing .monaco-editor {
   margin-left: auto;
   font-style: italic;
 }
+
+/* Cancel Query Button Styling */
+button.cancel-query-btn {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  border: 1px solid rgba(239, 68, 68, 0.8) !important;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+  animation: cancel-btn-pulse 2s infinite ease-in-out;
+}
+
+button.cancel-query-btn:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+  transform: translateY(-1px);
+}
+
+@keyframes cancel-btn-pulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 0 18px rgba(239, 68, 68, 0.75); }
+}
+
+.status-bar .live-query-timer {
+  background: rgba(14, 165, 233, 0.2);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+  animation: timer-badge-pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes timer-badge-pulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+button.status-bar-cancel-btn {
+  padding: 2px 10px !important;
+  font-size: 0.8rem !important;
+  margin-left: 6px;
+}

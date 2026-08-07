@@ -122,6 +122,16 @@ function densityLabel(density: GridDensity): string {
   }
 }
 
+function formatLiveElapsedTime(ms: number): string {
+  const totalSecs = ms / 1000;
+  if (totalSecs < 60) {
+    return `${totalSecs.toFixed(1)}s`;
+  }
+  const mins = Math.floor(totalSecs / 60);
+  const secs = (totalSecs % 60).toFixed(1);
+  return `${mins}m ${secs.padStart(4, "0")}s`;
+}
+
 const CIRCUIT_PRESETS = [
   // Preset 1: Silverstone Sweeping Loop
   "M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z",
@@ -418,11 +428,26 @@ export default function App() {
   const [rememberPassword, setRememberPassword] = useState(loadRememberPassword);
   const [passwordStorageAvailable, setPasswordStorageAvailable] = useState(false);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [queryStartTime, setQueryStartTime] = useState<number | null>(null);
+  const [queryElapsedTimeMs, setQueryElapsedTimeMs] = useState<number>(0);
   const [selectedConnectionId, setSelectedConnectionId] = useState<string>(initialConnState.selectedConnectionId);
   const [connectionName, setConnectionName] = useState<string>(initialConnState.connectionName);
   const [isProd, setIsProd] = useState<boolean>(initialConnState.isProd);
   const [preProdThemeId, setPreProdThemeId] = useState<AppThemeId>("default");
   const [showManageModal, setShowManageModal] = useState<boolean>(false);
+
+  // Real-time query execution length timer loop
+  useEffect(() => {
+    if (!busy || !queryStartTime) {
+      setQueryElapsedTimeMs(0);
+      return;
+    }
+    setQueryElapsedTimeMs(Date.now() - queryStartTime);
+    const interval = setInterval(() => {
+      setQueryElapsedTimeMs(Date.now() - queryStartTime);
+    }, 100);
+    return () => clearInterval(interval);
+  }, [busy, queryStartTime]);
   const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor | null>(null);
   const monacoApiRef = useRef<Parameters<BeforeMount>[0] | null>(null);
   const workspaceRef = useRef<HTMLElement | null>(null);
@@ -954,6 +979,19 @@ export default function App() {
     }
   };
 
+  const onCancelQuery = async () => {
+    try {
+      setMessage("Cancelling query execution...");
+      await window.oracle.cancelQuery();
+    } catch {
+      // ignore
+    } finally {
+      setBusy(false);
+      setError("Query execution cancelled by user");
+      setMessage("Query cancelled");
+    }
+  };
+
   const resolveExecutableSql = useCallback(() => {
     const editor = editorRef.current;
     const model = editor?.getModel();
@@ -984,6 +1022,7 @@ export default function App() {
     }
 
     setBusy(true);
+    setQueryStartTime(Date.now());
     setError(null);
     setBottomTab("results");
     setPendingEdits({});
@@ -1053,6 +1092,7 @@ export default function App() {
       }
       pushHistory(statement, false, text.split("\n")[0] ?? "Error");
     } finally {
+      setQueryStartTime(null);
       setBusy(false);
     }
   }, [
@@ -2558,6 +2598,16 @@ export default function App() {
           </div>
         </div>
         <div className="connection-actions">
+          {busy && (
+            <button
+              type="button"
+              className="danger cancel-query-btn"
+              onClick={onCancelQuery}
+              title="Cancel current database operation"
+            >
+              ⏹ Cancel
+            </button>
+          )}
           {status.connected ? (
             <button type="button" onClick={onDisconnect} disabled={busy}>
               Disconnect
@@ -2721,6 +2771,16 @@ export default function App() {
             >
               Run
             </button>
+            {busy && (
+              <button
+                type="button"
+                className="danger cancel-query-btn"
+                onClick={onCancelQuery}
+                title="Cancel running SQL query execution"
+              >
+                ⏹ Cancel Query
+              </button>
+            )}
             <button
               type="button"
               onClick={onExplainPlan}
@@ -2891,7 +2951,21 @@ export default function App() {
 
       <footer className="status-bar">
         <span className={error ? "error" : "ok"}>{message}</span>
-        {busy ? <span>Working…</span> : null}
+        {busy && queryStartTime ? (
+          <span className="live-query-timer" title="Current SQL query execution length in real time">
+            ⏱ {formatLiveElapsedTime(queryElapsedTimeMs)}
+          </span>
+        ) : null}
+        {busy ? (
+          <button
+            type="button"
+            className="danger cancel-query-btn status-bar-cancel-btn"
+            onClick={onCancelQuery}
+            title="Cancel running SQL query execution"
+          >
+            ⏹ Cancel Query
+          </button>
+        ) : null}
         <span className="save-status">
           {saveState === "saving"
             ? "Saving…"
