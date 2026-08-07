@@ -1792,9 +1792,6 @@
     transform: translate3d(calc(100vw + 450px), 180px, -1500px) rotateY(16deg) rotateX(-12deg) rotateZ(10deg) scale(0.14);
     opacity: 0;
   }
-}ale(0.12);
-    opacity: 0;
-  }
 }
 
 .ship-void-harvester .radiator-left {
