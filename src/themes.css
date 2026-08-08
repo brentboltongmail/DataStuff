@@ -4275,7 +4275,7 @@
   --sql-tab-active-bg: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
   --sql-tab-active-border: #38bdf8;
 
-  --editor-bg: rgba(11, 19, 32, 0.48);
+  --editor-bg: rgba(11, 19, 32, 0.85);
   --editor-gutter: #0f172a;
   --grid-header: #1e293b;
   --grid-zebra: rgba(56, 189, 248, 0.02);
@@ -4568,6 +4568,13 @@
 }
 
 /* Ice Theme UI Styling */
+
+[data-theme="ice"] .editor-pane,
+[data-theme="ice"] .object-browser,
+[data-theme="ice"] .results-pane {
+  background: rgba(11, 19, 32, 0.85) !important;
+  opacity: 0.85 !important;
+}
 
 [data-theme="ice"] .titlebar::after {
   content: "";
