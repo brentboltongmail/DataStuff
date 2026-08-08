@@ -2806,59 +2806,47 @@ export default function App() {
       ) : null}
       {themeId === "lava" ? (
         <div className="lava-atmosphere">
-          {/* Molten Lava River Basins & Magma Flows */}
+          {/* Horizon Radiant Magma Glow */}
+          <div className="lava-bottom-glow" />
+
+          {/* Molten Lava Basins & Magma Flows */}
           <div className="lava-magma-pool pool-1" />
           <div className="lava-magma-pool pool-2" />
           <div className="lava-river river-left" />
           <div className="lava-river river-right" />
           <div className="lava-crust-cracks" />
 
+          {/* Rolling Viscous Liquid Magma Surges Along Floor */}
+          <div className="lava-magma-surge surge-1">
+            <span className="magma-core" />
+            <span className="magma-crest crest-1" />
+            <span className="magma-crest crest-2" />
+          </div>
+          <div className="lava-magma-surge surge-2">
+            <span className="magma-core" />
+            <span className="magma-crest crest-2" />
+            <span className="magma-crest crest-3" />
+          </div>
+          <div className="lava-magma-surge surge-3">
+            <span className="magma-core" />
+            <span className="magma-crest crest-1" />
+            <span className="magma-crest crest-3" />
+          </div>
+          <div className="lava-magma-surge surge-4">
+            <span className="magma-core" />
+            <span className="magma-crest crest-2" />
+          </div>
+
+          {/* Magma Spatter & Erupting Liquid Splashes */}
+          <div className="lava-spatter-plume plume-1" />
+          <div className="lava-spatter-plume plume-2" />
+          <div className="lava-spatter-plume plume-3" />
+
           {/* Magma Bubbles & Eruptions */}
           <div className="lava-bubble bubble-1" />
           <div className="lava-bubble bubble-2" />
           <div className="lava-bubble bubble-3" />
           <div className="lava-bubble bubble-4" />
-
-          {/* Irregular Fire Columns Spread Across the Floor */}
-          <div className="fire-column column-pos-1">
-            <span className="fire-core" />
-            <span className="fire-flame flame-jagged-1" />
-            <span className="fire-flame flame-tongue-left" />
-            <span className="fire-flame flame-spark-tip" />
-          </div>
-          <div className="fire-column column-pos-2">
-            <span className="fire-core" />
-            <span className="fire-flame flame-jagged-2" />
-            <span className="fire-flame flame-tongue-right" />
-          </div>
-          <div className="fire-column column-pos-3">
-            <span className="fire-core" />
-            <span className="fire-flame flame-jagged-3" />
-            <span className="fire-flame flame-tongue-left" />
-            <span className="fire-flame flame-spark-tip" />
-          </div>
-          <div className="fire-column column-pos-4">
-            <span className="fire-core" />
-            <span className="fire-flame flame-jagged-1" />
-            <span className="fire-flame flame-tongue-right" />
-          </div>
-          <div className="fire-column column-pos-5">
-            <span className="fire-core" />
-            <span className="fire-flame flame-jagged-2" />
-            <span className="fire-flame flame-tongue-left" />
-            <span className="fire-flame flame-spark-tip" />
-          </div>
-          <div className="fire-column column-pos-6">
-            <span className="fire-core" />
-            <span className="fire-flame flame-jagged-3" />
-            <span className="fire-flame flame-tongue-right" />
-          </div>
-          <div className="fire-column column-pos-7">
-            <span className="fire-core" />
-            <span className="fire-flame flame-jagged-1" />
-            <span className="fire-flame flame-tongue-left" />
-            <span className="fire-flame flame-spark-tip" />
-          </div>
 
           <div className="lava-ember ember-1" />
           <div className="lava-ember ember-2" />
