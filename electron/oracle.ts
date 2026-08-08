@@ -304,39 +304,15 @@ export async function cancelQuery(): Promise<{ cancelled: boolean; message: stri
     return { cancelled: false, message: "No active database bridge" };
   }
 
-  const cancelPromise = send({ cmd: "cancel" }) as Promise<{ cancelled?: boolean; message?: string }>;
-  const timeoutPromise = new Promise<{ cancelled: boolean; message: string }>((resolve) => {
-    setTimeout(() => {
-      if (bridge) {
-        try {
-          bridge.kill();
-        } catch {
-          // ignore
-        }
-        bridge = null;
-        connectedState = { connected: false, mode: "jdbc" };
-      }
-      resolve({ cancelled: true, message: "Query forcibly cancelled (bridge process reset)" });
-    }, 1500);
-  });
-
   try {
-    const res = await Promise.race([cancelPromise, timeoutPromise]);
+    const res = (await send({ cmd: "cancel" })) as { cancelled?: boolean; message?: string };
     return {
       cancelled: res.cancelled ?? true,
       message: res.message ?? "Query execution cancelled by user",
     };
-  } catch {
-    if (bridge) {
-      try {
-        bridge.kill();
-      } catch {
-        // ignore
-      }
-      bridge = null;
-      connectedState = { connected: false, mode: "jdbc" };
-    }
-    return { cancelled: true, message: "Query execution cancelled" };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return { cancelled: true, message: `Query cancel sent (${msg})` };
   }
 }
 
