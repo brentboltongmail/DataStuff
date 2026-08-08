@@ -756,38 +756,85 @@
 
 /* ── Spaceship animations: Shooting stars & Distant ships ── */
 
-.theme-atmosphere {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0 !important;
-}
+/* ── Spaceship animations: Shooting stars & Distant ships ── */
 
+.theme-atmosphere,
 .spaceship-atmosphere {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0 !important;
+  position: fixed !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  z-index: -9999 !important;
+  transform: translateZ(-500px);
   overflow: hidden;
   perspective: 1200px;
 }
 
-/* Guarantee that all UI containers, text, words, and controls sit strictly above the space backdrop */
-[data-theme="spaceship"] .titlebar,
-[data-theme="spaceship"] .connection-bar,
-[data-theme="spaceship"] .workspace,
-[data-theme="spaceship"] .sidebar,
-[data-theme="spaceship"] .editor-pane,
-[data-theme="spaceship"] .results-pane,
-[data-theme="spaceship"] .toolbar,
-[data-theme="spaceship"] .status-bar,
-[data-theme="spaceship"] .modal-backdrop {
+/* Guarantee that all UI containers, panels, text, words, and controls sit strictly above the space backdrop */
+[data-theme="spaceship"] .app {
   position: relative;
-  z-index: 5;
+  z-index: 1;
+  isolation: isolate;
+}
+
+[data-theme="spaceship"] .titlebar {
+  position: relative;
+  z-index: 20;
+  background: var(--bg-panel) !important;
+}
+
+[data-theme="spaceship"] .connection-bar {
+  position: relative;
+  z-index: 20;
+  background: var(--bg-panel) !important;
+}
+
+[data-theme="spaceship"] .workspace {
+  position: relative;
+  z-index: 20;
+}
+
+[data-theme="spaceship"] .sidebar {
+  position: relative;
+  z-index: 20;
+  background: var(--bg-panel) !important;
+}
+
+[data-theme="spaceship"] .editor-pane {
+  position: relative;
+  z-index: 20;
+  background: var(--bg-panel) !important;
+}
+
+[data-theme="spaceship"] .results-pane {
+  position: relative;
+  z-index: 20;
+  background: var(--bg-panel) !important;
+}
+
+[data-theme="spaceship"] .toolbar {
+  position: relative;
+  z-index: 20;
+  background: var(--bg-panel) !important;
+}
+
+[data-theme="spaceship"] .status-bar {
+  position: relative;
+  z-index: 20;
+  background: var(--bg-panel) !important;
+}
+
+[data-theme="spaceship"] .modal-backdrop,
+[data-theme="spaceship"] .modal {
+  position: relative;
+  z-index: 100;
 }
 
 [data-theme="spaceship"] .monaco-editor,
+[data-theme="spaceship"] .monaco-editor .margin,
+[data-theme="spaceship"] .monaco-editor .monaco-scrollable-element,
 [data-theme="spaceship"] .data-grid,
+[data-theme="spaceship"] .grid-row,
+[data-theme="spaceship"] .grid-cell,
 [data-theme="spaceship"] .object-list,
 [data-theme="spaceship"] .column-list,
 [data-theme="spaceship"] .history-list,
@@ -800,7 +847,7 @@
 [data-theme="spaceship"] h2,
 [data-theme="spaceship"] h3 {
   position: relative;
-  z-index: 6;
+  z-index: 25;
 }
 
 /* Deep-Space 3D Spiral Galaxy Backdrop */
