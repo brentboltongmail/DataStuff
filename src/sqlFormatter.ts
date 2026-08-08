@@ -1,5 +1,6 @@
 /**
  * Custom SQL Formatter enforcing:
+ * - Separate queries separated by 2 blank lines
  * - Single item clauses (SELECT, FROM, WHERE, ORDER BY, GROUP BY) formatted on the SAME line as the keyword
  * - Multiple item clauses formatted with 4-space indentations on separate lines
  * - JOIN table ON condition all on a single line (e.g. LEFT JOIN departments d ON e.dept_id = d.dept_id)
@@ -52,9 +53,115 @@ const SUBQUERY_KEYWORDS = ["SELECT", "WITH", "INSERT", "UPDATE", "DELETE"];
 export function formatSql(sql: string): string {
   if (!sql || !sql.trim()) return sql;
 
-  const trimmed = sql.trim();
-  const hasSemicolon = trimmed.endsWith(";");
-  const cleanSql = hasSemicolon ? trimmed.slice(0, -1).trim() : trimmed;
+  // Split input into individual queries by semicolons or blank line breaks (\n\s*\n+)
+  // respecting string literals ('...') and comments (-- / /* ... */)
+  const queryChunks: { text: string; hasSemicolon: boolean }[] = [];
+  let currentChunk = "";
+  let inString = false;
+  let stringChar = "";
+  let inLineComment = false;
+  let inBlockComment = false;
+
+  for (let i = 0; i < sql.length; i++) {
+    const char = sql[i];
+    const nextChar = sql[i + 1] || "";
+
+    if (inLineComment) {
+      currentChunk += char;
+      if (char === "\n") inLineComment = false;
+      continue;
+    }
+
+    if (inBlockComment) {
+      currentChunk += char;
+      if (char === "*" && nextChar === "/") {
+        currentChunk += "/";
+        i++;
+        inBlockComment = false;
+      }
+      continue;
+    }
+
+    if (!inString) {
+      if (char === "-" && nextChar === "-") {
+        currentChunk += "--";
+        i++;
+        inLineComment = true;
+        continue;
+      }
+      if (char === "/" && nextChar === "*") {
+        currentChunk += "/*";
+        i++;
+        inBlockComment = true;
+        continue;
+      }
+    }
+
+    if (char === "'" || char === '"') {
+      if (!inString) {
+        inString = true;
+        stringChar = char;
+      } else if (char === stringChar) {
+        inString = false;
+      }
+      currentChunk += char;
+      continue;
+    }
+
+    if (inString) {
+      currentChunk += char;
+      continue;
+    }
+
+    // Semicolon query terminator
+    if (char === ";") {
+      if (currentChunk.trim()) {
+        queryChunks.push({ text: currentChunk.trim(), hasSemicolon: true });
+        currentChunk = "";
+      }
+      continue;
+    }
+
+    // Blank line separator (\n followed by optional whitespace and \n)
+    if (char === "\n") {
+      let isBlankLine = false;
+      let j = i + 1;
+      while (j < sql.length && (sql[j] === " " || sql[j] === "\t" || sql[j] === "\r")) {
+        j++;
+      }
+      if (j < sql.length && sql[j] === "\n") {
+        isBlankLine = true;
+      }
+
+      if (isBlankLine && currentChunk.trim()) {
+        queryChunks.push({ text: currentChunk.trim(), hasSemicolon: false });
+        currentChunk = "";
+        i = j;
+        continue;
+      }
+    }
+
+    currentChunk += char;
+  }
+
+  if (currentChunk.trim()) {
+    queryChunks.push({ text: currentChunk.trim(), hasSemicolon: false });
+  }
+
+  if (queryChunks.length === 0) return sql;
+
+  const formattedQueries = queryChunks.map((chunk) => {
+    const formatted = formatSingleQuery(chunk.text);
+    return chunk.hasSemicolon && !formatted.endsWith(";") ? formatted + ";" : formatted;
+  });
+
+  // Keep separate queries separated by 2 blank lines (\n\n\n)
+  return formattedQueries.join("\n\n\n");
+}
+
+function formatSingleQuery(cleanSql: string): string {
+  const hasSemicolon = cleanSql.endsWith(";");
+  const sqlToFormat = hasSemicolon ? cleanSql.slice(0, -1).trim() : cleanSql;
 
   const tokens: string[] = [];
   let currentToken = "";
@@ -63,11 +170,10 @@ export function formatSql(sql: string): string {
   let inLineComment = false;
   let inBlockComment = false;
 
-  for (let i = 0; i < cleanSql.length; i++) {
-    const char = cleanSql[i];
-    const nextChar = cleanSql[i + 1] || "";
+  for (let i = 0; i < sqlToFormat.length; i++) {
+    const char = sqlToFormat[i];
+    const nextChar = sqlToFormat[i + 1] || "";
 
-    // Handle comments
     if (inLineComment) {
       currentToken += char;
       if (char === "\n") {
@@ -107,7 +213,6 @@ export function formatSql(sql: string): string {
       }
     }
 
-    // Handle string literals
     if (char === "'" || char === '"') {
       if (!inString) {
         if (currentToken.trim()) tokens.push(currentToken.trim());
@@ -130,7 +235,6 @@ export function formatSql(sql: string): string {
       continue;
     }
 
-    // Delimiters
     if (char === "(" || char === ")" || char === ",") {
       if (currentToken.trim()) {
         tokens.push(currentToken.trim());
@@ -140,7 +244,6 @@ export function formatSql(sql: string): string {
       continue;
     }
 
-    // Whitespace
     if (/\s/.test(char)) {
       if (currentToken.trim()) {
         tokens.push(currentToken.trim());
@@ -156,7 +259,6 @@ export function formatSql(sql: string): string {
     tokens.push(currentToken.trim());
   }
 
-  // Combine multi-word keywords
   const normalizedTokens: string[] = [];
   for (let i = 0; i < tokens.length; i++) {
     const t = tokens[i];
@@ -214,7 +316,6 @@ export function formatSql(sql: string): string {
     }
   }
 
-  // Pre-calculate which parentheses indices belong to multi-line subqueries vs inline function calls
   const isSubqueryParen: boolean[] = new Array(normalizedTokens.length).fill(false);
   const parenStack: number[] = [];
 
@@ -238,7 +339,6 @@ export function formatSql(sql: string): string {
     }
   }
 
-  // Pre-calculate single item clauses
   const isSingleItemClause: boolean[] = new Array(normalizedTokens.length).fill(false);
   for (let i = 0; i < normalizedTokens.length; i++) {
     const upper = normalizedTokens[i].toUpperCase();
@@ -286,7 +386,7 @@ export function formatSql(sql: string): string {
     }
   }
 
-  const INDENT = "    "; // 4 spaces
+  const INDENT = "    ";
   let subqueryDepth = 0;
   let isUnderClause = false;
   let inBetween = false;
@@ -305,7 +405,6 @@ export function formatSql(sql: string): string {
     const token = normalizedTokens[i];
     const upper = token.toUpperCase();
 
-    // Comments
     if (token.startsWith("--") || token.startsWith("/*")) {
       if (currentLine.trim()) {
         pushLine(currentLine, isUnderClause ? 1 : 0);
@@ -315,7 +414,6 @@ export function formatSql(sql: string): string {
       continue;
     }
 
-    // Major clause keywords (SELECT, FROM, WHERE, etc.)
     if (MAJOR_KEYWORDS.includes(upper)) {
       if (currentLine.trim()) {
         pushLine(currentLine, isUnderClause ? 1 : 0);
@@ -332,7 +430,6 @@ export function formatSql(sql: string): string {
       continue;
     }
 
-    // Join keywords (JOIN, LEFT JOIN, INNER JOIN, etc.)
     if (JOIN_KEYWORDS.includes(upper)) {
       if (currentLine.trim()) {
         pushLine(currentLine, isUnderClause ? 1 : 0);
@@ -344,7 +441,6 @@ export function formatSql(sql: string): string {
       continue;
     }
 
-    // Track BETWEEN keyword
     if (upper === "BETWEEN") {
       inBetween = true;
       if (currentLine.length > 0 && !currentLine.endsWith(" ")) {
@@ -354,7 +450,6 @@ export function formatSql(sql: string): string {
       continue;
     }
 
-    // Logical operators (AND, OR)
     if (LOGICAL_OPERATORS.includes(upper)) {
       if (upper === "AND" && inBetween) {
         inBetween = false;
@@ -375,7 +470,6 @@ export function formatSql(sql: string): string {
       continue;
     }
 
-    // Opening parenthesis '('
     if (token === "(") {
       if (isSubqueryParen[i]) {
         openParenTypes.push("subquery");
@@ -400,7 +494,6 @@ export function formatSql(sql: string): string {
       continue;
     }
 
-    // Closing parenthesis ')'
     if (token === ")") {
       const parenType = openParenTypes.pop() ?? (isSubqueryParen[i] ? "subquery" : "inline");
       if (parenType === "subquery") {
@@ -417,7 +510,6 @@ export function formatSql(sql: string): string {
       continue;
     }
 
-    // Comma list separator
     if (token === ",") {
       const currentParenContext = openParenTypes[openParenTypes.length - 1];
       if (currentParenContext === "inline") {
@@ -431,7 +523,6 @@ export function formatSql(sql: string): string {
       continue;
     }
 
-    // Normal tokens
     if (currentLine.length > 0 && !currentLine.endsWith(" ") && !currentLine.endsWith("(")) {
       currentLine += " ";
     }
@@ -442,10 +533,5 @@ export function formatSql(sql: string): string {
     pushLine(currentLine, isUnderClause ? 1 : 0);
   }
 
-  let formatted = resultLines.join("\n");
-  if (hasSemicolon) {
-    formatted += ";";
-  }
-
-  return formatted;
+  return resultLines.join("\n");
 }
