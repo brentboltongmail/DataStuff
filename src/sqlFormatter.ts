@@ -1,7 +1,7 @@
 /**
  * Custom SQL Formatter enforcing:
- * - 4-space indentations for clause items
- * - Major SQL keywords on new lines
+ * - Single item clauses (SELECT, FROM, WHERE, ORDER BY, GROUP BY) formatted on the SAME line as the keyword
+ * - Multiple item clauses formatted with 4-space indentations on separate lines
  * - JOIN table ON condition all on a single line (e.g. LEFT JOIN departments d ON e.dept_id = d.dept_id)
  * - Subquery opening '(' on its own new line (inner query on next line indented +4 spaces)
  * - Functions like TRUNC(...), NVL(...), COUNT(...), TO_DATE(...) kept inline on a single line
@@ -224,7 +224,6 @@ export function formatSql(sql: string): string {
       parenStack.push(i);
     } else if (token === ")" && parenStack.length > 0) {
       const openIndex = parenStack.pop()!;
-      // Check if tokens between openIndex and i contain a subquery keyword
       let hasSubqueryKeyword = false;
       for (let j = openIndex + 1; j < i; j++) {
         if (SUBQUERY_KEYWORDS.includes(normalizedTokens[j].toUpperCase())) {
@@ -235,6 +234,54 @@ export function formatSql(sql: string): string {
       if (hasSubqueryKeyword) {
         isSubqueryParen[openIndex] = true;
         isSubqueryParen[i] = true;
+      }
+    }
+  }
+
+  // Pre-calculate single item clauses
+  const isSingleItemClause: boolean[] = new Array(normalizedTokens.length).fill(false);
+  for (let i = 0; i < normalizedTokens.length; i++) {
+    const upper = normalizedTokens[i].toUpperCase();
+    if (MAJOR_KEYWORDS.includes(upper)) {
+      let commaCount = 0;
+      let logicalOpCount = 0;
+      let joinCount = 0;
+      let parenDepth = 0;
+      let scanInBetween = false;
+
+      for (let j = i + 1; j < normalizedTokens.length; j++) {
+        const tok = normalizedTokens[j];
+        const tokUpper = tok.toUpperCase();
+
+        if (tok === "(") parenDepth++;
+        if (tok === ")") {
+          if (parenDepth === 0) break;
+          parenDepth--;
+        }
+
+        if (parenDepth === 0) {
+          if (MAJOR_KEYWORDS.includes(tokUpper)) break;
+          if (JOIN_KEYWORDS.includes(tokUpper)) joinCount++;
+          if (tok === ",") commaCount++;
+          if (tokUpper === "BETWEEN") scanInBetween = true;
+          if (tokUpper === "AND" || tokUpper === "OR") {
+            if (tokUpper === "AND" && scanInBetween) {
+              scanInBetween = false;
+            } else {
+              logicalOpCount++;
+            }
+          }
+        }
+      }
+
+      if (upper === "SELECT" || upper === "GROUP BY" || upper === "ORDER BY" || upper === "SET" || upper === "VALUES") {
+        if (commaCount === 0) isSingleItemClause[i] = true;
+      } else if (upper === "WHERE" || upper === "HAVING") {
+        if (logicalOpCount === 0) isSingleItemClause[i] = true;
+      } else if (upper === "FROM") {
+        if (commaCount === 0 && joinCount === 0) isSingleItemClause[i] = true;
+      } else {
+        if (commaCount === 0) isSingleItemClause[i] = true;
       }
     }
   }
@@ -274,13 +321,18 @@ export function formatSql(sql: string): string {
         pushLine(currentLine, isUnderClause ? 1 : 0);
         currentLine = "";
       }
-      pushLine(upper, 0);
-      isUnderClause = true;
+      if (isSingleItemClause[i]) {
+        currentLine = upper + " ";
+        isUnderClause = false;
+      } else {
+        pushLine(upper, 0);
+        isUnderClause = true;
+      }
       inBetween = false;
       continue;
     }
 
-    // Join keywords (JOIN, LEFT JOIN, INNER JOIN, etc.) — keep JOIN ... ON ... on the same line!
+    // Join keywords (JOIN, LEFT JOIN, INNER JOIN, etc.)
     if (JOIN_KEYWORDS.includes(upper)) {
       if (currentLine.trim()) {
         pushLine(currentLine, isUnderClause ? 1 : 0);
@@ -305,8 +357,7 @@ export function formatSql(sql: string): string {
     // Logical operators (AND, OR)
     if (LOGICAL_OPERATORS.includes(upper)) {
       if (upper === "AND" && inBetween) {
-        // Keep AND on the same line for BETWEEN x AND y!
-        inBetween = false; // reset after AND in BETWEEN
+        inBetween = false;
         if (currentLine.length > 0 && !currentLine.endsWith(" ")) {
           currentLine += " ";
         }
@@ -327,7 +378,6 @@ export function formatSql(sql: string): string {
     // Opening parenthesis '('
     if (token === "(") {
       if (isSubqueryParen[i]) {
-        // Multi-line subquery parenthesis
         openParenTypes.push("subquery");
         if (currentLine.trim()) {
           pushLine(currentLine, isUnderClause ? 1 : 0);
@@ -337,7 +387,6 @@ export function formatSql(sql: string): string {
         subqueryDepth += 2;
         isUnderClause = false;
       } else {
-        // Inline function parenthesis (e.g. TRUNC(...), NVL(...), COUNT(...))
         openParenTypes.push("inline");
         if (
           currentLine.length > 0 &&
@@ -355,7 +404,6 @@ export function formatSql(sql: string): string {
     if (token === ")") {
       const parenType = openParenTypes.pop() ?? (isSubqueryParen[i] ? "subquery" : "inline");
       if (parenType === "subquery") {
-        // Multi-line subquery closing parenthesis
         if (currentLine.trim()) {
           pushLine(currentLine, isUnderClause ? 1 : 0);
           currentLine = "";
@@ -364,7 +412,6 @@ export function formatSql(sql: string): string {
         pushLine(")", 1);
         isUnderClause = true;
       } else {
-        // Inline function closing parenthesis
         currentLine += ")";
       }
       continue;
@@ -374,10 +421,8 @@ export function formatSql(sql: string): string {
     if (token === ",") {
       const currentParenContext = openParenTypes[openParenTypes.length - 1];
       if (currentParenContext === "inline") {
-        // Inside inline function call parameters (e.g. TRUNC(created_at, 'DD')) — keep inline!
         currentLine += ", ";
       } else {
-        // Top-level clause list items — push to new line
         if (currentLine.trim()) {
           pushLine(currentLine + ",", isUnderClause ? 1 : 0);
           currentLine = "";
