@@ -23,6 +23,7 @@ import {
   isRowIdColumn,
 } from "./editableQuery";
 import { formatElapsed } from "./formatElapsed";
+import { formatSql } from "./sqlFormatter";
 import { sqlToExecute } from "./sqlStatement";
 import {
   APP_THEMES,
@@ -1496,8 +1497,43 @@ export default function App() {
     }
   };
 
+  const onFormatSql = useCallback(() => {
+    if (!editorRef.current) {
+      if (sql) {
+        const formatted = formatSql(sql);
+        setActiveSql(formatted);
+      }
+      return;
+    }
+
+    const selection = editorRef.current.getSelection();
+    const model = editorRef.current.getModel();
+    const selectedText = model && selection ? model.getValueInRange(selection) : "";
+
+    if (selectedText && selectedText.trim()) {
+      const formatted = formatSql(selectedText);
+      editorRef.current.executeEdits("format-sql", [
+        {
+          range: selection!,
+          text: formatted,
+          forceMoveMarkers: true,
+        },
+      ]);
+      setActiveSql(editorRef.current.getValue());
+    } else {
+      const currentFullSql = editorRef.current.getValue();
+      if (!currentFullSql || !currentFullSql.trim()) return;
+      const formatted = formatSql(currentFullSql);
+      editorRef.current.setValue(formatted);
+      setActiveSql(formatted);
+    }
+  }, [sql, setActiveSql]);
+
   const onExecuteRef = useRef(onExecute);
   onExecuteRef.current = onExecute;
+
+  const onFormatSqlRef = useRef(onFormatSql);
+  onFormatSqlRef.current = onFormatSql;
 
   const onEditorBeforeMount: BeforeMount = useCallback((monaco) => {
     monacoApiRef.current = monaco;
@@ -1548,107 +1584,107 @@ export default function App() {
         "editorIndentGuide.background": "#2A2433",
         "editorIndentGuide.activeBackground": "#3A3344",
         "editorWidget.background": "#1A1620",
-        "editorWidget.border": "#3A3344",
+        "editorWidget.border": "#2A2433",
       },
     });
     monaco.editor.defineTheme("datastuff-spaceship", {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "5A7190" },
-        { token: "keyword", foreground: "22D3EE" },
-        { token: "number", foreground: "34D399" },
-        { token: "string", foreground: "A78BFA" },
-        { token: "string.sql", foreground: "A78BFA" },
-        { token: "string.escape", foreground: "C4B5FD" },
+        { token: "comment", foreground: "475569" },
+        { token: "keyword", foreground: "38bdf8" },
+        { token: "number", foreground: "34d399" },
+        { token: "string", foreground: "c084fc" },
+        { token: "string.sql", foreground: "c084fc" },
+        { token: "string.escape", foreground: "e879f9" },
       ],
       colors: {
         "editor.background": "#00000000",
-        "editor.foreground": "#E8F4FF",
-        "editorLineNumber.foreground": "#3D5575",
-        "editorLineNumber.activeForeground": "#7A93B5",
-        "editorCursor.foreground": "#67E8F9",
-        "editor.selectionBackground": "#22D3EE33",
-        "editor.lineHighlightBackground": "#0E1C3088",
-        "editorIndentGuide.background": "#1A3358",
-        "editorIndentGuide.activeBackground": "#22D3EE55",
-        "editorWidget.background": "#0A1220",
-        "editorWidget.border": "#1A3358",
+        "editor.foreground": "#f8fafc",
+        "editorLineNumber.foreground": "#334155",
+        "editorLineNumber.activeForeground": "#94a3b8",
+        "editorCursor.foreground": "#38bdf8",
+        "editor.selectionBackground": "#38bdf833",
+        "editor.lineHighlightBackground": "#0f172a88",
+        "editorIndentGuide.background": "#1e293b",
+        "editorIndentGuide.activeBackground": "#38bdf855",
+        "editorWidget.background": "#0b1329",
+        "editorWidget.border": "#1e293b",
       },
     });
     monaco.editor.defineTheme("datastuff-aetherium", {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "7A7288" },
-        { token: "keyword", foreground: "FF9B7A" },
-        { token: "number", foreground: "5EEAD4" },
-        { token: "string", foreground: "F0D78C" },
-        { token: "string.sql", foreground: "F0D78C" },
-        { token: "string.escape", foreground: "FFC4A8" },
+        { token: "comment", foreground: "64748b" },
+        { token: "keyword", foreground: "818cf8" },
+        { token: "number", foreground: "38bdf8" },
+        { token: "string", foreground: "e879f9" },
+        { token: "string.sql", foreground: "e879f9" },
+        { token: "string.escape", foreground: "f472b6" },
       ],
       colors: {
         "editor.background": "#00000000",
-        "editor.foreground": "#F4EFE6",
-        "editorLineNumber.foreground": "#5A5368",
-        "editorLineNumber.activeForeground": "#A39AAB",
-        "editorCursor.foreground": "#FFC4A8",
-        "editor.selectionBackground": "#FF9B7A33",
-        "editor.lineHighlightBackground": "#1A162488",
-        "editorIndentGuide.background": "#2A2436",
-        "editorIndentGuide.activeBackground": "#5EEAD455",
-        "editorWidget.background": "#12101A",
-        "editorWidget.border": "#3A3148",
+        "editor.foreground": "#f1f5f9",
+        "editorLineNumber.foreground": "#475569",
+        "editorLineNumber.activeForeground": "#818cf8",
+        "editorCursor.foreground": "#818cf8",
+        "editor.selectionBackground": "#818cf833",
+        "editor.lineHighlightBackground": "#1e1b4b88",
+        "editorIndentGuide.background": "#312e81",
+        "editorIndentGuide.activeBackground": "#818cf855",
+        "editorWidget.background": "#1e1b4b",
+        "editorWidget.border": "#312e81",
       },
     });
     monaco.editor.defineTheme("datastuff-racecar", {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "6B7280" },
-        { token: "keyword", foreground: "EF4444" },
-        { token: "number", foreground: "F59E0B" },
-        { token: "string", foreground: "10B981" },
-        { token: "string.sql", foreground: "10B981" },
-        { token: "string.escape", foreground: "34D399" },
+        { token: "comment", foreground: "71717a" },
+        { token: "keyword", foreground: "ef4444" },
+        { token: "number", foreground: "f59e0b" },
+        { token: "string", foreground: "38bdf8" },
+        { token: "string.sql", foreground: "38bdf8" },
+        { token: "string.escape", foreground: "60a5fa" },
       ],
       colors: {
         "editor.background": "#00000000",
-        "editor.foreground": "#F3F4F6",
-        "editorLineNumber.foreground": "#4B5563",
-        "editorLineNumber.activeForeground": "#9CA3AF",
-        "editorCursor.foreground": "#EF4444",
-        "editor.selectionBackground": "#EF444433",
-        "editor.lineHighlightBackground": "#1F293788",
-        "editorIndentGuide.background": "#374151",
-        "editorIndentGuide.activeBackground": "#EF444455",
-        "editorWidget.background": "#111827",
-        "editorWidget.border": "#374151",
+        "editor.foreground": "#fafafa",
+        "editorLineNumber.foreground": "#52525b",
+        "editorLineNumber.activeForeground": "#ef4444",
+        "editorCursor.foreground": "#ef4444",
+        "editor.selectionBackground": "#ef444433",
+        "editor.lineHighlightBackground": "#27272a88",
+        "editorIndentGuide.background": "#3f3f46",
+        "editorIndentGuide.activeBackground": "#ef444455",
+        "editorWidget.background": "#18181b",
+        "editorWidget.border": "#27272a",
       },
     });
     monaco.editor.defineTheme("datastuff-lava", {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "78350F" },
-        { token: "keyword", foreground: "F97316" },
-        { token: "number", foreground: "FBBF24" },
-        { token: "string", foreground: "F43F5E" },
-        { token: "string.sql", foreground: "F43F5E" },
-        { token: "string.escape", foreground: "FB7185" },
+        { token: "comment", foreground: "78350f" },
+        { token: "keyword", foreground: "f97316" },
+        { token: "number", foreground: "eab308" },
+        { token: "string", foreground: "ef4444" },
+        { token: "string.sql", foreground: "ef4444" },
+        { token: "string.escape", foreground: "f87171" },
       ],
       colors: {
         "editor.background": "#00000000",
-        "editor.foreground": "#FEF3C7",
-        "editorLineNumber.foreground": "#78350F",
-        "editorLineNumber.activeForeground": "#F59E0B",
-        "editorCursor.foreground": "#F97316",
-        "editor.selectionBackground": "#F9731644",
-        "editor.lineHighlightBackground": "#2A0E0A88",
-        "editorIndentGuide.background": "#451A03",
-        "editorIndentGuide.activeBackground": "#F9731666",
-        "editorWidget.background": "#1C0A0A",
-        "editorWidget.border": "#451A03",
+        "editor.foreground": "#fff7ed",
+        "editorLineNumber.foreground": "#7c2d12",
+        "editorLineNumber.activeForeground": "#f97316",
+        "editorCursor.foreground": "#f97316",
+        "editor.selectionBackground": "#f9731633",
+        "editor.lineHighlightBackground": "#451a0388",
+        "editorIndentGuide.background": "#7c2d12",
+        "editorIndentGuide.activeBackground": "#f9731655",
+        "editorWidget.background": "#290f04",
+        "editorWidget.border": "#451a03",
       },
     });
     monaco.editor.defineTheme("datastuff-ice", {
@@ -1656,17 +1692,17 @@ export default function App() {
       inherit: true,
       rules: [
         { token: "comment", foreground: "475569" },
-        { token: "keyword", foreground: "38BDF8" },
-        { token: "number", foreground: "34D399" },
-        { token: "string", foreground: "A78BFA" },
-        { token: "string.sql", foreground: "A78BFA" },
-        { token: "string.escape", foreground: "C4B5FD" },
+        { token: "keyword", foreground: "38bdf8" },
+        { token: "number", foreground: "34d399" },
+        { token: "string", foreground: "818cf8" },
+        { token: "string.sql", foreground: "818cf8" },
+        { token: "string.escape", foreground: "a5b4fc" },
       ],
       colors: {
         "editor.background": "#00000000",
         "editor.foreground": "#f0f9ff",
         "editorLineNumber.foreground": "#334155",
-        "editorLineNumber.activeForeground": "#7dd3fc",
+        "editorLineNumber.activeForeground": "#38bdf8",
         "editorCursor.foreground": "#38bdf8",
         "editor.selectionBackground": "#38bdf833",
         "editor.lineHighlightBackground": "#13233888",
@@ -1722,6 +1758,17 @@ export default function App() {
         monaco.KeyMod.Shift | monaco.KeyCode.Enter,
       ],
       run: runStatement,
+    });
+
+    ed.addAction({
+      id: "oracle-ide.format-sql",
+      label: "Format SQL Query",
+      keybindings: [
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyF,
+      ],
+      run: () => {
+        onFormatSqlRef.current();
+      },
     });
 
     // addCommand overrides the default Shift+Enter binding (needs editContext: false).
@@ -3263,6 +3310,14 @@ export default function App() {
               }
             >
               Rollback
+            </button>
+            <button
+              type="button"
+              className="secondary format-sql-btn"
+              onClick={onFormatSql}
+              title="Reformat SQL query with 4-space indentations and subquery nesting on new lines (Cmd+Shift+F)"
+            >
+              ✨ Format SQL
             </button>
             <button
               type="button"
