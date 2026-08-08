@@ -685,7 +685,8 @@ body.is-row-resizing .monaco-editor {
 .sql-tab.active {
   background: var(--bg);
   color: var(--text);
-  box-shadow: inset 3px 0 0 var(--accent);
+  border: 1px solid var(--accent) !important;
+  box-shadow: inset 0 0 0 1px var(--accent), 0 0 8px rgba(0, 0, 0, 0.4);
   border-radius: 0 !important;
 }
 
