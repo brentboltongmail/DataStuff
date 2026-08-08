@@ -2,9 +2,11 @@
  * Custom SQL Formatter enforcing:
  * - 4-space indentations for clause items
  * - Major SQL keywords on new lines
- * - Subquery opening '(' on its own new line
- * - Subquery starting on even the next line below '(' indented +4 spaces further
- * - Closing ')' on its own line aligned with opening parenthesis
+ * - JOIN table ON condition all on a single line (e.g. LEFT JOIN departments d ON e.dept_id = d.dept_id)
+ * - Subquery opening '(' on its own new line (inner query on next line indented +4 spaces)
+ * - Functions like TRUNC(...), NVL(...), COUNT(...), TO_DATE(...) kept inline on a single line
+ * - BETWEEN ... AND ... kept on the same line
+ * - Closing ')' for subqueries on its own line aligned with opening parenthesis
  */
 
 const MAJOR_KEYWORDS = [
@@ -41,10 +43,11 @@ const JOIN_KEYWORDS = [
   "FULL JOIN",
   "CROSS JOIN",
   "JOIN",
-  "ON",
 ];
 
 const LOGICAL_OPERATORS = ["AND", "OR"];
+
+const SUBQUERY_KEYWORDS = ["SELECT", "WITH", "INSERT", "UPDATE", "DELETE"];
 
 export function formatSql(sql: string): string {
   if (!sql || !sql.trim()) return sql;
@@ -211,9 +214,36 @@ export function formatSql(sql: string): string {
     }
   }
 
+  // Pre-calculate which parentheses indices belong to multi-line subqueries vs inline function calls
+  const isSubqueryParen: boolean[] = new Array(normalizedTokens.length).fill(false);
+  const parenStack: number[] = [];
+
+  for (let i = 0; i < normalizedTokens.length; i++) {
+    const token = normalizedTokens[i];
+    if (token === "(") {
+      parenStack.push(i);
+    } else if (token === ")" && parenStack.length > 0) {
+      const openIndex = parenStack.pop()!;
+      // Check if tokens between openIndex and i contain a subquery keyword
+      let hasSubqueryKeyword = false;
+      for (let j = openIndex + 1; j < i; j++) {
+        if (SUBQUERY_KEYWORDS.includes(normalizedTokens[j].toUpperCase())) {
+          hasSubqueryKeyword = true;
+          break;
+        }
+      }
+      if (hasSubqueryKeyword) {
+        isSubqueryParen[openIndex] = true;
+        isSubqueryParen[i] = true;
+      }
+    }
+  }
+
   const INDENT = "    "; // 4 spaces
   let subqueryDepth = 0;
   let isUnderClause = false;
+  let inBetween = false;
+  const openParenTypes: ("subquery" | "inline")[] = [];
   const resultLines: string[] = [];
   let currentLine = "";
 
@@ -244,71 +274,120 @@ export function formatSql(sql: string): string {
         pushLine(currentLine, isUnderClause ? 1 : 0);
         currentLine = "";
       }
-      pushLine(upper, 0); // Keyword at base subquery depth
-      isUnderClause = true; // Following items indented +1
+      pushLine(upper, 0);
+      isUnderClause = true;
+      inBetween = false;
       continue;
     }
 
-    // Join keywords (JOIN, LEFT JOIN, ON, etc.)
+    // Join keywords (JOIN, LEFT JOIN, INNER JOIN, etc.) — keep JOIN ... ON ... on the same line!
     if (JOIN_KEYWORDS.includes(upper)) {
       if (currentLine.trim()) {
         pushLine(currentLine, isUnderClause ? 1 : 0);
         currentLine = "";
       }
-      pushLine(upper, 0);
-      isUnderClause = true;
+      currentLine = upper + " ";
+      isUnderClause = false;
+      inBetween = false;
+      continue;
+    }
+
+    // Track BETWEEN keyword
+    if (upper === "BETWEEN") {
+      inBetween = true;
+      if (currentLine.length > 0 && !currentLine.endsWith(" ")) {
+        currentLine += " ";
+      }
+      currentLine += token;
       continue;
     }
 
     // Logical operators (AND, OR)
     if (LOGICAL_OPERATORS.includes(upper)) {
+      if (upper === "AND" && inBetween) {
+        // Keep AND on the same line for BETWEEN x AND y!
+        inBetween = false; // reset after AND in BETWEEN
+        if (currentLine.length > 0 && !currentLine.endsWith(" ")) {
+          currentLine += " ";
+        }
+        currentLine += token;
+        continue;
+      }
+
       if (currentLine.trim()) {
         pushLine(currentLine, isUnderClause ? 1 : 0);
         currentLine = "";
       }
       currentLine = upper + " ";
       isUnderClause = true;
+      inBetween = false;
       continue;
     }
 
-    // Opening parenthesis '(' for subqueries / expressions
+    // Opening parenthesis '('
     if (token === "(") {
-      if (currentLine.trim()) {
-        pushLine(currentLine, isUnderClause ? 1 : 0);
-        currentLine = "";
+      if (isSubqueryParen[i]) {
+        // Multi-line subquery parenthesis
+        openParenTypes.push("subquery");
+        if (currentLine.trim()) {
+          pushLine(currentLine, isUnderClause ? 1 : 0);
+          currentLine = "";
+        }
+        pushLine("(", 1);
+        subqueryDepth += 2;
+        isUnderClause = false;
+      } else {
+        // Inline function parenthesis (e.g. TRUNC(...), NVL(...), COUNT(...))
+        openParenTypes.push("inline");
+        if (
+          currentLine.length > 0 &&
+          !currentLine.endsWith(" ") &&
+          !/^[a-zA-Z0-9_$]+$/.test(normalizedTokens[i - 1] || "")
+        ) {
+          currentLine += " ";
+        }
+        currentLine += "(";
       }
-      // Parenthesis on next line at clause level (+1 depth)
-      pushLine("(", 1);
-      // Inner subquery starts on even the next line below, indented +4 spaces further (+2 depth)
-      subqueryDepth += 2;
-      isUnderClause = false;
       continue;
     }
 
     // Closing parenthesis ')'
     if (token === ")") {
-      if (currentLine.trim()) {
-        pushLine(currentLine, isUnderClause ? 1 : 0);
-        currentLine = "";
+      const parenType = openParenTypes.pop() ?? (isSubqueryParen[i] ? "subquery" : "inline");
+      if (parenType === "subquery") {
+        // Multi-line subquery closing parenthesis
+        if (currentLine.trim()) {
+          pushLine(currentLine, isUnderClause ? 1 : 0);
+          currentLine = "";
+        }
+        subqueryDepth = Math.max(0, subqueryDepth - 2);
+        pushLine(")", 1);
+        isUnderClause = true;
+      } else {
+        // Inline function closing parenthesis
+        currentLine += ")";
       }
-      subqueryDepth = Math.max(0, subqueryDepth - 2);
-      // Closing parenthesis aligned with opening parenthesis (+1 depth)
-      pushLine(")", 1);
-      isUnderClause = true;
       continue;
     }
 
     // Comma list separator
     if (token === ",") {
-      if (currentLine.trim()) {
-        pushLine(currentLine + ",", isUnderClause ? 1 : 0);
-        currentLine = "";
+      const currentParenContext = openParenTypes[openParenTypes.length - 1];
+      if (currentParenContext === "inline") {
+        // Inside inline function call parameters (e.g. TRUNC(created_at, 'DD')) — keep inline!
+        currentLine += ", ";
+      } else {
+        // Top-level clause list items — push to new line
+        if (currentLine.trim()) {
+          pushLine(currentLine + ",", isUnderClause ? 1 : 0);
+          currentLine = "";
+        }
       }
       continue;
     }
 
-    // Normal tokens (column names, values, table names)
-    if (currentLine.length > 0 && !currentLine.endsWith(" ")) {
+    // Normal tokens
+    if (currentLine.length > 0 && !currentLine.endsWith(" ") && !currentLine.endsWith("(")) {
       currentLine += " ";
     }
     currentLine += token;
