@@ -368,7 +368,7 @@ input:focus {
 
 .body {
   display: grid;
-  grid-template-columns: 240px 3px 1fr;
+  grid-template-columns: 1fr 3px 240px;
   min-height: 0;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.15), transparent 8%);
 }
@@ -412,13 +412,13 @@ body.is-col-resizing .sidebar-split {
 .object-browser {
   display: grid;
   grid-template-rows: auto auto 1fr auto;
-  border-right: 1px solid var(--border-soft);
+  border-left: 1px solid var(--border-soft);
   background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, transparent 100%),
+    linear-gradient(270deg, rgba(0, 0, 0, 0.2) 0%, transparent 100%),
     var(--bg-panel);
   opacity: 0.85;
-  box-shadow: inset -1px 0 0 var(--panel-tint),
-    4px 0 18px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 1px 0 0 var(--panel-tint),
+    -4px 0 18px rgba(0, 0, 0, 0.2);
   min-height: 0;
 }
 

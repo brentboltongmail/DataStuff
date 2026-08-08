@@ -2074,7 +2074,7 @@ export default function App() {
     (event: ReactPointerEvent<HTMLDivElement>) => {
       const drag = sidebarDragRef.current;
       if (!drag) return;
-      const next = drag.startWidth + (event.clientX - drag.startX);
+      const next = drag.startWidth - (event.clientX - drag.startX);
       setSidebarWidth(
         Math.min(MAX_SIDEBAR_WIDTH, Math.max(MIN_SIDEBAR_WIDTH, next)),
       );
@@ -3439,24 +3439,7 @@ export default function App() {
         </div>
       </header>
 
-      <div className="body" style={{ gridTemplateColumns: `${sidebarWidth}px 3px 1fr` }}>
-        <ObjectBrowser
-          connected={status.connected}
-          refreshKey={objectsRefresh}
-          onInsertSql={insertObjectName}
-          onOpenSelect={openSelectForObject}
-        />
-
-        <div
-          className="sidebar-split"
-          title="Drag to resize object browser · double-click to reset"
-          onPointerDown={onSidebarPointerDown}
-          onPointerMove={onSidebarPointerMove}
-          onPointerUp={onSidebarPointerUp}
-          onPointerCancel={endSidebarDrag}
-          onDoubleClick={() => setSidebarWidth(DEFAULT_SIDEBAR_WIDTH)}
-        />
-
+      <div className="body" style={{ gridTemplateColumns: `1fr 3px ${sidebarWidth}px` }}>
         <main
           className="workspace"
           ref={workspaceRef}
@@ -3790,6 +3773,23 @@ export default function App() {
             </div>
           </section>
         </main>
+
+        <div
+          className="sidebar-split"
+          title="Drag to resize object browser · double-click to reset"
+          onPointerDown={onSidebarPointerDown}
+          onPointerMove={onSidebarPointerMove}
+          onPointerUp={onSidebarPointerUp}
+          onPointerCancel={endSidebarDrag}
+          onDoubleClick={() => setSidebarWidth(DEFAULT_SIDEBAR_WIDTH)}
+        />
+
+        <ObjectBrowser
+          connected={status.connected}
+          refreshKey={objectsRefresh}
+          onInsertSql={insertObjectName}
+          onOpenSelect={openSelectForObject}
+        />
       </div>
 
       <footer className="status-bar">
