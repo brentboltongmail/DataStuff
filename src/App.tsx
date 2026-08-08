@@ -605,6 +605,49 @@ const ForestAtmosphere: React.FC = () => {
   );
 };
 
+const CyberpunkAtmosphere: React.FC = () => {
+  return (
+    <div className="cyberpunk-atmosphere">
+      <div className="cyber-skyline" />
+      <div className="puddle-reflection-grid" />
+      <div className="neon-signboard signboard-1">
+        <span className="sign-kanji">サイバー</span>
+        <span className="sign-sub">CYBER 2077</span>
+      </div>
+      <div className="neon-signboard signboard-2">
+        <span className="sign-kanji">電脳街</span>
+        <span className="sign-sub">NETRUNNER</span>
+      </div>
+      <div className="neon-signboard signboard-3">
+        <span className="sign-kanji">ネオン</span>
+        <span className="sign-sub">NEON GRID</span>
+      </div>
+      <div className="hover-spinner spinner-1">
+        <div className="spinner-beam headlight" />
+        <div className="spinner-beam taillight" />
+      </div>
+      <div className="hover-spinner spinner-2">
+        <div className="spinner-beam headlight" />
+        <div className="spinner-beam taillight" />
+      </div>
+      <div className="hover-spinner spinner-3">
+        <div className="spinner-beam headlight" />
+        <div className="spinner-beam taillight" />
+      </div>
+      <div className="rain-streak drop-1" />
+      <div className="rain-streak drop-2" />
+      <div className="rain-streak drop-3" />
+      <div className="rain-streak drop-4" />
+      <div className="rain-streak drop-5" />
+      <div className="rain-streak drop-6" />
+      <div className="rain-streak drop-7" />
+      <div className="rain-streak drop-8" />
+      <div className="rain-streak drop-9" />
+      <div className="rain-streak drop-10" />
+    </div>
+  );
+};
+
 const CIRCUIT_PRESETS = [
   // Preset 1: Silverstone Sweeping Loop
   "M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z",
@@ -4049,15 +4092,7 @@ export default function App() {
 
       {themeId === "crystal" ? <CrystalAtmosphere /> : null}
 
-      {themeId === "cyberpunk" ? (
-        <div className="cyberpunk-atmosphere">
-          <div className="rain-streak drop-1" />
-          <div className="rain-streak drop-2" />
-          <div className="rain-streak drop-3" />
-          <div className="neon-signboard signboard-1" />
-          <div className="neon-signboard signboard-2" />
-        </div>
-      ) : null}
+      {themeId === "cyberpunk" ? <CyberpunkAtmosphere /> : null}
 
       {themeId === "solar" ? <SolarAtmosphere /> : null}
       <header className="titlebar">

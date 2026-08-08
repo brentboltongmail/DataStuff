@@ -6657,26 +6657,180 @@
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
-  background: #030712;
+  background: radial-gradient(ellipse at 50% 30%, #111827 0%, #030712 75%, #010308 100%);
+}
+
+.cyberpunk-atmosphere .cyber-skyline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 350px;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 255, 204, 0.08) 50%, rgba(244, 114, 182, 0.15) 100%);
+  border-top: 1px solid rgba(0, 255, 204, 0.25);
+  box-shadow: inset 0 2px 30px rgba(0, 255, 204, 0.2);
+}
+
+.cyberpunk-atmosphere .puddle-reflection-grid {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(0, 255, 204, 0.2) 60%, rgba(236, 72, 153, 0.3) 100%),
+    repeating-linear-gradient(90deg, transparent 0px, transparent 40px, rgba(0, 255, 204, 0.05) 40px, rgba(0, 255, 204, 0.05) 41px);
+  filter: blur(2px);
+}
+
+.cyberpunk-atmosphere .neon-signboard {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 2px solid currentColor;
+  box-shadow: 0 0 20px currentColor, inset 0 0 15px currentColor;
+  background: rgba(3, 7, 18, 0.7);
+  will-change: opacity, transform;
+}
+
+.cyberpunk-atmosphere .signboard-1 {
+  top: 15vh;
+  left: 8vw;
+  color: #00ffcc;
+  animation: signboard-flicker 5s ease-in-out infinite alternate;
+}
+
+.cyberpunk-atmosphere .signboard-2 {
+  top: 25vh;
+  right: 10vw;
+  color: #ec4899;
+  animation: signboard-flicker 7s ease-in-out 1.2s infinite alternate;
+}
+
+.cyberpunk-atmosphere .signboard-3 {
+  bottom: 28vh;
+  left: 45vw;
+  color: #f59e0b;
+  animation: signboard-flicker 6s ease-in-out 2.5s infinite alternate;
+}
+
+.cyberpunk-atmosphere .sign-kanji {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  text-shadow: 0 0 10px currentColor;
+}
+
+.cyberpunk-atmosphere .sign-sub {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-top: 2px;
+}
+
+@keyframes signboard-flicker {
+  0% { opacity: 0.85; filter: brightness(1); }
+  92% { opacity: 0.85; filter: brightness(1); }
+  93% { opacity: 0.2; filter: brightness(0.4); }
+  94% { opacity: 0.95; filter: brightness(1.3); }
+  96% { opacity: 0.4; filter: brightness(0.5); }
+  97% { opacity: 1; filter: brightness(1.2); }
+  100% { opacity: 0.9; filter: brightness(1); }
+}
+
+.cyberpunk-atmosphere .hover-spinner {
+  position: absolute;
+  width: 55px;
+  height: 12px;
+  border-radius: 6px;
+  background: #111827;
+  border: 1px solid #00ffcc;
+  box-shadow: 0 0 15px #00ffcc;
+  will-change: transform;
+}
+
+.cyberpunk-atmosphere .spinner-beam {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 3px;
+  border-radius: 3px;
+}
+
+.cyberpunk-atmosphere .headlight {
+  right: -30px;
+  width: 30px;
+  background: linear-gradient(90deg, #00ffcc 0%, transparent 100%);
+  box-shadow: 0 0 10px #00ffcc;
+}
+
+.cyberpunk-atmosphere .taillight {
+  left: -20px;
+  width: 20px;
+  background: linear-gradient(270deg, #ef4444 0%, transparent 100%);
+  box-shadow: 0 0 10px #ef4444;
+}
+
+.cyberpunk-atmosphere .spinner-1 {
+  top: 18vh; left: -100px;
+  animation: spinner-corridor 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.cyberpunk-atmosphere .spinner-2 {
+  top: 32vh; left: -120px;
+  animation: spinner-corridor 16s cubic-bezier(0.4, 0, 0.2, 1) 4s infinite;
+}
+
+.cyberpunk-atmosphere .spinner-3 {
+  bottom: 35vh; right: -100px;
+  transform: scaleX(-1);
+  animation: spinner-corridor-rev 14s cubic-bezier(0.4, 0, 0.2, 1) 2s infinite;
+}
+
+@keyframes spinner-corridor {
+  0% { transform: translate3d(0, 0, 0) scale(0.6); opacity: 0; }
+  10% { opacity: 0.95; }
+  90% { opacity: 0.9; }
+  100% { transform: translate3d(120vw, 40px, 0) scale(1.1); opacity: 0; }
+}
+
+@keyframes spinner-corridor-rev {
+  0% { transform: translate3d(0, 0, 0) scale(0.7); opacity: 0; }
+  10% { opacity: 0.95; }
+  90% { opacity: 0.9; }
+  100% { transform: translate3d(-120vw, -30px, 0) scale(1.2); opacity: 0; }
 }
 
 .cyberpunk-atmosphere .rain-streak {
   position: absolute;
-  width: 1px;
-  height: 80px;
-  background: linear-gradient(180deg, transparent, #00ffcc);
-  opacity: 0.6;
+  width: 2px;
+  height: 110px;
+  background: linear-gradient(180deg, transparent 0%, #00ffcc 60%, #ffffff 100%);
+  box-shadow: 0 0 10px #00ffcc;
+  opacity: 0.8;
   will-change: transform;
 }
 
-.cyberpunk-atmosphere .drop-1 { left: 22vw; top: -80px; animation: cyberpunk-rain 2.5s linear infinite; }
-.cyberpunk-atmosphere .drop-2 { left: 58vw; top: -80px; animation: cyberpunk-rain 3.1s linear 0.8s infinite; }
-.cyberpunk-atmosphere .drop-3 { left: 84vw; top: -80px; animation: cyberpunk-rain 2.2s linear 1.4s infinite; }
+.cyberpunk-atmosphere .drop-1 { left: 8vw; top: -120px; animation: cyberpunk-rain 2.1s linear infinite; }
+.cyberpunk-atmosphere .drop-2 { left: 18vw; top: -120px; animation: cyberpunk-rain 2.7s linear 0.4s infinite; }
+.cyberpunk-atmosphere .drop-3 { left: 28vw; top: -120px; animation: cyberpunk-rain 1.9s linear 1.1s infinite; }
+.cyberpunk-atmosphere .drop-4 { left: 39vw; top: -120px; animation: cyberpunk-rain 3.0s linear 0.2s infinite; }
+.cyberpunk-atmosphere .drop-5 { left: 52vw; top: -120px; animation: cyberpunk-rain 2.4s linear 1.5s infinite; }
+.cyberpunk-atmosphere .drop-6 { left: 64vw; top: -120px; animation: cyberpunk-rain 2.8s linear 0.7s infinite; }
+.cyberpunk-atmosphere .drop-7 { left: 75vw; top: -120px; animation: cyberpunk-rain 1.8s linear 1.3s infinite; }
+.cyberpunk-atmosphere .drop-8 { left: 86vw; top: -120px; animation: cyberpunk-rain 3.2s linear 0.9s infinite; }
+.cyberpunk-atmosphere .drop-9 { left: 94vw; top: -120px; animation: cyberpunk-rain 2.3s linear 1.7s infinite; }
+.cyberpunk-atmosphere .drop-10 { left: 45vw; top: -120px; animation: cyberpunk-rain 2.6s linear 0.1s infinite; }
 
 @keyframes cyberpunk-rain {
-  0% { transform: translate3d(0, 0, 0); opacity: 0; }
-  20% { opacity: 0.7; }
-  100% { transform: translate3d(-30px, 105vh, 0); opacity: 0; }
+  0% { transform: translate3d(0, 0, 0) rotate(-15deg); opacity: 0; }
+  15% { opacity: 0.9; }
+  85% { opacity: 0.85; }
+  100% { transform: translate3d(-100px, 110vh, 0) rotate(-15deg); opacity: 0; }
 }
 
 
