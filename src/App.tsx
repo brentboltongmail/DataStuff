@@ -613,6 +613,7 @@ export default function App() {
   const [isProd, setIsProd] = useState<boolean>(initialConnState.isProd);
   const [preProdThemeId, setPreProdThemeId] = useState<AppThemeId>("default");
   const [showManageModal, setShowManageModal] = useState<boolean>(false);
+  const [showProdCommitConfirm, setShowProdCommitConfirm] = useState<boolean>(false);
   const [autoFormat, setAutoFormat] = useState<boolean>(() => localStorage.getItem(AUTO_FORMAT_KEY) === "true");
 
   // Real-time query execution length timer loop
@@ -2080,7 +2081,8 @@ export default function App() {
     return edits.length;
   };
 
-  const onCommit = async () => {
+  const executeCommit = async () => {
+    setShowProdCommitConfirm(false);
     setBusy(true);
     setError(null);
     try {
@@ -2113,6 +2115,14 @@ export default function App() {
       }
     } finally {
       setBusy(false);
+    }
+  };
+
+  const onCommit = async () => {
+    if (isProd) {
+      setShowProdCommitConfirm(true);
+    } else {
+      await executeCommit();
     }
   };
 
@@ -3798,6 +3808,49 @@ export default function App() {
                 onClick={() => setShowManageModal(false)}
               >
                 Done
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {showProdCommitConfirm ? (
+        <div
+          className="modal-backdrop"
+          onClick={() => setShowProdCommitConfirm(false)}
+        >
+          <div
+            className="modal prod-commit-confirm-modal"
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: "440px" }}
+          >
+            <h2 style={{ color: "#ef4444", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+              ⚠️ Production Commit Confirmation
+            </h2>
+            <p style={{ marginTop: "12px", lineHeight: "1.5", fontSize: "14px" }}>
+              You are connected to a <strong>PRODUCTION</strong> database environment (<strong>{connectionName || "PROD"}</strong>).
+            </p>
+            <p style={{ marginTop: "8px", color: "var(--text-muted)", fontSize: "13px", lineHeight: "1.4" }}>
+              Are you sure you want to permanently commit your transaction to Production?
+            </p>
+            <div
+              className="modal-actions"
+              style={{ marginTop: "20px", display: "flex", justifyContent: "flex-end", gap: "10px" }}
+            >
+              <button
+                type="button"
+                className="secondary"
+                onClick={() => setShowProdCommitConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="danger"
+                onClick={executeCommit}
+                autoFocus
+              >
+                Yes, Commit to Production
               </button>
             </div>
           </div>
