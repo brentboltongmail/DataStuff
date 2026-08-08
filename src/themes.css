@@ -763,73 +763,87 @@
   position: fixed !important;
   inset: 0 !important;
   pointer-events: none !important;
-  z-index: -9999 !important;
-  transform: translateZ(-500px);
+  z-index: 0 !important;
   overflow: hidden;
   perspective: 1200px;
 }
 
-/* Guarantee that all UI containers, panels, text, words, and controls sit strictly above the space backdrop */
+/* Guarantee 80% opacity on all windows and panels in space theme so backdrop shines through */
+[data-theme="spaceship"] {
+  background: #020610 !important;
+}
+
 [data-theme="spaceship"] .app {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   isolation: isolate;
-  opacity: 0.90 !important;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  opacity: 0.80 !important;
+  background: transparent !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 [data-theme="spaceship"] .titlebar {
   position: relative;
   z-index: 20;
-  background: rgba(6, 12, 22, 0.88) !important;
+  background: rgba(6, 12, 22, 0.80) !important;
+  opacity: 0.80 !important;
 }
 
 [data-theme="spaceship"] .connection-bar {
   position: relative;
   z-index: 20;
-  background: rgba(8, 14, 26, 0.88) !important;
+  background: rgba(8, 14, 26, 0.80) !important;
+  opacity: 0.80 !important;
 }
 
 [data-theme="spaceship"] .workspace {
   position: relative;
   z-index: 20;
+  background: transparent !important;
 }
 
 [data-theme="spaceship"] .sidebar {
   position: relative;
   z-index: 20;
-  background: rgba(10, 18, 32, 0.88) !important;
+  background: rgba(10, 18, 32, 0.80) !important;
+  opacity: 0.80 !important;
 }
 
 [data-theme="spaceship"] .editor-pane {
   position: relative;
   z-index: 20;
-  background: rgba(10, 18, 32, 0.85) !important;
+  background: rgba(10, 18, 32, 0.80) !important;
+  opacity: 0.80 !important;
 }
 
 [data-theme="spaceship"] .results-pane {
   position: relative;
   z-index: 20;
-  background: rgba(10, 18, 32, 0.88) !important;
+  background: rgba(10, 18, 32, 0.80) !important;
+  opacity: 0.80 !important;
 }
 
 [data-theme="spaceship"] .toolbar {
   position: relative;
   z-index: 20;
-  background: rgba(12, 20, 36, 0.88) !important;
+  background: rgba(12, 20, 36, 0.80) !important;
+  opacity: 0.80 !important;
 }
 
 [data-theme="spaceship"] .status-bar {
   position: relative;
   z-index: 20;
-  background: rgba(6, 12, 22, 0.90) !important;
+  background: rgba(6, 12, 22, 0.80) !important;
+  opacity: 0.80 !important;
 }
 
 [data-theme="spaceship"] .modal-backdrop,
 [data-theme="spaceship"] .modal {
   position: relative;
   z-index: 100;
+  background: rgba(10, 18, 32, 0.80) !important;
+  opacity: 0.80 !important;
 }
 
 [data-theme="spaceship"] .monaco-editor,
@@ -1201,152 +1215,88 @@
   100% { transform: translate3d(220px, 70px, 0) scale(1.15); }
 }
 
-/* Gas giant planet with atmospheric ring */
+/* Gas giant planet with atmospheric ring - ON SCREEN (Top Right Sky) */
 .spaceship-atmosphere .celestial-planet {
-  top: 12%;
-  left: -500px;
-  width: 420px;
-  height: 420px;
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  width: 440px;
+  height: 440px;
+  opacity: 0.95 !important;
   background:
     radial-gradient(circle at 35% 35%, #06b6d4 0%, #0284c7 45%, #0f172a 85%, #020617 100%);
   box-shadow:
     inset -45px -45px 75px rgba(2, 6, 23, 0.9),
-    0 0 100px rgba(6, 182, 212, 0.35);
-  animation: celestial-planet-transit 320s linear 12s infinite;
+    0 0 120px rgba(6, 182, 212, 0.55);
+  animation: celestial-orbit-pulse-1 40s ease-in-out infinite alternate;
 }
 
-/* Cratered ice moon */
+/* Cratered ice moon - ON SCREEN (Upper Mid Sky) */
 .spaceship-atmosphere .celestial-moon {
-  top: 58%;
-  right: -300px;
-  width: 210px;
-  height: 210px;
+  position: absolute;
+  top: 32%;
+  right: 28%;
+  width: 220px;
+  height: 220px;
+  opacity: 0.95 !important;
   background:
     radial-gradient(circle at 30% 30%, #e0f2fe 0%, #bae6fd 30%, #38bdf8 65%, #0f172a 100%);
   box-shadow:
     inset -30px -30px 50px rgba(15, 23, 42, 0.95),
-    0 0 60px rgba(186, 230, 253, 0.3);
-  animation: celestial-moon-transit 240s linear 70s infinite;
+    0 0 75px rgba(186, 230, 253, 0.55);
+  animation: celestial-orbit-pulse-2 36s ease-in-out infinite alternate;
 }
 
-/* Lava Exoplanet */
+/* Lava Exoplanet - ON SCREEN (Lower Left Sky) */
 .spaceship-atmosphere .celestial-lava-planet {
-  top: 32%;
-  left: -350px;
-  width: 285px;
-  height: 285px;
+  position: absolute;
+  top: 52%;
+  left: 3%;
+  width: 300px;
+  height: 300px;
+  opacity: 0.95 !important;
   background:
     radial-gradient(circle at 32% 32%, #f97316 0%, #dc2626 40%, #7f1d1d 75%, #0f172a 100%);
   box-shadow:
     inset -35px -35px 60px rgba(15, 23, 42, 0.95),
-    0 0 75px rgba(249, 115, 22, 0.35);
-  animation: celestial-lava-transit 280s linear 95s infinite;
+    0 0 85px rgba(249, 115, 22, 0.55);
+  animation: celestial-orbit-pulse-3 44s ease-in-out infinite alternate;
 }
 
-/* Nebula Purple Giant */
+/* Nebula Purple Giant - ON SCREEN (Bottom Right Sky) */
 .spaceship-atmosphere .celestial-purple-giant {
-  top: 68%;
-  left: -480px;
-  width: 390px;
-  height: 390px;
+  position: absolute;
+  bottom: 4%;
+  right: 16%;
+  width: 380px;
+  height: 380px;
+  opacity: 0.95 !important;
   background:
     radial-gradient(circle at 35% 35%, #c084fc 0%, #a855f7 35%, #6b21a8 70%, #0f172a 100%);
   box-shadow:
     inset -40px -40px 70px rgba(15, 23, 42, 0.95),
-    0 0 85px rgba(168, 85, 247, 0.35);
-  animation: celestial-purple-transit 360s linear 40s infinite;
+    0 0 95px rgba(168, 85, 247, 0.55);
+  animation: celestial-orbit-pulse-4 48s ease-in-out infinite alternate;
 }
 
-@keyframes celestial-planet-transit {
-  0% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.85);
-    opacity: 0;
-  }
-  2% {
-    opacity: 0.45;
-  }
-  30% {
-    transform: translate3d(calc(30vw + 100px), 60px, 0) rotate(6deg) scale(0.95);
-  }
-  65% {
-    transform: translate3d(calc(65vw + 200px), -25px, 0) rotate(-4deg) scale(1.02);
-  }
-  95% {
-    opacity: 0.45;
-  }
-  100% {
-    transform: translate3d(calc(100vw + 350px), 110px, 0) rotate(8deg) scale(1.08);
-    opacity: 0;
-  }
+@keyframes celestial-orbit-pulse-1 {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(0.98); }
+  100% { transform: translate3d(-30px, 20px, 0) rotate(4deg) scale(1.03); }
 }
 
-@keyframes celestial-moon-transit {
-  0% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.8);
-    opacity: 0;
-  }
-  3% {
-    opacity: 0.5;
-  }
-  40% {
-    transform: translate3d(calc(-40vw - 100px), -85px, 0) rotate(-12deg) scale(0.92);
-  }
-  75% {
-    transform: translate3d(calc(-75vw - 180px), 30px, 0) rotate(5deg) scale(0.88);
-  }
-  92% {
-    opacity: 0.5;
-  }
-  100% {
-    transform: translate3d(calc(-100vw - 260px), -90px, 0) rotate(-15deg) scale(0.95);
-    opacity: 0;
-  }
+@keyframes celestial-orbit-pulse-2 {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(0.95); }
+  100% { transform: translate3d(25px, -15px, 0) rotate(-6deg) scale(1.04); }
 }
 
-@keyframes celestial-lava-transit {
-  0% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.8);
-    opacity: 0;
-  }
-  3% {
-    opacity: 0.45;
-  }
-  35% {
-    transform: translate3d(calc(35vw + 90px), -75px, 0) rotate(-8deg) scale(0.92);
-  }
-  70% {
-    transform: translate3d(calc(70vw + 170px), 40px, 0) rotate(10deg) scale(0.98);
-  }
-  92% {
-    opacity: 0.45;
-  }
-  100% {
-    transform: translate3d(calc(100vw + 280px), -60px, 0) rotate(-5deg) scale(1.02);
-    opacity: 0;
-  }
+@keyframes celestial-orbit-pulse-3 {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(0.97); }
+  100% { transform: translate3d(35px, -25px, 0) rotate(8deg) scale(1.02); }
 }
 
-@keyframes celestial-purple-transit {
-  0% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.88);
-    opacity: 0;
-  }
-  3% {
-    opacity: 0.4;
-  }
-  45% {
-    transform: translate3d(calc(45vw + 120px), -110px, 0) rotate(14deg) scale(0.98);
-  }
-  80% {
-    transform: translate3d(calc(80vw + 220px), 35px, 0) rotate(-6deg) scale(1.05);
-  }
-  92% {
-    opacity: 0.4;
-  }
-  100% {
-    transform: translate3d(calc(100vw + 330px), -90px, 0) rotate(18deg) scale(1.1);
-    opacity: 0;
-  }
+@keyframes celestial-orbit-pulse-4 {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(0.96); }
+  100% { transform: translate3d(-25px, -20px, 0) rotate(-5deg) scale(1.04); }
 }
 
 /* Iconic Sci-Fi Ships (Star Trek & Star Wars silhouettes with glowing nacelles/engines) */
@@ -1901,7 +1851,7 @@
   left: 0;
   width: 230px;
   height: 105px;
-  animation: straight-flight-left-to-right-3 40s linear 14s infinite;
+  animation: straight-flight-left-to-right-3 30s linear 2s infinite;
 }
 
 /* Ship 6: Apex Stealth Corvette */
@@ -1910,7 +1860,7 @@
   left: 0;
   width: 210px;
   height: 98px;
-  animation: straight-flight-right-to-left-3 34s linear 18s infinite;
+  animation: straight-flight-right-to-left-3 26s linear 4s infinite;
 }
 
 /* Ship 7: Titan Carrier */
@@ -1919,7 +1869,7 @@
   left: 0;
   width: 260px;
   height: 120px;
-  animation: straight-flight-left-to-right-4 46s linear 22s infinite;
+  animation: straight-flight-left-to-right-4 36s linear 6s infinite;
 }
 
 /* ── STRAIGHT HORIZONTAL FLIGHT PATHS (Off-Screen Left to Off-Screen Right & Vice-Versa) ── */
