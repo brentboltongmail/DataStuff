@@ -2279,219 +2279,186 @@ export default function App() {
           </div>
           <span className="shooting-star shooting-star-1" />
           <span className="shooting-star shooting-star-2" />
-          {/* Ship 1: Astral Dreadnought (5x Expanded Structural Parts) */}
+          {/* Ship 1: Astral Dreadnought Flagship */}
           <div className="distant-ship distant-ship-1 ship-astral-dreadnought">
-            <span className="ship-ring-module-1" />
-            <span className="ship-ring-module-2" />
-            <span className="ship-ring-inner-1" />
-            <span className="ship-ring-inner-2" />
-            <span className="ship-ring-spokes" />
-            <span className="ship-spine-fore" />
-            <span className="ship-spine-aft" />
-            <span className="ship-hull-bow" />
-            <span className="ship-hull-mid" />
-            <span className="ship-hull-stern" />
-            <span className="ship-armor-plating-top-1" />
-            <span className="ship-armor-plating-top-2" />
-            <span className="ship-armor-plating-bottom-1" />
-            <span className="ship-armor-plating-bottom-2" />
-            <span className="ship-citadel-base" />
-            <span className="ship-citadel-tower" />
-            <span className="ship-sensor-spire" />
-            <span className="ship-radar-dish" />
-            <span className="ship-hangar-left" />
-            <span className="ship-hangar-right" />
-            <span className="ship-hangar-field-left" />
-            <span className="ship-hangar-field-right" />
-            <span className="ship-wing-upper-left" />
-            <span className="ship-wing-upper-right" />
-            <span className="ship-wing-lower-left" />
-            <span className="ship-wing-lower-right" />
-            <span className="ship-fin-top" />
-            <span className="ship-fin-bottom" />
-            <span className="ship-turret-1" />
-            <span className="ship-turret-2" />
-            <span className="ship-turret-3" />
-            <span className="ship-turret-4" />
-            <span className="ship-engine-1" />
-            <span className="ship-engine-2" />
-            <span className="ship-engine-3" />
-            <span className="ship-engine-4" />
-            <span className="ship-exhaust-trail-1" />
-            <span className="ship-exhaust-trail-2" />
+            <svg className="starship-svg" viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="dreadnought-hull" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#0f172a" />
+                  <stop offset="35%" stopColor="#334155" />
+                  <stop offset="70%" stopColor="#64748b" />
+                  <stop offset="100%" stopColor="#94a3b8" />
+                </linearGradient>
+                <filter id="dreadnought-glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="4" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+              <polygon points="0,28 40,32 0,36" fill="#38bdf8" opacity="0.85" filter="url(#dreadnought-glow)" />
+              <polygon points="0,44 40,48 0,52" fill="#38bdf8" opacity="0.85" filter="url(#dreadnought-glow)" />
+              <polygon points="35,40 60,20 180,24 230,40 180,56 60,60" fill="url(#dreadnought-hull)" stroke="#cbd5e1" strokeWidth="1.5" />
+              <ellipse cx="90" cy="40" rx="14" ry="26" fill="none" stroke="#38bdf8" strokeWidth="4" filter="url(#dreadnought-glow)" />
+              <ellipse cx="90" cy="40" rx="8" ry="18" fill="none" stroke="#f1f5f9" strokeWidth="2" />
+              <polygon points="120,40 140,28 175,32 165,40" fill="#f8fafc" stroke="#38bdf8" strokeWidth="1" />
+              <polygon points="120,40 140,52 175,48 165,40" fill="#cbd5e1" stroke="#38bdf8" strokeWidth="1" />
+              <rect x="100" y="34" width="24" height="12" rx="2" fill="#0284c7" opacity="0.8" />
+              <polygon points="140,16 170,8 180,22" fill="#475569" stroke="#67e8f9" strokeWidth="1" />
+              <polygon points="140,64 170,72 180,58" fill="#475569" stroke="#67e8f9" strokeWidth="1" />
+              <circle cx="228" cy="40" r="3" fill="#ffffff" filter="url(#dreadnought-glow)" />
+            </svg>
           </div>
 
-          {/* Ship 2: Quantum Interceptor (5x Expanded Structural Parts) */}
+          {/* Ship 2: Quantum Interceptor Starfighter */}
           <div className="distant-ship distant-ship-2 ship-quantum-interceptor">
-            <span className="qi-prow-nose" />
-            <span className="qi-prow-sensor" />
-            <span className="qi-delta-hull-left" />
-            <span className="qi-delta-hull-right" />
-            <span className="qi-armor-panel-left-1" />
-            <span className="qi-armor-panel-left-2" />
-            <span className="qi-armor-panel-right-1" />
-            <span className="qi-armor-panel-right-2" />
-            <span className="qi-mid-fuselage" />
-            <span className="qi-spine-ridge" />
-            <span className="qi-canopy-glass" />
-            <span className="qi-canopy-frame" />
-            <span className="qi-wing-port-upper" />
-            <span className="qi-wing-port-lower" />
-            <span className="qi-wing-starboard-upper" />
-            <span className="qi-wing-starboard-lower" />
-            <span className="qi-winglet-tip-1" />
-            <span className="qi-winglet-tip-2" />
-            <span className="qi-prong-left" />
-            <span className="qi-prong-right" />
-            <span className="qi-arc-emitter-left" />
-            <span className="qi-arc-emitter-right" />
-            <span className="qi-reactor-core" />
-            <span className="qi-reactor-ring-1" />
-            <span className="qi-reactor-ring-2" />
-            <span className="qi-containment-struts" />
-            <span className="qi-thruster-left" />
-            <span className="qi-thruster-right" />
-            <span className="qi-afterburner-ring-left" />
-            <span className="qi-afterburner-ring-right" />
-            <span className="qi-engine-trail-1" />
-            <span className="qi-engine-trail-2" />
+            <svg className="starship-svg" viewBox="0 0 220 80" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="interceptor-hull" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#1e1b4b" />
+                  <stop offset="50%" stopColor="#4338ca" />
+                  <stop offset="100%" stopColor="#818cf8" />
+                </linearGradient>
+                <filter id="purple-glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+              <polygon points="0,32 45,36 0,40" fill="#c084fc" opacity="0.9" filter="url(#purple-glow)" />
+              <polygon points="0,40 45,44 0,48" fill="#f472b6" opacity="0.9" filter="url(#purple-glow)" />
+              <polygon points="40,40 100,10 210,40 100,70" fill="url(#interceptor-hull)" stroke="#c7d2fe" strokeWidth="1.5" />
+              <line x1="210" y1="36" x2="220" y2="34" stroke="#a5b4fc" strokeWidth="3" />
+              <line x1="210" y1="44" x2="220" y2="46" stroke="#a5b4fc" strokeWidth="3" />
+              <polygon points="120,40 160,32 185,40 160,48" fill="#e0e7ff" stroke="#38bdf8" strokeWidth="1.5" />
+              <polygon points="90,12 140,2 150,18" fill="#312e81" stroke="#818cf8" strokeWidth="1" />
+              <polygon points="90,68 140,78 150,62" fill="#312e81" stroke="#818cf8" strokeWidth="1" />
+            </svg>
           </div>
 
-          {/* Ship 3: Solar Corvette (5x Expanded Structural Parts) */}
+          {/* Ship 3: Solar Corvette */}
           <div className="distant-ship distant-ship-3 ship-solar-corvette">
-            <span className="sc-catamaran-port-bow" />
-            <span className="sc-catamaran-port-stern" />
-            <span className="sc-catamaran-starboard-bow" />
-            <span className="sc-catamaran-starboard-stern" />
-            <span className="sc-truss-forward" />
-            <span className="sc-truss-mid" />
-            <span className="sc-truss-aft" />
-            <span className="sc-hull-rib-1" />
-            <span className="sc-hull-rib-2" />
-            <span className="sc-hull-rib-3" />
-            <span className="sc-center-deck" />
-            <span className="sc-bridge-dome" />
-            <span className="sc-bridge-viewports" />
-            <span className="sc-nav-beacon-1" />
-            <span className="sc-nav-beacon-2" />
-            <span className="sc-solar-sail-top-left" />
-            <span className="sc-solar-sail-top-right" />
-            <span className="sc-solar-sail-bottom-left" />
-            <span className="sc-solar-sail-bottom-right" />
-            <span className="sc-sail-harness-1" />
-            <span className="sc-sail-harness-2" />
-            <span className="sc-sail-truss-left" />
-            <span className="sc-sail-truss-right" />
-            <span className="sc-drive-port" />
-            <span className="sc-drive-center" />
-            <span className="sc-drive-starboard" />
-            <span className="sc-engine-glow-1" />
-            <span className="sc-engine-glow-2" />
-            <span className="sc-engine-glow-3" />
-            <span className="sc-exhaust-stream" />
+            <svg className="starship-svg" viewBox="0 0 210 80" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="corvette-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#78350f" />
+                  <stop offset="50%" stopColor="#d97706" />
+                  <stop offset="100%" stopColor="#fef08a" />
+                </linearGradient>
+                <filter id="gold-glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+              <polygon points="0,35 50,40 0,45" fill="#f59e0b" opacity="0.9" filter="url(#gold-glow)" />
+              <rect x="40" y="14" width="140" height="14" rx="7" fill="#451a03" stroke="#fbbf24" strokeWidth="1.5" />
+              <rect x="40" y="52" width="140" height="14" rx="7" fill="#451a03" stroke="#fbbf24" strokeWidth="1.5" />
+              <rect x="90" y="24" width="20" height="32" fill="#92400e" stroke="#d97706" strokeWidth="1" />
+              <rect x="140" y="24" width="20" height="32" fill="#92400e" stroke="#d97706" strokeWidth="1" />
+              <ellipse cx="120" cy="40" rx="35" ry="18" fill="url(#corvette-gold)" stroke="#ffffff" strokeWidth="1.5" />
+              <ellipse cx="135" cy="40" rx="15" ry="8" fill="#ffffff" filter="url(#gold-glow)" />
+              <polygon points="90,14 110,0 130,14" fill="#fef08a" opacity="0.85" />
+              <polygon points="90,66 110,80 130,66" fill="#fef08a" opacity="0.85" />
+            </svg>
           </div>
 
-          {/* Ship 4: Void Harvester (5x Expanded Structural Parts) */}
+          {/* Ship 4: Void Harvester Mining Dreadnought */}
           <div className="distant-ship distant-ship-4 ship-void-harvester">
-            <span className="vh-hex-core" />
-            <span className="vh-core-lattice-1" />
-            <span className="vh-core-lattice-2" />
-            <span className="vh-upper-deck" />
-            <span className="vh-mandible-upper-left" />
-            <span className="vh-mandible-upper-right" />
-            <span className="vh-mandible-lower-left" />
-            <span className="vh-mandible-lower-right" />
-            <span className="vh-plasma-cutter-1" />
-            <span className="vh-plasma-cutter-2" />
-            <span className="vh-collector-beam" />
-            <span className="vh-radiator-1" />
-            <span className="vh-radiator-2" />
-            <span className="vh-radiator-3" />
-            <span className="vh-radiator-4" />
-            <span className="vh-cargo-1" />
-            <span className="vh-cargo-2" />
-            <span className="vh-cargo-3" />
-            <span className="vh-cargo-4" />
-            <span className="vh-hyperdrive-ring" />
-            <span className="vh-engine-top" />
-            <span className="vh-engine-bottom" />
-            <span className="vh-exhaust-stream-1" />
-            <span className="vh-exhaust-stream-2" />
+            <svg className="starship-svg" viewBox="0 0 220 80" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="harvester-hull" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#1c1917" />
+                  <stop offset="50%" stopColor="#44403c" />
+                  <stop offset="100%" stopColor="#78716c" />
+                </linearGradient>
+                <filter id="orange-glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+              <polygon points="0,32 40,36 0,40" fill="#f97316" filter="url(#orange-glow)" />
+              <polygon points="0,40 40,44 0,48" fill="#f97316" filter="url(#orange-glow)" />
+              <polygon points="70,40 90,20 160,20 180,40 160,60 90,60" fill="url(#harvester-hull)" stroke="#ea580c" strokeWidth="1.5" />
+              <polygon points="160,24 210,12 185,34" fill="#292524" stroke="#f97316" strokeWidth="1.5" />
+              <polygon points="160,56 210,68 185,46" fill="#292524" stroke="#f97316" strokeWidth="1.5" />
+              <line x1="205" y1="14" x2="205" y2="66" stroke="#fde047" strokeWidth="2.5" filter="url(#orange-glow)" />
+              <rect x="100" y="26" width="22" height="12" rx="3" fill="#ea580c" />
+              <rect x="130" y="26" width="22" height="12" rx="3" fill="#ea580c" />
+              <rect x="100" y="42" width="22" height="12" rx="3" fill="#ea580c" />
+              <rect x="130" y="42" width="22" height="12" rx="3" fill="#ea580c" />
+            </svg>
           </div>
 
-          {/* Ship 5: Chrono Battlecruiser (5x Expanded Structural Parts) */}
+          {/* Ship 5: Chrono Battlecruiser */}
           <div className="distant-ship distant-ship-5 ship-chrono-battlecruiser">
-            <span className="cb-main-spine-1" />
-            <span className="cb-main-spine-2" />
-            <span className="cb-prow-nose" />
-            <span className="cb-prow-ram" />
-            <span className="cb-prow-armor-left" />
-            <span className="cb-prow-armor-right" />
-            <span className="cb-sensor-dish" />
-            <span className="cb-sensor-spindle" />
-            <span className="cb-tachyon-emitter" />
-            <span className="cb-outrigger-left" />
-            <span className="cb-outrigger-right" />
-            <span className="cb-pod-left" />
-            <span className="cb-pod-right" />
-            <span className="cb-command-citadel" />
-            <span className="cb-citadel-viewports-1" />
-            <span className="cb-citadel-viewports-2" />
-            <span className="cb-ventral-fin-1" />
-            <span className="cb-ventral-fin-2" />
-            <span className="cb-thruster-1" />
-            <span className="cb-thruster-2" />
-            <span className="cb-thruster-3" />
-            <span className="cb-thruster-4" />
-            <span className="cb-chrono-conduit" />
-            <span className="cb-exhaust-trail" />
+            <svg className="starship-svg" viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="battlecruiser-blue" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#0284c7" />
+                  <stop offset="50%" stopColor="#0369a1" />
+                  <stop offset="100%" stopColor="#e0f2fe" />
+                </linearGradient>
+                <filter id="cyan-glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="4" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+              <polygon points="0,30 45,35 0,40" fill="#38bdf8" filter="url(#cyan-glow)" />
+              <polygon points="0,40 45,45 0,50" fill="#38bdf8" filter="url(#cyan-glow)" />
+              <polygon points="40,40 80,18 200,22 235,40 200,58 80,62" fill="url(#battlecruiser-blue)" stroke="#bae6fd" strokeWidth="1.5" />
+              <polygon points="230,40 240,40 235,37 235,43" fill="#ffffff" filter="url(#cyan-glow)" />
+              <ellipse cx="140" cy="22" rx="12" ry="6" fill="#0f172a" stroke="#38bdf8" strokeWidth="1.5" />
+              <line x1="140" y1="22" x2="140" y2="10" stroke="#38bdf8" strokeWidth="2" />
+              <rect x="150" y="34" width="30" height="12" rx="2" fill="#ffffff" filter="url(#cyan-glow)" />
+            </svg>
           </div>
 
-          {/* Ship 6: Apex Stealth Corvette (5x Expanded Structural Parts) */}
+          {/* Ship 6: Apex Stealth Corvette */}
           <div className="distant-ship distant-ship-6 ship-apex-corvette">
-            <span className="ac-diamond-hull" />
-            <span className="ac-chine-left" />
-            <span className="ac-chine-right" />
-            <span className="ac-dorsal-ridge" />
-            <span className="ac-wing-left" />
-            <span className="ac-wing-right" />
-            <span className="ac-wingtip-left" />
-            <span className="ac-wingtip-right" />
-            <span className="ac-edge-glow-left" />
-            <span className="ac-edge-glow-right" />
-            <span className="ac-heat-sink-1" />
-            <span className="ac-heat-sink-2" />
-            <span className="ac-pulse-core" />
-            <span className="ac-exhaust-left" />
-            <span className="ac-exhaust-right" />
-            <span className="ac-ion-trail" />
+            <svg className="starship-svg" viewBox="0 0 210 80" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="stealth-dark" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#09090b" />
+                  <stop offset="50%" stopColor="#27272a" />
+                  <stop offset="100%" stopColor="#52525b" />
+                </linearGradient>
+                <filter id="violet-glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+              <polygon points="0,34 40,38 0,42" fill="#a855f7" filter="url(#violet-glow)" opacity="0.95" />
+              <polygon points="35,40 90,8 200,40 90,72" fill="url(#stealth-dark)" stroke="#e4e4e7" strokeWidth="1.5" />
+              <line x1="90" y1="8" x2="200" y2="40" stroke="#c084fc" strokeWidth="1.5" filter="url(#violet-glow)" />
+              <line x1="90" y1="72" x2="200" y2="40" stroke="#c084fc" strokeWidth="1.5" filter="url(#violet-glow)" />
+              <rect x="100" y="30" width="4" height="20" fill="#a855f7" />
+              <rect x="110" y="30" width="4" height="20" fill="#a855f7" />
+              <rect x="120" y="30" width="4" height="20" fill="#a855f7" />
+            </svg>
           </div>
 
-          {/* Ship 7: Titan Carrier (5x Expanded Structural Parts) */}
+          {/* Ship 7: Titan Carrier */}
           <div className="distant-ship distant-ship-7 ship-titan-carrier">
-            <span className="tc-upper-flight-deck" />
-            <span className="tc-lower-flight-deck" />
-            <span className="tc-superstructure-base" />
-            <span className="tc-superstructure-mid" />
-            <span className="tc-runway-lights-left" />
-            <span className="tc-runway-lights-right" />
-            <span className="tc-hangar-left" />
-            <span className="tc-hangar-right" />
-            <span className="tc-hangar-gantry" />
-            <span className="tc-crane-arm" />
-            <span className="tc-island-bridge" />
-            <span className="tc-radar-spire" />
-            <span className="tc-sensor-dome" />
-            <span className="tc-armor-plate-1" />
-            <span className="tc-armor-plate-2" />
-            <span className="tc-engine-cowling" />
-            <span className="tc-engine-1" />
-            <span className="tc-engine-2" />
-            <span className="tc-engine-3" />
-            <span className="tc-engine-4" />
-            <span className="tc-engine-5" />
-            <span className="tc-engine-6" />
-            <span className="tc-heavy-exhaust-trail" />
+            <svg className="starship-svg" viewBox="0 0 250 90" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="carrier-steel" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#0f172a" />
+                  <stop offset="50%" stopColor="#334155" />
+                  <stop offset="100%" stopColor="#64748b" />
+                </linearGradient>
+                <filter id="green-glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+              <polygon points="0,32 45,37 0,42" fill="#34d399" filter="url(#green-glow)" opacity="0.95" />
+              <polygon points="0,48 45,53 0,58" fill="#34d399" filter="url(#green-glow)" opacity="0.95" />
+              <polygon points="40,45 70,20 235,25 245,45 235,65 70,70" fill="url(#carrier-steel)" stroke="#94a3b8" strokeWidth="1.5" />
+              <line x1="80" y1="32" x2="220" y2="35" stroke="#34d399" strokeWidth="2" strokeDasharray="8 6" filter="url(#green-glow)" />
+              <line x1="80" y1="58" x2="220" y2="55" stroke="#34d399" strokeWidth="2" strokeDasharray="8 6" filter="url(#green-glow)" />
+              <rect x="110" y="40" width="30" height="10" fill="#020617" stroke="#34d399" strokeWidth="1" />
+              <rect x="160" y="40" width="30" height="10" fill="#020617" stroke="#34d399" strokeWidth="1" />
+              <rect x="130" y="12" width="40" height="15" rx="3" fill="#f8fafc" stroke="#34d399" strokeWidth="1.5" />
+              <line x1="150" y1="12" x2="150" y2="4" stroke="#34d399" strokeWidth="2" />
+              <circle cx="150" cy="4" r="3" fill="#34d399" filter="url(#green-glow)" />
+            </svg>
           </div>
         </div>
       ) : null}

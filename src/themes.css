@@ -1348,6 +1348,13 @@
   filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 16px rgba(56, 189, 248, 0.6));
 }
 
+.spaceship-atmosphere .starship-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  display: block;
+}
+
 /* Engine Pulse & LED Strobe Animations */
 @keyframes engine-pulse-glow {
   0%, 100% { opacity: 0.85; filter: drop-shadow(-8px 0 12px rgba(56, 189, 248, 0.7)); }
