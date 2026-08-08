@@ -125,7 +125,7 @@ input:focus {
 
 .app {
   display: grid;
-  grid-template-rows: 52px auto 1fr 28px;
+  grid-template-rows: 28px auto 1fr 24px;
   height: 100%;
   position: relative;
   z-index: 1;
@@ -135,7 +135,10 @@ input:focus {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 0 16px 0 100px;
+  padding: 0 16px 0 85px;
+  height: 28px;
+  min-height: 28px;
+  max-height: 28px;
   border-bottom: 1px solid var(--titlebar-border);
   background: var(--titlebar-bg);
   box-shadow: var(--titlebar-shadow);
@@ -602,6 +605,9 @@ body.is-row-resizing .monaco-editor {
 .sql-tabs {
   display: flex;
   align-items: stretch;
+  height: 26px;
+  min-height: 26px;
+  max-height: 26px;
   border-bottom: 1px solid var(--border);
   background: var(--bg-panel);
   min-width: 0;

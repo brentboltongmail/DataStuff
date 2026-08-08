@@ -95,7 +95,7 @@ const DEFAULT_SIDEBAR_WIDTH = 240;
 const MIN_SIDEBAR_WIDTH = 120;
 const MAX_SIDEBAR_WIDTH = 600;
 /** Fixed workspace chrome above/below the editor↔results split (tabs + splitter + toolbar). */
-const WORKSPACE_FIXED_CHROME_PX = 34 + 4 + 30;
+const WORKSPACE_FIXED_CHROME_PX = 26 + 4 + 30;
 /** How often to probe a live Oracle session while connected. */
 const CONNECTION_HEARTBEAT_MS = 30_000;
 
@@ -3083,7 +3083,6 @@ export default function App() {
 
       <section className="connection-bar">
         <div className="field saved-profiles">
-          <label htmlFor="saved-connections">Connection</label>
           <div className="saved-profile-select-row">
             <select
               id="saved-connections"
@@ -3176,7 +3175,7 @@ export default function App() {
           className="workspace"
           ref={workspaceRef}
           style={{
-            gridTemplateRows: `34px minmax(120px, ${editorSplit}fr) 4px 30px minmax(120px, ${1 - editorSplit}fr)`,
+            gridTemplateRows: `26px minmax(120px, ${editorSplit}fr) 4px 30px minmax(120px, ${1 - editorSplit}fr)`,
           }}
         >
           <SqlTabs
