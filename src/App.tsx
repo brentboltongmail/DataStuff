@@ -753,6 +753,110 @@ const DeepSeaAtmosphere: React.FC = () => {
   );
 };
 
+const AetheriumAtmosphere: React.FC = () => {
+  return (
+    <div className="theme-atmosphere aetherium-atmosphere" aria-hidden="true">
+      <div className="aetherium-aurora-ribbon ribbon-1" />
+      <div className="aetherium-aurora-ribbon ribbon-2" />
+      <div className="aetherium-veil" />
+
+      <div className="aetherium-island island-left">
+        <svg className="island-svg" viewBox="0 0 300 200">
+          <path
+            d="M 50 100 Q 150 40 250 100 Q 200 160 150 190 Q 100 160 50 100 Z"
+            fill="url(#islandGrad)"
+            stroke="#c084fc"
+            strokeWidth="2"
+          />
+          <polygon points="120,60 135,15 150,60" fill="#e9d5ff" />
+          <polygon points="150,70 165,25 180,70" fill="#f472b6" />
+          <polygon points="100,75 110,40 120,75" fill="#38bdf8" />
+          <defs>
+            <linearGradient id="islandGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#3b0764" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#1e1b4b" stopOpacity="0.9" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div className="aether-waterfall" />
+      </div>
+
+      <div className="aetherium-island island-right">
+        <svg className="island-svg" viewBox="0 0 250 160">
+          <path
+            d="M 40 80 Q 125 30 210 80 Q 160 130 125 150 Q 90 130 40 80 Z"
+            fill="url(#islandGrad)"
+            stroke="#f472b6"
+            strokeWidth="2"
+          />
+          <polygon points="110,50 125,10 140,50" fill="#fef08a" />
+          <polygon points="140,55 150,20 160,55" fill="#c084fc" />
+        </svg>
+        <div className="aether-waterfall" />
+      </div>
+
+      <div className="aether-crystal crystal-1" />
+      <div className="aether-crystal crystal-2" />
+      <div className="aether-crystal crystal-3" />
+
+      <div className="aether-mote mote-1" />
+      <div className="aether-mote mote-2" />
+      <div className="aether-mote mote-3" />
+      <div className="aether-mote mote-4" />
+      <div className="aether-mote mote-5" />
+      <div className="aether-mote mote-6" />
+    </div>
+  );
+};
+
+const BrassAtmosphere: React.FC = () => {
+  return (
+    <div className="theme-atmosphere brass-atmosphere" aria-hidden="true">
+      <div className="steam-cloud cloud-1" />
+      <div className="steam-cloud cloud-2" />
+      <div className="steam-cloud cloud-3" />
+
+      <div className="brass-gear gear-large gear-1">
+        <svg className="gear-svg" viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="70" fill="none" stroke="#d97706" strokeWidth="20" strokeDasharray="12 6" />
+          <circle cx="100" cy="100" r="45" fill="#78350f" stroke="#b45309" strokeWidth="6" />
+          <circle cx="100" cy="100" r="18" fill="#fef08a" />
+          <line x1="100" y1="20" x2="100" y2="180" stroke="#b45309" strokeWidth="8" />
+          <line x1="20" y1="100" x2="180" y2="100" stroke="#b45309" strokeWidth="8" />
+        </svg>
+      </div>
+
+      <div className="brass-gear gear-medium gear-2">
+        <svg className="gear-svg" viewBox="0 0 160 160">
+          <circle cx="80" cy="80" r="55" fill="none" stroke="#f59e0b" strokeWidth="16" strokeDasharray="10 5" />
+          <circle cx="80" cy="80" r="35" fill="#92400e" stroke="#d97706" strokeWidth="5" />
+          <circle cx="80" cy="80" r="14" fill="#fef08a" />
+          <line x1="80" y1="15" x2="80" y2="145" stroke="#d97706" strokeWidth="6" />
+          <line x1="15" y1="80" x2="145" y2="80" stroke="#d97706" strokeWidth="6" />
+        </svg>
+      </div>
+
+      <div className="brass-gear gear-small gear-3">
+        <svg className="gear-svg" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="40" fill="none" stroke="#d97706" strokeWidth="12" strokeDasharray="8 4" />
+          <circle cx="60" cy="60" r="24" fill="#78350f" stroke="#b45309" strokeWidth="4" />
+          <circle cx="60" cy="60" r="10" fill="#fef08a" />
+        </svg>
+      </div>
+
+      <div className="brass-gauge gauge-1">
+        <div className="gauge-dial">
+          <div className="gauge-needle" />
+          <span className="gauge-cap" />
+        </div>
+      </div>
+
+      <div className="steam-vent vent-1" />
+      <div className="steam-vent vent-2" />
+    </div>
+  );
+};
+
 const CIRCUIT_PRESETS = [
   // Preset 1: Silverstone Sweeping Loop
   "M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z",
@@ -3366,15 +3470,8 @@ export default function App() {
 
   return (
     <div className="app">
-      {themeId === "aetherium" ? (
-        <div className="theme-atmosphere aetherium-atmosphere" aria-hidden="true">
-          <span className="aetherium-prism" />
-          <span className="aetherium-aurora" />
-          <span className="aetherium-caustic" />
-          <span className="aetherium-motes" />
-          <span className="aetherium-veil" />
-        </div>
-      ) : null}
+      {themeId === "aetherium" ? <AetheriumAtmosphere /> : null}
+      {themeId === "brass" ? <BrassAtmosphere /> : null}
       {themeId === "spaceship" ? (
         <div className="theme-atmosphere spaceship-atmosphere" aria-hidden="true">
           {/* Large Deep-Space 3D Spiral Galaxy (300+ Individual Star Particles) */}

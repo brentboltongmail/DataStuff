@@ -2761,137 +2761,264 @@
   overflow: hidden;
 }
 
-.aetherium-atmosphere > * {
+.aetherium-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 20%, #2e1065 0%, #1e1b4b 65%, #0f0a28 100%);
+}
+
+.aetherium-atmosphere .aetherium-aurora-ribbon {
+  position: absolute;
+  top: -120px;
+  width: 140vw;
+  height: 60vh;
+  background: linear-gradient(180deg, rgba(244, 114, 182, 0.25) 0%, rgba(192, 132, 252, 0.15) 50%, transparent 100%);
+  filter: blur(35px);
+  will-change: transform;
+}
+
+.aetherium-atmosphere .ribbon-1 {
+  left: -20vw;
+  transform: rotate(-12deg);
+  animation: aurora-wave 14s ease-in-out infinite alternate;
+}
+
+.aetherium-atmosphere .ribbon-2 {
+  right: -20vw;
+  transform: rotate(15deg);
+  animation: aurora-wave 18s ease-in-out 3s infinite alternate;
+}
+
+@keyframes aurora-wave {
+  0% { transform: scaleY(0.9) translate3d(0, 0, 0); opacity: 0.5; }
+  100% { transform: scaleY(1.2) translate3d(30px, 40px, 0); opacity: 0.85; }
+}
+
+.aetherium-atmosphere .aetherium-island {
+  position: absolute;
+  will-change: transform;
+  filter: drop-shadow(0 0 25px #c084fc) drop-shadow(0 0 50px #f472b6);
+}
+
+.aetherium-atmosphere .island-left {
+  top: 15vh;
+  left: 6vw;
+  width: 280px;
+  height: 180px;
+  animation: island-float-left 16s ease-in-out infinite alternate;
+}
+
+.aetherium-atmosphere .island-right {
+  bottom: 22vh;
+  right: 8vw;
+  width: 240px;
+  height: 150px;
+  animation: island-float-right 20s ease-in-out 2s infinite alternate;
+}
+
+@keyframes island-float-left {
+  0% { transform: translate3d(0, 0, 0) rotate(-2deg); }
+  100% { transform: translate3d(25px, -35px, 0) rotate(2deg); }
+}
+
+@keyframes island-float-right {
+  0% { transform: translate3d(0, 0, 0) rotate(3deg); }
+  100% { transform: translate3d(-30px, 40px, 0) rotate(-2deg); }
+}
+
+.aetherium-atmosphere .aether-waterfall {
+  position: absolute;
+  bottom: -20px;
+  left: 45%;
+  width: 20px;
+  height: 120px;
+  background: linear-gradient(180deg, #fef08a 0%, #c084fc 60%, transparent 100%);
+  filter: blur(4px);
+  animation: waterfall-flow 2s linear infinite;
+}
+
+@keyframes waterfall-flow {
+  0% { opacity: 0.6; transform: scaleY(0.8); }
+  50% { opacity: 0.95; }
+  100% { opacity: 0.6; transform: scaleY(1.2); }
+}
+
+.aetherium-atmosphere .aether-crystal {
+  position: absolute;
+  width: 40px;
+  height: 65px;
+  background: linear-gradient(135deg, #fef08a, #f472b6, #c084fc);
+  clip-path: polygon(50% 0%, 90% 30%, 75% 100%, 25% 100%, 10% 30%);
+  box-shadow: 0 0 25px #f472b6;
+  filter: drop-shadow(0 0 15px #c084fc);
+  will-change: transform;
+}
+
+.aetherium-atmosphere .crystal-1 { left: 22vw; bottom: 25vh; animation: crystal-orbit 12s ease-in-out infinite alternate; }
+.aetherium-atmosphere .crystal-2 { right: 28vw; top: 18vh; animation: crystal-orbit 15s ease-in-out 1.5s infinite alternate; }
+.aetherium-atmosphere .crystal-3 { left: 52vw; top: 12vh; animation: crystal-orbit 14s ease-in-out 3s infinite alternate; }
+
+@keyframes crystal-orbit {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(0.9); }
+  100% { transform: translate3d(30px, -45px, 0) rotate(35deg) scale(1.15); }
+}
+
+.aetherium-atmosphere .aether-mote {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 12px #f472b6, 0 0 24px #c084fc;
+  will-change: transform, opacity;
+}
+
+.aetherium-atmosphere .mote-1 { left: 15vw; bottom: -10px; animation: aether-mote-rise 8s linear infinite; }
+.aetherium-atmosphere .mote-2 { left: 35vw; bottom: -10px; animation: aether-mote-rise 12s linear 2s infinite; }
+.aetherium-atmosphere .mote-3 { left: 55vw; bottom: -10px; animation: aether-mote-rise 9s linear 4s infinite; }
+.aetherium-atmosphere .mote-4 { left: 75vw; bottom: -10px; animation: aether-mote-rise 13s linear 1s infinite; }
+.aetherium-atmosphere .mote-5 { left: 88vw; bottom: -10px; animation: aether-mote-rise 10s linear 3s infinite; }
+.aetherium-atmosphere .mote-6 { left: 45vw; bottom: -10px; animation: aether-mote-rise 11s linear 5s infinite; }
+
+@keyframes aether-mote-rise {
+  0% { transform: translate3d(0, 0, 0) scale(0.6); opacity: 0; }
+  15% { opacity: 0.9; }
+  85% { opacity: 0.85; }
+  100% { transform: translate3d(40px, -105vh, 0) scale(1.3); opacity: 0; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Brass & Steam Steampunk Atmosphere
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.brass-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 50%, #3d2419 0%, #1c0d07 70%, #0d0603 100%);
+}
+
+.brass-atmosphere .steam-cloud {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(254, 240, 138, 0.25) 0%, rgba(217, 119, 6, 0.12) 50%, transparent 75%);
+  filter: blur(35px);
+  will-change: transform, opacity;
+}
+
+.brass-atmosphere .cloud-1 { width: 350px; height: 350px; left: 8vw; bottom: 10vh; animation: steam-puff 10s ease-in-out infinite alternate; }
+.brass-atmosphere .cloud-2 { width: 400px; height: 400px; right: 10vw; top: 15vh; animation: steam-puff 14s ease-in-out 2s infinite alternate; }
+.brass-atmosphere .cloud-3 { width: 300px; height: 300px; left: 45vw; bottom: 25vh; animation: steam-puff 12s ease-in-out 4s infinite alternate; }
+
+@keyframes steam-puff {
+  0% { transform: scale(0.85) translate3d(0, 0, 0); opacity: 0.3; }
+  100% { transform: scale(1.25) translate3d(40px, -30px, 0); opacity: 0.65; }
+}
+
+.brass-atmosphere .brass-gear {
+  position: absolute;
+  will-change: transform;
+  filter: drop-shadow(0 0 15px #d97706) drop-shadow(0 0 30px #78350f);
+}
+
+.brass-atmosphere .gear-1 {
+  bottom: -40px;
+  left: 5vw;
+  width: 260px;
+  height: 260px;
+  animation: gear-spin-cw 35s linear infinite;
+}
+
+.brass-atmosphere .gear-2 {
+  bottom: 80px;
+  left: 210px;
+  width: 190px;
+  height: 190px;
+  animation: gear-spin-ccw 28s linear infinite;
+}
+
+.brass-atmosphere .gear-3 {
+  top: -30px;
+  right: 8vw;
+  width: 170px;
+  height: 170px;
+  animation: gear-spin-cw 24s linear infinite;
+}
+
+@keyframes gear-spin-cw {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes gear-spin-ccw {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+.brass-atmosphere .brass-gauge {
+  position: absolute;
+  right: 12vw;
+  bottom: 18vh;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 8px solid #b45309;
+  background: radial-gradient(circle, #fef08a 0%, #d97706 60%, #78350f 100%);
+  box-shadow: 0 0 25px rgba(217, 119, 6, 0.5), inset 0 0 15px rgba(0, 0, 0, 0.6);
+}
+
+.brass-atmosphere .gauge-dial {
   position: absolute;
   inset: 0;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Slow rotating prismatic wash */
-.aetherium-prism {
-  background: conic-gradient(
-    from 0deg at 50% 40%,
-    rgba(255, 155, 122, 0.14),
-    rgba(94, 234, 212, 0.1),
-    rgba(240, 215, 140, 0.08),
-    rgba(180, 140, 220, 0.07),
-    rgba(255, 155, 122, 0.12),
-    rgba(94, 234, 212, 0.09),
-    rgba(255, 155, 122, 0.14)
-  );
-  mix-blend-mode: screen;
-  opacity: 0.55;
-  animation: aetherium-prism-spin 48s linear infinite;
-  filter: blur(40px);
-  transform-origin: 50% 45%;
+.brass-atmosphere .gauge-needle {
+  position: absolute;
+  width: 4px;
+  height: 50px;
+  background: #dc2626;
+  border-radius: 2px;
+  transform-origin: center 42px;
+  box-shadow: 0 0 8px #dc2626;
+  animation: gauge-needle-bounce 2.5s ease-in-out infinite alternate;
 }
 
-@keyframes aetherium-prism-spin {
-  to {
-    transform: rotate(360deg) scale(1.35);
-  }
+@keyframes gauge-needle-bounce {
+  0% { transform: rotate(-45deg); }
+  50% { transform: rotate(35deg); }
+  75% { transform: rotate(15deg); }
+  100% { transform: rotate(55deg); }
 }
 
-/* Drifting aurora ribbons */
-.aetherium-aurora {
-  background:
-    radial-gradient(ellipse 55% 35% at 15% 20%, rgba(255, 155, 122, 0.22), transparent 70%),
-    radial-gradient(ellipse 45% 40% at 85% 75%, rgba(94, 234, 212, 0.18), transparent 65%),
-    radial-gradient(ellipse 40% 30% at 60% 10%, rgba(240, 215, 140, 0.12), transparent 60%),
-    radial-gradient(ellipse 50% 25% at 30% 90%, rgba(168, 130, 210, 0.1), transparent 70%);
-  animation: aetherium-aurora-drift 22s ease-in-out infinite alternate;
-  filter: blur(8px);
-  mix-blend-mode: screen;
+.brass-atmosphere .gauge-cap {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #78350f;
+  border: 2px solid #fef08a;
 }
 
-@keyframes aetherium-aurora-drift {
-  0% {
-    transform: translate3d(-2%, -1%, 0) scale(1);
-    opacity: 0.75;
-  }
-  50% {
-    transform: translate3d(3%, 2%, 0) scale(1.08);
-    opacity: 1;
-  }
-  100% {
-    transform: translate3d(1%, -3%, 0) scale(1.04);
-    opacity: 0.85;
-  }
+.brass-atmosphere .steam-vent {
+  position: absolute;
+  width: 30px;
+  height: 70px;
+  background: linear-gradient(180deg, #b45309 0%, #451a03 100%);
+  border-radius: 6px 6px 0 0;
+  box-shadow: 0 0 12px #d97706;
 }
 
-/* Water-glass caustic light */
-.aetherium-caustic {
-  background:
-    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.07) 0%, transparent 18%),
-    radial-gradient(circle at 70% 20%, rgba(94, 234, 212, 0.1) 0%, transparent 22%),
-    radial-gradient(circle at 40% 70%, rgba(255, 155, 122, 0.09) 0%, transparent 20%),
-    radial-gradient(circle at 85% 60%, rgba(240, 215, 140, 0.08) 0%, transparent 16%),
-    radial-gradient(circle at 55% 45%, rgba(255, 255, 255, 0.05) 0%, transparent 14%);
-  background-size: 140% 140%;
-  animation: aetherium-caustic-shift 16s ease-in-out infinite alternate;
-  mix-blend-mode: soft-light;
-  opacity: 0.9;
-}
-
-@keyframes aetherium-caustic-shift {
-  0% {
-    background-position: 0% 20%, 80% 10%, 30% 80%, 90% 50%, 50% 40%;
-  }
-  100% {
-    background-position: 30% 60%, 40% 40%, 70% 30%, 60% 80%, 20% 70%;
-  }
-}
-
-/* Floating light motes */
-.aetherium-motes {
-  background-image:
-    radial-gradient(1.5px 1.5px at 8% 12%, rgba(255, 196, 168, 0.9), transparent),
-    radial-gradient(2px 2px at 22% 48%, rgba(94, 234, 212, 0.85), transparent),
-    radial-gradient(1px 1px at 35% 18%, rgba(255, 255, 255, 0.7), transparent),
-    radial-gradient(1.5px 1.5px at 48% 72%, rgba(240, 215, 140, 0.8), transparent),
-    radial-gradient(1px 1px at 61% 28%, rgba(255, 155, 122, 0.75), transparent),
-    radial-gradient(2px 2px at 74% 58%, rgba(255, 255, 255, 0.65), transparent),
-    radial-gradient(1px 1px at 88% 22%, rgba(94, 234, 212, 0.8), transparent),
-    radial-gradient(1.5px 1.5px at 12% 82%, rgba(240, 215, 140, 0.7), transparent),
-    radial-gradient(1px 1px at 55% 92%, rgba(255, 196, 168, 0.75), transparent),
-    radial-gradient(2px 2px at 92% 88%, rgba(168, 130, 210, 0.65), transparent),
-    radial-gradient(1px 1px at 41% 55%, rgba(255, 255, 255, 0.55), transparent),
-    radial-gradient(1.5px 1.5px at 67% 8%, rgba(94, 234, 212, 0.7), transparent);
-  animation: aetherium-motes-rise 28s linear infinite;
-  opacity: 0.85;
-}
-
-@keyframes aetherium-motes-rise {
-  0% {
-    transform: translateY(0);
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 0.95;
-  }
-  100% {
-    transform: translateY(-4%);
-    opacity: 0.55;
-  }
-}
-
-/* Marble / film grain veil */
-.aetherium-veil {
-  opacity: 0.07;
-  background-image: var(--noise);
-  background-size: 220px 220px;
-  mix-blend-mode: overlay;
-  animation: aetherium-grain 0.4s steps(2) infinite;
-}
-
-@keyframes aetherium-grain {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(-1.5%, 1%);
-  }
-}
+.brass-atmosphere .vent-1 { left: 22vw; bottom: 0; }
+.brass-atmosphere .vent-2 { right: 28vw; bottom: 0; }
 
 [data-theme="aetherium"] body::before {
   content: "";
