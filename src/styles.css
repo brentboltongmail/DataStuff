@@ -912,21 +912,29 @@ kbd {
   text-overflow: ellipsis;
 }
 
+.results-grid thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
 .results-grid th {
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 10;
   background: var(--grid-header);
   color: var(--text-muted);
   font-weight: 600;
-  font-size: calc(11px * var(--font-scale));
+  font-size: var(--base-font-size);
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  box-shadow: inset 0 -1px 0 var(--border);
 }
 
 .results-grid th:not(.row-num) {
   position: sticky;
   top: 0;
+  z-index: 10;
   overflow: visible;
 }
 
@@ -1106,8 +1114,10 @@ body.is-col-resizing .monaco-editor {
   height: auto;
 }
 
-/* Tilted column separators & column resizer handles in crammed mode */
 .results-grid.density-crammed thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   overflow: visible;
 }
 
@@ -1117,9 +1127,11 @@ body.is-col-resizing .monaco-editor {
   letter-spacing: 0;
   vertical-align: bottom;
   overflow: visible;
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 10;
   border-right: none;
-  background: transparent;
+  background: var(--grid-header);
 }
 
 .results-grid.density-crammed th:not(.row-num)::after {
