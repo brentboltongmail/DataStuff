@@ -196,6 +196,415 @@ const SolarAtmosphere: React.FC = () => {
   );
 };
 
+const CrystalAtmosphere: React.FC = () => {
+  return (
+    <div className="crystal-atmosphere">
+      <div className="cavern-ambient-glow" />
+      <div className="cavern-ceiling-arch">
+        <div className="crystal-cluster cluster-top-left amethyst">
+          <div className="gem-spike spike-1" />
+          <div className="gem-spike spike-2" />
+          <div className="gem-spike spike-3" />
+        </div>
+        <div className="crystal-cluster cluster-top-right rose-quartz">
+          <div className="gem-spike spike-1" />
+          <div className="gem-spike spike-2" />
+          <div className="gem-spike spike-3" />
+        </div>
+      </div>
+      <div className="cavern-floor-arch">
+        <div className="crystal-cluster cluster-bottom-left emerald">
+          <div className="gem-spike spike-1" />
+          <div className="gem-spike spike-2" />
+          <div className="gem-spike spike-3" />
+          <div className="gem-spike spike-4" />
+        </div>
+        <div className="crystal-cluster cluster-bottom-right sapphire">
+          <div className="gem-spike spike-1" />
+          <div className="gem-spike spike-2" />
+          <div className="gem-spike spike-3" />
+        </div>
+        <div className="crystal-cluster cluster-bottom-center topaz">
+          <div className="gem-spike spike-1" />
+          <div className="gem-spike spike-2" />
+        </div>
+      </div>
+      <div className="floating-geode geode-1 amethyst" />
+      <div className="floating-geode geode-2 rose-quartz" />
+      <div className="floating-geode geode-3 emerald" />
+      <div className="floating-geode geode-4 sapphire" />
+      <div className="floating-geode geode-5 topaz" />
+      <div className="prismatic-beam beam-1" />
+      <div className="prismatic-beam beam-2" />
+      <div className="crystal-dust dust-1" />
+      <div className="crystal-dust dust-2" />
+      <div className="crystal-dust dust-3" />
+      <div className="crystal-dust dust-4" />
+      <div className="crystal-dust dust-5" />
+      <div className="crystal-dust dust-6" />
+    </div>
+  );
+};
+
+const DuneAtmosphere: React.FC = () => {
+  return (
+    <div className="dune-atmosphere">
+      <div className="dune-sun-halo sun-primary" />
+      <div className="dune-sun-halo sun-secondary" />
+      <div className="dune-heat-haze" />
+      <div className="dune-horizon dune-back" />
+      <div className="dune-horizon dune-mid" />
+      <div className="dune-horizon dune-front" />
+      <div className="sand-sweep sweep-1" />
+      <div className="sand-sweep sweep-2" />
+      <div className="spice-mote mote-1" />
+      <div className="spice-mote mote-2" />
+      <div className="spice-mote mote-3" />
+      <div className="spice-mote mote-4" />
+      <div className="spice-mote mote-5" />
+      <div className="spice-mote mote-6" />
+      <div className="spice-mote mote-7" />
+      <div className="spice-mote mote-8" />
+      <div className="spice-mote mote-9" />
+      <div className="spice-mote mote-10" />
+      <div className="spice-mote mote-11" />
+      <div className="spice-mote mote-12" />
+    </div>
+  );
+};
+
+const CodexAtmosphere: React.FC = () => {
+  return (
+    <div className="codex-atmosphere">
+      <div className="parchment-grain" />
+      <div className="codex-pyramid">
+        <div className="pyramid-capstone" />
+        <div className="pyramid-light-beam" />
+      </div>
+      <div className="codex-stargate">
+        <div className="stargate-ring">
+          <div className="stargate-chevron chevron-1" />
+          <div className="stargate-chevron chevron-2" />
+          <div className="stargate-chevron chevron-3" />
+          <div className="stargate-chevron chevron-4" />
+        </div>
+        <div className="event-horizon" />
+      </div>
+      <div className="candle-glow glow-left" />
+      <div className="candle-glow glow-right" />
+    </div>
+  );
+};
+
+const DriftAtmosphere: React.FC = () => {
+  return (
+    <div className="drift-atmosphere">
+      <div className="tokyo-skyline" />
+      <div className="asphalt-underglow" />
+      <div className="light-trail red-trail-1" />
+      <div className="light-trail red-trail-2" />
+      <div className="light-trail red-trail-3" />
+      <div className="light-trail red-trail-4" />
+      <div className="light-trail gold-trail-1" />
+      <div className="light-trail gold-trail-2" />
+      <div className="light-trail xenon-trail-1" />
+      <div className="light-trail xenon-trail-2" />
+      <div className="light-trail nitro-trail-1" />
+      <div className="speed-streak streak-1" />
+      <div className="speed-streak streak-2" />
+      <div className="speed-streak streak-3" />
+      <div className="speed-streak streak-4" />
+      <div className="drift-smoke smoke-1" />
+      <div className="drift-smoke smoke-2" />
+    </div>
+  );
+};
+
+const LightningAtmosphere: React.FC = () => {
+  return (
+    <div className="lightning-atmosphere">
+      <div className="storm-flash" />
+      <svg className="lightning-bolt bolt-left" viewBox="0 0 200 500">
+        <path
+          d="M 120 0 L 80 140 L 110 160 L 50 310 L 80 330 L 10 500"
+          stroke="#ffffff"
+          strokeWidth="3"
+          fill="none"
+          filter="url(#glow-cyan)"
+        />
+        <path
+          d="M 80 140 L 140 220 M 50 310 L 110 380"
+          stroke="#38bdf8"
+          strokeWidth="2"
+          fill="none"
+        />
+        <defs>
+          <filter id="glow-cyan">
+            <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+      </svg>
+      <svg className="lightning-bolt bolt-center" viewBox="0 0 200 600">
+        <path
+          d="M 100 0 L 130 180 L 90 220 L 150 400 L 110 430 L 170 600"
+          stroke="#ffffff"
+          strokeWidth="4"
+          fill="none"
+          filter="url(#glow-cyan)"
+        />
+        <path
+          d="M 130 180 L 60 270 M 150 400 L 80 480"
+          stroke="#bae6fd"
+          strokeWidth="2"
+          fill="none"
+        />
+      </svg>
+      <svg className="lightning-bolt bolt-right" viewBox="0 0 200 500">
+        <path
+          d="M 70 0 L 110 130 L 80 170 L 130 320 L 90 350 L 140 500"
+          stroke="#ffffff"
+          strokeWidth="3"
+          fill="none"
+          filter="url(#glow-cyan)"
+        />
+        <path
+          d="M 110 130 L 160 200 M 130 320 L 180 390"
+          stroke="#38bdf8"
+          strokeWidth="2"
+          fill="none"
+        />
+      </svg>
+      <div className="tesla-arc arc-1" />
+      <div className="tesla-arc arc-2" />
+    </div>
+  );
+};
+
+const SakuraAtmosphere: React.FC = () => {
+  return (
+    <div className="sakura-atmosphere">
+      <div className="sakura-moon" />
+      <div className="sakura-mist" />
+      <div className="paper-lantern lantern-1" />
+      <div className="paper-lantern lantern-2" />
+      <div className="paper-lantern lantern-3" />
+      <div className="paper-lantern lantern-4" />
+      <div className="sakura-petal petal-1" />
+      <div className="sakura-petal petal-2" />
+      <div className="sakura-petal petal-3" />
+      <div className="sakura-petal petal-4" />
+      <div className="sakura-petal petal-5" />
+      <div className="sakura-petal petal-6" />
+      <div className="sakura-petal petal-7" />
+      <div className="sakura-petal petal-8" />
+      <div className="sakura-petal petal-9" />
+      <div className="sakura-petal petal-10" />
+      <div className="sakura-petal petal-11" />
+      <div className="sakura-petal petal-12" />
+    </div>
+  );
+};
+
+const NebulaAtmosphere: React.FC = () => {
+  return (
+    <div className="nebula-atmosphere">
+      <div className="quasar-core" />
+      <div className="quasar-ring" />
+      <div className="nebula-cloud cloud-1" />
+      <div className="nebula-cloud cloud-2" />
+      <div className="nebula-cloud cloud-3" />
+      <div className="nebula-cloud cloud-4" />
+      <div className="comet-trail comet-1" />
+      <div className="comet-trail comet-2" />
+      <div className="starfire star-1" />
+      <div className="starfire star-2" />
+      <div className="starfire star-3" />
+      <div className="starfire star-4" />
+      <div className="starfire star-5" />
+      <div className="starfire star-6" />
+      <div className="starfire star-7" />
+      <div className="starfire star-8" />
+    </div>
+  );
+};
+
+const DragonAtmosphere: React.FC = () => {
+  return (
+    <div className="dragon-atmosphere">
+      <div className="dragon-scale-texture" />
+      <div className="magma-chamber" />
+      <div className="dragon-flyer">
+        <svg className="dragon-svg" viewBox="0 0 300 200">
+          <path
+            className="dragon-wing wing-left"
+            d="M 150 90 Q 90 20 20 50 Q 70 90 100 110 Q 130 105 150 90 Z"
+            fill="#dc2626"
+            stroke="#991b1b"
+            strokeWidth="2"
+          />
+          <path
+            className="dragon-wing wing-right"
+            d="M 150 90 Q 210 20 280 50 Q 230 90 200 110 Q 170 105 150 90 Z"
+            fill="#dc2626"
+            stroke="#991b1b"
+            strokeWidth="2"
+          />
+          <path
+            d="M 150 60 Q 160 90 150 140 Q 140 180 120 190 Q 110 195 130 180 Q 145 160 145 130 Q 140 90 150 60 Z"
+            fill="#7f1d1d"
+          />
+          <path
+            d="M 150 60 L 140 35 L 146 45 L 150 40 L 154 45 L 160 35 L 150 60 Z"
+            fill="#991b1b"
+          />
+          <circle cx="146" cy="48" r="2.5" fill="#fde047" />
+          <circle cx="154" cy="48" r="2.5" fill="#fde047" />
+        </svg>
+        <div className="fire-breath-stream" />
+      </div>
+      <div className="dragon-magma-vein vein-1" />
+      <div className="dragon-magma-vein vein-2" />
+      <div className="dragon-ember spark-1" />
+      <div className="dragon-ember spark-2" />
+      <div className="dragon-ember spark-3" />
+      <div className="dragon-ember spark-4" />
+      <div className="dragon-ember spark-5" />
+    </div>
+  );
+};
+
+const StealthAtmosphere: React.FC = () => {
+  return (
+    <div className="hud-atmosphere">
+      <div className="hud-radar-scope">
+        <span className="radar-sweep-beam" />
+        <span className="radar-ring ring-1" />
+        <span className="radar-ring ring-2" />
+        <span className="radar-crosshair" />
+      </div>
+      <div className="hud-pitch-ladder" />
+
+      <div className="stealth-jet jet-leader">
+        <svg className="jet-svg" viewBox="0 0 160 100">
+          <path
+            d="M 160 50 L 60 10 L 40 30 L 10 35 L 25 50 L 10 65 L 40 70 L 60 90 Z"
+            fill="#10b981"
+            opacity="0.85"
+          />
+          <ellipse cx="110" cy="50" rx="20" ry="6" fill="#6ee7b7" opacity="0.9" />
+        </svg>
+        <div className="afterburner-glow" />
+        <div className="jet-vapor-trail" />
+      </div>
+
+      <div className="stealth-jet jet-wingman">
+        <svg className="jet-svg" viewBox="0 0 160 100">
+          <path
+            d="M 160 50 L 60 10 L 40 30 L 10 35 L 25 50 L 10 65 L 40 70 L 60 90 Z"
+            fill="#059669"
+            opacity="0.75"
+          />
+          <ellipse cx="110" cy="50" rx="20" ry="6" fill="#a7f3d0" opacity="0.8" />
+        </svg>
+        <div className="afterburner-glow" />
+        <div className="jet-vapor-trail" />
+      </div>
+
+      <div className="stealth-jet jet-recon">
+        <svg className="jet-svg" viewBox="0 0 160 100">
+          <path
+            d="M 160 50 L 70 15 L 45 35 L 15 40 L 30 50 L 15 60 L 45 65 L 70 85 Z"
+            fill="#34d399"
+            opacity="0.8"
+          />
+          <ellipse cx="115" cy="50" rx="18" ry="5" fill="#6ee7b7" opacity="0.9" />
+        </svg>
+        <div className="afterburner-glow" />
+        <div className="jet-vapor-trail" />
+      </div>
+
+      <div className="sonic-boom-ring boom-1" />
+      <div className="sonic-boom-ring boom-2" />
+    </div>
+  );
+};
+
+const ForestAtmosphere: React.FC = () => {
+  return (
+    <div className="enchanted-atmosphere">
+      <div className="forest-mist" />
+      <div className="moonlight-shafts" />
+
+      <svg className="enchanted-tree tree-left" viewBox="0 0 400 700">
+        <path
+          d="M 60 700 Q 110 500 140 350 Q 160 250 120 180 Q 80 120 40 40 M 140 350 Q 220 220 280 140 Q 320 80 350 10 M 150 280 Q 180 190 190 100 M 120 420 Q 50 360 10 320 M 60 700 Q 10 650 -20 700 M 140 700 Q 180 620 240 700"
+          stroke="#0f172a"
+          strokeWidth="28"
+          strokeLinecap="round"
+          fill="none"
+        />
+        <path
+          d="M 60 700 Q 110 500 140 350 Q 160 250 120 180 Q 80 120 40 40 M 140 350 Q 220 220 280 140 Q 320 80 350 10 M 150 280 Q 180 190 190 100 M 120 420 Q 50 360 10 320"
+          stroke="#1e293b"
+          strokeWidth="14"
+          strokeLinecap="round"
+          fill="none"
+        />
+        <circle cx="40" cy="40" r="50" fill="url(#leafGlow1)" opacity="0.85" />
+        <circle cx="350" cy="10" r="65" fill="url(#leafGlow2)" opacity="0.85" />
+        <circle cx="190" cy="100" r="45" fill="url(#leafGlow1)" opacity="0.8" />
+        <circle cx="10" cy="320" r="40" fill="url(#leafGlow2)" opacity="0.75" />
+        <defs>
+          <radialGradient id="leafGlow1" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#34d399" stopOpacity="0.8" />
+            <stop offset="60%" stopColor="#059669" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#047857" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="leafGlow2" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#a7f3d0" stopOpacity="0.8" />
+            <stop offset="60%" stopColor="#10b981" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#065f46" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+      </svg>
+
+      <svg className="enchanted-tree tree-right" viewBox="0 0 400 700">
+        <path
+          d="M 340 700 Q 290 520 260 380 Q 240 280 280 200 Q 320 130 360 50 M 260 380 Q 180 250 120 160 Q 80 90 50 20 M 250 300 Q 210 210 200 120 M 280 450 Q 340 380 390 340 M 340 700 Q 390 640 420 700 M 260 700 Q 220 630 170 700"
+          stroke="#0f172a"
+          strokeWidth="26"
+          strokeLinecap="round"
+          fill="none"
+        />
+        <path
+          d="M 340 700 Q 290 520 260 380 Q 240 280 280 200 Q 320 130 360 50 M 260 380 Q 180 250 120 160 Q 80 90 50 20 M 250 300 Q 210 210 200 120"
+          stroke="#1e293b"
+          strokeWidth="12"
+          strokeLinecap="round"
+          fill="none"
+        />
+        <circle cx="360" cy="50" r="60" fill="url(#leafGlow2)" opacity="0.85" />
+        <circle cx="50" cy="20" r="70" fill="url(#leafGlow1)" opacity="0.85" />
+        <circle cx="200" cy="120" r="45" fill="url(#leafGlow2)" opacity="0.8" />
+        <circle cx="390" cy="340" r="40" fill="url(#leafGlow1)" opacity="0.75" />
+      </svg>
+
+      <div className="firefly fly-1" />
+      <div className="firefly fly-2" />
+      <div className="firefly fly-3" />
+      <div className="firefly fly-4" />
+      <div className="firefly fly-5" />
+      <div className="firefly fly-6" />
+      <div className="firefly fly-7" />
+      <div className="firefly fly-8" />
+    </div>
+  );
+};
+
 const CIRCUIT_PRESETS = [
   // Preset 1: Silverstone Sweeping Loop
   "M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z",
@@ -3620,105 +4029,25 @@ export default function App() {
         </div>
       ) : null}
 
-      {themeId === "enchanted" ? (
-        <div className="enchanted-atmosphere">
-          <div className="firefly fly-1" />
-          <div className="firefly fly-2" />
-          <div className="firefly fly-3" />
-          <div className="firefly fly-4" />
-          <div className="firefly fly-5" />
-          <div className="firefly fly-6" />
-          <div className="forest-mist" />
-        </div>
-      ) : null}
+      {themeId === "enchanted" ? <ForestAtmosphere /> : null}
 
-      {themeId === "hud" ? (
-        <div className="hud-atmosphere">
-          <div className="hud-radar-scope">
-            <span className="radar-sweep-beam" />
-            <span className="radar-ring ring-1" />
-            <span className="radar-ring ring-2" />
-            <span className="radar-crosshair" />
-          </div>
-          <div className="hud-pitch-ladder" />
-        </div>
-      ) : null}
+      {themeId === "hud" ? <StealthAtmosphere /> : null}
 
-      {themeId === "dragon" ? (
-        <div className="dragon-atmosphere">
-          <div className="dragon-scale-texture" />
-          <div className="dragon-magma-vein vein-1" />
-          <div className="dragon-magma-vein vein-2" />
-          <div className="dragon-ember spark-1" />
-          <div className="dragon-ember spark-2" />
-          <div className="dragon-ember spark-3" />
-        </div>
-      ) : null}
+      {themeId === "dragon" ? <DragonAtmosphere /> : null}
 
-      {themeId === "nebula" ? (
-        <div className="nebula-atmosphere">
-          <div className="nebula-cloud cloud-1" />
-          <div className="nebula-cloud cloud-2" />
-          <div className="star-field" />
-          <div className="quasar-beam" />
-        </div>
-      ) : null}
+      {themeId === "nebula" ? <NebulaAtmosphere /> : null}
 
-      {themeId === "sakura" ? (
-        <div className="sakura-atmosphere">
-          <div className="sakura-petal petal-1" />
-          <div className="sakura-petal petal-2" />
-          <div className="sakura-petal petal-3" />
-          <div className="sakura-petal petal-4" />
-          <div className="sakura-petal petal-5" />
-          <div className="paper-lantern lantern-1" />
-          <div className="paper-lantern lantern-2" />
-        </div>
-      ) : null}
+      {themeId === "sakura" ? <SakuraAtmosphere /> : null}
 
-      {themeId === "lightning" ? (
-        <div className="lightning-atmosphere">
-          <div className="tesla-arc arc-1" />
-          <div className="tesla-arc arc-2" />
-          <div className="storm-flash" />
-        </div>
-      ) : null}
+      {themeId === "lightning" ? <LightningAtmosphere /> : null}
 
-      {themeId === "drift" ? (
-        <div className="drift-atmosphere">
-          <div className="light-trail red-trail-1" />
-          <div className="light-trail red-trail-2" />
-          <div className="light-trail gold-trail-1" />
-          <div className="light-trail white-trail-1" />
-        </div>
-      ) : null}
+      {themeId === "drift" ? <DriftAtmosphere /> : null}
 
-      {themeId === "codex" ? (
-        <div className="codex-atmosphere">
-          <div className="parchment-grain" />
-          <div className="candle-glow glow-left" />
-          <div className="candle-glow glow-right" />
-        </div>
-      ) : null}
+      {themeId === "codex" ? <CodexAtmosphere /> : null}
 
-      {themeId === "dune" ? (
-        <div className="dune-atmosphere">
-          <div className="spice-mote mote-1" />
-          <div className="spice-mote mote-2" />
-          <div className="spice-mote mote-3" />
-          <div className="heat-haze-layer" />
-          <div className="twin-suns" />
-        </div>
-      ) : null}
+      {themeId === "dune" ? <DuneAtmosphere /> : null}
 
-      {themeId === "crystal" ? (
-        <div className="crystal-atmosphere">
-          <div className="crystal-shard shard-1" />
-          <div className="crystal-shard shard-2" />
-          <div className="crystal-shard shard-3" />
-          <div className="prismatic-ray" />
-        </div>
-      ) : null}
+      {themeId === "crystal" ? <CrystalAtmosphere /> : null}
 
       {themeId === "cyberpunk" ? (
         <div className="cyberpunk-atmosphere">
