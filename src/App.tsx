@@ -878,6 +878,84 @@ const MatrixAtmosphere: React.FC = () => {
   );
 };
 
+const DefaultAtmosphere: React.FC = () => {
+  return (
+    <div className="theme-atmosphere default-atmosphere" aria-hidden="true">
+      <div className="default-grid-mesh" />
+      <div className="grid-light-pulse" />
+      <div className="data-laser-beam beam-1" />
+      <div className="data-laser-beam beam-2" />
+
+      <div className="data-node node-1">
+        <span className="node-ring" />
+        <span className="node-core" />
+      </div>
+      <div className="data-node node-2">
+        <span className="node-ring" />
+        <span className="node-core" />
+      </div>
+      <div className="data-node node-3">
+        <span className="node-ring" />
+        <span className="node-core" />
+      </div>
+
+      <div className="emerald-mote mote-1" />
+      <div className="emerald-mote mote-2" />
+      <div className="emerald-mote mote-3" />
+      <div className="emerald-mote mote-4" />
+      <div className="emerald-mote mote-5" />
+      <div className="emerald-mote mote-6" />
+    </div>
+  );
+};
+
+const SynthwaveAtmosphere: React.FC = () => {
+  return (
+    <div className="synthwave-atmosphere">
+      <div className="synth-sky-glow" />
+
+      <div className="synth-sun">
+        <div className="sun-slice slice-1" />
+        <div className="sun-slice slice-2" />
+        <div className="sun-slice slice-3" />
+        <div className="sun-slice slice-4" />
+        <div className="sun-slice slice-5" />
+      </div>
+
+      <svg className="synth-mountains-svg" viewBox="0 0 1200 200" preserveAspectRatio="none">
+        <polyline
+          points="0,200 150,110 280,160 420,70 580,150 720,60 880,140 1020,80 1200,200"
+          fill="rgba(15, 5, 29, 0.9)"
+          stroke="#ec4899"
+          strokeWidth="3"
+        />
+        <polyline
+          points="0,200 120,130 250,170 380,90 520,160 680,90 820,160 980,110 1200,200"
+          fill="rgba(29, 9, 54, 0.6)"
+          stroke="#06b6d4"
+          strokeWidth="2"
+        />
+      </svg>
+
+      <div className="synth-grid-floor" />
+
+      <div className="synth-palm palm-left">
+        <svg className="palm-svg" viewBox="0 0 120 180">
+          <path d="M 50 180 Q 45 100 60 40" stroke="#1d0936" strokeWidth="8" fill="none" />
+          <path d="M 60 40 Q 20 20 0 40 M 60 40 Q 30 5 10 0 M 60 40 Q 90 5 110 0 M 60 40 Q 100 20 120 40" stroke="#ec4899" strokeWidth="3" fill="none" />
+        </svg>
+      </div>
+
+      <div className="synth-palm palm-right">
+        <svg className="palm-svg" viewBox="0 0 120 180">
+          <path d="M 70 180 Q 75 100 60 40" stroke="#1d0936" strokeWidth="8" fill="none" />
+          <path d="M 60 40 Q 20 20 0 40 M 60 40 Q 30 5 10 0 M 60 40 Q 90 5 110 0 M 60 40 Q 100 20 120 40" stroke="#06b6d4" strokeWidth="3" fill="none" />
+        </svg>
+      </div>
+    </div>
+  );
+};
+
 const CIRCUIT_PRESETS = [
   // Preset 1: Silverstone Sweeping Loop
   "M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z",
@@ -3491,6 +3569,7 @@ export default function App() {
 
   return (
     <div className="app">
+      {themeId === "default" ? <DefaultAtmosphere /> : null}
       {themeId === "aetherium" ? <AetheriumAtmosphere /> : null}
       {themeId === "brass" ? <BrassAtmosphere /> : null}
       {themeId === "spaceship" ? (
@@ -4263,13 +4342,7 @@ export default function App() {
 
       {themeId === "deepsea" ? <DeepSeaAtmosphere /> : null}
 
-      {themeId === "synthwave" ? (
-        <div className="synthwave-atmosphere">
-          <div className="synth-sun" />
-          <div className="synth-horizon-mountains" />
-          <div className="synth-grid-floor" />
-        </div>
-      ) : null}
+      {themeId === "synthwave" ? <SynthwaveAtmosphere /> : null}
 
       {themeId === "enchanted" ? <ForestAtmosphere /> : null}
 
