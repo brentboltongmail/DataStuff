@@ -1174,6 +1174,8 @@
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
+  opacity: 1 !important;
+  z-index: 15 !important;
 }
 
 .spaceship-atmosphere .moon-alpha {
@@ -1258,7 +1260,7 @@
   right: 5%;
   width: 440px;
   height: 440px;
-  opacity: 0.95 !important;
+  opacity: 1 !important;
   background:
     radial-gradient(circle at 35% 35%, #06b6d4 0%, #0284c7 45%, #0f172a 85%, #020617 100%);
   box-shadow:
@@ -1274,7 +1276,7 @@
   right: 28%;
   width: 220px;
   height: 220px;
-  opacity: 0.95 !important;
+  opacity: 1 !important;
   background:
     radial-gradient(circle at 30% 30%, #e0f2fe 0%, #bae6fd 30%, #38bdf8 65%, #0f172a 100%);
   box-shadow:
@@ -1290,7 +1292,7 @@
   left: 3%;
   width: 300px;
   height: 300px;
-  opacity: 0.95 !important;
+  opacity: 1 !important;
   background:
     radial-gradient(circle at 32% 32%, #f97316 0%, #dc2626 40%, #7f1d1d 75%, #0f172a 100%);
   box-shadow:
@@ -1306,7 +1308,7 @@
   right: 16%;
   width: 380px;
   height: 380px;
-  opacity: 0.95 !important;
+  opacity: 1 !important;
   background:
     radial-gradient(circle at 35% 35%, #c084fc 0%, #a855f7 35%, #6b21a8 70%, #0f172a 100%);
   box-shadow:
