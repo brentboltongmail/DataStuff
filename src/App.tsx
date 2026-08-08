@@ -95,7 +95,7 @@ const DEFAULT_SIDEBAR_WIDTH = 240;
 const MIN_SIDEBAR_WIDTH = 120;
 const MAX_SIDEBAR_WIDTH = 600;
 /** Fixed workspace chrome above/below the editor↔results split (tabs + splitter + toolbar). */
-const WORKSPACE_FIXED_CHROME_PX = 26 + 4 + 24;
+const WORKSPACE_FIXED_CHROME_PX = 4 + 20;
 /** How often to probe a live Oracle session while connected. */
 const CONNECTION_HEARTBEAT_MS = 30_000;
 
@@ -989,6 +989,7 @@ export default function App() {
     );
     editorRef.current?.updateOptions({
       fontSize: Math.round(EDITOR_BASE_FONT_SIZE * fontScale),
+      lineHeight: Math.round(EDITOR_BASE_FONT_SIZE * fontScale * 1.22),
     });
     window.oracle?.saveSettings?.({ fontScale });
   }, [fontScale]);
@@ -1853,6 +1854,7 @@ export default function App() {
     monaco.editor.setTheme(themeOption(themeId).monacoTheme);
     ed.updateOptions({
       fontSize: Math.round(EDITOR_BASE_FONT_SIZE * loadFontScale()),
+      lineHeight: Math.round(EDITOR_BASE_FONT_SIZE * loadFontScale() * 1.22),
     });
 
     setEditorLineHeight(ed.getOption(monaco.editor.EditorOption.lineHeight) || 18);
@@ -3148,8 +3150,64 @@ export default function App() {
         </div>
       ) : null}
       <header className="titlebar">
-        <h1>
-        </h1>
+        <div className="titlebar-left">
+          <h1 className="titlebar-app-name">DataStuff</h1>
+          <button
+            type="button"
+            className="secondary manage-conn-btn"
+            onClick={() => setShowManageModal(true)}
+            disabled={busy}
+            title="Manage saved connection profiles and credentials"
+          >
+            Manage Connections...
+          </button>
+          <select
+            id="saved-connections"
+            className="titlebar-conn-select"
+            value={selectedConnectionId}
+            onChange={(e) => handleSelectConnection(e.target.value)}
+            disabled={status.connected || busy}
+            title={
+              selectedConnectionId
+                ? savedConnections.find((c) => c.id === selectedConnectionId)?.name
+                : "Select saved connection profile"
+            }
+          >
+            <option value="">— Profile —</option>
+            {savedConnections.map((conn) => (
+              <option key={conn.id} value={conn.id}>
+                {conn.name}
+              </option>
+            ))}
+          </select>
+          {status.connected ? (
+            <button type="button" onClick={onDisconnect} disabled={busy}>
+              Disconnect
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="primary"
+              onClick={onConnect}
+              disabled={!selectedConnectionId || busy}
+              title={
+                !selectedConnectionId
+                  ? "Select a saved connection profile first"
+                  : "Connect to profile"
+              }
+            >
+              Connect
+            </button>
+          )}
+          <span
+            className={`status-dot ${status.connected ? "on" : ""}`}
+            title={
+              status.connected
+                ? `Connected as ${status.user}@${status.connectString} (${status.mode ?? "jdbc"}${config.tcps ? " · tcps" : ""})`
+                : "Not connected"
+            }
+          />
+        </div>
         <div className="titlebar-spacer" />
         <div className="theme-picker">
           <label htmlFor="app-theme">Theme</label>
@@ -3188,78 +3246,6 @@ export default function App() {
         </div>
       </header>
 
-      <section className="connection-bar">
-        <div className="field saved-profiles">
-          <div className="saved-profile-select-row">
-            <select
-              id="saved-connections"
-              value={selectedConnectionId}
-              onChange={(e) => handleSelectConnection(e.target.value)}
-              disabled={status.connected || busy}
-            >
-              <option value="">— Select Saved Connection —</option>
-              {savedConnections.map((conn) => (
-                <option key={conn.id} value={conn.id}>
-                  {conn.name} ({conn.user}@{conn.host})
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <div className="connection-actions">
-          {busy && (
-            <button
-              type="button"
-              className="danger cancel-query-btn"
-              onClick={onCancelQuery}
-              title="Cancel current database operation"
-            >
-              ⏹ Cancel
-            </button>
-          )}
-          {status.connected ? (
-            <button type="button" onClick={onDisconnect} disabled={busy}>
-              Disconnect
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="primary"
-              onClick={onConnect}
-              disabled={
-                busy ||
-                !selectedConnectionId ||
-                !config.user ||
-                !config.host ||
-                !config.service
-              }
-              title={
-                !selectedConnectionId
-                  ? "Select a saved connection first"
-                  : "Connect to the selected profile"
-              }
-            >
-              Connect
-            </button>
-          )}
-          <span className="status-pill">
-            <span className={`status-dot ${status.connected ? "on" : ""}`} />
-            {status.connected
-              ? `${connectionName.trim() ? `${connectionName.trim()} (` : ""}${status.user}@${status.connectString}${connectionName.trim() ? ")" : ""} · jdbc${config.tcps ? " · tcps" : ""}`
-              : `Not connected · jdbc${config.tcps ? " · tcps" : ""}`}
-          </span>
-          <button
-            type="button"
-            className="secondary manage-conn-btn"
-            onClick={() => setShowManageModal(true)}
-            disabled={busy}
-            title="Manage saved connection profiles and credentials"
-          >
-            Manage Connections...
-          </button>
-        </div>
-      </section>
-
       <div className="body" style={{ gridTemplateColumns: `${sidebarWidth}px 4px 1fr` }}>
         <ObjectBrowser
           connected={status.connected}
@@ -3282,96 +3268,98 @@ export default function App() {
           className="workspace"
           ref={workspaceRef}
           style={{
-            gridTemplateRows: `26px minmax(120px, ${editorSplit}fr) 4px 24px minmax(120px, ${1 - editorSplit}fr)`,
+            gridTemplateRows: `minmax(100px, ${editorSplit}fr) 4px 20px minmax(100px, ${1 - editorSplit}fr)`,
           }}
         >
-          <SqlTabs
-            tabs={tabs}
-            activeId={activeTabId}
-            onSelect={setActiveTabId}
-            onClose={(id) => {
-              void closeTab(id);
-            }}
-            onAdd={() => {
-              void addTab();
-            }}
-            onOpen={() => {
-              void openTabs();
-            }}
-            onRename={(id, title) => {
-              void renameTab(id, title);
-            }}
-          />
-
           <div className="editor-pane">
             {activeTab ? (
               <>
-                <div className="query-copy-gutter">
-                  {sqlBlocks.map((block) => {
-                    let top = 12 + (block.startLine - 1) * editorLineHeight - editorScrollTop;
-                    let height = (block.endLine - block.startLine + 1) * editorLineHeight;
-
-                    if (editorRef.current) {
-                      const lineTop = editorRef.current.getTopForLineNumber(block.startLine);
-                      const nextLineTop = editorRef.current.getTopForLineNumber(block.endLine + 1);
-                      top = lineTop - editorScrollTop;
-                      height = nextLineTop - lineTop;
-                    }
-
-                    const isCopied = copiedBlockId === block.id;
-
-                    if (top + height < -50 || top > 2500) return null;
-
-                    return (
-                      <button
-                        key={block.id}
-                        type="button"
-                        className={`query-copy-bar ${isCopied ? "copied" : ""}`}
-                        style={{
-                          top: `${top}px`,
-                          height: `${height}px`,
-                        }}
-                        title={`Click to copy query (Lines ${block.startLine}–${block.endLine})`}
-                        onClick={() => handleCopyQueryBlock(block)}
-                      />
-                    );
-                  })}
-                </div>
-                {copiedBlockId && <div className="query-copied-toast">✓ Query Copied!</div>}
-                <Editor
-                  key={activeTabId}
-                  height="100%"
-                  defaultLanguage="sql"
-                  theme={themeOption(themeId).monacoTheme}
-                  defaultValue={sql}
-                  onChange={(value) => setActiveSql(value ?? "")}
-                  beforeMount={onEditorBeforeMount}
-                  onMount={onEditorMount}
-                  options={{
-                    fontSize: Math.round(EDITOR_BASE_FONT_SIZE * fontScale),
-                    fontFamily: "IBM Plex Mono, SF Mono, Menlo, Monaco, Consolas, monospace",
-                    minimap: { enabled: false },
-                    scrollBeyondLastLine: false,
-                    wordWrap: "on",
-                    automaticLayout: true,
-                    tabSize: 2,
-                    padding: { top: 12 },
-                    // Required so Shift+Enter keybindings are not bypassed by
-                    // Native EditContext's beforeinput newline insertion.
-                    editContext: false,
-                    // Keep typing snappy — no autocomplete / word completion.
-                    quickSuggestions: false,
-                    suggestOnTriggerCharacters: false,
-                    acceptSuggestionOnCommitCharacter: false,
-                    acceptSuggestionOnEnter: "off",
-                    tabCompletion: "off",
-                    wordBasedSuggestions: "off",
-                    parameterHints: { enabled: false },
-                    snippetSuggestions: "none",
-                    hover: { enabled: "off" },
-                    inlayHints: { enabled: "off" },
+                <SqlTabs
+                  tabs={tabs}
+                  activeId={activeTabId}
+                  onSelect={setActiveTabId}
+                  onClose={(id) => {
+                    void closeTab(id);
+                  }}
+                  onAdd={() => {
+                    void addTab();
+                  }}
+                  onOpen={() => {
+                    void openTabs();
+                  }}
+                  onRename={(id, title) => {
+                    void renameTab(id, title);
                   }}
                 />
+                <div className="editor-wrapper">
+                  <div className="query-copy-gutter">
+                    {sqlBlocks.map((block) => {
+                      let top = 12 + (block.startLine - 1) * editorLineHeight - editorScrollTop;
+                      let height = (block.endLine - block.startLine + 1) * editorLineHeight;
+
+                      if (editorRef.current) {
+                        const lineTop = editorRef.current.getTopForLineNumber(block.startLine);
+                        const nextLineTop = editorRef.current.getTopForLineNumber(block.endLine + 1);
+                        top = lineTop - editorScrollTop;
+                        height = nextLineTop - lineTop;
+                      }
+
+                      const isCopied = copiedBlockId === block.id;
+
+                      if (top + height < -50 || top > 2500) return null;
+
+                      return (
+                        <button
+                          key={block.id}
+                          type="button"
+                          className={`query-copy-bar ${isCopied ? "copied" : ""}`}
+                          style={{
+                            top: `${top}px`,
+                            height: `${height}px`,
+                          }}
+                          title={`Click to copy query (Lines ${block.startLine}–${block.endLine})`}
+                          onClick={() => handleCopyQueryBlock(block)}
+                        />
+                      );
+                    })}
+                  </div>
+                  {copiedBlockId && <div className="query-copied-toast">✓ Query Copied!</div>}
+                  <Editor
+                    key={activeTabId}
+                    height="100%"
+                    defaultLanguage="sql"
+                    theme={themeOption(themeId).monacoTheme}
+                    defaultValue={sql}
+                    onChange={(value) => setActiveSql(value ?? "")}
+                    beforeMount={onEditorBeforeMount}
+                    onMount={onEditorMount}
+                    options={{
+                      fontSize: Math.round(EDITOR_BASE_FONT_SIZE * fontScale),
+                      lineHeight: Math.round(EDITOR_BASE_FONT_SIZE * fontScale * 1.22),
+                      fontFamily: "IBM Plex Mono, SF Mono, Menlo, Monaco, Consolas, monospace",
+                      minimap: { enabled: false },
+                      scrollBeyondLastLine: false,
+                      wordWrap: "on",
+                      automaticLayout: true,
+                      tabSize: 2,
+                      padding: { top: 12 },
+                      // Required so Shift+Enter keybindings are not bypassed by
+                      // Native EditContext's beforeinput newline insertion.
+                      editContext: false,
+                      // Keep typing snappy — no autocomplete / word completion.
+                      quickSuggestions: false,
+                      suggestOnTriggerCharacters: false,
+                      acceptSuggestionOnCommitCharacter: false,
+                      acceptSuggestionOnEnter: "off",
+                      tabCompletion: "off",
+                      wordBasedSuggestions: "off",
+                      parameterHints: { enabled: false },
+                      snippetSuggestions: "none",
+                      hover: { enabled: "off" },
+                      inlayHints: { enabled: "off" },
+                    }}
+                  />
+                </div>
               </>
             ) : (
               <div className="empty-state">

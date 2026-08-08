@@ -125,7 +125,7 @@ input:focus {
 
 .app {
   display: grid;
-  grid-template-rows: 28px auto 1fr 24px;
+  grid-template-rows: 24px 1fr 22px;
   height: 100%;
   position: relative;
   z-index: 1;
@@ -134,11 +134,11 @@ input:focus {
 .titlebar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 16px 0 85px;
-  height: 28px;
-  min-height: 28px;
-  max-height: 28px;
+  gap: 10px;
+  padding: 0 12px 0 76px;
+  height: 24px;
+  min-height: 24px;
+  max-height: 24px;
   border-bottom: 1px solid var(--titlebar-border);
   background: var(--titlebar-bg);
   box-shadow: var(--titlebar-shadow);
@@ -147,18 +147,41 @@ input:focus {
   position: relative;
 }
 
-.titlebar h1 {
+.titlebar-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  -webkit-app-region: no-drag;
+}
+
+.titlebar h1.titlebar-app-name {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--base-font-size);
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
+  font-weight: 700;
+  color: var(--brand-color, var(--accent));
+  letter-spacing: 0.03em;
+  white-space: nowrap;
 }
 
-.titlebar .brand {
-  color: var(--brand-color);
-  font-weight: 700;
+.titlebar button,
+.titlebar select {
+  -webkit-app-region: no-drag;
+  height: 18px !important;
+  padding: 0 8px;
+  font-size: var(--base-font-size);
+  line-height: 1;
+}
+
+.titlebar select.titlebar-conn-select {
+  max-width: 140px;
+  background: var(--bg-surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .titlebar-spacer {
@@ -604,32 +627,41 @@ body.is-row-resizing .monaco-editor {
 
 .sql-tabs {
   display: flex;
-  align-items: stretch;
-  height: 26px;
-  min-height: 26px;
-  max-height: 26px;
-  border-bottom: 1px solid var(--border);
+  flex-direction: column;
+  width: 130px;
+  min-width: 130px;
+  max-width: 160px;
+  height: 100%;
+  border-right: 1px solid var(--border);
   background: var(--bg-panel);
-  min-width: 0;
+  min-height: 0;
+  user-select: none;
+  flex-shrink: 0;
+  z-index: 10;
 }
 
 .sql-tabs-list {
   display: flex;
-  overflow-x: auto;
-  min-width: 0;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
   flex: 1;
 }
 
 .sql-tab {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 0 10px;
-  border-right: 1px solid var(--border-soft);
+  justify-content: space-between;
+  gap: 4px;
+  padding: 0 6px;
+  height: 24px;
+  min-height: 24px;
+  border-bottom: 1px solid var(--border-soft);
   color: var(--text-muted);
   font-size: var(--base-font-size);
   cursor: pointer;
-  max-width: 180px;
+  width: 100%;
   user-select: none;
   transition: background 0.12s ease, color 0.12s ease;
 }
@@ -637,7 +669,7 @@ body.is-row-resizing .monaco-editor {
 .sql-tab.active {
   background: var(--bg);
   color: var(--text);
-  box-shadow: inset 0 -2px 0 var(--accent);
+  box-shadow: inset 3px 0 0 var(--accent);
 }
 
 .sql-tab-title {
@@ -649,7 +681,7 @@ body.is-row-resizing .monaco-editor {
   color: inherit;
   padding: 0;
   font: inherit;
-  max-width: 140px;
+  flex: 1;
   text-align: left;
   box-shadow: none;
 }
@@ -659,9 +691,8 @@ body.is-row-resizing .monaco-editor {
 }
 
 .sql-tab-rename {
-  width: 120px;
-  min-width: 80px;
-  padding: 2px 6px;
+  width: 100%;
+  padding: 2px 4px;
   font-size: var(--base-font-size);
   font-family: var(--font-ui);
 }
@@ -684,13 +715,20 @@ body.is-row-resizing .monaco-editor {
   box-shadow: none;
 }
 
-.sql-tab-add {
-  width: auto;
-  min-width: 34px;
-  padding: 0 10px;
+.sql-tab-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-top: 1px solid var(--border-soft);
+  background: var(--bg-panel);
+}
+
+.sql-tab-actions .sql-tab-add {
+  flex: 1;
+  height: 20px;
   font-size: var(--base-font-size);
-  font-weight: 600;
-  box-shadow: none;
+  padding: 0 4px;
 }
 
 .editor-pane {
@@ -701,6 +739,15 @@ body.is-row-resizing .monaco-editor {
   -webkit-backdrop-filter: blur(2px) saturate(110%);
   overflow: hidden;
   box-shadow: inset 0 8px 24px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: row;
+}
+
+.editor-wrapper {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  min-width: 0;
 }
 
 .query-copy-gutter {
@@ -768,11 +815,11 @@ body.is-row-resizing .monaco-editor {
 .toolbar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 0 12px;
-  height: 24px;
-  min-height: 24px;
-  max-height: 24px;
+  gap: 6px;
+  padding: 0 8px;
+  height: 20px;
+  min-height: 20px;
+  max-height: 20px;
   flex-wrap: nowrap;
   overflow-x: auto;
   overflow-y: hidden;
@@ -786,11 +833,12 @@ body.is-row-resizing .monaco-editor {
 .toolbar button {
   white-space: nowrap !important;
   flex-shrink: 0 !important;
-  height: 20px !important;
+  height: 17px !important;
   line-height: 1 !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  padding: 0 6px !important;
 }
 
 .toolbar-field {
@@ -803,8 +851,8 @@ body.is-row-resizing .monaco-editor {
 }
 
 .toolbar-field input {
-  width: 50px;
-  padding: 2px 6px;
+  width: 48px;
+  padding: 1px 4px;
   font-family: var(--font-mono);
   font-size: var(--base-font-size);
 }
@@ -839,9 +887,9 @@ button.active-toggle {
   font-size: var(--base-font-size);
   color: var(--text-muted);
   border-bottom: 1px solid var(--border-soft);
-  height: 24px;
-  min-height: 24px;
-  max-height: 24px;
+  height: 20px;
+  min-height: 20px;
+  max-height: 20px;
   background: linear-gradient(180deg, var(--panel-tint), transparent);
 }
 

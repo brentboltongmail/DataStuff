@@ -114,17 +114,19 @@ export default function SqlTabs({
           </div>
         ))}
       </div>
-      <button
-        type="button"
-        className="sql-tab-add"
-        title="Open SQL file (Cmd+O)"
-        onClick={onOpen}
-      >
-        Open
-      </button>
-      <button type="button" className="sql-tab-add" title="New tab (Cmd+T)" onClick={onAdd}>
-        +
-      </button>
+      <div className="sql-tab-actions">
+        <button
+          type="button"
+          className="sql-tab-add"
+          title="Open SQL file (Cmd+O)"
+          onClick={onOpen}
+        >
+          Open
+        </button>
+        <button type="button" className="sql-tab-add" title="New tab (Cmd+T)" onClick={onAdd}>
+          +
+        </button>
+      </div>
     </div>
   );
 }
