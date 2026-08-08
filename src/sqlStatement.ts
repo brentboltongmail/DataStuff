@@ -62,3 +62,74 @@ export function sqlToExecute(
   }
   return statementAtCursor(sql, cursorLine);
 }
+
+export interface SqlStatementBlock {
+  id: string;
+  text: string;
+  startLine: number;
+  endLine: number;
+}
+
+/**
+ * Parse all SQL statement blocks with their 1-based start and end line ranges.
+ */
+export function parseSqlStatements(sql: string): SqlStatementBlock[] {
+  if (!sql || !sql.trim()) return [];
+
+  const lines = sql.split(/\r?\n/);
+  const blocks: SqlStatementBlock[] = [];
+  let currentLines: string[] = [];
+  let startLine = 1;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const isBlankLine = line.trim() === "";
+
+    if (isBlankLine) {
+      if (currentLines.length > 0) {
+        const text = currentLines.join("\n").trim();
+        if (text) {
+          blocks.push({
+            id: `stmt-${startLine}-${i}`,
+            text: text.replace(/;+\s*$/g, ""),
+            startLine,
+            endLine: i,
+          });
+        }
+        currentLines = [];
+      }
+    } else {
+      if (currentLines.length === 0) {
+        startLine = i + 1;
+      }
+      currentLines.push(line);
+
+      if (line.trim().endsWith(";")) {
+        const text = currentLines.join("\n").trim();
+        if (text) {
+          blocks.push({
+            id: `stmt-${startLine}-${i + 1}`,
+            text: text.replace(/;+\s*$/g, ""),
+            startLine,
+            endLine: i + 1,
+          });
+        }
+        currentLines = [];
+      }
+    }
+  }
+
+  if (currentLines.length > 0) {
+    const text = currentLines.join("\n").trim();
+    if (text) {
+      blocks.push({
+        id: `stmt-${startLine}-${lines.length}`,
+        text: text.replace(/;+\s*$/g, ""),
+        startLine,
+        endLine: lines.length,
+      });
+    }
+  }
+
+  return blocks;
+}

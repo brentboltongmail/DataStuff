@@ -24,7 +24,7 @@ import {
 } from "./editableQuery";
 import { formatElapsed } from "./formatElapsed";
 import { formatSql } from "./sqlFormatter";
-import { sqlToExecute } from "./sqlStatement";
+import { parseSqlStatements, sqlToExecute, type SqlStatementBlock } from "./sqlStatement";
 import {
   APP_THEMES,
   THEME_KEY,
@@ -677,6 +677,24 @@ export default function App() {
 
   const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0];
   const sql = activeTab?.sql ?? "";
+
+  const [editorScrollTop, setEditorScrollTop] = useState(0);
+  const [editorLineHeight, setEditorLineHeight] = useState(18);
+  const [copiedBlockId, setCopiedBlockId] = useState<string | null>(null);
+
+  const sqlBlocks = useMemo(() => parseSqlStatements(sql), [sql]);
+
+  const handleCopyQueryBlock = useCallback(
+    (block: SqlStatementBlock) => {
+      void navigator.clipboard.writeText(block.text);
+      setCopiedBlockId(block.id);
+      setMessage(`Copied query (Lines ${block.startLine}–${block.endLine}) to clipboard`);
+      window.setTimeout(() => {
+        setCopiedBlockId(null);
+      }, 1800);
+    },
+    [setMessage],
+  );
 
   const persistPassword = useCallback(async (password: string, remember: boolean) => {
     try {
@@ -1751,6 +1769,11 @@ export default function App() {
     monaco.editor.setTheme(themeOption(themeId).monacoTheme);
     ed.updateOptions({
       fontSize: Math.round(EDITOR_BASE_FONT_SIZE * loadFontScale()),
+    });
+
+    setEditorLineHeight(ed.getOption(monaco.editor.EditorOption.lineHeight) || 18);
+    ed.onDidScrollChange((e) => {
+      setEditorScrollTop(e.scrollTop);
     });
 
     const runStatement = () => {
@@ -3198,40 +3221,66 @@ export default function App() {
 
           <div className="editor-pane">
             {activeTab ? (
-              <Editor
-                key={activeTabId}
-                height="100%"
-                defaultLanguage="sql"
-                theme={themeOption(themeId).monacoTheme}
-                defaultValue={sql}
-                onChange={(value) => setActiveSql(value ?? "")}
-                beforeMount={onEditorBeforeMount}
-                onMount={onEditorMount}
-                options={{
-                  fontSize: Math.round(EDITOR_BASE_FONT_SIZE * fontScale),
-                  fontFamily: "IBM Plex Mono, SF Mono, Menlo, Monaco, Consolas, monospace",
-                  minimap: { enabled: false },
-                  scrollBeyondLastLine: false,
-                  wordWrap: "on",
-                  automaticLayout: true,
-                  tabSize: 2,
-                  padding: { top: 12 },
-                  // Required so Shift+Enter keybindings are not bypassed by
-                  // Native EditContext's beforeinput newline insertion.
-                  editContext: false,
-                  // Keep typing snappy — no autocomplete / word completion.
-                  quickSuggestions: false,
-                  suggestOnTriggerCharacters: false,
-                  acceptSuggestionOnCommitCharacter: false,
-                  acceptSuggestionOnEnter: "off",
-                  tabCompletion: "off",
-                  wordBasedSuggestions: "off",
-                  parameterHints: { enabled: false },
-                  snippetSuggestions: "none",
-                  hover: { enabled: "off" },
-                  inlayHints: { enabled: "off" },
-                }}
-              />
+              <>
+                <div className="query-copy-gutter">
+                  {sqlBlocks.map((block) => {
+                    const top = 12 + (block.startLine - 1) * editorLineHeight - editorScrollTop;
+                    const height = (block.endLine - block.startLine + 1) * editorLineHeight;
+                    const isCopied = copiedBlockId === block.id;
+
+                    if (top + height < -50 || top > 2500) return null;
+
+                    return (
+                      <button
+                        key={block.id}
+                        type="button"
+                        className={`query-copy-bar ${isCopied ? "copied" : ""}`}
+                        style={{
+                          top: `${top}px`,
+                          height: `${height}px`,
+                        }}
+                        title={`Click to copy query (Lines ${block.startLine}–${block.endLine})`}
+                        onClick={() => handleCopyQueryBlock(block)}
+                      />
+                    );
+                  })}
+                </div>
+                {copiedBlockId && <div className="query-copied-toast">✓ Query Copied!</div>}
+                <Editor
+                  key={activeTabId}
+                  height="100%"
+                  defaultLanguage="sql"
+                  theme={themeOption(themeId).monacoTheme}
+                  defaultValue={sql}
+                  onChange={(value) => setActiveSql(value ?? "")}
+                  beforeMount={onEditorBeforeMount}
+                  onMount={onEditorMount}
+                  options={{
+                    fontSize: Math.round(EDITOR_BASE_FONT_SIZE * fontScale),
+                    fontFamily: "IBM Plex Mono, SF Mono, Menlo, Monaco, Consolas, monospace",
+                    minimap: { enabled: false },
+                    scrollBeyondLastLine: false,
+                    wordWrap: "on",
+                    automaticLayout: true,
+                    tabSize: 2,
+                    padding: { top: 12 },
+                    // Required so Shift+Enter keybindings are not bypassed by
+                    // Native EditContext's beforeinput newline insertion.
+                    editContext: false,
+                    // Keep typing snappy — no autocomplete / word completion.
+                    quickSuggestions: false,
+                    suggestOnTriggerCharacters: false,
+                    acceptSuggestionOnCommitCharacter: false,
+                    acceptSuggestionOnEnter: "off",
+                    tabCompletion: "off",
+                    wordBasedSuggestions: "off",
+                    parameterHints: { enabled: false },
+                    snippetSuggestions: "none",
+                    hover: { enabled: "off" },
+                    inlayHints: { enabled: "off" },
+                  }}
+                />
+              </>
             ) : (
               <div className="empty-state">
                 {!workspaceHydrated ? (
