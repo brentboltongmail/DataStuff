@@ -82,10 +82,10 @@ const REMEMBER_PASSWORD_KEY = "oracle-ide.rememberPassword";
 const MAX_HISTORY = 100;
 const DEFAULT_MAX_ROWS = 1000;
 const DEFAULT_FONT_SCALE = 1;
-const MIN_FONT_SCALE = 0.75;
-const MAX_FONT_SCALE = 1.75;
-const FONT_SCALE_STEP = 0.1;
-const EDITOR_BASE_FONT_SIZE = 13;
+const MIN_FONT_SCALE = 0.5;
+const MAX_FONT_SCALE = 2.0;
+const FONT_SCALE_STEP = 0.05;
+const EDITOR_BASE_FONT_SIZE = 10;
 const SAVE_DEBOUNCE_MS = 10_000;
 const PASSWORD_SAVE_DEBOUNCE_MS = 400;
 const DEFAULT_EDITOR_SPLIT = 0.42;
@@ -950,7 +950,10 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem(FONT_SCALE_KEY, String(fontScale));
-    document.documentElement.style.setProperty("--font-scale", String(fontScale));
+    document.documentElement.style.setProperty(
+      "--font-scale",
+      String(roundScale(fontScale * 0.75)),
+    );
     editorRef.current?.updateOptions({
       fontSize: Math.round(EDITOR_BASE_FONT_SIZE * fontScale),
     });
