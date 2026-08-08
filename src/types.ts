@@ -57,8 +57,9 @@ export interface CellEdit {
   rowIndex: number;
   columnIndex: number;
   columnName: string;
-  originalValue: unknown;
-  newValue: string;
+  oldValue?: unknown;
+  originalValue?: unknown;
+  newValue: unknown;
 }
 
 export interface EditMeta {

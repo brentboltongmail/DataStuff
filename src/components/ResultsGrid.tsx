@@ -9,20 +9,13 @@ import {
 } from "react";
 import { formatCell, isNullCell } from "../csv";
 import { isRowIdColumn, parseEditValue } from "../editableQuery";
-import type { QueryResult } from "../types";
+import type { CellEdit, QueryResult } from "../types";
 
+export type { CellEdit };
 export type GridDensity = "normal" | "compact" | "crammed";
 
 /** Crammed header labels are rotated this many degrees from horizontal. */
 const CRAMMED_HEADER_ANGLE_DEG = 45;
-
-export interface CellEdit {
-  rowIndex: number;
-  columnIndex: number;
-  columnName: string;
-  oldValue: unknown;
-  newValue: unknown;
-}
 
 interface Props {
   result: QueryResult;

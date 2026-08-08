@@ -27,7 +27,6 @@ import {
   type AppThemeId,
 } from "./themes";
 import type {
-  CellEdit,
   ConnectionConfig,
   ConnectionState,
   EditMeta,
@@ -369,7 +368,7 @@ export default function App() {
   const [activeTabId, setActiveTabId] = useState("");
   const [sqlDir, setSqlDir] = useState("~/sql");
   const [workspaceHydrated, setWorkspaceHydrated] = useState(false);
-  const [globalHistory, setGlobalHistory] = useState<HistoryEntry[]>(() => loadHistory());
+  const [globalHistory] = useState<HistoryEntry[]>(() => loadHistory());
   const [tabStates, setTabStates] = useState<Record<string, TabState>>({});
 
   const defaultTabState = useMemo<TabState>(
