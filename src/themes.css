@@ -4611,6 +4611,7 @@
 
 /* Ice Theme UI Styling */
 
+[data-theme="ice"] .sql-tabs,
 [data-theme="ice"] .editor-pane,
 [data-theme="ice"] .object-browser,
 [data-theme="ice"] .results-pane {
@@ -4765,6 +4766,7 @@
   --font-code: "IBM Plex Mono", monospace;
 }
 
+[data-theme="matrix"] .sql-tabs,
 [data-theme="matrix"] .editor-pane,
 [data-theme="matrix"] .object-browser,
 [data-theme="matrix"] .results-pane {
@@ -4854,6 +4856,7 @@
   --font-code: "IBM Plex Mono", monospace;
 }
 
+[data-theme="deepsea"] .sql-tabs,
 [data-theme="deepsea"] .editor-pane,
 [data-theme="deepsea"] .object-browser,
 [data-theme="deepsea"] .results-pane {
@@ -4961,6 +4964,7 @@
   --font-code: "IBM Plex Mono", monospace;
 }
 
+[data-theme="synthwave"] .sql-tabs,
 [data-theme="synthwave"] .editor-pane,
 [data-theme="synthwave"] .object-browser,
 [data-theme="synthwave"] .results-pane {
@@ -5049,6 +5053,7 @@
   --font-code: "IBM Plex Mono", monospace;
 }
 
+[data-theme="enchanted"] .sql-tabs,
 [data-theme="enchanted"] .editor-pane,
 [data-theme="enchanted"] .object-browser,
 [data-theme="enchanted"] .results-pane {
@@ -5130,6 +5135,7 @@
   --font-code: "IBM Plex Mono", monospace;
 }
 
+[data-theme="hud"] .sql-tabs,
 [data-theme="hud"] .editor-pane,
 [data-theme="hud"] .object-browser,
 [data-theme="hud"] .results-pane {

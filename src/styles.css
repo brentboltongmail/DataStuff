@@ -649,6 +649,7 @@ body.is-row-resizing .monaco-editor {
   height: 100%;
   border-right: 1px solid var(--border);
   background: var(--bg-panel);
+  opacity: 0.85;
   min-height: 0;
   user-select: none;
   flex-shrink: 0;
