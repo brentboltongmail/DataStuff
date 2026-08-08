@@ -667,8 +667,8 @@ body.is-row-resizing .monaco-editor {
   justify-content: space-between;
   gap: 4px;
   padding: 0 6px;
-  height: 24px;
-  min-height: 24px;
+  height: 20px;
+  min-height: 20px;
   border-bottom: 1px solid var(--border-soft);
   color: var(--text-muted);
   font-size: var(--base-font-size);
@@ -704,7 +704,7 @@ body.is-row-resizing .monaco-editor {
 
 .sql-tab-rename {
   width: 100%;
-  padding: 2px 4px;
+  padding: 1px 4px;
   font-size: var(--base-font-size);
   font-family: var(--font-ui);
 }
@@ -731,14 +731,14 @@ body.is-row-resizing .monaco-editor {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 4px;
+  padding: 2px 4px;
   border-bottom: 1px solid var(--border-soft);
   background: var(--bg-panel);
 }
 
 .sql-tab-actions .sql-tab-add {
   flex: 1;
-  height: 20px;
+  height: 18px;
   font-size: var(--base-font-size);
   padding: 0 4px;
 }
