@@ -803,7 +803,7 @@ body.is-row-resizing .monaco-editor {
 }
 
 .toolbar-field input {
-  width: 88px;
+  width: 50px;
   padding: 2px 6px;
   font-family: var(--font-mono);
   font-size: var(--base-font-size);

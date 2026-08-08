@@ -272,6 +272,7 @@ function loadRememberPassword(): boolean {
 
 const SAVED_CONNECTIONS_KEY = "oracle-ide.saved-connections";
 const LAST_CONNECTION_ID_KEY = "oracle-ide.last-connection-id";
+const AUTO_FORMAT_KEY = "oracle-ide.auto-format";
 
 export interface SavedConnection {
   id: string;
@@ -612,6 +613,7 @@ export default function App() {
   const [isProd, setIsProd] = useState<boolean>(initialConnState.isProd);
   const [preProdThemeId, setPreProdThemeId] = useState<AppThemeId>("default");
   const [showManageModal, setShowManageModal] = useState<boolean>(false);
+  const [autoFormat, setAutoFormat] = useState<boolean>(() => localStorage.getItem(AUTO_FORMAT_KEY) === "true");
 
   // Real-time query execution length timer loop
   useEffect(() => {
@@ -956,9 +958,18 @@ export default function App() {
           setRememberPassword(diskSettings.rememberPassword);
           localStorage.setItem(REMEMBER_PASSWORD_KEY, String(diskSettings.rememberPassword));
         }
+        if (typeof diskSettings.autoFormat === "boolean") {
+          setAutoFormat(diskSettings.autoFormat);
+          localStorage.setItem(AUTO_FORMAT_KEY, String(diskSettings.autoFormat));
+        }
       })
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem(AUTO_FORMAT_KEY, String(autoFormat));
+    window.oracle?.saveSettings?.({ autoFormat });
+  }, [autoFormat]);
 
   useEffect(() => {
     localStorage.setItem(MAX_ROWS_KEY, String(maxRows));
@@ -1507,6 +1518,10 @@ export default function App() {
     if (!status.connected) {
       setError("Connect to Oracle first");
       return;
+    }
+
+    if (autoFormat) {
+      onFormatSqlRef.current();
     }
 
     const statement = resolveExecutableSql();
@@ -3451,6 +3466,17 @@ export default function App() {
             >
               ✨ Format SQL
             </button>
+            <label
+              className="checkbox-row toolbar-auto-format"
+              title="Automatically format queries immediately after execution"
+            >
+              <input
+                type="checkbox"
+                checked={autoFormat}
+                onChange={(e) => setAutoFormat(e.target.checked)}
+              />
+              Auto Format
+            </label>
             <button
               type="button"
               onClick={onExportCsv}
