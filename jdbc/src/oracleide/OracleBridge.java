@@ -64,6 +64,8 @@ public final class OracleBridge {
         return connect(id, request);
       case "disconnect":
         return disconnect(id);
+      case "cancel":
+        return response(id, true, cancelQuery(), null);
       case "execute":
         return execute(
             id,
@@ -162,6 +164,38 @@ public final class OracleBridge {
     return response(id, true, result, null);
   }
 
+  private static volatile Statement activeStatement = null;
+
+  private static synchronized void setActiveStatement(Statement stmt) {
+    activeStatement = stmt;
+  }
+
+  private static synchronized void clearActiveStatement() {
+    activeStatement = null;
+  }
+
+  private static Map<String, Object> cancelQuery() {
+    Map<String, Object> result = new LinkedHashMap<>();
+    Statement stmt = activeStatement;
+    if (stmt != null) {
+      try {
+        if (!stmt.isClosed()) {
+          stmt.cancel();
+          result.put("cancelled", true);
+          result.put("message", "Query execution cancelled by user");
+          return result;
+        }
+      } catch (Exception e) {
+        result.put("cancelled", false);
+        result.put("message", "Cancel failed: " + e.getMessage());
+        return result;
+      }
+    }
+    result.put("cancelled", true);
+    result.put("message", "No active query statement to cancel");
+    return result;
+  }
+
   private static Map<String, Object> execute(
       Object id, String sql, int maxRows, List<Object> binds) throws Exception {
     Connection conn = requireConnection();
@@ -180,6 +214,7 @@ public final class OracleBridge {
 
     if (!bindList.isEmpty()) {
       try (var ps = conn.prepareStatement(cleaned)) {
+        setActiveStatement(ps);
         for (int i = 0; i < bindList.size(); i++) {
           Object value = bindList.get(i);
           if (value == null) {
@@ -194,15 +229,20 @@ public final class OracleBridge {
         boolean hasResultSet = ps.execute();
         long elapsedMs = System.currentTimeMillis() - started;
         return response(id, true, buildExecuteResult(ps, hasResultSet, selectLike, limit, elapsedMs), null);
+      } finally {
+        clearActiveStatement();
       }
     }
 
     try (Statement statement = conn.createStatement()) {
+      setActiveStatement(statement);
       statement.setMaxRows(selectLike ? limit + 1 : 0);
       boolean hasResultSet = statement.execute(cleaned);
       long elapsedMs = System.currentTimeMillis() - started;
       return response(
           id, true, buildExecuteResult(statement, hasResultSet, selectLike, limit, elapsedMs), null);
+    } finally {
+      clearActiveStatement();
     }
   }
 
