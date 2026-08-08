@@ -170,20 +170,20 @@ interface SpiralStar {
 function generateSpiralGalaxyStars(): SpiralStar[] {
   const stars: SpiralStar[] = [];
   const arms = 2;
-  const starsPerArm = 120;
+  const starsPerArm = 25;
   const colors = [
     "#ffffff", "#fef08a", "#bae6fd", "#7dd3fc", 
     "#f472b6", "#c084fc", "#a855f7", "#38bdf8", "#fbbf24"
   ];
-  const animations = ["star-twinkle-1", "star-twinkle-2", "star-twinkle-3", ""];
+  const animations = ["star-twinkle-1", "star-twinkle-2", ""];
 
-  // 1. Core Cluster (65 stars)
-  for (let i = 0; i < 65; i++) {
+  // 1. Core Cluster (20 stars)
+  for (let i = 0; i < 20; i++) {
     const angle = Math.random() * Math.PI * 2;
     const dist = Math.pow(Math.random(), 1.8) * 85;
     const x = 400 + Math.cos(angle) * dist;
     const y = 400 + Math.sin(angle) * dist;
-    const size = 1.5 + Math.random() * 4.2;
+    const size = 1.5 + Math.random() * 3.5;
     const color = colors[Math.floor(Math.random() * 4)];
     stars.push({
       cx: Math.round(x * 10) / 10,
@@ -195,7 +195,7 @@ function generateSpiralGalaxyStars(): SpiralStar[] {
     });
   }
 
-  // 2. Logarithmic Spiral Arm Stars (2 arms x 120 stars = 240 stars)
+  // 2. Logarithmic Spiral Arm Stars (2 arms x 25 stars = 50 stars)
   for (let arm = 0; arm < arms; arm++) {
     const baseAngle = (arm * Math.PI * 2) / arms;
     for (let i = 0; i < starsPerArm; i++) {
@@ -213,7 +213,7 @@ function generateSpiralGalaxyStars(): SpiralStar[] {
       const y = 400 + Math.sin(thetaFinal) * rFinal;
       
       const isSupergiant = Math.random() < 0.08;
-      const size = isSupergiant ? (2.8 + Math.random() * 2.4) : (1.2 + Math.random() * 2.2);
+      const size = isSupergiant ? (2.5 + Math.random() * 2.0) : (1.2 + Math.random() * 2.0);
       const color = colors[Math.floor(Math.random() * colors.length)];
       const opacity = Math.round((0.4 + Math.random() * 0.55) * 100) / 100;
       

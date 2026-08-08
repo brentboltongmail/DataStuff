@@ -765,7 +765,8 @@
   pointer-events: none !important;
   z-index: 0 !important;
   overflow: hidden;
-  perspective: 1200px;
+  contain: strict;
+  transform: translateZ(0);
 }
 
 /* Guarantee 85% opacity on all windows and panels in space theme so backdrop shines through */
@@ -779,8 +780,6 @@
   isolation: isolate;
   opacity: 0.85 !important;
   background: transparent !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 }
 
 [data-theme="spaceship"] .titlebar {
