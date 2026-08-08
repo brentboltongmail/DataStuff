@@ -32,7 +32,7 @@ button {
   background: var(--btn-bg);
   color: var(--text);
   border-radius: 6px;
-  padding: 6px 12px;
+  padding: 3px 10px;
   box-shadow: var(--btn-shadow);
   white-space: nowrap;
   flex-shrink: 0;
@@ -108,7 +108,7 @@ input {
   border: 1px solid var(--border);
   color: var(--text);
   border-radius: 6px;
-  padding: 6px 10px;
+  padding: 3px 8px;
   outline: none;
   min-width: 0;
   box-shadow: var(--input-shadow);
@@ -167,7 +167,7 @@ input:focus {
 
 .font-controls button {
   width: 28px;
-  height: 24px;
+  height: 18px;
   padding: 0;
   line-height: 1;
   font-size: calc(14px * var(--font-scale));
@@ -187,7 +187,7 @@ input:focus {
   flex-wrap: wrap;
   gap: 8px;
   align-items: end;
-  padding: 10px 12px;
+  padding: 6px 12px;
   border-bottom: 1px solid var(--border);
   background: var(--connection-bg);
   box-shadow: var(--connection-shadow);
@@ -218,7 +218,7 @@ input:focus {
 
 .saved-profile-select-row select {
   width: 100%;
-  height: 32px;
+  height: 26px;
   padding: 0 8px;
   font-size: calc(12px * var(--font-scale));
   color: var(--text);
@@ -231,13 +231,13 @@ input:focus {
   display: flex;
   gap: 6px;
   align-items: center;
-  height: 32px;
+  height: 26px;
   padding-bottom: 1px;
 }
 
 .save-conn-btn,
 .delete-conn-btn {
-  height: 32px;
+  height: 26px;
   padding: 0 10px;
   font-size: calc(12px * var(--font-scale));
 }
@@ -255,7 +255,7 @@ input:focus {
   gap: 6px;
   width: auto;
   align-self: end;
-  height: 32px;
+  height: 26px;
   margin-bottom: 0;
   font-size: calc(12px * var(--font-scale));
   color: var(--text-muted);
@@ -290,7 +290,7 @@ input:focus {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 32px;
+  height: 26px;
   font-size: calc(12px * var(--font-scale));
   color: var(--text);
   text-transform: none;
@@ -706,9 +706,9 @@ body.is-row-resizing .monaco-editor {
   align-items: center;
   gap: 8px;
   padding: 0 12px;
-  height: 40px;
-  min-height: 40px;
-  max-height: 40px;
+  height: 34px;
+  min-height: 34px;
+  max-height: 34px;
   flex-wrap: nowrap;
   overflow-x: auto;
   overflow-y: hidden;
@@ -722,7 +722,7 @@ body.is-row-resizing .monaco-editor {
 .toolbar button {
   white-space: nowrap !important;
   flex-shrink: 0 !important;
-  height: 28px !important;
+  height: 22px !important;
   line-height: 1 !important;
   display: inline-flex !important;
   align-items: center !important;
