@@ -55,8 +55,25 @@ export default function BindVariablesModal({
     }));
   };
 
+  const backdropMouseDownRef = React.useRef(false);
+
+  const handleBackdropMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    backdropMouseDownRef.current = e.target === e.currentTarget;
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (backdropMouseDownRef.current && e.target === e.currentTarget) {
+      onCancel();
+    }
+    backdropMouseDownRef.current = false;
+  };
+
   return (
-    <div className="modal-backdrop" onClick={onCancel}>
+    <div
+      className="modal-backdrop"
+      onMouseDown={handleBackdropMouseDown}
+      onClick={handleBackdropClick}
+    >
       <div className="modal bind-variables-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3>

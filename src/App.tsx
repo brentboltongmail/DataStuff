@@ -506,6 +506,19 @@ export default function App() {
     rawSql: string;
   } | null>(null);
 
+  const manageBackdropMouseDownRef = useRef(false);
+
+  const handleManageBackdropMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    manageBackdropMouseDownRef.current = e.target === e.currentTarget;
+  }, []);
+
+  const handleManageBackdropClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (manageBackdropMouseDownRef.current && e.target === e.currentTarget) {
+      setShowManageModal(false);
+    }
+    manageBackdropMouseDownRef.current = false;
+  }, []);
+
   const message = activeTabState.message;
   const setMessage = useCallback(
     (val: string | ((prev: string) => string)) => {
@@ -3401,7 +3414,11 @@ export default function App() {
       </footer>
 
       {showManageModal ? (
-        <div className="modal-backdrop" onClick={() => setShowManageModal(false)}>
+        <div
+          className="modal-backdrop"
+          onMouseDown={handleManageBackdropMouseDown}
+          onClick={handleManageBackdropClick}
+        >
           <div className="modal connection-manage-modal" onClick={(e) => e.stopPropagation()}>
             <h2>Manage Connection Profiles</h2>
             <p className="subtitle">
