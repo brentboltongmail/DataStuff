@@ -5926,25 +5926,45 @@
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 100%, #451a03 0%, #180505 80%);
+  background: radial-gradient(circle at 50% 50%, #290d09 0%, #180505 100%);
 }
 
-.solar-atmosphere .coronal-loop {
+.solar-flare-expanding {
   position: absolute;
-  bottom: -50px;
-  left: 35vw;
-  width: 300px;
-  height: 180px;
-  border-radius: 50% 50% 0 0;
-  border: 2px solid rgba(254, 240, 138, 0.4);
-  border-bottom: none;
-  box-shadow: 0 0 25px #f97316;
-  animation: solar-pulse 6s ease-in-out infinite alternate;
+  transform: translate3d(-50%, -50%, 0);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    #ffffff 0%,
+    #fef08a 12%,
+    #f97316 35%,
+    #dc2626 65%,
+    rgba(120, 53, 15, 0) 85%
+  );
+  box-shadow:
+    0 0 35px #ffffff,
+    0 0 70px #fef08a,
+    0 0 140px #f97316,
+    0 0 220px #dc2626;
+  animation: solar-grow-indefinite linear infinite;
+  will-change: transform, opacity;
 }
 
-@keyframes solar-pulse {
-  0% { transform: scale(0.95); opacity: 0.5; }
-  100% { transform: scale(1.08); opacity: 0.95; }
+@keyframes solar-grow-indefinite {
+  0% {
+    transform: translate3d(-50%, -50%, 0) scale(0.02);
+    opacity: 0.05;
+  }
+  8% {
+    opacity: 0.95;
+  }
+  80% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(-50%, -50%, 0) scale(var(--max-scale, 40));
+    opacity: 0;
+  }
 }
 
 .theme-picker {

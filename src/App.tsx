@@ -135,6 +135,67 @@ function formatLiveElapsedTime(ms: number): string {
   return `${mins}m ${secs.padStart(4, "0")}s`;
 }
 
+interface SolarFlareState {
+  id: number;
+  left: number;
+  top: number;
+  size: number;
+  duration: number;
+  delay: number;
+  maxScale: number;
+}
+
+const SolarAtmosphere: React.FC = () => {
+  const [flares, setFlares] = useState<SolarFlareState[]>(() =>
+    Array.from({ length: 5 }).map((_, i) => ({
+      id: i,
+      left: Math.floor(Math.random() * 85) + 5,
+      top: Math.floor(Math.random() * 85) + 5,
+      size: Math.floor(Math.random() * 80) + 40,
+      duration: Math.floor(Math.random() * 5) + 7,
+      delay: i * 1.8,
+      maxScale: Math.floor(Math.random() * 20) + 30,
+    }))
+  );
+
+  const handleIteration = (id: number) => {
+    setFlares((prev) =>
+      prev.map((f) =>
+        f.id === id
+          ? {
+              ...f,
+              left: Math.floor(Math.random() * 90) + 5,
+              top: Math.floor(Math.random() * 90) + 5,
+              duration: Math.floor(Math.random() * 5) + 7,
+              maxScale: Math.floor(Math.random() * 20) + 30,
+            }
+          : f
+      )
+    );
+  };
+
+  return (
+    <div className="solar-atmosphere">
+      {flares.map((f) => (
+        <div
+          key={f.id}
+          className="solar-flare-expanding"
+          style={{
+            left: `${f.left}%`,
+            top: `${f.top}%`,
+            width: `${f.size}px`,
+            height: `${f.size}px`,
+            animationDuration: `${f.duration}s`,
+            animationDelay: `${f.delay}s`,
+            ["--max-scale" as string]: f.maxScale,
+          }}
+          onAnimationIteration={() => handleIteration(f.id)}
+        />
+      ))}
+    </div>
+  );
+};
+
 const CIRCUIT_PRESETS = [
   // Preset 1: Silverstone Sweeping Loop
   "M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z",
@@ -3669,14 +3730,7 @@ export default function App() {
         </div>
       ) : null}
 
-      {themeId === "solar" ? (
-        <div className="solar-atmosphere">
-          <div className="coronal-loop loop-1" />
-          <div className="coronal-loop loop-2" />
-          <div className="solar-flare flare-burst" />
-          <div className="sunspot spot-1" />
-        </div>
-      ) : null}
+      {themeId === "solar" ? <SolarAtmosphere /> : null}
       <header className="titlebar">
         <div className="titlebar-left">
           <h1 className="titlebar-app-name">DataStuff</h1>
