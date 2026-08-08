@@ -857,6 +857,27 @@ const BrassAtmosphere: React.FC = () => {
   );
 };
 
+const MatrixAtmosphere: React.FC = () => {
+  return (
+    <div className="matrix-atmosphere">
+      <div className="matrix-crt-scanlines" />
+      <div className="matrix-phosphor-bloom" />
+      <div className="matrix-code-stream stream-1"><span className="stream-head">01</span></div>
+      <div className="matrix-code-stream stream-2"><span className="stream-head">10</span></div>
+      <div className="matrix-code-stream stream-3"><span className="stream-head">11</span></div>
+      <div className="matrix-code-stream stream-4"><span className="stream-head">00</span></div>
+      <div className="matrix-code-stream stream-5"><span className="stream-head">10</span></div>
+      <div className="matrix-code-stream stream-6"><span className="stream-head">01</span></div>
+      <div className="matrix-code-stream stream-7"><span className="stream-head">11</span></div>
+      <div className="matrix-code-stream stream-8"><span className="stream-head">10</span></div>
+      <div className="matrix-code-stream stream-9"><span className="stream-head">01</span></div>
+      <div className="matrix-code-stream stream-10"><span className="stream-head">00</span></div>
+      <div className="matrix-code-stream stream-11"><span className="stream-head">11</span></div>
+      <div className="matrix-code-stream stream-12"><span className="stream-head">10</span></div>
+    </div>
+  );
+};
+
 const CIRCUIT_PRESETS = [
   // Preset 1: Silverstone Sweeping Loop
   "M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z",
@@ -4238,16 +4259,7 @@ export default function App() {
         </div>
       ) : null}
 
-      {themeId === "matrix" ? (
-        <div className="matrix-atmosphere">
-          <div className="matrix-code-stream stream-1" />
-          <div className="matrix-code-stream stream-2" />
-          <div className="matrix-code-stream stream-3" />
-          <div className="matrix-code-stream stream-4" />
-          <div className="matrix-code-stream stream-5" />
-          <div className="matrix-crt-scanlines" />
-        </div>
-      ) : null}
+      {themeId === "matrix" ? <MatrixAtmosphere /> : null}
 
       {themeId === "deepsea" ? <DeepSeaAtmosphere /> : null}
 
