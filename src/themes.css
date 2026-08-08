@@ -847,14 +847,49 @@
 }
 
 [data-theme="spaceship"] .monaco-editor,
+[data-theme="spaceship"] .monaco-editor-background,
 [data-theme="spaceship"] .monaco-editor .margin,
 [data-theme="spaceship"] .monaco-editor .monaco-scrollable-element,
-[data-theme="spaceship"] .data-grid,
-[data-theme="spaceship"] .grid-row,
-[data-theme="spaceship"] .grid-cell,
+[data-theme="spaceship"] .monaco-editor .inputarea.ime-input,
+[data-theme="spaceship"] .monaco-editor .overflow-guard {
+  background-color: transparent !important;
+  background-image: none !important;
+  position: relative;
+  z-index: 25;
+}
+
+[data-theme="spaceship"] .sidebar,
+[data-theme="spaceship"] .tree-view,
+[data-theme="spaceship"] .tree-node,
+[data-theme="spaceship"] .object-browser,
+[data-theme="spaceship"] .connection-panel,
+[data-theme="spaceship"] .history-panel,
+[data-theme="spaceship"] .history-item,
 [data-theme="spaceship"] .object-list,
 [data-theme="spaceship"] .column-list,
-[data-theme="spaceship"] .history-list,
+[data-theme="spaceship"] .history-list {
+  background-color: rgba(10, 18, 32, 0.35) !important;
+  background-image: none !important;
+  position: relative;
+  z-index: 25;
+}
+
+[data-theme="spaceship"] .results-pane,
+[data-theme="spaceship"] .grid-wrap,
+[data-theme="spaceship"] .results-grid,
+[data-theme="spaceship"] .data-grid,
+[data-theme="spaceship"] .rdg,
+[data-theme="spaceship"] .rdg-header-row,
+[data-theme="spaceship"] .rdg-row,
+[data-theme="spaceship"] .rdg-cell,
+[data-theme="spaceship"] .grid-row,
+[data-theme="spaceship"] .grid-cell {
+  background-color: rgba(10, 18, 32, 0.35) !important;
+  background-image: none !important;
+  position: relative;
+  z-index: 25;
+}
+
 [data-theme="spaceship"] button,
 [data-theme="spaceship"] input,
 [data-theme="spaceship"] label,
@@ -998,7 +1033,8 @@
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
-  opacity: 0;
+  opacity: 0.95 !important;
+  z-index: 10 !important;
   transform-style: preserve-3d;
 }
 
@@ -1303,10 +1339,11 @@
 .spaceship-atmosphere .distant-ship {
   position: absolute;
   pointer-events: none;
-  opacity: 0.92;
+  opacity: 1 !important;
+  z-index: 20 !important;
   will-change: transform;
   transform-style: preserve-3d;
-  filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 12px rgba(56, 189, 248, 0.3));
+  filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 16px rgba(56, 189, 248, 0.6));
 }
 
 /* Engine Pulse & LED Strobe Animations */
