@@ -1936,22 +1936,66 @@ export default function App() {
             </svg>
           </div>
 
-          <span
-            className="space-celestial celestial-planet"
+          {/* Celestial Body 1: Gas Giant with Saturn Rings, Auroras, Storm Spot, & 2 Orbiting Moons */}
+          <div
+            className="space-celestial celestial-planet celestial-gas-giant"
             style={initialSpaceDelays[0] ? { animationDelay: initialSpaceDelays[0] } : undefined}
-          />
-          <span
-            className="space-celestial celestial-moon"
+          >
+            <span className="planet-atmosphere-halo" />
+            <span className="planet-surface-texture" />
+            <span className="planet-cloud-bands" />
+            <span className="planet-aurora-boreal" />
+            <span className="planet-great-spot" />
+            <span className="planet-ring-system outer-ice-ring" />
+            <span className="planet-ring-system inner-dust-ring" />
+            <span className="planet-ring-system cassini-division" />
+            <div className="orbiting-moon moon-alpha">
+              <span className="moon-shadow" />
+            </div>
+            <div className="orbiting-moon moon-beta">
+              <span className="moon-shadow" />
+            </div>
+          </div>
+
+          {/* Celestial Body 2: Crystalline Ice World with Silver Ring & Orbiting Moon */}
+          <div
+            className="space-celestial celestial-moon celestial-ice-world"
             style={initialSpaceDelays[1] ? { animationDelay: initialSpaceDelays[1] } : undefined}
-          />
-          <span
+          >
+            <span className="planet-atmosphere-halo icy-cyan-glow" />
+            <span className="planet-surface-texture ice-crust" />
+            <span className="planet-ring-system silver-ice-ring" />
+            <div className="orbiting-moon moon-gamma">
+              <span className="moon-shadow" />
+            </div>
+          </div>
+
+          {/* Celestial Body 3: Volcanic Lava World with Molten Debris Ring & Scorched Moon */}
+          <div
             className="space-celestial celestial-lava-planet"
             style={initialSpaceDelays[2] ? { animationDelay: initialSpaceDelays[2] } : undefined}
-          />
-          <span
+          >
+            <span className="planet-atmosphere-halo magma-corona-glow" />
+            <span className="planet-surface-texture lava-rivers" />
+            <span className="planet-ring-system molten-debris-ring" />
+            <div className="orbiting-moon moon-delta">
+              <span className="moon-shadow" />
+            </div>
+          </div>
+
+          {/* Celestial Body 4: Violet Plasma Supergiant with Double Plasma Rings & Orbiting Moon */}
+          <div
             className="space-celestial celestial-purple-giant"
             style={initialSpaceDelays[3] ? { animationDelay: initialSpaceDelays[3] } : undefined}
-          />
+          >
+            <span className="planet-atmosphere-halo violet-aurora-glow" />
+            <span className="planet-surface-texture storm-swirls" />
+            <span className="planet-ring-system plasma-ring-outer" />
+            <span className="planet-ring-system plasma-ring-inner" />
+            <div className="orbiting-moon moon-epsilon">
+              <span className="moon-shadow" />
+            </div>
+          </div>
           <span className="shooting-star shooting-star-1" />
           <span className="shooting-star shooting-star-2" />
           <div className="distant-ship distant-ship-1 ship-astral-dreadnought">
