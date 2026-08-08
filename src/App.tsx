@@ -152,8 +152,8 @@ const SolarAtmosphere: React.FC = () => {
       left: Math.floor(Math.random() * 85) + 5,
       top: Math.floor(Math.random() * 85) + 5,
       size: Math.floor(Math.random() * 80) + 40,
-      duration: Math.floor(Math.random() * 5) + 7,
-      delay: i * 1.8,
+      duration: (Math.floor(Math.random() * 5) + 7) * 6, // 42s to 72s
+      delay: i * 10.8,
       maxScale: Math.floor(Math.random() * 20) + 30,
     }))
   );
@@ -166,7 +166,7 @@ const SolarAtmosphere: React.FC = () => {
               ...f,
               left: Math.floor(Math.random() * 90) + 5,
               top: Math.floor(Math.random() * 90) + 5,
-              duration: Math.floor(Math.random() * 5) + 7,
+              duration: (Math.floor(Math.random() * 5) + 7) * 6,
               maxScale: Math.floor(Math.random() * 20) + 30,
             }
           : f
