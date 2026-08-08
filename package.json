@@ -1,7 +1,8 @@
 {
-  "name": "oracle-ide",
+  "name": "datastuff",
+  "productName": "DataStuff",
   "version": "0.1.0",
-  "description": "Simple macOS Oracle query IDE",
+  "description": "DataStuff - macOS Oracle Query IDE",
   "main": "dist-electron/main.js",
   "private": true,
   "scripts": {

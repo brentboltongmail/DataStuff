@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain } from "electron";
+import { app, BrowserWindow, dialog, ipcMain, Menu } from "electron";
 import fs from "node:fs/promises";
 import path from "node:path";
 import {
@@ -32,8 +32,10 @@ import {
 } from "./sqlPages";
 import type { ConnectionConfig, SavedWorkspace, SqlTab } from "../src/types";
 
-// Name used for the macOS Keychain “Safe Storage” item.
+// Explicit macOS application name for Dock, Menu Bar, and Keychain
+app.name = "DataStuff";
 app.setName("DataStuff");
+process.title = "DataStuff";
 
 process.env.DIST = path.join(__dirname, "../dist");
 process.env.VITE_PUBLIC = app.isPackaged
@@ -41,6 +43,74 @@ process.env.VITE_PUBLIC = app.isPackaged
   : path.join(__dirname, "../public");
 
 let mainWindow: BrowserWindow | null = null;
+
+function setupAppMenu() {
+  const isMac = process.platform === "darwin";
+  const template: Electron.MenuItemConstructorOptions[] = [
+    ...(isMac
+      ? [
+          {
+            label: "DataStuff",
+            submenu: [
+              { role: "about" as const, label: "About DataStuff" },
+              { type: "separator" as const },
+              { role: "services" as const },
+              { type: "separator" as const },
+              { role: "hide" as const },
+              { role: "hideOthers" as const },
+              { role: "unhide" as const },
+              { type: "separator" as const },
+              { role: "quit" as const, label: "Quit DataStuff" },
+            ],
+          },
+        ]
+      : []),
+    {
+      label: "Edit",
+      submenu: [
+        { role: "undo" as const },
+        { role: "redo" as const },
+        { type: "separator" as const },
+        { role: "cut" as const },
+        { role: "copy" as const },
+        { role: "paste" as const },
+        { role: "selectAll" as const },
+      ],
+    },
+    {
+      label: "View",
+      submenu: [
+        { role: "reload" as const },
+        { role: "forceReload" as const },
+        { role: "toggleDevTools" as const },
+        { type: "separator" as const },
+        { role: "resetZoom" as const },
+        { role: "zoomIn" as const },
+        { role: "zoomOut" as const },
+        { type: "separator" as const },
+        { role: "togglefullscreen" as const },
+      ],
+    },
+    {
+      label: "Window",
+      submenu: [
+        { role: "minimize" as const },
+        { role: "zoom" as const },
+        ...(isMac
+          ? [
+              { type: "separator" as const },
+              { role: "front" as const },
+              { type: "separator" as const },
+              { role: "window" as const },
+            ]
+          : [{ role: "close" as const }]),
+      ],
+    },
+  ];
+
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -183,6 +253,7 @@ async function saveConnectionsToDisk(connections: unknown[]): Promise<{ saved: b
 }
 
 app.whenReady().then(() => {
+  setupAppMenu();
   registerIpc();
   createWindow();
 
