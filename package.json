@@ -11,8 +11,45 @@
     "dev": "vite",
     "prebuild": "npm run setup:jdbc",
     "build": "tsc -p tsconfig.node.json && vite build",
+    "package:mac": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac",
+    "package:fast": "npm run build && CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --dir --mac",
     "preview": "vite preview",
     "start": "electron ."
+  },
+  "build": {
+    "appId": "com.datastuff.app",
+    "productName": "DataStuff",
+    "copyright": "Copyright © 2026 DataStuff",
+    "asar": false,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "jdbc/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "identity": null,
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ]
+    }
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
@@ -25,6 +62,7 @@
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
     "electron": "^35.7.5",
+    "electron-builder": "^26.15.3",
     "typescript": "^5.8.3",
     "vite": "^6.3.3",
     "vite-plugin-electron": "^0.29.0",
