@@ -143,4 +143,6 @@ export interface OracleApi {
   clearPassword: () => Promise<void>;
   loadSavedConnections: <T = unknown>() => Promise<T[]>;
   saveSavedConnections: <T = unknown>(connections: T[]) => Promise<{ saved: boolean }>;
+  loadSettings?: () => Promise<Record<string, unknown>>;
+  saveSettings?: (settings: Record<string, unknown>) => Promise<{ saved: boolean }>;
 }

@@ -234,6 +234,33 @@ function getConnectionsFilePath(): string {
   return path.join(app.getPath("userData"), "saved-connections.json");
 }
 
+function getSettingsFilePath(): string {
+  return path.join(app.getPath("userData"), "user-settings.json");
+}
+
+async function loadSettingsFromDisk(): Promise<Record<string, unknown>> {
+  try {
+    const file = getSettingsFilePath();
+    const raw = await fs.readFile(file, "utf8");
+    return JSON.parse(raw) as Record<string, unknown>;
+  } catch {
+    return {};
+  }
+}
+
+async function saveSettingsToDisk(settings: Record<string, unknown>): Promise<{ saved: boolean }> {
+  try {
+    const file = getSettingsFilePath();
+    await fs.mkdir(path.dirname(file), { recursive: true });
+    const existing = await loadSettingsFromDisk();
+    const merged = { ...existing, ...settings };
+    await fs.writeFile(file, JSON.stringify(merged, null, 2), "utf8");
+    return { saved: true };
+  } catch {
+    return { saved: false };
+  }
+}
+
 async function loadConnectionsFromDisk(): Promise<unknown[]> {
   try {
     const file = getConnectionsFilePath();

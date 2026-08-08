@@ -38,6 +38,9 @@ const api: OracleApi = {
   loadSavedConnections: () => ipcRenderer.invoke("connections:load"),
   saveSavedConnections: (connections: unknown[]) =>
     ipcRenderer.invoke("connections:save", connections),
+  loadSettings: () => ipcRenderer.invoke("settings:load"),
+  saveSettings: (settings: Record<string, unknown>) =>
+    ipcRenderer.invoke("settings:save", settings),
 };
 
 contextBridge.exposeInMainWorld("oracle", api);

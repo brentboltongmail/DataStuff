@@ -896,11 +896,55 @@ export default function App() {
   }, [history]);
 
   useEffect(() => {
+    if (!window.oracle?.loadSettings) return;
+    window.oracle
+      .loadSettings()
+      .then((diskSettings) => {
+        if (!diskSettings || typeof diskSettings !== "object") return;
+        if (typeof diskSettings.theme === "string") {
+          setThemeId(diskSettings.theme as AppThemeId);
+          localStorage.setItem(THEME_KEY, diskSettings.theme);
+          applyThemeToDocument(diskSettings.theme as AppThemeId);
+        }
+        if (typeof diskSettings.fontScale === "number" && Number.isFinite(diskSettings.fontScale)) {
+          setFontScale(diskSettings.fontScale);
+          localStorage.setItem(FONT_SCALE_KEY, String(diskSettings.fontScale));
+        }
+        if (
+          typeof diskSettings.density === "string" &&
+          (diskSettings.density === "normal" || diskSettings.density === "compact" || diskSettings.density === "crammed")
+        ) {
+          setDensity(diskSettings.density as GridDensity);
+          localStorage.setItem(DENSITY_KEY, diskSettings.density);
+        }
+        if (typeof diskSettings.maxRows === "number" && Number.isFinite(diskSettings.maxRows) && diskSettings.maxRows >= 1) {
+          setMaxRows(diskSettings.maxRows);
+          localStorage.setItem(MAX_ROWS_KEY, String(diskSettings.maxRows));
+        }
+        if (typeof diskSettings.editorSplit === "number" && Number.isFinite(diskSettings.editorSplit)) {
+          setEditorSplit(diskSettings.editorSplit);
+          localStorage.setItem(EDITOR_SPLIT_KEY, String(diskSettings.editorSplit));
+        }
+        if (typeof diskSettings.sidebarWidth === "number" && Number.isFinite(diskSettings.sidebarWidth)) {
+          setSidebarWidth(diskSettings.sidebarWidth);
+          localStorage.setItem(SIDEBAR_WIDTH_KEY, String(diskSettings.sidebarWidth));
+        }
+        if (typeof diskSettings.rememberPassword === "boolean") {
+          setRememberPassword(diskSettings.rememberPassword);
+          localStorage.setItem(REMEMBER_PASSWORD_KEY, String(diskSettings.rememberPassword));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
     localStorage.setItem(MAX_ROWS_KEY, String(maxRows));
+    window.oracle?.saveSettings?.({ maxRows });
   }, [maxRows]);
 
   useEffect(() => {
     localStorage.setItem(DENSITY_KEY, density);
+    window.oracle?.saveSettings?.({ density });
   }, [density]);
 
   useEffect(() => {
@@ -909,20 +953,24 @@ export default function App() {
     editorRef.current?.updateOptions({
       fontSize: Math.round(EDITOR_BASE_FONT_SIZE * fontScale),
     });
+    window.oracle?.saveSettings?.({ fontScale });
   }, [fontScale]);
 
   useEffect(() => {
     localStorage.setItem(THEME_KEY, themeId);
     applyThemeToDocument(themeId);
     monacoApiRef.current?.editor.setTheme(themeOption(themeId).monacoTheme);
+    window.oracle?.saveSettings?.({ theme: themeId });
   }, [themeId]);
 
   useEffect(() => {
     localStorage.setItem(EDITOR_SPLIT_KEY, String(editorSplit));
+    window.oracle?.saveSettings?.({ editorSplit });
   }, [editorSplit]);
 
   useEffect(() => {
     localStorage.setItem(SIDEBAR_WIDTH_KEY, String(sidebarWidth));
+    window.oracle?.saveSettings?.({ sidebarWidth });
   }, [sidebarWidth]);
 
   const handleSelectConnection = useCallback(

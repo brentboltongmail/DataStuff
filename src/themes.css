@@ -1363,14 +1363,14 @@
 .spaceship-atmosphere .distant-ship {
   position: absolute;
   pointer-events: none;
-  opacity: 1 !important;
-  z-index: 20 !important;
+  opacity: 0.85 !important;
+  z-index: 2 !important; /* Fly BEHIND planets & moons in deep space */
   will-change: transform;
   transform: translateZ(0);
   contain: layout style paint;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  filter: drop-shadow(0 12px 16px rgba(0, 0, 0, 0.75));
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.9)) brightness(0.9);
 }
 
 .spaceship-atmosphere .starship-svg {
@@ -1396,9 +1396,9 @@
 .spaceship-atmosphere .ship-astral-dreadnought {
   top: 15%;
   left: 0;
-  width: 210px;
-  height: 95px;
-  animation: straight-flight-left-to-right-1 38s linear 0s infinite;
+  width: 105px;
+  height: 48px;
+  animation: straight-flight-left-to-right-1 48s linear 0s infinite;
 }
 
 .ship-astral-dreadnought .ship-ring-module {
@@ -1635,9 +1635,9 @@
 .spaceship-atmosphere .ship-quantum-interceptor {
   top: 32%;
   left: 0;
-  width: 220px;
-  height: 105px;
-  animation: straight-flight-left-to-right-2 42s linear 6s infinite;
+  width: 95px;
+  height: 42px;
+  animation: straight-flight-left-to-right-2 52s linear 6s infinite;
 }
 
 .ship-quantum-interceptor .qi-delta-hull {
@@ -1748,9 +1748,9 @@
 .spaceship-atmosphere .ship-solar-corvette {
   top: 48%;
   left: 0;
-  width: 200px;
-  height: 100px;
-  animation: straight-flight-right-to-left-1 36s linear 3s infinite;
+  width: 100px;
+  height: 45px;
+  animation: straight-flight-right-to-left-1 46s linear 3s infinite;
 }
 
 .ship-solar-corvette .sc-catamaran-left {
@@ -1846,9 +1846,9 @@
 .spaceship-atmosphere .ship-void-harvester {
   top: 64%;
   left: 0;
-  width: 195px;
-  height: 95px;
-  animation: straight-flight-right-to-left-2 44s linear 10s infinite;
+  width: 100px;
+  height: 45px;
+  animation: straight-flight-right-to-left-2 56s linear 10s infinite;
 }
 
 .ship-void-harvester .vh-hex-core {
@@ -1921,27 +1921,27 @@
 .spaceship-atmosphere .ship-chrono-battlecruiser {
   top: 78%;
   left: 0;
-  width: 230px;
-  height: 105px;
-  animation: straight-flight-left-to-right-3 30s linear 2s infinite;
+  width: 110px;
+  height: 45px;
+  animation: straight-flight-left-to-right-3 44s linear 2s infinite;
 }
 
 /* Ship 6: Apex Stealth Corvette */
 .spaceship-atmosphere .ship-apex-corvette {
   top: 22%;
   left: 0;
-  width: 210px;
-  height: 98px;
-  animation: straight-flight-right-to-left-3 26s linear 4s infinite;
+  width: 90px;
+  height: 38px;
+  animation: straight-flight-right-to-left-3 40s linear 4s infinite;
 }
 
 /* Ship 7: Titan Carrier */
 .spaceship-atmosphere .ship-titan-carrier {
   top: 85%;
   left: 0;
-  width: 260px;
-  height: 120px;
-  animation: straight-flight-left-to-right-4 36s linear 6s infinite;
+  width: 120px;
+  height: 50px;
+  animation: straight-flight-left-to-right-4 50s linear 6s infinite;
 }
 
 /* ── STRAIGHT HORIZONTAL FLIGHT PATHS (Off-Screen Left to Off-Screen Right & Vice-Versa) ── */
