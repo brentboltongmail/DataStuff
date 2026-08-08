@@ -368,7 +368,7 @@ input:focus {
 
 .body {
   display: grid;
-  grid-template-columns: 1fr 3px 240px;
+  grid-template-columns: 1fr 2px 240px;
   min-height: 0;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.15), transparent 8%);
 }
