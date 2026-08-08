@@ -450,10 +450,10 @@ body.is-col-resizing .sidebar-split {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
   margin: 0;
-  padding: 8px 6px 4px;
+  padding: 4px 4px 2px;
   border: 0;
   background: transparent;
   font: inherit;
@@ -504,15 +504,16 @@ body.is-col-resizing .sidebar-split {
   background: transparent;
   color: var(--text);
   border-radius: 4px;
-  padding: 4px 6px;
+  padding: 1px 4px;
+  line-height: 1.22;
   text-align: left;
 }
 
 .object-expand {
   color: var(--text-muted);
-  width: 22px;
-  padding-left: 4px;
-  padding-right: 4px;
+  width: 20px;
+  padding-left: 2px;
+  padding-right: 2px;
 }
 
 .object-name {
@@ -530,14 +531,15 @@ body.is-col-resizing .sidebar-split {
 }
 
 .column-list {
-  padding: 0 0 6px 28px;
+  padding: 0 0 4px 24px;
 }
 
 .column-list li {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  padding: 2px 4px;
+  padding: 1px 4px;
+  line-height: 1.22;
   font-size: var(--base-font-size);
   font-family: var(--font-mono);
   color: var(--text-muted);
