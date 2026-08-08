@@ -1085,7 +1085,9 @@ export default function App() {
     setMessage(`Connection "${nameToSave}" saved`);
   }, [config, connectionName, isProd, selectedConnectionId]);
 
-  // Synchronize saved connections from disk JSON file on mount
+  const autoConnectAttemptedRef = useRef(false);
+
+  // Synchronize saved connections from disk JSON file on mount & auto-connect to last connection
   useEffect(() => {
     window.oracle?.loadSavedConnections?.<SavedConnection>()
       .then((diskConns) => {
@@ -1096,6 +1098,73 @@ export default function App() {
       })
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (autoConnectAttemptedRef.current) return;
+    if (!savedConnections || savedConnections.length === 0) return;
+    autoConnectAttemptedRef.current = true;
+
+    const lastId = localStorage.getItem(LAST_CONNECTION_ID_KEY) || savedConnections[0]?.id;
+    const targetConn = savedConnections.find((c) => c.id === lastId) || savedConnections[0];
+
+    if (!targetConn) return;
+
+    (async () => {
+      try {
+        setSelectedConnectionId(targetConn.id);
+        setConnectionName(targetConn.name);
+        setIsProd(!!targetConn.isProd);
+
+        const connConfig: ConnectionConfig = {
+          user: targetConn.user,
+          host: targetConn.host,
+          port: targetConn.port,
+          service: targetConn.service,
+          tcps: !!targetConn.tcps,
+          password: "",
+        };
+
+        let loadedPass = "";
+        if (window.oracle?.loadPassword) {
+          loadedPass = (await window.oracle.loadPassword()) || "";
+        }
+        connConfig.password = loadedPass;
+        setConfig(connConfig);
+
+        if (loadedPass) {
+          setBusy(true);
+          setMessage(`Auto-connecting to ${targetConn.name}...`);
+
+          let hasTimedOut = false;
+          const timeoutTimer = window.setTimeout(() => {
+            hasTimedOut = true;
+            setBusy(false);
+            setMessage("Auto-connect timeout (5s)");
+          }, 5000);
+
+          const next = await window.oracle.connect(connConfig);
+          window.clearTimeout(timeoutTimer);
+
+          if (!hasTimedOut) {
+            setStatus(next);
+            setObjectsRefresh((n) => n + 1);
+            if (targetConn.isProd) {
+              setPreProdThemeId(themeId);
+              setThemeId("nuclear");
+            }
+            setMessage(`Auto-connected as ${next.user}@${next.connectString}`);
+          }
+        } else {
+          setMessage(`Restored connection "${targetConn.name}" — enter password to connect`);
+        }
+      } catch (err) {
+        const text = err instanceof Error ? err.message : String(err);
+        setMessage(`Auto-connect notice: ${text}`);
+      } finally {
+        setBusy(false);
+      }
+    })();
+  }, [savedConnections, themeId]);
 
   const handleDeleteConnection = useCallback(() => {
     if (!selectedConnectionId) return;
