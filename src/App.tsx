@@ -3293,8 +3293,16 @@ export default function App() {
               <>
                 <div className="query-copy-gutter">
                   {sqlBlocks.map((block) => {
-                    const top = 12 + (block.startLine - 1) * editorLineHeight - editorScrollTop;
-                    const height = (block.endLine - block.startLine + 1) * editorLineHeight;
+                    let top = 12 + (block.startLine - 1) * editorLineHeight - editorScrollTop;
+                    let height = (block.endLine - block.startLine + 1) * editorLineHeight;
+
+                    if (editorRef.current) {
+                      const lineTop = editorRef.current.getTopForLineNumber(block.startLine);
+                      const nextLineTop = editorRef.current.getTopForLineNumber(block.endLine + 1);
+                      top = lineTop - editorScrollTop;
+                      height = nextLineTop - lineTop;
+                    }
+
                     const isCopied = copiedBlockId === block.id;
 
                     if (top + height < -50 || top > 2500) return null;
