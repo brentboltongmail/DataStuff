@@ -95,7 +95,7 @@ const DEFAULT_SIDEBAR_WIDTH = 240;
 const MIN_SIDEBAR_WIDTH = 120;
 const MAX_SIDEBAR_WIDTH = 600;
 /** Fixed workspace chrome above/below the editor↔results split (tabs + splitter + toolbar). */
-const WORKSPACE_FIXED_CHROME_PX = 4 + 20;
+const WORKSPACE_FIXED_CHROME_PX = 3 + 20;
 /** How often to probe a live Oracle session while connected. */
 const CONNECTION_HEARTBEAT_MS = 30_000;
 
@@ -3246,7 +3246,7 @@ export default function App() {
         </div>
       </header>
 
-      <div className="body" style={{ gridTemplateColumns: `${sidebarWidth}px 4px 1fr` }}>
+      <div className="body" style={{ gridTemplateColumns: `${sidebarWidth}px 3px 1fr` }}>
         <ObjectBrowser
           connected={status.connected}
           refreshKey={objectsRefresh}
@@ -3268,7 +3268,7 @@ export default function App() {
           className="workspace"
           ref={workspaceRef}
           style={{
-            gridTemplateRows: `minmax(100px, ${editorSplit}fr) 4px 20px minmax(100px, ${1 - editorSplit}fr)`,
+            gridTemplateRows: `minmax(100px, ${editorSplit}fr) 3px 20px minmax(100px, ${1 - editorSplit}fr)`,
           }}
         >
           <div className="editor-pane">
