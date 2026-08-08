@@ -15,7 +15,7 @@ export type { CellEdit };
 export type GridDensity = "normal" | "compact" | "crammed";
 
 /** Crammed header labels are rotated this many degrees from horizontal. */
-const CRAMMED_HEADER_ANGLE_DEG = 45;
+const CRAMMED_HEADER_ANGLE_DEG = 30;
 
 interface Props {
   result: QueryResult;

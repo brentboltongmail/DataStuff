@@ -1131,7 +1131,7 @@ body.is-col-resizing .monaco-editor {
   width: 1px;
   height: 250px;
   background-color: var(--border-soft, var(--border));
-  transform: rotate(45deg);
+  transform: rotate(60deg);
   transform-origin: bottom left;
   pointer-events: none;
   z-index: 1;
@@ -1143,7 +1143,7 @@ body.is-col-resizing .monaco-editor {
   top: auto;
   width: 22px;
   height: 250px;
-  transform: rotate(45deg);
+  transform: rotate(60deg);
   transform-origin: bottom left;
   z-index: 100;
   cursor: col-resize;
@@ -1153,7 +1153,7 @@ body.is-col-resizing .monaco-editor {
 
 .results-grid.density-crammed th .th-label {
   display: inline-block;
-  transform: rotate(-45deg);
+  transform: rotate(-30deg);
   transform-origin: bottom left;
   white-space: nowrap;
   max-width: none;
