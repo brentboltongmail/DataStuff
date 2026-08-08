@@ -2275,8 +2275,9 @@ export default function App() {
             <span className="planet-ring-system ring-back inner-dust-ring" />
             <span className="planet-ring-system ring-back cassini-division" />
 
-            {/* PLANET SPHERE BODY */}
+            {/* PLANET SPHERE BODY (Solid 3D sphere covering back ring) */}
             <span className="planet-atmosphere-halo" />
+            <span className="planet-sphere-body gas-giant-body" />
             <span className="planet-surface-texture" />
             <span className="planet-cloud-bands" />
             <span className="planet-aurora-boreal" />
@@ -2303,6 +2304,7 @@ export default function App() {
             <span className="planet-ring-system ring-back silver-ice-ring" />
 
             <span className="planet-atmosphere-halo icy-cyan-glow" />
+            <span className="planet-sphere-body ice-moon-body" />
             <span className="planet-surface-texture ice-crust" />
 
             <span className="planet-ring-system ring-front silver-ice-ring" />
@@ -2320,6 +2322,7 @@ export default function App() {
             <span className="planet-ring-system ring-back molten-debris-ring" />
 
             <span className="planet-atmosphere-halo magma-corona-glow" />
+            <span className="planet-sphere-body lava-planet-body" />
             <span className="planet-surface-texture lava-rivers" />
 
             <span className="planet-ring-system ring-front molten-debris-ring" />
@@ -2338,6 +2341,7 @@ export default function App() {
             <span className="planet-ring-system ring-back plasma-ring-inner" />
 
             <span className="planet-atmosphere-halo violet-aurora-glow" />
+            <span className="planet-sphere-body purple-giant-body" />
             <span className="planet-surface-texture storm-swirls" />
 
             <span className="planet-ring-system ring-front plasma-ring-outer" />

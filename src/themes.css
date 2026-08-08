@@ -1115,26 +1115,65 @@
   transform: translate(-50%, -50%) rotateX(75deg) rotateY(-18deg);
 }
 
-/* BACK HALF OF RING: Passes behind planet body (top 50% clipped visible) */
+/* BACK HALF OF RING: Passes behind planet body (full ring circle at z-index: 1) */
 .spaceship-atmosphere .ring-back {
   z-index: 1 !important;
-  clip-path: polygon(-50% -50%, 150% -50%, 150% 48%, -50% 48%) !important;
 }
 
 /* PLANET BODY SURFACE SPHERE & ATMOSPHERE */
-.spaceship-atmosphere .planet-surface-texture,
 .spaceship-atmosphere .planet-atmosphere-halo,
+.spaceship-atmosphere .planet-sphere-body,
+.spaceship-atmosphere .planet-surface-texture,
 .spaceship-atmosphere .planet-cloud-bands,
 .spaceship-atmosphere .planet-great-spot,
 .spaceship-atmosphere .planet-aurora-boreal {
-  position: relative;
+  position: absolute;
   z-index: 5 !important;
+}
+
+.spaceship-atmosphere .planet-sphere-body {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  z-index: 5 !important;
+}
+
+.spaceship-atmosphere .gas-giant-body {
+  background:
+    radial-gradient(circle at 35% 35%, #06b6d4 0%, #0284c7 45%, #0f172a 85%, #020617 100%);
+  box-shadow:
+    inset -45px -45px 75px rgba(2, 6, 23, 0.9),
+    0 0 120px rgba(6, 182, 212, 0.55);
+}
+
+.spaceship-atmosphere .ice-moon-body {
+  background:
+    radial-gradient(circle at 30% 30%, #e0f2fe 0%, #bae6fd 30%, #38bdf8 65%, #0f172a 100%);
+  box-shadow:
+    inset -30px -30px 50px rgba(15, 23, 42, 0.95),
+    0 0 75px rgba(186, 230, 253, 0.55);
+}
+
+.spaceship-atmosphere .lava-planet-body {
+  background:
+    radial-gradient(circle at 32% 32%, #f97316 0%, #dc2626 40%, #7f1d1d 75%, #0f172a 100%);
+  box-shadow:
+    inset -35px -35px 60px rgba(15, 23, 42, 0.95),
+    0 0 85px rgba(249, 115, 22, 0.55);
+}
+
+.spaceship-atmosphere .purple-giant-body {
+  background:
+    radial-gradient(circle at 35% 35%, #c084fc 0%, #a855f7 35%, #6b21a8 70%, #0f172a 100%);
+  box-shadow:
+    inset -40px -40px 70px rgba(15, 23, 42, 0.95),
+    0 0 95px rgba(168, 85, 247, 0.55);
 }
 
 /* FRONT HALF OF RING: Passes in front of lower planet body (bottom 50% clipped visible) */
 .spaceship-atmosphere .ring-front {
   z-index: 10 !important;
-  clip-path: polygon(-50% 48%, 150% 48%, 150% 150%, -50% 150%) !important;
+  clip-path: polygon(-100% 48%, 200% 48%, 200% 200%, -100% 200%) !important;
 }
 
 .spaceship-atmosphere .outer-ice-ring {
@@ -1283,11 +1322,8 @@
   width: 440px;
   height: 440px;
   opacity: 1 !important;
-  background:
-    radial-gradient(circle at 35% 35%, #06b6d4 0%, #0284c7 45%, #0f172a 85%, #020617 100%);
-  box-shadow:
-    inset -45px -45px 75px rgba(2, 6, 23, 0.9),
-    0 0 120px rgba(6, 182, 212, 0.55);
+  background: transparent !important;
+  box-shadow: none !important;
   animation: celestial-orbit-pulse-1 40s ease-in-out infinite alternate;
 }
 
@@ -1299,11 +1335,8 @@
   width: 220px;
   height: 220px;
   opacity: 1 !important;
-  background:
-    radial-gradient(circle at 30% 30%, #e0f2fe 0%, #bae6fd 30%, #38bdf8 65%, #0f172a 100%);
-  box-shadow:
-    inset -30px -30px 50px rgba(15, 23, 42, 0.95),
-    0 0 75px rgba(186, 230, 253, 0.55);
+  background: transparent !important;
+  box-shadow: none !important;
   animation: celestial-orbit-pulse-2 36s ease-in-out infinite alternate;
 }
 
@@ -1315,11 +1348,8 @@
   width: 300px;
   height: 300px;
   opacity: 1 !important;
-  background:
-    radial-gradient(circle at 32% 32%, #f97316 0%, #dc2626 40%, #7f1d1d 75%, #0f172a 100%);
-  box-shadow:
-    inset -35px -35px 60px rgba(15, 23, 42, 0.95),
-    0 0 85px rgba(249, 115, 22, 0.55);
+  background: transparent !important;
+  box-shadow: none !important;
   animation: celestial-orbit-pulse-3 44s ease-in-out infinite alternate;
 }
 
@@ -1331,11 +1361,8 @@
   width: 380px;
   height: 380px;
   opacity: 1 !important;
-  background:
-    radial-gradient(circle at 35% 35%, #c084fc 0%, #a855f7 35%, #6b21a8 70%, #0f172a 100%);
-  box-shadow:
-    inset -40px -40px 70px rgba(15, 23, 42, 0.95),
-    0 0 95px rgba(168, 85, 247, 0.55);
+  background: transparent !important;
+  box-shadow: none !important;
   animation: celestial-orbit-pulse-4 48s ease-in-out infinite alternate;
 }
 
