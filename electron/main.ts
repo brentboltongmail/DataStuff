@@ -282,6 +282,19 @@ async function saveConnectionsToDisk(connections: unknown[]): Promise<{ saved: b
   }
 }
 
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on("second-instance", () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+  });
+}
+
 app.whenReady().then(() => {
   setupAppMenu();
   registerIpc();
@@ -300,9 +313,7 @@ app.on("window-all-closed", async () => {
   } catch {
     // ignore
   }
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
+  app.quit();
 });
 
 app.on("before-quit", async () => {
@@ -311,4 +322,8 @@ app.on("before-quit", async () => {
   } catch {
     // ignore
   }
+});
+
+app.on("will-quit", () => {
+  app.exit(0);
 });
