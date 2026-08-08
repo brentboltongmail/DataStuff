@@ -205,6 +205,10 @@ function registerIpc() {
   ipcMain.handle("connections:save", async (_event, connections: unknown[]) =>
     saveConnectionsToDisk(connections),
   );
+  ipcMain.handle("settings:load", async () => loadSettingsFromDisk());
+  ipcMain.handle("settings:save", async (_event, settings: Record<string, unknown>) =>
+    saveSettingsToDisk(settings),
+  );
   ipcMain.handle("secrets:isAvailable", () => isPasswordStorageAvailable());
   ipcMain.handle("secrets:savePassword", async (_event, password: string) =>
     savePassword(password ?? ""),
