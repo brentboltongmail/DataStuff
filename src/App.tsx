@@ -1973,6 +1973,246 @@ export default function App() {
         "editorWidget.border": "#78350f",
       },
     });
+    monaco.editor.defineTheme("datastuff-dragon", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "7f1d1d" },
+        { token: "keyword", foreground: "dc2626" },
+        { token: "number", foreground: "f59e0b" },
+        { token: "string", foreground: "f97316" },
+        { token: "string.sql", foreground: "f97316" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#fef2f2",
+        "editorLineNumber.foreground": "#7f1d1d",
+        "editorLineNumber.activeForeground": "#dc2626",
+        "editorCursor.foreground": "#dc2626",
+        "editor.selectionBackground": "#dc262633",
+        "editor.lineHighlightBackground": "#450a0a88",
+        "editorIndentGuide.background": "#7f1d1d",
+        "editorIndentGuide.activeBackground": "#dc262655",
+        "editorWidget.background": "#1c0a0a",
+        "editorWidget.border": "#7f1d1d",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-nebula", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "581c87" },
+        { token: "keyword", foreground: "a855f7" },
+        { token: "number", foreground: "06b6d4" },
+        { token: "string", foreground: "ec4899" },
+        { token: "string.sql", foreground: "ec4899" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#faf5ff",
+        "editorLineNumber.foreground": "#581c87",
+        "editorLineNumber.activeForeground": "#a855f7",
+        "editorCursor.foreground": "#a855f7",
+        "editor.selectionBackground": "#a855f733",
+        "editor.lineHighlightBackground": "#3b076488",
+        "editorIndentGuide.background": "#581c87",
+        "editorIndentGuide.activeBackground": "#a855f755",
+        "editorWidget.background": "#2e1065",
+        "editorWidget.border": "#581c87",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-sakura", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "831843" },
+        { token: "keyword", foreground: "f472b6" },
+        { token: "number", foreground: "fde047" },
+        { token: "string", foreground: "fb7185" },
+        { token: "string.sql", foreground: "fb7185" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#fdf2f8",
+        "editorLineNumber.foreground": "#831843",
+        "editorLineNumber.activeForeground": "#f472b6",
+        "editorCursor.foreground": "#f472b6",
+        "editor.selectionBackground": "#f472b633",
+        "editor.lineHighlightBackground": "#50072488",
+        "editorIndentGuide.background": "#831843",
+        "editorIndentGuide.activeBackground": "#f472b655",
+        "editorWidget.background": "#3b0764",
+        "editorWidget.border": "#831843",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-lightning", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "1e3a8a" },
+        { token: "keyword", foreground: "38bdf8" },
+        { token: "number", foreground: "facc15" },
+        { token: "string", foreground: "22d3ee" },
+        { token: "string.sql", foreground: "22d3ee" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#f0f9ff",
+        "editorLineNumber.foreground": "#1e3a8a",
+        "editorLineNumber.activeForeground": "#38bdf8",
+        "editorCursor.foreground": "#38bdf8",
+        "editor.selectionBackground": "#38bdf833",
+        "editor.lineHighlightBackground": "#17255488",
+        "editorIndentGuide.background": "#1e3a8a",
+        "editorIndentGuide.activeBackground": "#38bdf855",
+        "editorWidget.background": "#0f172a",
+        "editorWidget.border": "#1e3a8a",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-drift", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "7f1d1d" },
+        { token: "keyword", foreground: "ef4444" },
+        { token: "number", foreground: "f59e0b" },
+        { token: "string", foreground: "f8fafc" },
+        { token: "string.sql", foreground: "f8fafc" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#f8fafc",
+        "editorLineNumber.foreground": "#7f1d1d",
+        "editorLineNumber.activeForeground": "#ef4444",
+        "editorCursor.foreground": "#ef4444",
+        "editor.selectionBackground": "#ef444433",
+        "editor.lineHighlightBackground": "#450a0a88",
+        "editorIndentGuide.background": "#7f1d1d",
+        "editorIndentGuide.activeBackground": "#ef444455",
+        "editorWidget.background": "#0f172a",
+        "editorWidget.border": "#7f1d1d",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-codex", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "78350f" },
+        { token: "keyword", foreground: "d97706" },
+        { token: "number", foreground: "fde047" },
+        { token: "string", foreground: "fbbf24" },
+        { token: "string.sql", foreground: "fbbf24" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#fef08a",
+        "editorLineNumber.foreground": "#78350f",
+        "editorLineNumber.activeForeground": "#d97706",
+        "editorCursor.foreground": "#d97706",
+        "editor.selectionBackground": "#d9770633",
+        "editor.lineHighlightBackground": "#451a0388",
+        "editorIndentGuide.background": "#78350f",
+        "editorIndentGuide.activeBackground": "#d9770655",
+        "editorWidget.background": "#291e0a",
+        "editorWidget.border": "#78350f",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-dune", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "7c2d12" },
+        { token: "keyword", foreground: "f97316" },
+        { token: "number", foreground: "eab308" },
+        { token: "string", foreground: "fb7185" },
+        { token: "string.sql", foreground: "fb7185" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#fff7ed",
+        "editorLineNumber.foreground": "#7c2d12",
+        "editorLineNumber.activeForeground": "#f97316",
+        "editorCursor.foreground": "#f97316",
+        "editor.selectionBackground": "#f9731633",
+        "editor.lineHighlightBackground": "#43140788",
+        "editorIndentGuide.background": "#7c2d12",
+        "editorIndentGuide.activeBackground": "#f9731655",
+        "editorWidget.background": "#1c0a0a",
+        "editorWidget.border": "#7c2d12",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-crystal", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "581c87" },
+        { token: "keyword", foreground: "9333ea" },
+        { token: "number", foreground: "14b8a6" },
+        { token: "string", foreground: "f472b6" },
+        { token: "string.sql", foreground: "f472b6" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#faf5ff",
+        "editorLineNumber.foreground": "#581c87",
+        "editorLineNumber.activeForeground": "#9333ea",
+        "editorCursor.foreground": "#9333ea",
+        "editor.selectionBackground": "#9333ea33",
+        "editor.lineHighlightBackground": "#3b076488",
+        "editorIndentGuide.background": "#581c87",
+        "editorIndentGuide.activeBackground": "#9333ea55",
+        "editorWidget.background": "#1e1b4b",
+        "editorWidget.border": "#581c87",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-cyberpunk", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "831843" },
+        { token: "keyword", foreground: "00ffcc" },
+        { token: "number", foreground: "facc15" },
+        { token: "string", foreground: "be185d" },
+        { token: "string.sql", foreground: "be185d" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#ecfeff",
+        "editorLineNumber.foreground": "#831843",
+        "editorLineNumber.activeForeground": "#00ffcc",
+        "editorCursor.foreground": "#00ffcc",
+        "editor.selectionBackground": "#00ffcc33",
+        "editor.lineHighlightBackground": "#50072488",
+        "editorIndentGuide.background": "#831843",
+        "editorIndentGuide.activeBackground": "#00ffcc55",
+        "editorWidget.background": "#030712",
+        "editorWidget.border": "#be185d",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-solar", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "7f1d1d" },
+        { token: "keyword", foreground: "fef08a" },
+        { token: "number", foreground: "fbbf24" },
+        { token: "string", foreground: "f97316" },
+        { token: "string.sql", foreground: "f97316" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#fffbeb",
+        "editorLineNumber.foreground": "#7f1d1d",
+        "editorLineNumber.activeForeground": "#fef08a",
+        "editorCursor.foreground": "#fef08a",
+        "editor.selectionBackground": "#fef08a33",
+        "editor.lineHighlightBackground": "#450a0a88",
+        "editorIndentGuide.background": "#7f1d1d",
+        "editorIndentGuide.activeBackground": "#fef08a55",
+        "editorWidget.background": "#290d09",
+        "editorWidget.border": "#7f1d1d",
+      },
+    });
   }, []);
 
   const onEditorMount: OnMount = useCallback((ed, monaco) => {
@@ -3340,6 +3580,101 @@ export default function App() {
             <span className="radar-crosshair" />
           </div>
           <div className="hud-pitch-ladder" />
+        </div>
+      ) : null}
+
+      {themeId === "dragon" ? (
+        <div className="dragon-atmosphere">
+          <div className="dragon-scale-texture" />
+          <div className="dragon-magma-vein vein-1" />
+          <div className="dragon-magma-vein vein-2" />
+          <div className="dragon-ember spark-1" />
+          <div className="dragon-ember spark-2" />
+          <div className="dragon-ember spark-3" />
+        </div>
+      ) : null}
+
+      {themeId === "nebula" ? (
+        <div className="nebula-atmosphere">
+          <div className="nebula-cloud cloud-1" />
+          <div className="nebula-cloud cloud-2" />
+          <div className="star-field" />
+          <div className="quasar-beam" />
+        </div>
+      ) : null}
+
+      {themeId === "sakura" ? (
+        <div className="sakura-atmosphere">
+          <div className="sakura-petal petal-1" />
+          <div className="sakura-petal petal-2" />
+          <div className="sakura-petal petal-3" />
+          <div className="sakura-petal petal-4" />
+          <div className="sakura-petal petal-5" />
+          <div className="paper-lantern lantern-1" />
+          <div className="paper-lantern lantern-2" />
+        </div>
+      ) : null}
+
+      {themeId === "lightning" ? (
+        <div className="lightning-atmosphere">
+          <div className="tesla-arc arc-1" />
+          <div className="tesla-arc arc-2" />
+          <div className="storm-flash" />
+        </div>
+      ) : null}
+
+      {themeId === "drift" ? (
+        <div className="drift-atmosphere">
+          <div className="light-trail red-trail-1" />
+          <div className="light-trail red-trail-2" />
+          <div className="light-trail gold-trail-1" />
+          <div className="light-trail white-trail-1" />
+        </div>
+      ) : null}
+
+      {themeId === "codex" ? (
+        <div className="codex-atmosphere">
+          <div className="parchment-grain" />
+          <div className="candle-glow glow-left" />
+          <div className="candle-glow glow-right" />
+        </div>
+      ) : null}
+
+      {themeId === "dune" ? (
+        <div className="dune-atmosphere">
+          <div className="spice-mote mote-1" />
+          <div className="spice-mote mote-2" />
+          <div className="spice-mote mote-3" />
+          <div className="heat-haze-layer" />
+          <div className="twin-suns" />
+        </div>
+      ) : null}
+
+      {themeId === "crystal" ? (
+        <div className="crystal-atmosphere">
+          <div className="crystal-shard shard-1" />
+          <div className="crystal-shard shard-2" />
+          <div className="crystal-shard shard-3" />
+          <div className="prismatic-ray" />
+        </div>
+      ) : null}
+
+      {themeId === "cyberpunk" ? (
+        <div className="cyberpunk-atmosphere">
+          <div className="rain-streak drop-1" />
+          <div className="rain-streak drop-2" />
+          <div className="rain-streak drop-3" />
+          <div className="neon-signboard signboard-1" />
+          <div className="neon-signboard signboard-2" />
+        </div>
+      ) : null}
+
+      {themeId === "solar" ? (
+        <div className="solar-atmosphere">
+          <div className="coronal-loop loop-1" />
+          <div className="coronal-loop loop-2" />
+          <div className="solar-flare flare-burst" />
+          <div className="sunspot spot-1" />
         </div>
       ) : null}
       <header className="titlebar">

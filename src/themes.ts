@@ -11,7 +11,17 @@ export type AppThemeId =
   | "deepsea"
   | "synthwave"
   | "enchanted"
-  | "hud";
+  | "hud"
+  | "dragon"
+  | "nebula"
+  | "sakura"
+  | "lightning"
+  | "drift"
+  | "codex"
+  | "dune"
+  | "crystal"
+  | "cyberpunk"
+  | "solar";
 
 export interface AppThemeOption {
   id: AppThemeId;
@@ -35,6 +45,16 @@ export const APP_THEMES: AppThemeOption[] = [
   { id: "synthwave", label: "Synthwave Outrun", monacoTheme: "datastuff-synthwave" },
   { id: "enchanted", label: "Enchanted Forest", monacoTheme: "datastuff-enchanted" },
   { id: "hud", label: "Stealth Fighter HUD", monacoTheme: "datastuff-hud" },
+  { id: "dragon", label: "Obsidian Dragon", monacoTheme: "datastuff-dragon" },
+  { id: "nebula", label: "Nebula Odyssey", monacoTheme: "datastuff-nebula" },
+  { id: "sakura", label: "Sakura Rain", monacoTheme: "datastuff-sakura" },
+  { id: "lightning", label: "High-Voltage Lightning", monacoTheme: "datastuff-lightning" },
+  { id: "drift", label: "Midnight Drift", monacoTheme: "datastuff-drift" },
+  { id: "codex", label: "Ancient Codex", monacoTheme: "datastuff-codex" },
+  { id: "dune", label: "Dune Spice", monacoTheme: "datastuff-dune" },
+  { id: "crystal", label: "Crystal Cavern", monacoTheme: "datastuff-crystal" },
+  { id: "cyberpunk", label: "Cyberpunk City 2077", monacoTheme: "datastuff-cyberpunk" },
+  { id: "solar", label: "Solar Flare", monacoTheme: "datastuff-solar" },
 ];
 
 const THEME_IDS = new Set<AppThemeId>(APP_THEMES.map((theme) => theme.id));

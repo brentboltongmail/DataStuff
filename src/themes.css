@@ -5191,6 +5191,762 @@
               linear-gradient(0deg, transparent 49%, rgba(251, 191, 36, 0.3) 50%, transparent 51%);
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. Obsidian Dragon Theme
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="dragon"] {
+  --bg-app: #0a0a0c;
+  --bg-surface: #181014;
+  --bg-elevated: #26161c;
+  --bg-hover: #3b1d27;
+  --border-subtle: #26161c;
+  --border-strong: #dc2626;
+  --text-main: #fef2f2;
+  --text-muted: #fca5a5;
+  --text-faint: #7f1d1d;
+
+  --border-bright: #dc2626;
+  --accent: #dc2626;
+  --accent-hover: #ef4444;
+  --accent-deep: #991b1b;
+
+  --btn-primary-bg: linear-gradient(135deg, #dc2626, #991b1b);
+  --btn-primary-border: #fca5a5;
+  --btn-primary-shadow: 0 4px 18px rgba(220, 38, 38, 0.45);
+
+  --status-ok: #10b981;
+  --status-err: #ef4444;
+
+  --sql-tab-active-bg: linear-gradient(180deg, #26161c 0%, #181014 100%);
+  --sql-tab-active-border: #dc2626;
+
+  --editor-bg: rgba(24, 16, 20, 0.85);
+  --editor-gutter: #181014;
+  --grid-header: #26161c;
+  --grid-zebra: rgba(220, 38, 38, 0.03);
+
+  --font-display: "Fraunces", serif;
+  --font-body: "Source Sans 3", sans-serif;
+  --font-code: "IBM Plex Mono", monospace;
+}
+
+[data-theme="dragon"] .sql-tabs,
+[data-theme="dragon"] .editor-pane,
+[data-theme="dragon"] .object-browser,
+[data-theme="dragon"] .results-pane {
+  background: rgba(24, 16, 20, 0.85) !important;
+  opacity: 0.85 !important;
+}
+
+.dragon-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 100%, #181014 0%, #0a0a0c 80%);
+}
+
+.dragon-atmosphere .dragon-ember {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #f97316;
+  box-shadow: 0 0 10px #dc2626, 0 0 20px #f59e0b;
+  will-change: transform;
+}
+
+.dragon-atmosphere .spark-1 { left: 20vw; bottom: -10px; animation: dragon-ember-rise 7s linear infinite; }
+.dragon-atmosphere .spark-2 { left: 55vw; bottom: -10px; animation: dragon-ember-rise 9s linear 2s infinite; }
+.dragon-atmosphere .spark-3 { left: 80vw; bottom: -10px; animation: dragon-ember-rise 6s linear 4s infinite; }
+
+@keyframes dragon-ember-rise {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  20% { opacity: 0.9; }
+  100% { transform: translate3d(30px, -105vh, 0); opacity: 0; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. Nebula Odyssey Theme
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="nebula"] {
+  --bg-app: #070414;
+  --bg-surface: #130a2a;
+  --bg-elevated: #201142;
+  --bg-hover: #311a63;
+  --border-subtle: #201142;
+  --border-strong: #a855f7;
+  --text-main: #faf5ff;
+  --text-muted: #d8b4fe;
+  --text-faint: #581c87;
+
+  --border-bright: #a855f7;
+  --accent: #a855f7;
+  --accent-hover: #c084fc;
+  --accent-deep: #7e22ce;
+
+  --btn-primary-bg: linear-gradient(135deg, #a855f7, #7e22ce);
+  --btn-primary-border: #e9d5ff;
+  --btn-primary-shadow: 0 4px 18px rgba(168, 85, 247, 0.45);
+
+  --status-ok: #06b6d4;
+  --status-err: #ef4444;
+
+  --sql-tab-active-bg: linear-gradient(180deg, #201142 0%, #130a2a 100%);
+  --sql-tab-active-border: #a855f7;
+
+  --editor-bg: rgba(19, 10, 42, 0.85);
+  --editor-gutter: #130a2a;
+  --grid-header: #201142;
+  --grid-zebra: rgba(168, 85, 247, 0.03);
+
+  --font-display: "Outfit", sans-serif;
+  --font-body: "Source Sans 3", sans-serif;
+  --font-code: "IBM Plex Mono", monospace;
+}
+
+[data-theme="nebula"] .sql-tabs,
+[data-theme="nebula"] .editor-pane,
+[data-theme="nebula"] .object-browser,
+[data-theme="nebula"] .results-pane {
+  background: rgba(19, 10, 42, 0.85) !important;
+  opacity: 0.85 !important;
+}
+
+.nebula-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at 30% 20%, #201142 0%, #070414 70%);
+}
+
+.nebula-atmosphere .nebula-cloud {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(50px);
+  opacity: 0.4;
+  will-change: transform;
+}
+
+.nebula-atmosphere .cloud-1 { width: 350px; height: 350px; left: 10vw; top: 10vh; background: #a855f7; animation: nebula-pulse 14s ease-in-out infinite alternate; }
+.nebula-atmosphere .cloud-2 { width: 400px; height: 400px; right: 10vw; bottom: 10vh; background: #ec4899; animation: nebula-pulse 18s ease-in-out 3s infinite alternate; }
+
+@keyframes nebula-pulse {
+  0% { transform: scale(0.85) translate3d(0, 0, 0); opacity: 0.3; }
+  100% { transform: scale(1.15) translate3d(30px, -20px, 0); opacity: 0.5; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. Sakura Rain Theme
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="sakura"] {
+  --bg-app: #0f172a;
+  --bg-surface: #1e1b4b;
+  --bg-elevated: #2e1065;
+  --bg-hover: #3b0764;
+  --border-subtle: #2e1065;
+  --border-strong: #f472b6;
+  --text-main: #fdf2f8;
+  --text-muted: #fbcfe8;
+  --text-faint: #831843;
+
+  --border-bright: #f472b6;
+  --accent: #f472b6;
+  --accent-hover: #f472b6;
+  --accent-deep: #be185d;
+
+  --btn-primary-bg: linear-gradient(135deg, #f472b6, #be185d);
+  --btn-primary-border: #fce7f3;
+  --btn-primary-shadow: 0 4px 18px rgba(244, 114, 182, 0.45);
+
+  --status-ok: #10b981;
+  --status-err: #ef4444;
+
+  --sql-tab-active-bg: linear-gradient(180deg, #2e1065 0%, #1e1b4b 100%);
+  --sql-tab-active-border: #f472b6;
+
+  --editor-bg: rgba(30, 27, 75, 0.85);
+  --editor-gutter: #1e1b4b;
+  --grid-header: #2e1065;
+  --grid-zebra: rgba(244, 114, 182, 0.03);
+
+  --font-display: "Outfit", sans-serif;
+  --font-body: "Source Sans 3", sans-serif;
+  --font-code: "IBM Plex Mono", monospace;
+}
+
+[data-theme="sakura"] .sql-tabs,
+[data-theme="sakura"] .editor-pane,
+[data-theme="sakura"] .object-browser,
+[data-theme="sakura"] .results-pane {
+  background: rgba(30, 27, 75, 0.85) !important;
+  opacity: 0.85 !important;
+}
+
+.sakura-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at 70% 10%, #2e1065 0%, #0f172a 75%);
+}
+
+.sakura-atmosphere .sakura-petal {
+  position: absolute;
+  width: 10px;
+  height: 14px;
+  border-radius: 80% 0 80% 0;
+  background: #f472b6;
+  opacity: 0.7;
+  will-change: transform;
+}
+
+.sakura-atmosphere .petal-1 { left: 15vw; top: -20px; animation: sakura-fall 10s linear infinite; }
+.sakura-atmosphere .petal-2 { left: 40vw; top: -20px; animation: sakura-fall 13s linear 3s infinite; }
+.sakura-atmosphere .petal-3 { left: 65vw; top: -20px; animation: sakura-fall 9s linear 1s infinite; }
+.sakura-atmosphere .petal-4 { left: 85vw; top: -20px; animation: sakura-fall 11s linear 4s infinite; }
+.sakura-atmosphere .petal-5 { left: 30vw; top: -20px; animation: sakura-fall 12s linear 6s infinite; }
+
+@keyframes sakura-fall {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 0.8; }
+  100% { transform: translate3d(80px, 105vh, 0) rotate(360deg); opacity: 0; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. High-Voltage Lightning Theme
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="lightning"] {
+  --bg-app: #020617;
+  --bg-surface: #0f172a;
+  --bg-elevated: #1e293b;
+  --bg-hover: #334155;
+  --border-subtle: #1e293b;
+  --border-strong: #38bdf8;
+  --text-main: #f0f9ff;
+  --text-muted: #7dd3fc;
+  --text-faint: #1e3a8a;
+
+  --border-bright: #38bdf8;
+  --accent: #38bdf8;
+  --accent-hover: #7dd3fc;
+  --accent-deep: #0284c7;
+
+  --btn-primary-bg: linear-gradient(135deg, #38bdf8, #0284c7);
+  --btn-primary-border: #bae6fd;
+  --btn-primary-shadow: 0 4px 18px rgba(56, 189, 248, 0.45);
+
+  --status-ok: #facc15;
+  --status-err: #ef4444;
+
+  --sql-tab-active-bg: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  --sql-tab-active-border: #38bdf8;
+
+  --editor-bg: rgba(15, 23, 42, 0.85);
+  --editor-gutter: #0f172a;
+  --grid-header: #1e293b;
+  --grid-zebra: rgba(56, 189, 248, 0.03);
+
+  --font-display: "Exo 2", sans-serif;
+  --font-body: "Source Sans 3", sans-serif;
+  --font-code: "IBM Plex Mono", monospace;
+}
+
+[data-theme="lightning"] .sql-tabs,
+[data-theme="lightning"] .editor-pane,
+[data-theme="lightning"] .object-browser,
+[data-theme="lightning"] .results-pane {
+  background: rgba(15, 23, 42, 0.85) !important;
+  opacity: 0.85 !important;
+}
+
+.lightning-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: #020617;
+}
+
+.lightning-atmosphere .storm-flash {
+  position: absolute;
+  inset: 0;
+  background: rgba(56, 189, 248, 0.08);
+  animation: tesla-flash 8s ease-in-out infinite;
+}
+
+@keyframes tesla-flash {
+  0%, 92%, 98%, 100% { opacity: 0; }
+  93%, 97% { opacity: 1; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. Midnight Drift Theme
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="drift"] {
+  --bg-app: #0b0f19;
+  --bg-surface: #141c2e;
+  --bg-elevated: #1e2942;
+  --bg-hover: #2d3c5e;
+  --border-subtle: #1e2942;
+  --border-strong: #ef4444;
+  --text-main: #f8fafc;
+  --text-muted: #fca5a5;
+  --text-faint: #7f1d1d;
+
+  --border-bright: #ef4444;
+  --accent: #ef4444;
+  --accent-hover: #f87171;
+  --accent-deep: #b91c1c;
+
+  --btn-primary-bg: linear-gradient(135deg, #ef4444, #b91c1c);
+  --btn-primary-border: #fecaca;
+  --btn-primary-shadow: 0 4px 18px rgba(239, 68, 68, 0.45);
+
+  --status-ok: #f59e0b;
+  --status-err: #ef4444;
+
+  --sql-tab-active-bg: linear-gradient(180deg, #1e2942 0%, #141c2e 100%);
+  --sql-tab-active-border: #ef4444;
+
+  --editor-bg: rgba(20, 28, 46, 0.85);
+  --editor-gutter: #141c2e;
+  --grid-header: #1e2942;
+  --grid-zebra: rgba(239, 68, 68, 0.03);
+
+  --font-display: "Exo 2", sans-serif;
+  --font-body: "Source Sans 3", sans-serif;
+  --font-code: "IBM Plex Mono", monospace;
+}
+
+[data-theme="drift"] .sql-tabs,
+[data-theme="drift"] .editor-pane,
+[data-theme="drift"] .object-browser,
+[data-theme="drift"] .results-pane {
+  background: rgba(20, 28, 46, 0.85) !important;
+  opacity: 0.85 !important;
+}
+
+.drift-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: #0b0f19;
+}
+
+.drift-atmosphere .light-trail {
+  position: absolute;
+  height: 2px;
+  box-shadow: 0 0 12px currentColor;
+  will-change: transform;
+}
+
+.drift-atmosphere .red-trail-1 { bottom: 15vh; width: 400px; color: #ef4444; animation: drift-streak 3.5s linear infinite; }
+.drift-atmosphere .gold-trail-1 { bottom: 8vh; width: 350px; color: #f59e0b; animation: drift-streak 4.2s linear 1.5s infinite; }
+
+@keyframes drift-streak {
+  0% { transform: translate3d(-450px, 0, 0); opacity: 0; }
+  20% { opacity: 0.9; }
+  100% { transform: translate3d(105vw, 0, 0); opacity: 0; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. Ancient Codex Theme
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="codex"] {
+  --bg-app: #1c1917;
+  --bg-surface: #292524;
+  --bg-elevated: #44403c;
+  --bg-hover: #57534e;
+  --border-subtle: #44403c;
+  --border-strong: #d97706;
+  --text-main: #fef08a;
+  --text-muted: #fde047;
+  --text-faint: #78350f;
+
+  --border-bright: #d97706;
+  --accent: #d97706;
+  --accent-hover: #f59e0b;
+  --accent-deep: #b45309;
+
+  --btn-primary-bg: linear-gradient(135deg, #d97706, #b45309);
+  --btn-primary-border: #fef08a;
+  --btn-primary-shadow: 0 4px 18px rgba(217, 119, 6, 0.45);
+
+  --status-ok: #10b981;
+  --status-err: #ef4444;
+
+  --sql-tab-active-bg: linear-gradient(180deg, #44403c 0%, #292524 100%);
+  --sql-tab-active-border: #d97706;
+
+  --editor-bg: rgba(41, 37, 36, 0.85);
+  --editor-gutter: #292524;
+  --grid-header: #44403c;
+  --grid-zebra: rgba(217, 119, 6, 0.03);
+
+  --font-display: "Cormorant Garamond", serif;
+  --font-body: "Source Sans 3", sans-serif;
+  --font-code: "IBM Plex Mono", monospace;
+}
+
+[data-theme="codex"] .sql-tabs,
+[data-theme="codex"] .editor-pane,
+[data-theme="codex"] .object-browser,
+[data-theme="codex"] .results-pane {
+  background: rgba(41, 37, 36, 0.85) !important;
+  opacity: 0.85 !important;
+}
+
+.codex-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: #1c1917;
+}
+
+.codex-atmosphere .candle-glow {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(217, 119, 6, 0.25) 0%, transparent 70%);
+  animation: candle-flicker 4s ease-in-out infinite alternate;
+}
+
+.codex-atmosphere .glow-left { left: -50px; bottom: -50px; }
+.codex-atmosphere .glow-right { right: -50px; bottom: -50px; }
+
+@keyframes candle-flicker {
+  0% { transform: scale(0.95); opacity: 0.6; }
+  100% { transform: scale(1.08); opacity: 0.9; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   7. Dune Spice Theme
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="dune"] {
+  --bg-app: #180e0a;
+  --bg-surface: #291811;
+  --bg-elevated: #3d2419;
+  --bg-hover: #543122;
+  --border-subtle: #3d2419;
+  --border-strong: #f97316;
+  --text-main: #fff7ed;
+  --text-muted: #fdba74;
+  --text-faint: #7c2d12;
+
+  --border-bright: #f97316;
+  --accent: #f97316;
+  --accent-hover: #fb923c;
+  --accent-deep: #c2410c;
+
+  --btn-primary-bg: linear-gradient(135deg, #f97316, #c2410c);
+  --btn-primary-border: #ffedd5;
+  --btn-primary-shadow: 0 4px 18px rgba(249, 115, 22, 0.45);
+
+  --status-ok: #eab308;
+  --status-err: #ef4444;
+
+  --sql-tab-active-bg: linear-gradient(180deg, #3d2419 0%, #291811 100%);
+  --sql-tab-active-border: #f97316;
+
+  --editor-bg: rgba(41, 24, 17, 0.85);
+  --editor-gutter: #291811;
+  --grid-header: #3d2419;
+  --grid-zebra: rgba(249, 115, 22, 0.03);
+
+  --font-display: "Outfit", sans-serif;
+  --font-body: "Source Sans 3", sans-serif;
+  --font-code: "IBM Plex Mono", monospace;
+}
+
+[data-theme="dune"] .sql-tabs,
+[data-theme="dune"] .editor-pane,
+[data-theme="dune"] .object-browser,
+[data-theme="dune"] .results-pane {
+  background: rgba(41, 24, 17, 0.85) !important;
+  opacity: 0.85 !important;
+}
+
+.dune-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, #180e0a 0%, #291811 100%);
+}
+
+.dune-atmosphere .spice-mote {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fde047;
+  box-shadow: 0 0 10px #f97316;
+  will-change: transform;
+}
+
+.dune-atmosphere .mote-1 { left: 30vw; bottom: -10px; animation: spice-drift 11s linear infinite; }
+.dune-atmosphere .mote-2 { left: 70vw; bottom: -10px; animation: spice-drift 14s linear 3s infinite; }
+
+@keyframes spice-drift {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  20% { opacity: 0.9; }
+  100% { transform: translate3d(-60px, -105vh, 0); opacity: 0; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   8. Crystal Cavern Theme
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="crystal"] {
+  --bg-app: #0d0b18;
+  --bg-surface: #1e1b4b;
+  --bg-elevated: #2e1065;
+  --bg-hover: #3b0764;
+  --border-subtle: #2e1065;
+  --border-strong: #9333ea;
+  --text-main: #faf5ff;
+  --text-muted: #e9d5ff;
+  --text-faint: #581c87;
+
+  --border-bright: #9333ea;
+  --accent: #9333ea;
+  --accent-hover: #a855f7;
+  --accent-deep: #7e22ce;
+
+  --btn-primary-bg: linear-gradient(135deg, #9333ea, #7e22ce);
+  --btn-primary-border: #f3e8ff;
+  --btn-primary-shadow: 0 4px 18px rgba(147, 51, 234, 0.45);
+
+  --status-ok: #14b8a6;
+  --status-err: #ef4444;
+
+  --sql-tab-active-bg: linear-gradient(180deg, #2e1065 0%, #1e1b4b 100%);
+  --sql-tab-active-border: #9333ea;
+
+  --editor-bg: rgba(30, 27, 75, 0.85);
+  --editor-gutter: #1e1b4b;
+  --grid-header: #2e1065;
+  --grid-zebra: rgba(147, 51, 234, 0.03);
+
+  --font-display: "Outfit", sans-serif;
+  --font-body: "Source Sans 3", sans-serif;
+  --font-code: "IBM Plex Mono", monospace;
+}
+
+[data-theme="crystal"] .sql-tabs,
+[data-theme="crystal"] .editor-pane,
+[data-theme="crystal"] .object-browser,
+[data-theme="crystal"] .results-pane {
+  background: rgba(30, 27, 75, 0.85) !important;
+  opacity: 0.85 !important;
+}
+
+.crystal-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: #0d0b18;
+}
+
+.crystal-atmosphere .crystal-shard {
+  position: absolute;
+  width: 40px;
+  height: 90px;
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.3), rgba(20, 184, 166, 0.2));
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.4);
+  will-change: transform;
+}
+
+.crystal-atmosphere .shard-1 { left: 15vw; bottom: 20vh; animation: crystal-rotate 18s ease-in-out infinite alternate; }
+.crystal-atmosphere .shard-2 { right: 20vw; top: 15vh; animation: crystal-rotate 22s ease-in-out 4s infinite alternate; }
+
+@keyframes crystal-rotate {
+  0% { transform: rotate(0deg) scale(0.9); }
+  100% { transform: rotate(45deg) scale(1.1); }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   9. Cyberpunk City 2077 Theme
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="cyberpunk"] {
+  --bg-app: #030712;
+  --bg-surface: #111827;
+  --bg-elevated: #1f2937;
+  --bg-hover: #374151;
+  --border-subtle: #1f2937;
+  --border-strong: #00ffcc;
+  --text-main: #ecfeff;
+  --text-muted: #67e8f9;
+  --text-faint: #831843;
+
+  --border-bright: #00ffcc;
+  --accent: #00ffcc;
+  --accent-hover: #a5f3fc;
+  --accent-deep: #0891b2;
+
+  --btn-primary-bg: linear-gradient(135deg, #00ffcc, #0891b2);
+  --btn-primary-border: #cffafe;
+  --btn-primary-shadow: 0 4px 18px rgba(0, 255, 204, 0.45);
+
+  --status-ok: #00ffcc;
+  --status-err: #ef4444;
+
+  --sql-tab-active-bg: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+  --sql-tab-active-border: #00ffcc;
+
+  --editor-bg: rgba(17, 24, 39, 0.85);
+  --editor-gutter: #111827;
+  --grid-header: #1f2937;
+  --grid-zebra: rgba(0, 255, 204, 0.03);
+
+  --font-display: "Orbitron", sans-serif;
+  --font-body: "Source Sans 3", sans-serif;
+  --font-code: "IBM Plex Mono", monospace;
+}
+
+[data-theme="cyberpunk"] .sql-tabs,
+[data-theme="cyberpunk"] .editor-pane,
+[data-theme="cyberpunk"] .object-browser,
+[data-theme="cyberpunk"] .results-pane {
+  background: rgba(17, 24, 39, 0.85) !important;
+  opacity: 0.85 !important;
+}
+
+.cyberpunk-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: #030712;
+}
+
+.cyberpunk-atmosphere .rain-streak {
+  position: absolute;
+  width: 1px;
+  height: 80px;
+  background: linear-gradient(180deg, transparent, #00ffcc);
+  opacity: 0.6;
+  will-change: transform;
+}
+
+.cyberpunk-atmosphere .drop-1 { left: 22vw; top: -80px; animation: cyberpunk-rain 2.5s linear infinite; }
+.cyberpunk-atmosphere .drop-2 { left: 58vw; top: -80px; animation: cyberpunk-rain 3.1s linear 0.8s infinite; }
+.cyberpunk-atmosphere .drop-3 { left: 84vw; top: -80px; animation: cyberpunk-rain 2.2s linear 1.4s infinite; }
+
+@keyframes cyberpunk-rain {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  20% { opacity: 0.7; }
+  100% { transform: translate3d(-30px, 105vh, 0); opacity: 0; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   10. Solar Flare Theme
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="solar"] {
+  --bg-app: #180505;
+  --bg-surface: #290d09;
+  --bg-elevated: #451a03;
+  --bg-hover: #78350f;
+  --border-subtle: #451a03;
+  --border-strong: #fef08a;
+  --text-main: #fffbeb;
+  --text-muted: #fde047;
+  --text-faint: #7f1d1d;
+
+  --border-bright: #fef08a;
+  --accent: #fef08a;
+  --accent-hover: #fef9c3;
+  --accent-deep: #d97706;
+
+  --btn-primary-bg: linear-gradient(135deg, #fef08a, #d97706);
+  --btn-primary-border: #ffffff;
+  --btn-primary-shadow: 0 4px 18px rgba(254, 240, 138, 0.45);
+
+  --status-ok: #fbbf24;
+  --status-err: #ef4444;
+
+  --sql-tab-active-bg: linear-gradient(180deg, #451a03 0%, #290d09 100%);
+  --sql-tab-active-border: #fef08a;
+
+  --editor-bg: rgba(41, 13, 9, 0.85);
+  --editor-gutter: #290d09;
+  --grid-header: #451a03;
+  --grid-zebra: rgba(254, 240, 138, 0.03);
+
+  --font-display: "Outfit", sans-serif;
+  --font-body: "Source Sans 3", sans-serif;
+  --font-code: "IBM Plex Mono", monospace;
+}
+
+[data-theme="solar"] .sql-tabs,
+[data-theme="solar"] .editor-pane,
+[data-theme="solar"] .object-browser,
+[data-theme="solar"] .results-pane {
+  background: rgba(41, 13, 9, 0.85) !important;
+  opacity: 0.85 !important;
+}
+
+.solar-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 100%, #451a03 0%, #180505 80%);
+}
+
+.solar-atmosphere .coronal-loop {
+  position: absolute;
+  bottom: -50px;
+  left: 35vw;
+  width: 300px;
+  height: 180px;
+  border-radius: 50% 50% 0 0;
+  border: 2px solid rgba(254, 240, 138, 0.4);
+  border-bottom: none;
+  box-shadow: 0 0 25px #f97316;
+  animation: solar-pulse 6s ease-in-out infinite alternate;
+}
+
+@keyframes solar-pulse {
+  0% { transform: scale(0.95); opacity: 0.5; }
+  100% { transform: scale(1.08); opacity: 0.95; }
+}
+
 .theme-picker {
   display: inline-flex;
   align-items: center;
