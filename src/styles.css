@@ -835,6 +835,8 @@ body.is-row-resizing .monaco-editor {
 }
 
 .toolbar {
+  position: relative;
+  z-index: 30 !important;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -850,6 +852,16 @@ body.is-row-resizing .monaco-editor {
     linear-gradient(180deg, var(--panel-tint) 0%, transparent 100%),
     var(--bg-panel);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.toolbar button,
+.toolbar input,
+.toolbar select,
+.toolbar label,
+.toolbar span,
+.toolbar div {
+  position: relative;
+  z-index: 31 !important;
 }
 
 .toolbar button {
