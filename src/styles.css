@@ -1237,7 +1237,7 @@ body.is-col-resizing .monaco-editor {
   background:
     linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.25)),
     var(--bg-panel);
-  font-size: var(--base-font-size);
+  font-size: calc(1.2 * var(--base-font-size));
   color: var(--text-muted);
   box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.25);
   position: relative;
