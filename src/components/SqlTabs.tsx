@@ -52,6 +52,19 @@ export default function SqlTabs({
 
   return (
     <div className="sql-tabs" role="tablist">
+      <div className="sql-tab-actions">
+        <button
+          type="button"
+          className="sql-tab-add"
+          title="Open SQL file (Cmd+O)"
+          onClick={onOpen}
+        >
+          Open
+        </button>
+        <button type="button" className="sql-tab-add" title="New tab (Cmd+T)" onClick={onAdd}>
+          +
+        </button>
+      </div>
       <div className="sql-tabs-list">
         {tabs.map((tab) => (
           <div
@@ -113,19 +126,6 @@ export default function SqlTabs({
             </button>
           </div>
         ))}
-      </div>
-      <div className="sql-tab-actions">
-        <button
-          type="button"
-          className="sql-tab-add"
-          title="Open SQL file (Cmd+O)"
-          onClick={onOpen}
-        >
-          Open
-        </button>
-        <button type="button" className="sql-tab-add" title="New tab (Cmd+T)" onClick={onAdd}>
-          +
-        </button>
       </div>
     </div>
   );

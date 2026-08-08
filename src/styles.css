@@ -732,7 +732,7 @@ body.is-row-resizing .monaco-editor {
   align-items: center;
   gap: 4px;
   padding: 4px;
-  border-top: 1px solid var(--border-soft);
+  border-bottom: 1px solid var(--border-soft);
   background: var(--bg-panel);
 }
 
