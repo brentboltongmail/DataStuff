@@ -2217,19 +2217,28 @@ export default function App() {
             </svg>
           </div>
 
-          {/* Celestial Body 1: Gas Giant with Saturn Rings, Auroras, Storm Spot, & 2 Orbiting Moons */}
+          {/* Celestial Body 1: Gas Giant with 3D Saturn Rings wrapping around planet */}
           <div
             className="space-celestial celestial-planet celestial-gas-giant"
             style={initialSpaceDelays[0] ? { animationDelay: initialSpaceDelays[0] } : undefined}
           >
+            {/* BACK RING HALF (Passes behind top hemisphere) */}
+            <span className="planet-ring-system ring-back outer-ice-ring" />
+            <span className="planet-ring-system ring-back inner-dust-ring" />
+            <span className="planet-ring-system ring-back cassini-division" />
+
+            {/* PLANET SPHERE BODY */}
             <span className="planet-atmosphere-halo" />
             <span className="planet-surface-texture" />
             <span className="planet-cloud-bands" />
             <span className="planet-aurora-boreal" />
             <span className="planet-great-spot" />
-            <span className="planet-ring-system outer-ice-ring" />
-            <span className="planet-ring-system inner-dust-ring" />
-            <span className="planet-ring-system cassini-division" />
+
+            {/* FRONT RING HALF (Passes in front of lower hemisphere) */}
+            <span className="planet-ring-system ring-front outer-ice-ring" />
+            <span className="planet-ring-system ring-front inner-dust-ring" />
+            <span className="planet-ring-system ring-front cassini-division" />
+
             <div className="orbiting-moon moon-alpha">
               <span className="moon-shadow" />
             </div>
@@ -2238,41 +2247,54 @@ export default function App() {
             </div>
           </div>
 
-          {/* Celestial Body 2: Crystalline Ice World with Silver Ring & Orbiting Moon */}
+          {/* Celestial Body 2: Crystalline Ice World with 3D Encircling Silver Ring */}
           <div
             className="space-celestial celestial-moon celestial-ice-world"
             style={initialSpaceDelays[1] ? { animationDelay: initialSpaceDelays[1] } : undefined}
           >
+            <span className="planet-ring-system ring-back silver-ice-ring" />
+
             <span className="planet-atmosphere-halo icy-cyan-glow" />
             <span className="planet-surface-texture ice-crust" />
-            <span className="planet-ring-system silver-ice-ring" />
+
+            <span className="planet-ring-system ring-front silver-ice-ring" />
+
             <div className="orbiting-moon moon-gamma">
               <span className="moon-shadow" />
             </div>
           </div>
 
-          {/* Celestial Body 3: Volcanic Lava World with Molten Debris Ring & Scorched Moon */}
+          {/* Celestial Body 3: Volcanic Lava World with 3D Encircling Molten Debris Ring */}
           <div
             className="space-celestial celestial-lava-planet"
             style={initialSpaceDelays[2] ? { animationDelay: initialSpaceDelays[2] } : undefined}
           >
+            <span className="planet-ring-system ring-back molten-debris-ring" />
+
             <span className="planet-atmosphere-halo magma-corona-glow" />
             <span className="planet-surface-texture lava-rivers" />
-            <span className="planet-ring-system molten-debris-ring" />
+
+            <span className="planet-ring-system ring-front molten-debris-ring" />
+
             <div className="orbiting-moon moon-delta">
               <span className="moon-shadow" />
             </div>
           </div>
 
-          {/* Celestial Body 4: Violet Plasma Supergiant with Double Plasma Rings & Orbiting Moon */}
+          {/* Celestial Body 4: Violet Plasma Supergiant with 3D Encircling Plasma Rings */}
           <div
             className="space-celestial celestial-purple-giant"
             style={initialSpaceDelays[3] ? { animationDelay: initialSpaceDelays[3] } : undefined}
           >
+            <span className="planet-ring-system ring-back plasma-ring-outer" />
+            <span className="planet-ring-system ring-back plasma-ring-inner" />
+
             <span className="planet-atmosphere-halo violet-aurora-glow" />
             <span className="planet-surface-texture storm-swirls" />
-            <span className="planet-ring-system plasma-ring-outer" />
-            <span className="planet-ring-system plasma-ring-inner" />
+
+            <span className="planet-ring-system ring-front plasma-ring-outer" />
+            <span className="planet-ring-system ring-front plasma-ring-inner" />
+
             <div className="orbiting-moon moon-epsilon">
               <span className="moon-shadow" />
             </div>
