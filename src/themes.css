@@ -774,18 +774,21 @@
   position: relative;
   z-index: 1;
   isolation: isolate;
+  opacity: 0.90 !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 [data-theme="spaceship"] .titlebar {
   position: relative;
   z-index: 20;
-  background: var(--bg-panel) !important;
+  background: rgba(6, 12, 22, 0.88) !important;
 }
 
 [data-theme="spaceship"] .connection-bar {
   position: relative;
   z-index: 20;
-  background: var(--bg-panel) !important;
+  background: rgba(8, 14, 26, 0.88) !important;
 }
 
 [data-theme="spaceship"] .workspace {
@@ -796,31 +799,31 @@
 [data-theme="spaceship"] .sidebar {
   position: relative;
   z-index: 20;
-  background: var(--bg-panel) !important;
+  background: rgba(10, 18, 32, 0.88) !important;
 }
 
 [data-theme="spaceship"] .editor-pane {
   position: relative;
   z-index: 20;
-  background: var(--bg-panel) !important;
+  background: rgba(10, 18, 32, 0.85) !important;
 }
 
 [data-theme="spaceship"] .results-pane {
   position: relative;
   z-index: 20;
-  background: var(--bg-panel) !important;
+  background: rgba(10, 18, 32, 0.88) !important;
 }
 
 [data-theme="spaceship"] .toolbar {
   position: relative;
   z-index: 20;
-  background: var(--bg-panel) !important;
+  background: rgba(12, 20, 36, 0.88) !important;
 }
 
 [data-theme="spaceship"] .status-bar {
   position: relative;
   z-index: 20;
-  background: var(--bg-panel) !important;
+  background: rgba(6, 12, 22, 0.90) !important;
 }
 
 [data-theme="spaceship"] .modal-backdrop,
