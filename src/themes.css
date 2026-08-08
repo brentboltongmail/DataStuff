@@ -4411,24 +4411,53 @@
 /* Floating Snow / Frost Flakes */
 .ice-atmosphere .snow-flake {
   position: absolute;
-  width: 5px;
-  height: 5px;
   border-radius: 50%;
   background: #ffffff;
-  box-shadow: 0 0 8px #bae6fd;
-  opacity: 0;
+  box-shadow: 0 0 10px #e0f2fe, 0 0 4px #ffffff;
+  pointer-events: none;
+  will-change: transform, opacity;
+  z-index: 5;
 }
 
-.ice-atmosphere .flake-1 { left: 22vw; animation: snow-drift 12s linear 0s infinite; }
-.ice-atmosphere .flake-2 { left: 42vw; animation: snow-drift 15s linear 4s infinite; }
-.ice-atmosphere .flake-3 { left: 64vw; animation: snow-drift 10s linear 2s infinite; }
-.ice-atmosphere .flake-4 { left: 82vw; animation: snow-drift 14s linear 6s infinite; }
+.ice-atmosphere .flake-1  { width: 4px; height: 4px; left: 5vw;  animation: snow-drift-slow 11s linear 0s infinite; }
+.ice-atmosphere .flake-2  { width: 7px; height: 7px; left: 12vw; animation: snow-drift-med 14s linear 3s infinite; }
+.ice-atmosphere .flake-3  { width: 10px; height: 10px; left: 20vw; animation: snow-drift-fast 8s linear 1.5s infinite; filter: blur(0.5px); }
+.ice-atmosphere .flake-4  { width: 5px; height: 5px; left: 28vw; animation: snow-drift-slow 13s linear 5s infinite; }
+.ice-atmosphere .flake-5  { width: 8px; height: 8px; left: 35vw; animation: snow-drift-med 10s linear 0.5s infinite; }
+.ice-atmosphere .flake-6  { width: 4px; height: 4px; left: 43vw; animation: snow-drift-fast 9s linear 4s infinite; }
+.ice-atmosphere .flake-7  { width: 9px; height: 9px; left: 50vw; animation: snow-drift-slow 15s linear 2s infinite; }
+.ice-atmosphere .flake-8  { width: 6px; height: 6px; left: 58vw; animation: snow-drift-med 11s linear 6s infinite; }
+.ice-atmosphere .flake-9  { width: 11px; height: 11px; left: 65vw; animation: snow-drift-fast 8.5s linear 1s infinite; filter: blur(0.8px); }
+.ice-atmosphere .flake-10 { width: 5px; height: 5px; left: 72vw; animation: snow-drift-slow 12.5s linear 3.5s infinite; }
+.ice-atmosphere .flake-11 { width: 8px; height: 8px; left: 79vw; animation: snow-drift-med 13.5s linear 5.5s infinite; }
+.ice-atmosphere .flake-12 { width: 4px; height: 4px; left: 86vw; animation: snow-drift-fast 9.5s linear 0.8s infinite; }
+.ice-atmosphere .flake-13 { width: 7px; height: 7px; left: 93vw; animation: snow-drift-slow 14s linear 2.8s infinite; }
+.ice-atmosphere .flake-14 { width: 9px; height: 9px; left: 16vw; animation: snow-drift-med 10.5s linear 7s infinite; }
+.ice-atmosphere .flake-15 { width: 5px; height: 5px; left: 47vw; animation: snow-drift-fast 11.5s linear 4.2s infinite; }
+.ice-atmosphere .flake-16 { width: 8px; height: 8px; left: 81vw; animation: snow-drift-slow 12s linear 1.2s infinite; }
 
-@keyframes snow-drift {
-  0% { transform: translate3d(0, -10px, 0); opacity: 0; }
-  10% { opacity: 0.8; }
-  50% { transform: translate3d(25px, 50vh, 0); opacity: 0.9; }
-  100% { transform: translate3d(-20px, 105vh, 0); opacity: 0; }
+@keyframes snow-drift-slow {
+  0% { transform: translate3d(0, -20px, 0); opacity: 0; }
+  10% { opacity: 0.85; }
+  50% { transform: translate3d(35px, 50vh, 0); opacity: 0.95; }
+  90% { opacity: 0.8; }
+  100% { transform: translate3d(-15px, 105vh, 0); opacity: 0; }
+}
+
+@keyframes snow-drift-med {
+  0% { transform: translate3d(0, -20px, 0); opacity: 0; }
+  12% { opacity: 0.9; }
+  50% { transform: translate3d(-30px, 48vh, 0); opacity: 1; }
+  88% { opacity: 0.85; }
+  100% { transform: translate3d(25px, 105vh, 0); opacity: 0; }
+}
+
+@keyframes snow-drift-fast {
+  0% { transform: translate3d(0, -20px, 0); opacity: 0; }
+  15% { opacity: 0.95; }
+  45% { transform: translate3d(40px, 45vh, 0); opacity: 1; }
+  85% { opacity: 0.9; }
+  100% { transform: translate3d(-35px, 105vh, 0); opacity: 0; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════

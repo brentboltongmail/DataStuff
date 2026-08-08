@@ -3147,6 +3147,16 @@ export default function App() {
           <div className="snow-flake flake-4" />
           <div className="snow-flake flake-5" />
           <div className="snow-flake flake-6" />
+          <div className="snow-flake flake-7" />
+          <div className="snow-flake flake-8" />
+          <div className="snow-flake flake-9" />
+          <div className="snow-flake flake-10" />
+          <div className="snow-flake flake-11" />
+          <div className="snow-flake flake-12" />
+          <div className="snow-flake flake-13" />
+          <div className="snow-flake flake-14" />
+          <div className="snow-flake flake-15" />
+          <div className="snow-flake flake-16" />
         </div>
       ) : null}
       <header className="titlebar">
