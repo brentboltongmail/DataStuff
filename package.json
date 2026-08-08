@@ -15,7 +15,8 @@
     "package:fast": "npm run build && CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --dir --mac",
     "preview": "vite preview",
     "prestart": "npm run build",
-    "start": "electron ."
+    "start": "electron .",
+    "restart": "node scripts/restart.mjs"
   },
   "build": {
     "appId": "com.datastuff.app",
