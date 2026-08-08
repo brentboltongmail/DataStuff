@@ -53,12 +53,40 @@ export interface SqlTab {
   sql: string;
 }
 
+export interface CellEdit {
+  rowIndex: number;
+  columnIndex: number;
+  columnName: string;
+  originalValue: unknown;
+  newValue: string;
+}
+
+export interface EditMeta {
+  table: string;
+  pkColumns: string[];
+  editable: boolean;
+}
+
 export interface HistoryEntry {
   id: string;
   sql: string;
   ranAt: string;
   ok: boolean;
   summary: string;
+}
+
+export interface TabState {
+  result: QueryResult | null;
+  explainResult: QueryResult | null;
+  explainError: string | null;
+  editMeta: EditMeta | null;
+  pendingEdits: Record<string, CellEdit>;
+  bottomTab: "results" | "history" | "explain";
+  history: HistoryEntry[];
+  message: string;
+  error: string | null;
+  queryStartTime: number | null;
+  queryElapsedTimeMs: number;
 }
 
 export interface SaveCsvResult {

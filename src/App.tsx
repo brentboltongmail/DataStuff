@@ -27,18 +27,15 @@ import {
   type AppThemeId,
 } from "./themes";
 import type {
+  CellEdit,
   ConnectionConfig,
   ConnectionState,
+  EditMeta,
   HistoryEntry,
   QueryResult,
   SqlTab,
+  TabState,
 } from "./types";
-
-interface EditMeta {
-  table: string;
-  pkColumns: string[];
-  editable: boolean;
-}
 
 function cellValuesEqual(a: unknown, b: unknown): boolean {
   if (isNullCell(a) && isNullCell(b)) return true;
@@ -372,16 +369,157 @@ export default function App() {
   const [activeTabId, setActiveTabId] = useState("");
   const [sqlDir, setSqlDir] = useState("~/sql");
   const [workspaceHydrated, setWorkspaceHydrated] = useState(false);
-  const [history, setHistory] = useState<HistoryEntry[]>(() => loadHistory());
-  const [result, setResult] = useState<QueryResult | null>(null);
-  const [explainResult, setExplainResult] = useState<QueryResult | null>(null);
-  const [explainError, setExplainError] = useState<string | null>(null);
-  const [editMeta, setEditMeta] = useState<EditMeta | null>(null);
-  const [pendingEdits, setPendingEdits] = useState<Record<string, CellEdit>>({});
-  const [bottomTab, setBottomTab] = useState<"results" | "history" | "explain">("results");
+  const [globalHistory, setGlobalHistory] = useState<HistoryEntry[]>(() => loadHistory());
+  const [tabStates, setTabStates] = useState<Record<string, TabState>>({});
+
+  const defaultTabState = useMemo<TabState>(
+    () => ({
+      result: null,
+      explainResult: null,
+      explainError: null,
+      editMeta: null,
+      pendingEdits: {},
+      bottomTab: "results",
+      history: globalHistory,
+      message: "Ready",
+      error: null,
+      queryStartTime: null,
+      queryElapsedTimeMs: 0,
+    }),
+    [globalHistory],
+  );
+
+  const activeTabState = useMemo<TabState>(() => {
+    if (!activeTabId) return defaultTabState;
+    return tabStates[activeTabId] ?? defaultTabState;
+  }, [activeTabId, tabStates, defaultTabState]);
+
+  const updateActiveTabState = useCallback(
+    (updater: Partial<TabState> | ((prev: TabState) => Partial<TabState>)) => {
+      if (!activeTabId) return;
+      setTabStates((prevMap) => {
+        const current = prevMap[activeTabId] ?? defaultTabState;
+        const patch = typeof updater === "function" ? updater(current) : updater;
+        return {
+          ...prevMap,
+          [activeTabId]: { ...current, ...patch },
+        };
+      });
+    },
+    [activeTabId, defaultTabState],
+  );
+
+  const result = activeTabState.result;
+  const setResult = useCallback(
+    (val: QueryResult | null | ((prev: QueryResult | null) => QueryResult | null)) => {
+      updateActiveTabState((prev: TabState) => ({
+        result: typeof val === "function" ? val(prev.result) : val,
+      }));
+    },
+    [updateActiveTabState],
+  );
+
+  const explainResult = activeTabState.explainResult;
+  const setExplainResult = useCallback(
+    (val: QueryResult | null | ((prev: QueryResult | null) => QueryResult | null)) => {
+      updateActiveTabState((prev: TabState) => ({
+        explainResult: typeof val === "function" ? val(prev.explainResult) : val,
+      }));
+    },
+    [updateActiveTabState],
+  );
+
+  const explainError = activeTabState.explainError;
+  const setExplainError = useCallback(
+    (val: string | null | ((prev: string | null) => string | null)) => {
+      updateActiveTabState((prev: TabState) => ({
+        explainError: typeof val === "function" ? val(prev.explainError) : val,
+      }));
+    },
+    [updateActiveTabState],
+  );
+
+  const editMeta = activeTabState.editMeta;
+  const setEditMeta = useCallback(
+    (val: EditMeta | null | ((prev: EditMeta | null) => EditMeta | null)) => {
+      updateActiveTabState((prev: TabState) => ({
+        editMeta: typeof val === "function" ? val(prev.editMeta) : val,
+      }));
+    },
+    [updateActiveTabState],
+  );
+
+  const pendingEdits = activeTabState.pendingEdits;
+  const setPendingEdits = useCallback(
+    (val: Record<string, CellEdit> | ((prev: Record<string, CellEdit>) => Record<string, CellEdit>)) => {
+      updateActiveTabState((prev: TabState) => ({
+        pendingEdits: typeof val === "function" ? val(prev.pendingEdits) : val,
+      }));
+    },
+    [updateActiveTabState],
+  );
+
+  const bottomTab = activeTabState.bottomTab;
+  const setBottomTab = useCallback(
+    (val: "results" | "history" | "explain" | ((prev: "results" | "history" | "explain") => "results" | "history" | "explain")) => {
+      updateActiveTabState((prev: TabState) => ({
+        bottomTab: typeof val === "function" ? val(prev.bottomTab) : val,
+      }));
+    },
+    [updateActiveTabState],
+  );
+
+  const history = activeTabState.history;
+  const setHistory = useCallback(
+    (val: HistoryEntry[] | ((prev: HistoryEntry[]) => HistoryEntry[])) => {
+      updateActiveTabState((prev: TabState) => ({
+        history: typeof val === "function" ? val(prev.history) : val,
+      }));
+    },
+    [updateActiveTabState],
+  );
+
+  const message = activeTabState.message;
+  const setMessage = useCallback(
+    (val: string | ((prev: string) => string)) => {
+      updateActiveTabState((prev: TabState) => ({
+        message: typeof val === "function" ? val(prev.message) : val,
+      }));
+    },
+    [updateActiveTabState],
+  );
+
+  const error = activeTabState.error;
+  const setError = useCallback(
+    (val: string | null | ((prev: string | null) => string | null)) => {
+      updateActiveTabState((prev: TabState) => ({
+        error: typeof val === "function" ? val(prev.error) : val,
+      }));
+    },
+    [updateActiveTabState],
+  );
+
+  const queryStartTime = activeTabState.queryStartTime;
+  const setQueryStartTime = useCallback(
+    (val: number | null | ((prev: number | null) => number | null)) => {
+      updateActiveTabState((prev: TabState) => ({
+        queryStartTime: typeof val === "function" ? val(prev.queryStartTime) : val,
+      }));
+    },
+    [updateActiveTabState],
+  );
+
+  const queryElapsedTimeMs = activeTabState.queryElapsedTimeMs;
+  const setQueryElapsedTimeMs = useCallback(
+    (val: number | ((prev: number) => number)) => {
+      updateActiveTabState((prev: TabState) => ({
+        queryElapsedTimeMs: typeof val === "function" ? val(prev.queryElapsedTimeMs) : val,
+      }));
+    },
+    [updateActiveTabState],
+  );
+
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState("Ready");
-  const [error, setError] = useState<string | null>(null);
   const [objectsRefresh, setObjectsRefresh] = useState(0);
   const [maxRows, setMaxRows] = useState(loadMaxRows);
   const [density, setDensity] = useState<GridDensity>(loadDensity);
@@ -428,8 +566,6 @@ export default function App() {
   const [rememberPassword, setRememberPassword] = useState(loadRememberPassword);
   const [passwordStorageAvailable, setPasswordStorageAvailable] = useState(false);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
-  const [queryStartTime, setQueryStartTime] = useState<number | null>(null);
-  const [queryElapsedTimeMs, setQueryElapsedTimeMs] = useState<number>(0);
   const [selectedConnectionId, setSelectedConnectionId] = useState<string>(initialConnState.selectedConnectionId);
   const [connectionName, setConnectionName] = useState<string>(initialConnState.connectionName);
   const [isProd, setIsProd] = useState<boolean>(initialConnState.isProd);
@@ -447,7 +583,7 @@ export default function App() {
       setQueryElapsedTimeMs(Date.now() - queryStartTime);
     }, 100);
     return () => clearInterval(interval);
-  }, [busy, queryStartTime]);
+  }, [busy, queryStartTime, setQueryElapsedTimeMs]);
   const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor | null>(null);
   const monacoApiRef = useRef<Parameters<BeforeMount>[0] | null>(null);
   const workspaceRef = useRef<HTMLElement | null>(null);
@@ -1544,10 +1680,10 @@ export default function App() {
     const edits = Object.values(pendingEdits);
     if (edits.length === 0) return 0;
 
-    const rowIdIndex = result.columns.findIndex((col) => isRowIdColumn(col.name));
-    const pkIndexes = editMeta.pkColumns.map((name) => {
+    const rowIdIndex = result.columns.findIndex((col: { name: string }) => isRowIdColumn(col.name));
+    const pkIndexes = editMeta.pkColumns.map((name: string) => {
       const index = result.columns.findIndex(
-        (col) => col.name.replace(/^"+|"+$/g, "").toUpperCase() === name.toUpperCase(),
+        (col: { name: string }) => col.name.replace(/^"+|"+$/g, "").toUpperCase() === name.toUpperCase(),
       );
       if (index < 0) {
         throw new Error(`Primary key column ${name} not in result set`);
@@ -1555,7 +1691,7 @@ export default function App() {
       return { name, index };
     });
 
-    for (const edit of edits) {
+    for (const edit of edits as CellEdit[]) {
       const row = result.rows[edit.rowIndex];
       if (!row) throw new Error(`Missing row ${edit.rowIndex + 1}`);
 
@@ -1565,14 +1701,14 @@ export default function App() {
           : undefined;
       const pkColumns =
         !rowId && pkIndexes.length > 0
-          ? pkIndexes.map(({ name, index }) => ({
+          ? pkIndexes.map(({ name, index }: { name: string; index: number }) => ({
               name,
               value: row[index],
             }))
           : undefined;
 
       const colMeta = result.columns.find(
-        (c) => c.name.replace(/^"+|"+$/g, "").toUpperCase() === edit.columnName.replace(/^"+|"+$/g, "").toUpperCase(),
+        (c: { name: string; type?: string }) => c.name.replace(/^"+|"+$/g, "").toUpperCase() === edit.columnName.replace(/^"+|"+$/g, "").toUpperCase(),
       );
 
       const { sql, binds } = buildUpdate(
@@ -1598,7 +1734,7 @@ export default function App() {
         setResult((prev) => {
           if (!prev) return prev;
           const rows = prev.rows.map((row) => [...row]);
-          for (const edit of Object.values(pendingEdits)) {
+          for (const edit of Object.values(pendingEdits) as CellEdit[]) {
             rows[edit.rowIndex][edit.columnIndex] = edit.newValue;
           }
           return { ...prev, rows };
@@ -1844,13 +1980,13 @@ export default function App() {
       const row = explainResult.rows[rowIndex];
       if (!row) return undefined;
       const typeIdx = explainResult.columns.findIndex(
-        (c) => c.name.toUpperCase() === "OBJECT_TYPE",
+        (c: { name: string }) => c.name.toUpperCase() === "OBJECT_TYPE",
       );
       const opIdx = explainResult.columns.findIndex(
-        (c) => c.name.toUpperCase() === "OPERATION",
+        (c: { name: string }) => c.name.toUpperCase() === "OPERATION",
       );
       const ownerIdx = explainResult.columns.findIndex(
-        (c) => c.name.toUpperCase() === "OBJECT_OWNER",
+        (c: { name: string }) => c.name.toUpperCase() === "OBJECT_OWNER",
       );
       const objectType = typeIdx >= 0 ? String(row[typeIdx] ?? "") : "";
       const operation = opIdx >= 0 ? String(row[opIdx] ?? "") : "";
