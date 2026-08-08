@@ -768,7 +768,7 @@
   perspective: 1200px;
 }
 
-/* Guarantee 80% opacity on all windows and panels in space theme so backdrop shines through */
+/* Guarantee 85% opacity on all windows and panels in space theme so backdrop shines through */
 [data-theme="spaceship"] {
   background: #020610 !important;
 }
@@ -777,7 +777,7 @@
   position: relative;
   z-index: 2;
   isolation: isolate;
-  opacity: 0.80 !important;
+  opacity: 0.85 !important;
   background: transparent !important;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -786,15 +786,15 @@
 [data-theme="spaceship"] .titlebar {
   position: relative;
   z-index: 20;
-  background: rgba(6, 12, 22, 0.80) !important;
-  opacity: 0.80 !important;
+  background: rgba(6, 12, 22, 0.85) !important;
+  opacity: 0.85 !important;
 }
 
 [data-theme="spaceship"] .connection-bar {
   position: relative;
   z-index: 20;
-  background: rgba(8, 14, 26, 0.80) !important;
-  opacity: 0.80 !important;
+  background: rgba(8, 14, 26, 0.85) !important;
+  opacity: 0.85 !important;
 }
 
 [data-theme="spaceship"] .workspace {
@@ -806,44 +806,44 @@
 [data-theme="spaceship"] .sidebar {
   position: relative;
   z-index: 20;
-  background: rgba(10, 18, 32, 0.80) !important;
-  opacity: 0.80 !important;
+  background: rgba(10, 18, 32, 0.85) !important;
+  opacity: 0.85 !important;
 }
 
 [data-theme="spaceship"] .editor-pane {
   position: relative;
   z-index: 20;
-  background: rgba(10, 18, 32, 0.80) !important;
-  opacity: 0.80 !important;
+  background: rgba(10, 18, 32, 0.85) !important;
+  opacity: 0.85 !important;
 }
 
 [data-theme="spaceship"] .results-pane {
   position: relative;
   z-index: 20;
-  background: rgba(10, 18, 32, 0.80) !important;
-  opacity: 0.80 !important;
+  background: rgba(10, 18, 32, 0.85) !important;
+  opacity: 0.85 !important;
 }
 
 [data-theme="spaceship"] .toolbar {
   position: relative;
   z-index: 20;
-  background: rgba(12, 20, 36, 0.80) !important;
-  opacity: 0.80 !important;
+  background: rgba(12, 20, 36, 0.85) !important;
+  opacity: 0.85 !important;
 }
 
 [data-theme="spaceship"] .status-bar {
   position: relative;
   z-index: 20;
-  background: rgba(6, 12, 22, 0.80) !important;
-  opacity: 0.80 !important;
+  background: rgba(6, 12, 22, 0.85) !important;
+  opacity: 0.85 !important;
 }
 
 [data-theme="spaceship"] .modal-backdrop,
 [data-theme="spaceship"] .modal {
   position: relative;
   z-index: 100;
-  background: rgba(10, 18, 32, 0.80) !important;
-  opacity: 0.80 !important;
+  background: rgba(10, 18, 32, 0.85) !important;
+  opacity: 0.85 !important;
 }
 
 [data-theme="spaceship"] .monaco-editor,
