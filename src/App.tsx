@@ -648,6 +648,111 @@ const CyberpunkAtmosphere: React.FC = () => {
   );
 };
 
+const DeepSeaAtmosphere: React.FC = () => {
+  return (
+    <div className="deepsea-atmosphere">
+      <div className="abyssal-glow" />
+      <div className="ocean-caustic-beam beam-1" />
+      <div className="ocean-caustic-beam beam-2" />
+
+      <div className="biolum-whale whale-1">
+        <svg className="whale-svg" viewBox="0 0 500 200">
+          <path
+            d="M 50 100 Q 120 30 280 40 Q 400 50 460 90 Q 490 100 480 120 Q 450 140 380 150 Q 250 160 120 150 Q 70 140 50 100 Z"
+            fill="url(#whaleGrad1)"
+            filter="url(#whaleGlow)"
+          />
+          <path
+            className="whale-fluke"
+            d="M 50 100 Q 20 60 0 40 Q 20 90 50 100 Q 20 110 0 160 Q 20 140 50 100 Z"
+            fill="#0284c7"
+          />
+          <path
+            d="M 160 145 Q 260 150 360 140 M 180 135 Q 260 140 340 130"
+            stroke="#38bdf8"
+            strokeWidth="2"
+            fill="none"
+            opacity="0.7"
+          />
+          <circle cx="410" cy="85" r="4" fill="#6ee7b7" />
+          <defs>
+            <linearGradient id="whaleGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#0369a1" stopOpacity="0.4" />
+              <stop offset="50%" stopColor="#0284c7" stopOpacity="0.7" />
+              <stop offset="100%" stopColor="#0d9488" stopOpacity="0.8" />
+            </linearGradient>
+            <filter id="whaleGlow">
+              <feGaussianBlur stdDeviation="6" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+        </svg>
+        <div className="blowhole-plume" />
+      </div>
+
+      <div className="biolum-whale whale-2">
+        <svg className="whale-svg" viewBox="0 0 500 200">
+          <path
+            d="M 450 100 Q 380 30 220 40 Q 100 50 40 90 Q 10 100 20 120 Q 50 140 120 150 Q 250 160 380 150 Q 430 140 450 100 Z"
+            fill="url(#whaleGrad2)"
+            filter="url(#whaleGlow)"
+          />
+          <path
+            className="whale-fluke"
+            d="M 450 100 Q 480 60 500 40 Q 480 90 450 100 Q 480 110 500 160 Q 480 140 450 100 Z"
+            fill="#0d9488"
+          />
+          <circle cx="90" cy="85" r="4" fill="#a7f3d0" />
+          <defs>
+            <linearGradient id="whaleGrad2" x1="100%" y1="0%" x2="0%" y2="0%">
+              <stop offset="0%" stopColor="#0f766e" stopOpacity="0.3" />
+              <stop offset="60%" stopColor="#06b6d4" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#2dd4bf" stopOpacity="0.75" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <div className="biolum-manta">
+        <svg className="manta-svg" viewBox="0 0 200 120">
+          <path
+            className="manta-wings"
+            d="M 100 10 Q 40 50 0 90 Q 60 80 100 110 Q 140 80 200 90 Q 160 50 100 10 Z"
+            fill="#06b6d4"
+            opacity="0.8"
+          />
+          <path d="M 100 110 L 100 160" stroke="#38bdf8" strokeWidth="2" />
+        </svg>
+      </div>
+
+      <div className="biolum-jelly jelly-1">
+        <span className="jelly-bell" />
+        <span className="jelly-tentacles" />
+      </div>
+      <div className="biolum-jelly jelly-2">
+        <span className="jelly-bell" />
+        <span className="jelly-tentacles" />
+      </div>
+      <div className="biolum-jelly jelly-3">
+        <span className="jelly-bell" />
+        <span className="jelly-tentacles" />
+      </div>
+
+      <div className="sea-plankton p-1" />
+      <div className="sea-plankton p-2" />
+      <div className="sea-plankton p-3" />
+      <div className="sea-plankton p-4" />
+      <div className="sea-bubble bubble-1" />
+      <div className="sea-bubble bubble-2" />
+      <div className="sea-bubble bubble-3" />
+      <div className="sea-bubble bubble-4" />
+    </div>
+  );
+};
+
 const CIRCUIT_PRESETS = [
   // Preset 1: Silverstone Sweeping Loop
   "M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z",
@@ -4047,22 +4152,7 @@ export default function App() {
         </div>
       ) : null}
 
-      {themeId === "deepsea" ? (
-        <div className="deepsea-atmosphere">
-          <div className="jellyfish jelly-1">
-            <span className="jelly-bell" />
-            <span className="jelly-tentacles" />
-          </div>
-          <div className="jellyfish jelly-2">
-            <span className="jelly-bell" />
-            <span className="jelly-tentacles" />
-          </div>
-          <div className="ocean-caustic-beam" />
-          <div className="sea-bubble bubble-1" />
-          <div className="sea-bubble bubble-2" />
-          <div className="sea-bubble bubble-3" />
-        </div>
-      ) : null}
+      {themeId === "deepsea" ? <DeepSeaAtmosphere /> : null}
 
       {themeId === "synthwave" ? (
         <div className="synthwave-atmosphere">
