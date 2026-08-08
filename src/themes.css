@@ -4724,6 +4724,467 @@
   }
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. Matrix Cyber-Rain Theme (The Hacker Terminal)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="matrix"] {
+  --bg-app: #030704;
+  --bg-surface: #051409;
+  --bg-elevated: #082110;
+  --bg-hover: #0c3319;
+  --border-subtle: #0d381b;
+  --border-strong: #00ff66;
+  --text-main: #f0fdf4;
+  --text-muted: #4ade80;
+  --text-faint: #166534;
+
+  --border-bright: #00ff66;
+  --accent: #00ff66;
+  --accent-hover: #4ade80;
+  --accent-deep: #15803d;
+
+  --btn-primary-bg: linear-gradient(135deg, #00ff66, #15803d);
+  --btn-primary-border: #86efac;
+  --btn-primary-shadow: 0 4px 18px rgba(0, 255, 102, 0.4);
+  --btn-shadow-hover: 0 0 22px rgba(0, 255, 102, 0.7);
+
+  --status-ok: #00ff66;
+  --status-err: #ef4444;
+
+  --sql-tab-active-bg: linear-gradient(180deg, #092b14 0%, #051409 100%);
+  --sql-tab-active-border: #00ff66;
+
+  --editor-bg: rgba(3, 15, 7, 0.85);
+  --editor-gutter: #051409;
+  --grid-header: #082110;
+  --grid-zebra: rgba(0, 255, 102, 0.03);
+
+  --font-display: "IBM Plex Mono", monospace;
+  --font-body: "IBM Plex Mono", monospace;
+  --font-code: "IBM Plex Mono", monospace;
+}
+
+[data-theme="matrix"] .editor-pane,
+[data-theme="matrix"] .object-browser,
+[data-theme="matrix"] .results-pane {
+  background: rgba(3, 15, 7, 0.85) !important;
+  opacity: 0.85 !important;
+}
+
+.matrix-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: #030704;
+}
+
+.matrix-crt-scanlines {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+}
+
+.matrix-code-stream {
+  position: absolute;
+  top: -200px;
+  width: 30px;
+  background: linear-gradient(180deg, transparent 0%, #15803d 40%, #00ff66 85%, #ffffff 100%);
+  box-shadow: 0 0 12px #00ff66;
+  opacity: 0.8;
+  will-change: transform;
+}
+
+.matrix-atmosphere .stream-1 { left: 8vw; height: 180px; animation: matrix-fall 4.2s linear 0s infinite; }
+.matrix-atmosphere .stream-2 { left: 28vw; height: 240px; animation: matrix-fall 5.5s linear 1.2s infinite; }
+.matrix-atmosphere .stream-3 { left: 52vw; height: 160px; animation: matrix-fall 3.8s linear 0.5s infinite; }
+.matrix-atmosphere .stream-4 { left: 74vw; height: 220px; animation: matrix-fall 4.8s linear 2.1s infinite; }
+.matrix-atmosphere .stream-5 { left: 91vw; height: 190px; animation: matrix-fall 4.0s linear 1.7s infinite; }
+
+@keyframes matrix-fall {
+  0% { transform: translate3d(0, -200px, 0); opacity: 0; }
+  15% { opacity: 0.85; }
+  85% { opacity: 0.7; }
+  100% { transform: translate3d(0, 105vh, 0); opacity: 0; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. Deep Sea Bioluminescence Theme
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="deepsea"] {
+  --bg-app: #020617;
+  --bg-surface: #082f49;
+  --bg-elevated: #0c4a6e;
+  --bg-hover: #164e63;
+  --border-subtle: #0f172a;
+  --border-strong: #06b6d4;
+  --text-main: #ecfeff;
+  --text-muted: #67e8f9;
+  --text-faint: #164e63;
+
+  --border-bright: #06b6d4;
+  --accent: #06b6d4;
+  --accent-hover: #67e8f9;
+  --accent-deep: #0e7490;
+
+  --btn-primary-bg: linear-gradient(135deg, #06b6d4, #0e7490);
+  --btn-primary-border: #a5f3fc;
+  --btn-primary-shadow: 0 4px 18px rgba(6, 182, 212, 0.45);
+  --btn-shadow-hover: 0 0 22px rgba(6, 182, 212, 0.7);
+
+  --status-ok: #10b981;
+  --status-err: #ef4444;
+
+  --sql-tab-active-bg: linear-gradient(180deg, #0c4a6e 0%, #082f49 100%);
+  --sql-tab-active-border: #06b6d4;
+
+  --editor-bg: rgba(6, 30, 48, 0.85);
+  --editor-gutter: #082f49;
+  --grid-header: #0c4a6e;
+  --grid-zebra: rgba(6, 182, 212, 0.03);
+
+  --font-display: "Outfit", sans-serif;
+  --font-body: "Source Sans 3", sans-serif;
+  --font-code: "IBM Plex Mono", monospace;
+}
+
+[data-theme="deepsea"] .editor-pane,
+[data-theme="deepsea"] .object-browser,
+[data-theme="deepsea"] .results-pane {
+  background: rgba(6, 30, 48, 0.85) !important;
+  opacity: 0.85 !important;
+}
+
+.deepsea-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 100%, #082f49 0%, #020617 75%);
+}
+
+.deepsea-atmosphere .jellyfish {
+  position: absolute;
+  width: 90px;
+  height: 110px;
+  will-change: transform;
+}
+
+.deepsea-atmosphere .jelly-1 { left: 15vw; bottom: 10vh; animation: jelly-float 16s ease-in-out infinite alternate; }
+.deepsea-atmosphere .jelly-2 { right: 18vw; bottom: 30vh; animation: jelly-float 20s ease-in-out 3s infinite alternate; }
+
+.deepsea-atmosphere .jelly-bell {
+  display: block;
+  width: 70px;
+  height: 50px;
+  border-radius: 50% 50% 25% 25%;
+  background: radial-gradient(ellipse at center, rgba(192, 132, 252, 0.8), rgba(6, 182, 212, 0.4));
+  box-shadow: 0 0 24px #c084fc, 0 0 45px #06b6d4;
+  animation: jelly-pulse 3.5s ease-in-out infinite alternate;
+}
+
+@keyframes jelly-float {
+  0% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(40px, -80px, 0); }
+  100% { transform: translate3d(-30px, -140px, 0); }
+}
+
+@keyframes jelly-pulse {
+  0% { transform: scale(0.9) scaleY(0.95); opacity: 0.7; }
+  100% { transform: scale(1.15) scaleY(1.05); opacity: 0.95; }
+}
+
+.deepsea-atmosphere .sea-bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(236, 254, 255, 0.6);
+  box-shadow: 0 0 8px #67e8f9;
+  will-change: transform;
+}
+
+.deepsea-atmosphere .bubble-1 { width: 8px; height: 8px; left: 25vw; bottom: -20px; animation: sea-bubble-rise 9s linear infinite; }
+.deepsea-atmosphere .bubble-2 { width: 12px; height: 12px; left: 60vw; bottom: -20px; animation: sea-bubble-rise 12s linear 2s infinite; }
+.deepsea-atmosphere .bubble-3 { width: 6px; height: 6px; left: 82vw; bottom: -20px; animation: sea-bubble-rise 8s linear 4s infinite; }
+
+@keyframes sea-bubble-rise {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  15% { opacity: 0.8; }
+  100% { transform: translate3d(20px, -105vh, 0); opacity: 0; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. Synthwave Outrun Theme (80s Retro Arcade)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="synthwave"] {
+  --bg-app: #0f051d;
+  --bg-surface: #1d0936;
+  --bg-elevated: #2d0e52;
+  --bg-hover: #45177a;
+  --border-subtle: #2d0e52;
+  --border-strong: #ec4899;
+  --text-main: #fdf2f8;
+  --text-muted: #f472b6;
+  --text-faint: #831843;
+
+  --border-bright: #ec4899;
+  --accent: #ec4899;
+  --accent-hover: #f472b6;
+  --accent-deep: #be185d;
+
+  --btn-primary-bg: linear-gradient(135deg, #ec4899, #be185d);
+  --btn-primary-border: #fbcfe8;
+  --btn-primary-shadow: 0 4px 18px rgba(236, 72, 153, 0.45);
+  --btn-shadow-hover: 0 0 22px rgba(236, 72, 153, 0.7);
+
+  --status-ok: #10b981;
+  --status-err: #ef4444;
+
+  --sql-tab-active-bg: linear-gradient(180deg, #2d0e52 0%, #1d0936 100%);
+  --sql-tab-active-border: #ec4899;
+
+  --editor-bg: rgba(22, 6, 42, 0.85);
+  --editor-gutter: #1d0936;
+  --grid-header: #2d0e52;
+  --grid-zebra: rgba(236, 72, 153, 0.03);
+
+  --font-display: "Exo 2", sans-serif;
+  --font-body: "Source Sans 3", sans-serif;
+  --font-code: "IBM Plex Mono", monospace;
+}
+
+[data-theme="synthwave"] .editor-pane,
+[data-theme="synthwave"] .object-browser,
+[data-theme="synthwave"] .results-pane {
+  background: rgba(22, 6, 42, 0.85) !important;
+  opacity: 0.85 !important;
+}
+
+.synthwave-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0f051d 0%, #2d0e52 50%, #f97316 90%, #ec4899 100%);
+}
+
+.synthwave-atmosphere .synth-sun {
+  position: absolute;
+  left: 50%;
+  bottom: 120px;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #fde047 0%, #f97316 50%, #ec4899 100%);
+  box-shadow: 0 0 50px #f97316, 0 0 100px #ec4899;
+}
+
+.synthwave-atmosphere .synth-grid-floor {
+  position: absolute;
+  left: -50%;
+  right: -50%;
+  bottom: -40px;
+  height: 180px;
+  background: linear-gradient(90deg, rgba(236, 72, 153, 0.4) 1px, transparent 1px),
+              linear-gradient(rgba(236, 72, 153, 0.4) 1px, transparent 1px);
+  background-size: 40px 20px;
+  transform: perspective(300px) rotateX(60deg);
+  animation: synth-grid-scroll 4s linear infinite;
+}
+
+@keyframes synth-grid-scroll {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 40px; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. Enchanted Forest Theme (Twilight Fireflies)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="enchanted"] {
+  --bg-app: #051c14;
+  --bg-surface: #0a2e22;
+  --bg-elevated: #114533;
+  --bg-hover: #195c45;
+  --border-subtle: #114533;
+  --border-strong: #f59e0b;
+  --text-main: #fef3c7;
+  --text-muted: #fcd34d;
+  --text-faint: #78350f;
+
+  --border-bright: #f59e0b;
+  --accent: #f59e0b;
+  --accent-hover: #fbbf24;
+  --accent-deep: #b45309;
+
+  --btn-primary-bg: linear-gradient(135deg, #f59e0b, #b45309);
+  --btn-primary-border: #fde68a;
+  --btn-primary-shadow: 0 4px 18px rgba(245, 158, 11, 0.45);
+  --btn-shadow-hover: 0 0 22px rgba(245, 158, 11, 0.7);
+
+  --status-ok: #34d399;
+  --status-err: #ef4444;
+
+  --sql-tab-active-bg: linear-gradient(180deg, #114533 0%, #0a2e22 100%);
+  --sql-tab-active-border: #f59e0b;
+
+  --editor-bg: rgba(6, 26, 19, 0.85);
+  --editor-gutter: #0a2e22;
+  --grid-header: #114533;
+  --grid-zebra: rgba(245, 158, 11, 0.03);
+
+  --font-display: "Cormorant Garamond", serif;
+  --font-body: "Source Sans 3", sans-serif;
+  --font-code: "IBM Plex Mono", monospace;
+}
+
+[data-theme="enchanted"] .editor-pane,
+[data-theme="enchanted"] .object-browser,
+[data-theme="enchanted"] .results-pane {
+  background: rgba(6, 26, 19, 0.85) !important;
+  opacity: 0.85 !important;
+}
+
+.enchanted-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 0%, #0a2e22 0%, #051c14 80%);
+}
+
+.enchanted-atmosphere .firefly {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fef3c7;
+  box-shadow: 0 0 12px #f59e0b, 0 0 24px #fbbf24;
+  will-change: transform, opacity;
+}
+
+.enchanted-atmosphere .fly-1 { left: 12vw; top: 20vh; animation: firefly-dance 7s ease-in-out infinite alternate; }
+.enchanted-atmosphere .fly-2 { left: 35vw; top: 55vh; animation: firefly-dance 9s ease-in-out 1.5s infinite alternate; }
+.enchanted-atmosphere .fly-3 { left: 58vw; top: 30vh; animation: firefly-dance 8s ease-in-out 0.8s infinite alternate; }
+.enchanted-atmosphere .fly-4 { left: 78vw; top: 65vh; animation: firefly-dance 10s ease-in-out 2.2s infinite alternate; }
+.enchanted-atmosphere .fly-5 { left: 24vw; top: 80vh; animation: firefly-dance 6.5s ease-in-out 3s infinite alternate; }
+.enchanted-atmosphere .fly-6 { left: 88vw; top: 15vh; animation: firefly-dance 8.5s ease-in-out 0.4s infinite alternate; }
+
+@keyframes firefly-dance {
+  0% { transform: translate3d(0, 0, 0); opacity: 0.3; }
+  50% { transform: translate3d(30px, -45px, 0); opacity: 1; }
+  100% { transform: translate3d(-25px, -20px, 0); opacity: 0.4; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. Stealth Fighter HUD Theme (F-22 Radar & Avionics)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="hud"] {
+  --bg-app: #090d16;
+  --bg-surface: #111a2e;
+  --bg-elevated: #1b2947;
+  --bg-hover: #263a63;
+  --border-subtle: #1b2947;
+  --border-strong: #fbbf24;
+  --text-main: #fffbeb;
+  --text-muted: #fcd34d;
+  --text-faint: #78350f;
+
+  --border-bright: #fbbf24;
+  --accent: #fbbf24;
+  --accent-hover: #fde047;
+  --accent-deep: #b45309;
+
+  --btn-primary-bg: linear-gradient(135deg, #fbbf24, #b45309);
+  --btn-primary-border: #fef08a;
+  --btn-primary-shadow: 0 4px 18px rgba(251, 191, 36, 0.45);
+  --btn-shadow-hover: 0 0 22px rgba(251, 191, 36, 0.7);
+
+  --status-ok: #22c55e;
+  --status-err: #ef4444;
+
+  --sql-tab-active-bg: linear-gradient(180deg, #1b2947 0%, #111a2e 100%);
+  --sql-tab-active-border: #fbbf24;
+
+  --editor-bg: rgba(10, 16, 28, 0.85);
+  --editor-gutter: #111a2e;
+  --grid-header: #1b2947;
+  --grid-zebra: rgba(251, 191, 36, 0.03);
+
+  --font-display: "Orbitron", sans-serif;
+  --font-body: "Source Sans 3", sans-serif;
+  --font-code: "IBM Plex Mono", monospace;
+}
+
+[data-theme="hud"] .editor-pane,
+[data-theme="hud"] .object-browser,
+[data-theme="hud"] .results-pane {
+  background: rgba(10, 16, 28, 0.85) !important;
+  opacity: 0.85 !important;
+}
+
+.hud-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: #090d16;
+}
+
+.hud-atmosphere .hud-radar-scope {
+  position: absolute;
+  right: 6vw;
+  bottom: 8vh;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.15);
+}
+
+.hud-atmosphere .radar-sweep-beam {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(251, 191, 36, 0.4) 0deg, transparent 60deg, transparent 360deg);
+  animation: radar-sweep 6s linear infinite;
+  will-change: transform;
+}
+
+@keyframes radar-sweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.hud-atmosphere .radar-ring.ring-1 {
+  position: absolute;
+  inset: 30px;
+  border-radius: 50%;
+  border: 1px dashed rgba(251, 191, 36, 0.25);
+}
+
+.hud-atmosphere .radar-crosshair {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 49%, rgba(251, 191, 36, 0.3) 50%, transparent 51%),
+              linear-gradient(0deg, transparent 49%, rgba(251, 191, 36, 0.3) 50%, transparent 51%);
+}
+
 .theme-picker {
   display: inline-flex;
   align-items: center;

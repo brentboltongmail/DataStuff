@@ -669,7 +669,7 @@ body.is-row-resizing .monaco-editor {
   align-items: center;
   justify-content: space-between;
   gap: 4px;
-  padding: 0 6px;
+  padding: 0 6px 0 8px;
   height: 20px;
   min-height: 20px;
   border-bottom: 1px solid var(--border-soft);
@@ -678,6 +678,7 @@ body.is-row-resizing .monaco-editor {
   cursor: pointer;
   width: 100%;
   user-select: none;
+  border-radius: 0 !important;
   transition: background 0.12s ease, color 0.12s ease;
 }
 
@@ -685,6 +686,7 @@ body.is-row-resizing .monaco-editor {
   background: var(--bg);
   color: var(--text);
   box-shadow: inset 3px 0 0 var(--accent);
+  border-radius: 0 !important;
 }
 
 .sql-tab-title {
@@ -694,11 +696,12 @@ body.is-row-resizing .monaco-editor {
   border: none;
   background: transparent;
   color: inherit;
-  padding: 0;
+  padding: 0 2px;
   font: inherit;
   flex: 1;
   text-align: left;
   box-shadow: none;
+  border-radius: 0 !important;
 }
 
 .sql-tab-title:hover {
@@ -710,6 +713,7 @@ body.is-row-resizing .monaco-editor {
   padding: 1px 4px;
   font-size: var(--base-font-size);
   font-family: var(--font-ui);
+  border-radius: 0 !important;
 }
 
 .sql-tab-close,

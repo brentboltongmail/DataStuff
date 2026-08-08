@@ -1848,6 +1848,131 @@ export default function App() {
         "editorWidget.border": "#38120D",
       },
     });
+    monaco.editor.defineTheme("datastuff-matrix", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "15803d" },
+        { token: "keyword", foreground: "00ff66" },
+        { token: "number", foreground: "a7f3d0" },
+        { token: "string", foreground: "34d399" },
+        { token: "string.sql", foreground: "34d399" },
+        { token: "string.escape", foreground: "6ee7b7" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#f0fdf4",
+        "editorLineNumber.foreground": "166534",
+        "editorLineNumber.activeForeground": "#00ff66",
+        "editorCursor.foreground": "#00ff66",
+        "editor.selectionBackground": "#00ff6633",
+        "editor.lineHighlightBackground": "#052e1688",
+        "editorIndentGuide.background": "#14532d",
+        "editorIndentGuide.activeBackground": "#00ff6655",
+        "editorWidget.background": "#052e16",
+        "editorWidget.border": "#15803d",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-deepsea", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "475569" },
+        { token: "keyword", foreground: "06b6d4" },
+        { token: "number", foreground: "c084fc" },
+        { token: "string", foreground: "38bdf8" },
+        { token: "string.sql", foreground: "38bdf8" },
+        { token: "string.escape", foreground: "a5b4fc" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#ecfeff",
+        "editorLineNumber.foreground": "#164e63",
+        "editorLineNumber.activeForeground": "#06b6d4",
+        "editorCursor.foreground": "#06b6d4",
+        "editor.selectionBackground": "#06b6d433",
+        "editor.lineHighlightBackground": "#08334488",
+        "editorIndentGuide.background": "#155e75",
+        "editorIndentGuide.activeBackground": "#06b6d455",
+        "editorWidget.background": "#083344",
+        "editorWidget.border": "#155e75",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-synthwave", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "6b21a8" },
+        { token: "keyword", foreground: "ec4899" },
+        { token: "number", foreground: "f97316" },
+        { token: "string", foreground: "06b6d4" },
+        { token: "string.sql", foreground: "06b6d4" },
+        { token: "string.escape", foreground: "a855f7" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#fdf2f8",
+        "editorLineNumber.foreground": "#831843",
+        "editorLineNumber.activeForeground": "#ec4899",
+        "editorCursor.foreground": "#ec4899",
+        "editor.selectionBackground": "#ec489933",
+        "editor.lineHighlightBackground": "#50072488",
+        "editorIndentGuide.background": "#9d174d",
+        "editorIndentGuide.activeBackground": "#ec489955",
+        "editorWidget.background": "#500724",
+        "editorWidget.border": "#9d174d",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-enchanted", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "064e3b" },
+        { token: "keyword", foreground: "f59e0b" },
+        { token: "number", foreground: "34d399" },
+        { token: "string", foreground: "fbbf24" },
+        { token: "string.sql", foreground: "fbbf24" },
+        { token: "string.escape", foreground: "fcd34d" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#fef3c7",
+        "editorLineNumber.foreground": "#78350f",
+        "editorLineNumber.activeForeground": "#f59e0b",
+        "editorCursor.foreground": "#f59e0b",
+        "editor.selectionBackground": "#f59e0b33",
+        "editor.lineHighlightBackground": "#451a0388",
+        "editorIndentGuide.background": "#78350f",
+        "editorIndentGuide.activeBackground": "#f59e0b55",
+        "editorWidget.background": "#291e0a",
+        "editorWidget.border": "#78350f",
+      },
+    });
+    monaco.editor.defineTheme("datastuff-hud", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "78350f" },
+        { token: "keyword", foreground: "fbbf24" },
+        { token: "number", foreground: "22c55e" },
+        { token: "string", foreground: "f59e0b" },
+        { token: "string.sql", foreground: "f59e0b" },
+        { token: "string.escape", foreground: "ef4444" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#fffbeb",
+        "editorLineNumber.foreground": "#451a03",
+        "editorLineNumber.activeForeground": "#fbbf24",
+        "editorCursor.foreground": "#fbbf24",
+        "editor.selectionBackground": "#fbbf2433",
+        "editor.lineHighlightBackground": "#290d0988",
+        "editorIndentGuide.background": "#78350f",
+        "editorIndentGuide.activeBackground": "#fbbf2455",
+        "editorWidget.background": "#1c1006",
+        "editorWidget.border": "#78350f",
+      },
+    });
   }, []);
 
   const onEditorMount: OnMount = useCallback((ed, monaco) => {
@@ -3155,6 +3280,66 @@ export default function App() {
           <div className="snow-flake flake-14" />
           <div className="snow-flake flake-15" />
           <div className="snow-flake flake-16" />
+        </div>
+      ) : null}
+
+      {themeId === "matrix" ? (
+        <div className="matrix-atmosphere">
+          <div className="matrix-code-stream stream-1" />
+          <div className="matrix-code-stream stream-2" />
+          <div className="matrix-code-stream stream-3" />
+          <div className="matrix-code-stream stream-4" />
+          <div className="matrix-code-stream stream-5" />
+          <div className="matrix-crt-scanlines" />
+        </div>
+      ) : null}
+
+      {themeId === "deepsea" ? (
+        <div className="deepsea-atmosphere">
+          <div className="jellyfish jelly-1">
+            <span className="jelly-bell" />
+            <span className="jelly-tentacles" />
+          </div>
+          <div className="jellyfish jelly-2">
+            <span className="jelly-bell" />
+            <span className="jelly-tentacles" />
+          </div>
+          <div className="ocean-caustic-beam" />
+          <div className="sea-bubble bubble-1" />
+          <div className="sea-bubble bubble-2" />
+          <div className="sea-bubble bubble-3" />
+        </div>
+      ) : null}
+
+      {themeId === "synthwave" ? (
+        <div className="synthwave-atmosphere">
+          <div className="synth-sun" />
+          <div className="synth-horizon-mountains" />
+          <div className="synth-grid-floor" />
+        </div>
+      ) : null}
+
+      {themeId === "enchanted" ? (
+        <div className="enchanted-atmosphere">
+          <div className="firefly fly-1" />
+          <div className="firefly fly-2" />
+          <div className="firefly fly-3" />
+          <div className="firefly fly-4" />
+          <div className="firefly fly-5" />
+          <div className="firefly fly-6" />
+          <div className="forest-mist" />
+        </div>
+      ) : null}
+
+      {themeId === "hud" ? (
+        <div className="hud-atmosphere">
+          <div className="hud-radar-scope">
+            <span className="radar-sweep-beam" />
+            <span className="radar-ring ring-1" />
+            <span className="radar-ring ring-2" />
+            <span className="radar-crosshair" />
+          </div>
+          <div className="hud-pitch-ladder" />
         </div>
       ) : null}
       <header className="titlebar">

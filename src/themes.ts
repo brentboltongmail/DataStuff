@@ -6,7 +6,12 @@ export type AppThemeId =
   | "racecar"
   | "lava"
   | "ice"
-  | "nuclear";
+  | "nuclear"
+  | "matrix"
+  | "deepsea"
+  | "synthwave"
+  | "enchanted"
+  | "hud";
 
 export interface AppThemeOption {
   id: AppThemeId;
@@ -25,6 +30,11 @@ export const APP_THEMES: AppThemeOption[] = [
   { id: "lava", label: "Lava", monacoTheme: "datastuff-lava" },
   { id: "ice", label: "Ice", monacoTheme: "datastuff-ice" },
   { id: "nuclear", label: "Nuclear Silo [PROD]", monacoTheme: "datastuff-nuclear" },
+  { id: "matrix", label: "Matrix Cyber-Rain", monacoTheme: "datastuff-matrix" },
+  { id: "deepsea", label: "Deep Sea Bioluminescence", monacoTheme: "datastuff-deepsea" },
+  { id: "synthwave", label: "Synthwave Outrun", monacoTheme: "datastuff-synthwave" },
+  { id: "enchanted", label: "Enchanted Forest", monacoTheme: "datastuff-enchanted" },
+  { id: "hud", label: "Stealth Fighter HUD", monacoTheme: "datastuff-hud" },
 ];
 
 const THEME_IDS = new Set<AppThemeId>(APP_THEMES.map((theme) => theme.id));

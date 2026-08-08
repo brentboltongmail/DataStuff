@@ -13,7 +13,7 @@
     <script>
       try {
         var t = localStorage.getItem("oracle-ide.theme");
-        if (t === "brass" || t === "default" || t === "spaceship" || t === "aetherium" || t === "racecar" || t === "lava" || t === "ice") {
+        if (t && t !== "nuclear") {
           document.documentElement.dataset.theme = t;
         }
       } catch (e) {}
