@@ -8,6 +8,12 @@ import ResultsGrid, {
   type CellEdit,
 } from "./components/ResultsGrid";
 import SqlTabs from "./components/SqlTabs";
+import BindVariablesModal from "./components/BindVariablesModal";
+import {
+  parseBindVariables,
+  prepareSqlWithBinds,
+  type BindVarParam,
+} from "./bindVariables";
 import { formatCell, isNullCell, resultToCsv } from "./csv";
 import {
   buildUpdate,
@@ -380,6 +386,7 @@ export default function App() {
       pendingEdits: {},
       bottomTab: "results",
       history: globalHistory,
+      bindValues: {},
       message: "Ready",
       error: null,
       queryStartTime: null,
@@ -477,6 +484,27 @@ export default function App() {
     },
     [updateActiveTabState],
   );
+
+  const bindValues = activeTabState.bindValues;
+  const setBindValues = useCallback(
+    (
+      val:
+        | Record<string, BindVarParam>
+        | ((prev: Record<string, BindVarParam>) => Record<string, BindVarParam>),
+    ) => {
+      updateActiveTabState((prev: TabState) => ({
+        bindValues: typeof val === "function" ? val(prev.bindValues) : val,
+      }));
+    },
+    [updateActiveTabState],
+  );
+
+  const [bindModalState, setBindModalState] = useState<{
+    open: boolean;
+    varNames: string[];
+    action: "execute" | "explain";
+    rawSql: string;
+  } | null>(null);
 
   const message = activeTabState.message;
   const setMessage = useCallback(
@@ -1157,6 +1185,168 @@ export default function App() {
     return sqlToExecute(text, cursorLine, selectedText);
   }, [sql]);
 
+  const executeQueryWithBinds = useCallback(
+    async (statement: string, currentBinds: Record<string, BindVarParam>) => {
+      setBusy(true);
+      setQueryStartTime(Date.now());
+      setError(null);
+      setBottomTab("results");
+      setPendingEdits({});
+      setEditMeta(null);
+      try {
+        const { preparedSql, positionalBinds } = prepareSqlWithBinds(
+          statement,
+          currentBinds,
+        );
+
+        const table = detectSingleSourceTable(statement);
+        let next: QueryResult;
+        let meta: EditMeta | null = null;
+
+        if (table) {
+          try {
+            const injected = injectRowId(statement);
+            const {
+              preparedSql: preparedInjected,
+              positionalBinds: positionalInjected,
+            } = prepareSqlWithBinds(injected, currentBinds);
+
+            next = await window.oracle.execute(
+              preparedInjected,
+              maxRows,
+              positionalInjected,
+            );
+            const hasRowId = hasRowIdColumn(next.columns);
+            let pkColumns: string[] = [];
+            if (!hasRowId) {
+              pkColumns = await window.oracle.listPrimaryKeys(table);
+            }
+            meta = {
+              table,
+              pkColumns,
+              editable: hasRowId || pkColumns.length > 0,
+            };
+          } catch (err) {
+            if (isNotConnectedError(err)) throw err;
+            next = await window.oracle.execute(
+              preparedSql,
+              maxRows,
+              positionalBinds,
+            );
+            const pkColumns = next.isSelect
+              ? await window.oracle.listPrimaryKeys(table)
+              : [];
+            meta = {
+              table,
+              pkColumns,
+              editable: next.isSelect && pkColumns.length > 0,
+            };
+          }
+        } else {
+          next = await window.oracle.execute(
+            preparedSql,
+            maxRows,
+            positionalBinds,
+          );
+        }
+
+        setResult(next);
+        setEditMeta(next.isSelect ? meta : null);
+        let summary: string;
+        if (next.isSelect) {
+          const note = next.truncated ? " (truncated)" : "";
+          const editNote =
+            meta?.editable
+              ? " · double-click cells to edit"
+              : table
+                ? " · not editable (need ROWID or PK)"
+                : "";
+          summary = `${next.rows.length} row${next.rows.length === 1 ? "" : "s"}${note} in ${formatElapsed(next.elapsedMs)}${editNote}`;
+        } else {
+          summary = `${next.rowsAffected} row${next.rowsAffected === 1 ? "" : "s"} affected in ${formatElapsed(next.elapsedMs)}`;
+        }
+        setMessage(
+          next.isSelect
+            ? summary
+            : `${summary} — commit or rollback to finish`,
+        );
+        pushHistory(statement, true, summary);
+      } catch (err) {
+        const text = err instanceof Error ? err.message : String(err);
+        if (isNotConnectedError(err)) {
+          await forceDisconnect(text);
+        } else {
+          setError(text);
+          setMessage("Execute failed");
+        }
+        pushHistory(statement, false, text.split("\n")[0] ?? "Error");
+      } finally {
+        setQueryStartTime(null);
+        setBusy(false);
+      }
+    },
+    [
+      pushHistory,
+      maxRows,
+      isNotConnectedError,
+      forceDisconnect,
+      setQueryStartTime,
+      setError,
+      setBottomTab,
+      setPendingEdits,
+      setEditMeta,
+      setResult,
+      setMessage,
+    ],
+  );
+
+  const executeExplainWithBinds = useCallback(
+    async (statement: string, currentBinds: Record<string, BindVarParam>) => {
+      setBusy(true);
+      setError(null);
+      setExplainError(null);
+      setBottomTab("explain");
+      try {
+        const { preparedSql, positionalBinds } = prepareSqlWithBinds(
+          statement,
+          currentBinds,
+        );
+        const next = await window.oracle.explain(preparedSql, positionalBinds);
+        setExplainResult(next);
+        const indexes = next.indexes ?? [];
+        const indexSummary =
+          indexes.length > 0
+            ? `Indexes: ${indexes.join(", ")}`
+            : "No indexes used (full table scan or other access path)";
+        const summary = `Explain plan · ${next.rows.length} step${next.rows.length === 1 ? "" : "s"} in ${formatElapsed(next.elapsedMs)} · ${indexSummary}`;
+        setMessage(summary);
+        pushHistory(`EXPLAIN PLAN FOR\n${statement}`, true, summary);
+      } catch (err) {
+        const text = err instanceof Error ? err.message : String(err);
+        if (isNotConnectedError(err)) {
+          await forceDisconnect(text);
+        } else {
+          setExplainError(text);
+          setError(text);
+          setMessage("Explain plan failed");
+        }
+        pushHistory(`EXPLAIN PLAN FOR\n${statement}`, false, text.split("\n")[0] ?? "Error");
+      } finally {
+        setBusy(false);
+      }
+    },
+    [
+      pushHistory,
+      isNotConnectedError,
+      forceDisconnect,
+      setError,
+      setExplainError,
+      setBottomTab,
+      setExplainResult,
+      setMessage,
+    ],
+  );
+
   const onExecute = useCallback(async () => {
     if (!status.connected) {
       setError("Connect to Oracle first");
@@ -1170,87 +1360,25 @@ export default function App() {
       return;
     }
 
-    setBusy(true);
-    setQueryStartTime(Date.now());
-    setError(null);
-    setBottomTab("results");
-    setPendingEdits({});
-    setEditMeta(null);
-    try {
-      const table = detectSingleSourceTable(statement);
-      let next: QueryResult;
-      let meta: EditMeta | null = null;
-
-      if (table) {
-        try {
-          next = await window.oracle.execute(injectRowId(statement), maxRows);
-          const hasRowId = hasRowIdColumn(next.columns);
-          let pkColumns: string[] = [];
-          if (!hasRowId) {
-            pkColumns = await window.oracle.listPrimaryKeys(table);
-          }
-          meta = {
-            table,
-            pkColumns,
-            editable: hasRowId || pkColumns.length > 0,
-          };
-        } catch (err) {
-          if (isNotConnectedError(err)) throw err;
-          next = await window.oracle.execute(statement, maxRows);
-          const pkColumns = next.isSelect
-            ? await window.oracle.listPrimaryKeys(table)
-            : [];
-          meta = {
-            table,
-            pkColumns,
-            editable: next.isSelect && pkColumns.length > 0,
-          };
-        }
-      } else {
-        next = await window.oracle.execute(statement, maxRows);
-      }
-
-      setResult(next);
-      setEditMeta(next.isSelect ? meta : null);
-      let summary: string;
-      if (next.isSelect) {
-        const note = next.truncated ? " (truncated)" : "";
-        const editNote =
-          meta?.editable
-            ? " · double-click cells to edit"
-            : table
-              ? " · not editable (need ROWID or PK)"
-              : "";
-        summary = `${next.rows.length} row${next.rows.length === 1 ? "" : "s"}${note} in ${formatElapsed(next.elapsedMs)}${editNote}`;
-      } else {
-        summary = `${next.rowsAffected} row${next.rowsAffected === 1 ? "" : "s"} affected in ${formatElapsed(next.elapsedMs)}`;
-      }
-      setMessage(
-        next.isSelect
-          ? summary
-          : `${summary} — commit or rollback to finish`,
-      );
-      pushHistory(statement, true, summary);
-    } catch (err) {
-      const text = err instanceof Error ? err.message : String(err);
-      if (isNotConnectedError(err)) {
-        await forceDisconnect(text);
-      } else {
-        setError(text);
-        setMessage("Execute failed");
-      }
-      pushHistory(statement, false, text.split("\n")[0] ?? "Error");
-    } finally {
-      setQueryStartTime(null);
-      setBusy(false);
+    const detectedBinds = parseBindVariables(statement);
+    if (detectedBinds.length > 0) {
+      setBindModalState({
+        open: true,
+        varNames: detectedBinds,
+        action: "execute",
+        rawSql: statement,
+      });
+      return;
     }
+
+    await executeQueryWithBinds(statement, bindValues);
   }, [
     status.connected,
-    pushHistory,
     resolveExecutableSql,
-    maxRows,
-    isNotConnectedError,
-    forceDisconnect,
+    bindValues,
+    executeQueryWithBinds,
+    setError,
+    setMessage,
   ]);
 
   const onExplainPlan = useCallback(async () => {
@@ -1266,41 +1394,46 @@ export default function App() {
       return;
     }
 
-    setBusy(true);
-    setError(null);
-    setExplainError(null);
-    setBottomTab("explain");
-    try {
-      const next = await window.oracle.explain(statement);
-      setExplainResult(next);
-      const indexes = next.indexes ?? [];
-      const indexSummary =
-        indexes.length > 0
-          ? `Indexes: ${indexes.join(", ")}`
-          : "No indexes used (full table scan or other access path)";
-      const summary = `Explain plan · ${next.rows.length} step${next.rows.length === 1 ? "" : "s"} in ${formatElapsed(next.elapsedMs)} · ${indexSummary}`;
-      setMessage(summary);
-      pushHistory(`EXPLAIN PLAN FOR\n${statement}`, true, summary);
-    } catch (err) {
-      const text = err instanceof Error ? err.message : String(err);
-      if (isNotConnectedError(err)) {
-        await forceDisconnect(text);
-      } else {
-        setExplainError(text);
-        setError(text);
-        setMessage("Explain plan failed");
-      }
-      pushHistory(`EXPLAIN PLAN FOR\n${statement}`, false, text.split("\n")[0] ?? "Error");
-    } finally {
-      setBusy(false);
+    const detectedBinds = parseBindVariables(statement);
+    if (detectedBinds.length > 0) {
+      setBindModalState({
+        open: true,
+        varNames: detectedBinds,
+        action: "explain",
+        rawSql: statement,
+      });
+      return;
     }
+
+    await executeExplainWithBinds(statement, bindValues);
   }, [
     status.connected,
-    pushHistory,
     resolveExecutableSql,
-    isNotConnectedError,
-    forceDisconnect,
+    bindValues,
+    executeExplainWithBinds,
+    setError,
+    setMessage,
   ]);
+
+  const onConfirmBindModal = async (confirmedBinds: Record<string, BindVarParam>) => {
+    if (!bindModalState) return;
+
+    setBindValues((prev) => ({
+      ...prev,
+      ...confirmedBinds,
+    }));
+
+    const { action, rawSql } = bindModalState;
+    setBindModalState(null);
+
+    const mergedBinds = { ...bindValues, ...confirmedBinds };
+
+    if (action === "execute") {
+      await executeQueryWithBinds(rawSql, mergedBinds);
+    } else {
+      await executeExplainWithBinds(rawSql, mergedBinds);
+    }
+  };
 
   const onExecuteRef = useRef(onExecute);
   onExecuteRef.current = onExecute;
@@ -3332,6 +3465,15 @@ export default function App() {
           </div>
         </div>
       ) : null}
+
+      {bindModalState?.open && (
+        <BindVariablesModal
+          varNames={bindModalState.varNames}
+          initialValues={bindValues}
+          onConfirm={onConfirmBindModal}
+          onCancel={() => setBindModalState(null)}
+        />
+      )}
     </div>
   );
 }

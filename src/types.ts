@@ -68,6 +68,10 @@ export interface EditMeta {
   editable: boolean;
 }
 
+import type { BindVarParam } from "./bindVariables";
+
+export type { BindVarParam };
+
 export interface HistoryEntry {
   id: string;
   sql: string;
@@ -84,6 +88,7 @@ export interface TabState {
   pendingEdits: Record<string, CellEdit>;
   bottomTab: "results" | "history" | "explain";
   history: HistoryEntry[];
+  bindValues: Record<string, BindVarParam>;
   message: string;
   error: string | null;
   queryStartTime: number | null;
@@ -112,8 +117,12 @@ export interface OracleApi {
   disconnect: () => Promise<ConnectionState>;
   cancelQuery: () => Promise<{ cancelled: boolean; message: string }>;
   getStatus: () => Promise<ConnectionState>;
-  execute: (sql: string, maxRows?: number, binds?: unknown[]) => Promise<QueryResult>;
-  explain: (sql: string) => Promise<QueryResult>;
+  execute: (
+    sql: string,
+    maxRows?: number,
+    binds?: unknown[],
+  ) => Promise<QueryResult>;
+  explain: (sql: string, binds?: unknown[]) => Promise<QueryResult>;
   commit: () => Promise<void>;
   rollback: () => Promise<void>;
   listObjects: () => Promise<DbObject[]>;

@@ -1262,7 +1262,8 @@ body.is-col-resizing .monaco-editor {
   -webkit-backdrop-filter: blur(4px);
 }
 
-.modal.connection-manage-modal {
+.modal.connection-manage-modal,
+.modal.bind-variables-modal {
   width: 560px;
   max-width: 92vw;
   background: var(--bg-surface);
@@ -1274,6 +1275,98 @@ body.is-col-resizing .monaco-editor {
   flex-direction: column;
   gap: 16px;
   color: var(--text);
+}
+
+.modal.bind-variables-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal.bind-variables-modal .modal-header h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: calc(16px * var(--font-scale));
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bind-modal-icon {
+  font-size: 1.1em;
+  color: #f59e0b;
+}
+
+.bind-modal-description {
+  margin: -6px 0 6px;
+  font-size: calc(12px * var(--font-scale));
+  color: var(--text-muted);
+}
+
+.bind-params-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 50vh;
+  overflow-y: auto;
+  padding: 8px 0;
+  border-top: 1px solid var(--border-subtle, var(--border));
+  border-bottom: 1px solid var(--border-subtle, var(--border));
+}
+
+.bind-param-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-soft, var(--border));
+}
+
+.bind-param-label {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: calc(13px * var(--font-scale));
+  color: #38bdf8;
+  word-break: break-all;
+}
+
+.bind-colon {
+  color: #f59e0b;
+  margin-right: 2px;
+}
+
+.bind-param-inputs {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 10px;
+}
+
+.bind-type-select {
+  padding: 6px 10px;
+  border-radius: 4px;
+  background: var(--bg-panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-size: calc(12px * var(--font-scale));
+  font-family: var(--font-mono);
+}
+
+.bind-value-input {
+  padding: 6px 10px;
+  border-radius: 4px;
+  background: var(--bg-panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-size: calc(12px * var(--font-scale));
+  font-family: var(--font-mono);
+  width: 100%;
 }
 
 .modal.connection-manage-modal h2 {

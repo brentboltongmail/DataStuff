@@ -154,7 +154,10 @@ function registerIpc() {
     async (_event, sql: string, maxRows?: number, binds?: unknown[]) =>
       execute(sql, maxRows, binds),
   );
-  ipcMain.handle("oracle:explain", async (_event, sql: string) => explain(sql));
+  ipcMain.handle(
+    "oracle:explain",
+    async (_event, sql: string, binds?: unknown[]) => explain(sql, binds),
+  );
   ipcMain.handle("oracle:commit", async () => commit());
   ipcMain.handle("oracle:rollback", async () => rollback());
   ipcMain.handle("oracle:listObjects", async () => listObjects());

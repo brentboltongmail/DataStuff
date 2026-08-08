@@ -353,10 +353,14 @@ export async function execute(
   })) as QueryResult;
 }
 
-export async function explain(sql: string): Promise<QueryResult> {
+export async function explain(
+  sql: string,
+  binds?: unknown[],
+): Promise<QueryResult> {
   return (await send({
     cmd: "explain",
     sql,
+    binds: binds ?? [],
   })) as QueryResult;
 }
 

@@ -9,7 +9,8 @@ const api: OracleApi = {
   getStatus: () => ipcRenderer.invoke("oracle:status"),
   execute: (sql: string, maxRows?: number, binds?: unknown[]) =>
     ipcRenderer.invoke("oracle:execute", sql, maxRows, binds),
-  explain: (sql: string) => ipcRenderer.invoke("oracle:explain", sql),
+  explain: (sql: string, binds?: unknown[]) =>
+    ipcRenderer.invoke("oracle:explain", sql, binds),
   commit: () => ipcRenderer.invoke("oracle:commit"),
   rollback: () => ipcRenderer.invoke("oracle:rollback"),
   listObjects: () => ipcRenderer.invoke("oracle:listObjects"),

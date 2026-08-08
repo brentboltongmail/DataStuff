@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -85,7 +86,7 @@ public final class OracleBridge {
       case "listPrimaryKeys":
         return listPrimaryKeys(id, stringVal(request.get("name")));
       case "explain":
-        return explain(id, stringVal(request.get("sql")));
+        return explain(id, stringVal(request.get("sql")), asList(request.get("binds")));
       case "status":
         return status(id);
       default:
@@ -250,7 +251,7 @@ public final class OracleBridge {
    * Runs EXPLAIN PLAN for the given SQL and returns the plan as a result grid.
    * Uses a savepoint so explain rows are rolled back and do not dirty the user transaction.
    */
-  private static Map<String, Object> explain(Object id, String sql) throws Exception {
+  private static Map<String, Object> explain(Object id, String sql, List<Object> binds) throws Exception {
     Connection conn = requireConnection();
     if (sql == null) {
       throw new IllegalArgumentException("SQL is empty");
@@ -264,12 +265,28 @@ public final class OracleBridge {
 
     String statementId = "DS" + Long.toHexString(System.nanoTime());
     long started = System.currentTimeMillis();
+    List<Object> bindList = binds == null ? List.of() : binds;
 
     try (Statement statement = conn.createStatement()) {
       statement.execute("SAVEPOINT ds_explain_sp");
       try {
-        statement.execute(
-            "EXPLAIN PLAN SET STATEMENT_ID = '" + statementId + "' FOR " + cleaned);
+        if (!bindList.isEmpty()) {
+          try (PreparedStatement ps = conn.prepareStatement(
+              "EXPLAIN PLAN SET STATEMENT_ID = '" + statementId + "' FOR " + cleaned)) {
+            for (int i = 0; i < bindList.size(); i++) {
+              Object value = bindList.get(i);
+              if (value == null) {
+                ps.setNull(i + 1, Types.NULL);
+              } else {
+                ps.setObject(i + 1, value);
+              }
+            }
+            ps.execute();
+          }
+        } else {
+          statement.execute(
+              "EXPLAIN PLAN SET STATEMENT_ID = '" + statementId + "' FOR " + cleaned);
+        }
 
         String planSql =
             "SELECT"
