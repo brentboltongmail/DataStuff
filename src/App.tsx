@@ -910,6 +910,10 @@ export default function App() {
         if (typeof diskSettings.fontScale === "number" && Number.isFinite(diskSettings.fontScale)) {
           setFontScale(diskSettings.fontScale);
           localStorage.setItem(FONT_SCALE_KEY, String(diskSettings.fontScale));
+          document.documentElement.style.setProperty(
+            "--font-scale",
+            String(roundScale(diskSettings.fontScale * 0.75)),
+          );
         }
         if (
           typeof diskSettings.density === "string" &&

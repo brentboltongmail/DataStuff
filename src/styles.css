@@ -11,9 +11,13 @@ body,
   margin: 0;
 }
 
+:root {
+  --base-font-size: calc(13.333px * var(--font-scale));
+}
+
 body {
   font-family: var(--font-ui);
-  font-size: calc(13px * var(--font-scale));
+  font-size: var(--base-font-size);
   background: var(--body-bg);
   color: var(--text);
   overflow: hidden;
@@ -143,7 +147,7 @@ input:focus {
 .titlebar h1 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: calc(15px * var(--font-scale));
+  font-size: var(--base-font-size);
   font-weight: 500;
   letter-spacing: 0.04em;
   color: var(--text-muted);
@@ -170,14 +174,14 @@ input:focus {
   height: 18px;
   padding: 0;
   line-height: 1;
-  font-size: calc(14px * var(--font-scale));
+  font-size: var(--base-font-size);
   font-weight: 600;
 }
 
 .font-controls .font-scale-label {
   min-width: 40px;
   text-align: center;
-  font-size: calc(11px * var(--font-scale));
+  font-size: var(--base-font-size);
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
 }
@@ -202,7 +206,7 @@ input:focus {
 }
 
 .field label {
-  font-size: calc(11px * var(--font-scale));
+  font-size: var(--base-font-size);
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -220,7 +224,7 @@ input:focus {
   width: 100%;
   height: 26px;
   padding: 0 8px;
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   color: var(--text);
   background: var(--bg-surface);
   border: 1px solid var(--border);
@@ -239,7 +243,7 @@ input:focus {
 .delete-conn-btn {
   height: 26px;
   padding: 0 10px;
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
 }
 
 .field.user {
@@ -257,7 +261,7 @@ input:focus {
   align-self: end;
   height: 26px;
   margin-bottom: 0;
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   color: var(--text-muted);
   text-transform: none;
   letter-spacing: normal;
@@ -291,7 +295,7 @@ input:focus {
   align-items: center;
   gap: 6px;
   height: 26px;
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   color: var(--text);
   text-transform: none;
   letter-spacing: normal;
@@ -318,7 +322,7 @@ input:focus {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   color: var(--text-muted);
   padding: 0 4px;
   white-space: nowrap;
@@ -397,7 +401,7 @@ body.is-col-resizing .sidebar-split {
   justify-content: space-between;
   padding: 8px 10px;
   border-bottom: 1px solid var(--border-soft);
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   font-family: var(--font-display);
   letter-spacing: 0.06em;
   background: linear-gradient(180deg, var(--panel-tint), transparent);
@@ -406,7 +410,7 @@ body.is-col-resizing .sidebar-split {
 .object-filter {
   margin: 8px 10px;
   width: calc(100% - 20px);
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
 }
 
 .object-browser-body {
@@ -426,7 +430,7 @@ body.is-col-resizing .sidebar-split {
   border: 0;
   background: transparent;
   font: inherit;
-  font-size: calc(11px * var(--font-scale));
+  font-size: var(--base-font-size);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -487,7 +491,7 @@ body.is-col-resizing .sidebar-split {
 .object-name {
   flex: 1;
   font-family: var(--font-mono);
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -507,7 +511,7 @@ body.is-col-resizing .sidebar-split {
   justify-content: space-between;
   gap: 8px;
   padding: 2px 4px;
-  font-size: calc(11px * var(--font-scale));
+  font-size: var(--base-font-size);
   font-family: var(--font-mono);
   color: var(--text-muted);
 }
@@ -519,14 +523,14 @@ body.is-col-resizing .sidebar-split {
 
 .object-empty {
   padding: 8px 10px;
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   color: var(--text-muted);
 }
 
 .object-hint {
   border-top: 1px solid var(--border-soft);
   padding: 6px 10px;
-  font-size: calc(11px * var(--font-scale));
+  font-size: var(--base-font-size);
   color: var(--text-muted);
   font-style: italic;
   background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), transparent);
@@ -617,7 +621,7 @@ body.is-row-resizing .monaco-editor {
   padding: 0 10px;
   border-right: 1px solid var(--border-soft);
   color: var(--text-muted);
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   cursor: pointer;
   max-width: 180px;
   user-select: none;
@@ -652,7 +656,7 @@ body.is-row-resizing .monaco-editor {
   width: 120px;
   min-width: 80px;
   padding: 2px 6px;
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   font-family: var(--font-ui);
 }
 
@@ -664,7 +668,7 @@ body.is-row-resizing .monaco-editor {
   padding: 0 4px;
   border-radius: 4px;
   line-height: 1;
-  font-size: calc(14px * var(--font-scale));
+  font-size: var(--base-font-size);
 }
 
 .sql-tab-close:hover:not(:disabled),
@@ -678,7 +682,7 @@ body.is-row-resizing .monaco-editor {
   width: auto;
   min-width: 34px;
   padding: 0 10px;
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   font-weight: 600;
   box-shadow: none;
 }
@@ -733,7 +737,7 @@ body.is-row-resizing .monaco-editor {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   color: var(--text-muted);
   white-space: nowrap;
 }
@@ -742,7 +746,7 @@ body.is-row-resizing .monaco-editor {
   width: 88px;
   padding: 4px 8px;
   font-family: var(--font-mono);
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
 }
 
 button.active-toggle {
@@ -753,7 +757,7 @@ button.active-toggle {
 
 .toolbar .hint {
   margin-left: auto;
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   color: var(--text-muted);
   font-style: italic;
   opacity: 0.85;
@@ -987,7 +991,7 @@ body.is-col-resizing .monaco-editor {
 }
 
 .results-grid.density-compact {
-  font-size: calc(11px * var(--font-scale));
+  font-size: var(--base-font-size);
 }
 
 /* Normal & compact: column width follows the header name, not cell content. */
@@ -1025,12 +1029,12 @@ body.is-col-resizing .monaco-editor {
 }
 
 .results-grid.density-compact th {
-  font-size: calc(10px * var(--font-scale));
+  font-size: var(--base-font-size);
   letter-spacing: 0.02em;
 }
 
 .results-grid.density-crammed {
-  font-size: calc(9px * var(--font-scale));
+  font-size: var(--base-font-size);
   border-collapse: separate;
   border-spacing: 0;
 }
@@ -1046,7 +1050,7 @@ body.is-col-resizing .monaco-editor {
 }
 
 .results-grid.density-crammed th {
-  font-size: calc(9px * var(--font-scale));
+  font-size: var(--base-font-size);
   text-transform: none;
   letter-spacing: 0;
   vertical-align: bottom;
@@ -1151,7 +1155,7 @@ body.is-col-resizing .monaco-editor {
   align-items: center;
   padding: 8px 12px;
   border-bottom: 1px solid var(--border);
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   color: var(--text-muted);
 }
 
@@ -1164,7 +1168,6 @@ body.is-col-resizing .monaco-editor {
   width: 100%;
   text-align: left;
   border: none;
-  border-bottom: 1px solid var(--border);
   border-radius: 0;
   background: transparent;
   padding: 10px 12px;
@@ -1182,7 +1185,7 @@ body.is-col-resizing .monaco-editor {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  font-size: calc(11px * var(--font-scale));
+  font-size: var(--base-font-size);
   color: var(--text-muted);
   margin-bottom: 4px;
 }
@@ -1190,7 +1193,7 @@ body.is-col-resizing .monaco-editor {
 .history-item code {
   display: block;
   font-family: var(--font-mono);
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
@@ -1201,7 +1204,7 @@ body.is-col-resizing .monaco-editor {
 .error-state {
   padding: 24px;
   color: var(--text-muted);
-  font-size: calc(13px * var(--font-scale));
+  font-size: var(--base-font-size);
   font-family: var(--font-display);
   letter-spacing: 0.02em;
 }
@@ -1214,7 +1217,7 @@ body.is-col-resizing .monaco-editor {
 
 .error-state.compact {
   padding: 10px;
-  font-size: calc(11px * var(--font-scale));
+  font-size: var(--base-font-size);
 }
 
 .status-bar {
@@ -1226,7 +1229,7 @@ body.is-col-resizing .monaco-editor {
   background:
     linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.25)),
     var(--bg-panel);
-  font-size: calc(11px * var(--font-scale));
+  font-size: var(--base-font-size);
   color: var(--text-muted);
   box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.25);
   position: relative;
@@ -1286,7 +1289,7 @@ body.is-col-resizing .monaco-editor {
 .modal.bind-variables-modal .modal-header h3 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: calc(16px * var(--font-scale));
+  font-size: var(--base-font-size);
   letter-spacing: 0.04em;
   color: var(--accent);
   display: flex;
@@ -1301,7 +1304,7 @@ body.is-col-resizing .monaco-editor {
 
 .bind-modal-description {
   margin: -6px 0 6px;
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   color: var(--text-muted);
 }
 
@@ -1332,7 +1335,7 @@ body.is-col-resizing .monaco-editor {
   align-items: center;
   font-family: var(--font-mono);
   font-weight: 600;
-  font-size: calc(13px * var(--font-scale));
+  font-size: var(--base-font-size);
   color: #38bdf8;
   word-break: break-all;
 }
@@ -1354,7 +1357,7 @@ body.is-col-resizing .monaco-editor {
   background: var(--bg-panel);
   color: var(--text);
   border: 1px solid var(--border);
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   font-family: var(--font-mono);
 }
 
@@ -1364,7 +1367,7 @@ body.is-col-resizing .monaco-editor {
   background: var(--bg-panel);
   color: var(--text);
   border: 1px solid var(--border);
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   font-family: var(--font-mono);
   width: 100%;
 }
@@ -1372,14 +1375,14 @@ body.is-col-resizing .monaco-editor {
 .modal.connection-manage-modal h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: calc(16px * var(--font-scale));
+  font-size: var(--base-font-size);
   letter-spacing: 0.04em;
   color: var(--accent);
 }
 
 .modal.connection-manage-modal p.subtitle {
   margin: -10px 0 0;
-  font-size: calc(12px * var(--font-scale));
+  font-size: var(--base-font-size);
   color: var(--text-muted);
 }
 
