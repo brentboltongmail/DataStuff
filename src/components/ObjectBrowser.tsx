@@ -220,11 +220,11 @@ export default function ObjectBrowser({
   return (
     <aside className="object-browser">
       <div className="object-browser-header">
-        <strong>Objects</strong>
-        <div className="header-actions">
+        <div className="object-browser-title-group">
+          <strong>Objects</strong>
           <button
             type="button"
-            className="ghost"
+            className="ghost object-refresh-btn"
             disabled={!connected || loading}
             onClick={() => {
               setColumns({});
@@ -237,10 +237,13 @@ export default function ObjectBrowser({
                 .catch((err) => setError(err instanceof Error ? err.message : String(err)))
                 .finally(() => setLoading(false));
             }}
-            title="Refresh"
+            title="Refresh database object browser list"
+            aria-label="Refresh Objects"
           >
             ↻
           </button>
+        </div>
+        <div className="header-actions">
           {onToggleCollapse ? (
             <button
               type="button"

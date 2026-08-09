@@ -480,6 +480,26 @@ body.is-col-resizing .sidebar-split {
   background: linear-gradient(180deg, var(--panel-tint), transparent);
 }
 
+.object-browser-title-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.object-refresh-btn {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  height: 20px !important;
+  width: 20px !important;
+  min-width: 20px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer;
+}
+
 .object-browser-header .header-actions {
   display: flex;
   align-items: center;
