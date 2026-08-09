@@ -888,34 +888,7 @@ const MatrixAtmosphere: React.FC = () => {
 };
 
 const DefaultAtmosphere: React.FC = () => {
-  return (
-    <div className="theme-atmosphere default-atmosphere" aria-hidden="true">
-      <div className="default-grid-mesh" />
-      <div className="grid-light-pulse" />
-      <div className="data-laser-beam beam-1" />
-      <div className="data-laser-beam beam-2" />
-
-      <div className="data-node node-1">
-        <span className="node-ring" />
-        <span className="node-core" />
-      </div>
-      <div className="data-node node-2">
-        <span className="node-ring" />
-        <span className="node-core" />
-      </div>
-      <div className="data-node node-3">
-        <span className="node-ring" />
-        <span className="node-core" />
-      </div>
-
-      <div className="emerald-mote mote-1" />
-      <div className="emerald-mote mote-2" />
-      <div className="emerald-mote mote-3" />
-      <div className="emerald-mote mote-4" />
-      <div className="emerald-mote mote-5" />
-      <div className="emerald-mote mote-6" />
-    </div>
-  );
+  return null;
 };
 
 const SynthwaveAtmosphere: React.FC = () => {

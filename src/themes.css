@@ -5261,7 +5261,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Default Theme Atmosphere (Modern Emerald Data Glass Grid)
+   Default Theme (Clean Dark Slate macOS / Windows Look - No Animations)
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .default-atmosphere {
@@ -5270,111 +5270,7 @@
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 30%, #064e3b 0%, #022c22 60%, #011611 100%);
-}
-
-.default-atmosphere .default-grid-mesh {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(16, 185, 129, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(16, 185, 129, 0.08) 1px, transparent 1px);
-  background-size: 50px 50px;
-}
-
-.default-atmosphere .grid-light-pulse {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.18) 0%, transparent 70%);
-  animation: grid-pulse-glow 6s ease-in-out infinite alternate;
-}
-
-@keyframes grid-pulse-glow {
-  0% { opacity: 0.4; transform: scale(0.95); }
-  100% { opacity: 0.85; transform: scale(1.05); }
-}
-
-.default-atmosphere .data-laser-beam {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: linear-gradient(180deg, transparent 0%, #10b981 50%, transparent 100%);
-  box-shadow: 0 0 15px #10b981;
-  opacity: 0.7;
-  will-change: transform;
-}
-
-.default-atmosphere .beam-1 { left: 25vw; animation: laser-sweep 12s ease-in-out infinite alternate; }
-.default-atmosphere .beam-2 { right: 30vw; animation: laser-sweep 16s ease-in-out 3s infinite alternate; }
-
-@keyframes laser-sweep {
-  0% { transform: translateX(-40px); opacity: 0.3; }
-  100% { transform: translateX(60px); opacity: 0.85; }
-}
-
-.default-atmosphere .data-node {
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  will-change: transform;
-}
-
-.default-atmosphere .node-1 { top: 20vh; left: 12vw; animation: node-float 10s ease-in-out infinite alternate; }
-.default-atmosphere .node-2 { bottom: 25vh; right: 15vw; animation: node-float 14s ease-in-out 2s infinite alternate; }
-.default-atmosphere .node-3 { top: 15vh; right: 35vw; animation: node-float 12s ease-in-out 4s infinite alternate; }
-
-.default-atmosphere .node-ring {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 2px stroke rgba(16, 185, 129, 0.6);
-  border-top-color: #34d399;
-  box-shadow: 0 0 15px #10b981;
-  animation: node-ring-spin 8s linear infinite;
-}
-
-@keyframes node-ring-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.default-atmosphere .node-core {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #34d399;
-  box-shadow: 0 0 12px #34d399, 0 0 24px #10b981;
-}
-
-@keyframes node-float {
-  0% { transform: translate3d(0, 0, 0); }
-  100% { transform: translate3d(20px, -30px, 0); }
-}
-
-.default-atmosphere .emerald-mote {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #6ee7b7;
-  box-shadow: 0 0 10px #10b981;
-  will-change: transform;
-}
-
-.default-atmosphere .mote-1 { left: 18vw; bottom: 15vh; animation: emerald-mote-float 8s ease-in-out infinite alternate; }
-.default-atmosphere .mote-2 { left: 42vw; top: 28vh; animation: emerald-mote-float 12s ease-in-out 1.5s infinite alternate; }
-.default-atmosphere .mote-3 { left: 68vw; bottom: 35vh; animation: emerald-mote-float 10s ease-in-out 3s infinite alternate; }
-.default-atmosphere .mote-4 { left: 85vw; top: 18vh; animation: emerald-mote-float 9s ease-in-out 2s infinite alternate; }
-.default-atmosphere .mote-5 { left: 32vw; bottom: 42vh; animation: emerald-mote-float 11s ease-in-out 4s infinite alternate; }
-.default-atmosphere .mote-6 { left: 55vw; top: 12vh; animation: emerald-mote-float 13s ease-in-out 0.5s infinite alternate; }
-
-@keyframes emerald-mote-float {
-  0% { transform: translate3d(0, 0, 0) scale(0.8); opacity: 0.4; }
-  100% { transform: translate3d(30px, -45px, 0) scale(1.3); opacity: 0.9; }
+  background: #14161a;
 }
 
 
