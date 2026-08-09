@@ -67,7 +67,7 @@ npm start
 
 ## Notes
 
-- Query pages auto-save into `~/sql/*.sql` about **10 seconds** after edits (and immediately on blur/quit). Double-click a tab name to rename the file.
+- Query pages auto-save into `~/sql/*.sql` about **5 seconds** after edits (and immediately on blur/quit). Double-click a tab name to rename the file.
 - Separate statements with a blank line. Semicolons are optional.
 - If text is selected, the selection is run instead.
 - Result sets are capped by **Max rows** in the toolbar (default **1000**, max 100,000).
