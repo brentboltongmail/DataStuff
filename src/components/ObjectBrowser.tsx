@@ -26,6 +26,8 @@ interface Props {
   refreshKey: number;
   onInsertSql: (sql: string) => void;
   onOpenSelect: (objectName: string) => void;
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
 }
 
 export default function ObjectBrowser({
@@ -33,6 +35,8 @@ export default function ObjectBrowser({
   refreshKey,
   onInsertSql,
   onOpenSelect,
+  collapsed,
+  onToggleCollapse,
 }: Props) {
   const [objects, setObjects] = useState<DbObject[]>([]);
   const [filter, setFilter] = useState(
@@ -115,25 +119,25 @@ export default function ObjectBrowser({
   };
 
   const renderGroup = (label: string, type: GroupKey, items: DbObject[]) => {
-    const collapsed = collapsedGroups[type];
+    const groupCollapsed = collapsedGroups[type];
     return (
-      <div className={`object-group${collapsed ? " collapsed" : ""}`} key={type}>
+      <div className={`object-group${groupCollapsed ? " collapsed" : ""}`} key={type}>
         <button
           type="button"
           className="object-group-title"
           onClick={() => toggleGroup(type)}
-          aria-expanded={!collapsed}
-          title={collapsed ? `Expand ${label}` : `Collapse ${label}`}
+          aria-expanded={!groupCollapsed}
+          title={groupCollapsed ? `Expand ${label}` : `Collapse ${label}`}
         >
           <span className="object-group-label">
             <span className="object-group-chevron" aria-hidden>
-              {collapsed ? "▸" : "▾"}
+              {groupCollapsed ? "▸" : "▾"}
             </span>
             {label}
           </span>
           <span>{items.length}</span>
         </button>
-        {collapsed ? null : items.length === 0 ? (
+        {groupCollapsed ? null : items.length === 0 ? (
           <div className="object-empty">None</div>
         ) : (
           <ul className="object-list">
@@ -197,29 +201,58 @@ export default function ObjectBrowser({
     );
   };
 
+  if (collapsed) {
+    return (
+      <aside className="object-browser collapsed" title="Unhide Objects Window">
+        <button
+          type="button"
+          className="object-browser-toggle-btn unhide-btn"
+          onClick={onToggleCollapse}
+          title="Unhide Objects Window"
+          aria-label="Unhide Objects Window"
+        >
+          ◀ <span className="vertical-label">Objects</span>
+        </button>
+      </aside>
+    );
+  }
+
   return (
     <aside className="object-browser">
       <div className="object-browser-header">
         <strong>Objects</strong>
-        <button
-          type="button"
-          className="ghost"
-          disabled={!connected || loading}
-          onClick={() => {
-            setColumns({});
-            setExpanded(null);
-            if (!connected) return;
-            setLoading(true);
-            window.oracle
-              .listObjects()
-              .then(setObjects)
-              .catch((err) => setError(err instanceof Error ? err.message : String(err)))
-              .finally(() => setLoading(false));
-          }}
-          title="Refresh"
-        >
-          ↻
-        </button>
+        <div className="header-actions">
+          <button
+            type="button"
+            className="ghost"
+            disabled={!connected || loading}
+            onClick={() => {
+              setColumns({});
+              setExpanded(null);
+              if (!connected) return;
+              setLoading(true);
+              window.oracle
+                .listObjects()
+                .then(setObjects)
+                .catch((err) => setError(err instanceof Error ? err.message : String(err)))
+                .finally(() => setLoading(false));
+            }}
+            title="Refresh"
+          >
+            ↻
+          </button>
+          {onToggleCollapse ? (
+            <button
+              type="button"
+              className="ghost object-browser-toggle-btn hide-btn"
+              onClick={onToggleCollapse}
+              title="Hide Objects Window"
+              aria-label="Hide Objects Window"
+            >
+              ▶
+            </button>
+          ) : null}
+        </div>
       </div>
       <input
         className="object-filter"

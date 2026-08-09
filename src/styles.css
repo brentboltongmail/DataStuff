@@ -434,6 +434,72 @@ body.is-col-resizing .sidebar-split {
   background: linear-gradient(180deg, var(--panel-tint), transparent);
 }
 
+.object-browser-header .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.object-browser-toggle-btn {
+  font-size: 11px;
+  padding: 2px 6px !important;
+  border-radius: 4px;
+  cursor: pointer;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.object-browser-toggle-btn:hover {
+  background: var(--hover-tint, rgba(255, 255, 255, 0.1));
+  color: var(--accent, #f97316);
+}
+
+.object-browser.collapsed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 2px;
+  user-select: none;
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border-soft);
+  width: 28px;
+  min-width: 28px;
+  box-shadow: inset 1px 0 0 var(--panel-tint);
+}
+
+.object-browser.collapsed .unhide-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 2px !important;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.object-browser.collapsed .unhide-btn:hover {
+  color: var(--accent, #f97316);
+  background: var(--hover-tint, rgba(255, 255, 255, 0.1));
+}
+
+.object-browser.collapsed .vertical-label {
+  writing-mode: vertical-rl;
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
 .object-filter {
   margin: 8px 10px;
   width: calc(100% - 20px);

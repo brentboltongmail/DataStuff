@@ -78,7 +78,16 @@ const DENSITY_KEY = "oracle-ide.gridDensity";
 const FONT_SCALE_KEY = "oracle-ide.fontScale";
 const EDITOR_SPLIT_KEY = "oracle-ide.editorSplit";
 const SIDEBAR_WIDTH_KEY = "oracle-ide.sidebarWidth";
+const SIDEBAR_COLLAPSED_KEY = "oracle-ide.sidebarCollapsed";
 const REMEMBER_PASSWORD_KEY = "oracle-ide.rememberPassword";
+
+const loadSidebarCollapsed = (): boolean => {
+  try {
+    return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "true";
+  } catch {
+    return false;
+  }
+};
 const MAX_HISTORY = 100;
 const DEFAULT_MAX_ROWS = 1000;
 const DEFAULT_FONT_SCALE = 1;
@@ -1426,6 +1435,17 @@ export default function App() {
   }, [themeId]);
   const [editorSplit, setEditorSplit] = useState(loadEditorSplit);
   const [sidebarWidth, setSidebarWidth] = useState(loadSidebarWidth);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(loadSidebarCollapsed);
+
+  const toggleSidebarCollapsed = () => {
+    setSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(next));
+      } catch {}
+      return next;
+    });
+  };
   const [rememberPassword, setRememberPassword] = useState(loadRememberPassword);
   const [passwordStorageAvailable, setPasswordStorageAvailable] = useState(false);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
@@ -4464,7 +4484,14 @@ export default function App() {
         </div>
       </header>
 
-      <div className="body" style={{ gridTemplateColumns: `1fr 2px ${sidebarWidth}px` }}>
+      <div
+        className="body"
+        style={{
+          gridTemplateColumns: sidebarCollapsed
+            ? "1fr 0px 28px"
+            : `1fr 2px ${sidebarWidth}px`,
+        }}
+      >
         <main
           className="workspace"
           ref={workspaceRef}
@@ -4799,21 +4826,25 @@ export default function App() {
           </section>
         </main>
 
-        <div
-          className="sidebar-split"
-          title="Drag to resize object browser · double-click to reset"
-          onPointerDown={onSidebarPointerDown}
-          onPointerMove={onSidebarPointerMove}
-          onPointerUp={onSidebarPointerUp}
-          onPointerCancel={endSidebarDrag}
-          onDoubleClick={() => setSidebarWidth(DEFAULT_SIDEBAR_WIDTH)}
-        />
+        {!sidebarCollapsed ? (
+          <div
+            className="sidebar-split"
+            title="Drag to resize object browser · double-click to reset"
+            onPointerDown={onSidebarPointerDown}
+            onPointerMove={onSidebarPointerMove}
+            onPointerUp={onSidebarPointerUp}
+            onPointerCancel={endSidebarDrag}
+            onDoubleClick={() => setSidebarWidth(DEFAULT_SIDEBAR_WIDTH)}
+          />
+        ) : null}
 
         <ObjectBrowser
           connected={status.connected}
           refreshKey={objectsRefresh}
           onInsertSql={insertObjectName}
           onOpenSelect={openSelectForObject}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={toggleSidebarCollapsed}
         />
       </div>
 
