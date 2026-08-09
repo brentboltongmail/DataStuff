@@ -2553,26 +2553,46 @@ export default function App() {
       return;
     }
 
-    const selection = editorRef.current.getSelection();
-    const model = editorRef.current.getModel();
-    const selectedText = model && selection ? model.getValueInRange(selection) : "";
+    const editor = editorRef.current;
+    const model = editor.getModel();
+    if (!model) return;
+
+    const selection = editor.getSelection();
+    const selectedText = selection ? model.getValueInRange(selection) : "";
+    const currentPos = editor.getPosition();
 
     if (selectedText && selectedText.trim()) {
       const formatted = formatSql(selectedText);
-      editorRef.current.executeEdits("format-sql", [
+      editor.executeEdits("format-sql", [
         {
           range: selection!,
           text: formatted,
           forceMoveMarkers: true,
         },
       ]);
-      setActiveSql(editorRef.current.getValue());
+      if (currentPos) editor.setPosition(currentPos);
+      setActiveSql(editor.getValue());
     } else {
-      const currentFullSql = editorRef.current.getValue();
+      const currentFullSql = editor.getValue();
       if (!currentFullSql || !currentFullSql.trim()) return;
       const formatted = formatSql(currentFullSql);
-      editorRef.current.setValue(formatted);
-      setActiveSql(formatted);
+      if (formatted === currentFullSql) return;
+
+      const fullRange = model.getFullModelRange();
+      editor.executeEdits("format-sql", [
+        {
+          range: fullRange,
+          text: formatted,
+          forceMoveMarkers: true,
+        },
+      ]);
+      if (currentPos) {
+        editor.setPosition(currentPos);
+      }
+      if (selection) {
+        editor.setSelection(selection);
+      }
+      setActiveSql(editor.getValue());
     }
   }, [sql, setActiveSql]);
 
