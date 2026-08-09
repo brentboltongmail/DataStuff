@@ -4684,6 +4684,7 @@ export default function App() {
               className="primary"
               onClick={onExecute}
               disabled={!status.connected || busy}
+              title="Run statement under cursor (Cmd+Enter / Ctrl+Enter or Shift+Enter)"
             >
               Run
             </button>
@@ -4781,9 +4782,6 @@ export default function App() {
             >
               {densityLabel(density)}
             </button>
-            <span className="hint">
-              Ctrl/Cmd+Enter or Shift+Enter run · Commit applies
-            </span>
           </div>
 
           <section className="results-pane">
