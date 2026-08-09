@@ -168,6 +168,82 @@ function computeCompactColWidths(
   return widths;
 }
 
+function isDateColumn(rows: unknown[][], colIndex: number): boolean {
+  let sampled = 0;
+  const sampleCount = Math.min(rows.length, 100);
+  for (let r = 0; r < sampleCount; r++) {
+    const val = rows[r]?.[colIndex];
+    if (val === null || val === undefined) continue;
+    sampled++;
+    if (val instanceof Date) return true;
+    const str = String(val);
+    if (/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}/.test(str)) {
+      return true;
+    }
+    if (sampled >= 20) break;
+  }
+  return false;
+}
+
+/** Crammed density: Date columns use max date width; non-date columns use the average width of the first 100 rows. */
+function computeCrammedColWidths(
+  columns: { col: { name: string }; index: number }[],
+  rows: unknown[][],
+  pendingEdits: Record<string, CellEdit>,
+  fontScale: number,
+): Record<string, number> {
+  const bodyFont = gridFontSizePx("crammed", fontScale);
+  const padX = 8;
+  const minW = minColWidthPx("crammed", fontScale);
+  const widths: Record<string, number> = {};
+
+  for (const { col, index } of columns) {
+    const isDate = isDateColumn(rows, index);
+
+    if (isDate) {
+      // Date types use full formatted date width
+      let maxDateW = 0;
+      const sampleCount = Math.min(rows.length, 100);
+      for (let r = 0; r < sampleCount; r++) {
+        const pending = pendingEdits[cellEditKey(r, index)];
+        const cell = pending ? pending.newValue : rows[r]?.[index];
+        const text = isNullCell(cell) ? "NULL" : formatCell(cell);
+        if (text) {
+          const w = measureTextPx(text, bodyFont) + padX;
+          if (w > maxDateW) maxDateW = w;
+        }
+      }
+      const defaultDateW = measureTextPx("2026-08-09 00:00:00", bodyFont) + padX;
+      widths[col.name] = Math.max(minW, maxDateW || defaultDateW);
+    } else {
+      // Non-date columns: average width of the first 100 rows of data in each column
+      let totalWidth = 0;
+      let sampleCount = 0;
+      const limit = Math.min(rows.length, 100);
+
+      for (let r = 0; r < limit; r++) {
+        const pending = pendingEdits[cellEditKey(r, index)];
+        const cell = pending ? pending.newValue : rows[r]?.[index];
+        const text = isNullCell(cell) ? "NULL" : formatCell(cell);
+        if (text) {
+          const w = measureTextPx(text, bodyFont);
+          totalWidth += w;
+          sampleCount++;
+        }
+      }
+
+      if (sampleCount > 0) {
+        const avgW = totalWidth / sampleCount + padX;
+        widths[col.name] = Math.max(minW, Math.round(avgW));
+      } else {
+        widths[col.name] = minW;
+      }
+    }
+  }
+
+  return widths;
+}
+
 function computeAutoColWidths(
   density: GridDensity,
   columns: { col: { name: string }; index: number }[],
@@ -177,6 +253,9 @@ function computeAutoColWidths(
 ): Record<string, number> {
   if (density === "compact") {
     return computeCompactColWidths(columns, fontScale);
+  }
+  if (density === "crammed") {
+    return computeCrammedColWidths(columns, rows, pendingEdits, fontScale);
   }
   return computeNormalColWidths(columns, rows, pendingEdits, fontScale);
 }
@@ -235,24 +314,15 @@ export default function ResultsGrid({
     setColWidths({});
   }, [columnKey]);
 
-  // Leaving auto-sized densities: drop widths so crammed / fit-content CSS can drive layout.
+  // Leaving auto-sized densities: drop widths on density/fit toggle.
   useEffect(() => {
-    if (
-      (density === "normal" || density === "compact") &&
-      !fitColumnsToContent
-    ) {
-      return;
-    }
     userResizedRef.current.clear();
     setColWidths({});
   }, [density, fitColumnsToContent]);
 
-  // Normal: max(header, min(data, 50 chars)). Compact: header width only.
+  // Normal, Compact, & Crammed auto width calculation.
   useLayoutEffect(() => {
-    if (
-      (density !== "normal" && density !== "compact") ||
-      fitColumnsToContent
-    ) {
+    if (fitColumnsToContent) {
       return;
     }
     const auto = computeAutoColWidths(
