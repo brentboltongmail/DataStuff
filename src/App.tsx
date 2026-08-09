@@ -4997,7 +4997,7 @@ export default function App() {
                   {densityLabel(density)}
                 </button>
                 <label className="toolbar-field" htmlFor="maxRows">
-                  Max rows
+                  MAX
                   <input
                     id="maxRows"
                     type="number"
