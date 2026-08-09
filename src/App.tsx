@@ -5020,14 +5020,6 @@ export default function App() {
                     }}
                   />
                 </label>
-                <button
-                  type="button"
-                  onClick={onExportCsv}
-                  disabled={!canExport || busy}
-                  title="Export current result grid to CSV"
-                >
-                  Export...
-                </button>
               </div>
 
               {bottomTab === "explain" && sqlBlocks.length > 1 ? (
@@ -5047,17 +5039,27 @@ export default function App() {
                 </div>
               ) : null}
 
-              {bottomTab === "results" && resultSummary ? (
-                <span className="results-summary">
-                  <strong>{resultSummary}</strong>
-                  {result?.truncated ? ` · first ${maxRows.toLocaleString()} rows` : ""}
-                </span>
-              ) : null}
-              {bottomTab === "explain" && explainSummary ? (
-                <span className="results-summary">
-                  <strong>{explainSummary}</strong>
-                </span>
-              ) : null}
+              <div className="results-header-right">
+                {bottomTab === "results" && resultSummary ? (
+                  <span className="results-summary">
+                    <strong>{resultSummary}</strong>
+                    {result?.truncated ? ` · first ${maxRows.toLocaleString()} rows` : ""}
+                  </span>
+                ) : null}
+                {bottomTab === "explain" && explainSummary ? (
+                  <span className="results-summary">
+                    <strong>{explainSummary}</strong>
+                  </span>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={onExportCsv}
+                  disabled={!canExport || busy}
+                  title="Export current result grid to CSV"
+                >
+                  Export...
+                </button>
+              </div>
             </div>
 
             <div className="grid-wrap">
