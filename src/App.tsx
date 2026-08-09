@@ -4655,7 +4655,6 @@ export default function App() {
           Auto
         </label>
         <div className="theme-picker">
-          <label htmlFor="app-theme">Theme</label>
           <select
             id="app-theme"
             value={themeId}
