@@ -4684,7 +4684,7 @@ export default function App() {
           className="workspace"
           ref={workspaceRef}
           style={{
-            gridTemplateRows: `minmax(100px, ${editorSplit}fr) 2px 20px minmax(100px, ${1 - editorSplit}fr)`,
+            gridTemplateRows: `minmax(100px, ${editorSplit}fr) 2px minmax(100px, ${1 - editorSplit}fr)`,
           }}
         >
           <div className="editor-pane">
@@ -4898,114 +4898,8 @@ export default function App() {
             onDoubleClick={() => setEditorSplit(DEFAULT_EDITOR_SPLIT)}
           />
 
-          <div className="toolbar">
-            <button
-              type="button"
-              className="primary"
-              onClick={onExecute}
-              disabled={!status.connected || busy}
-              title="Run statement under cursor (Cmd+Enter / Ctrl+Enter or Shift+Enter)"
-            >
-              Run
-            </button>
-            {busy && (
-              <button
-                type="button"
-                className="danger cancel-query-btn"
-                onClick={onCancelQuery}
-                title="Cancel running SQL query execution"
-              >
-                ⏹ Cancel Query
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={onExplainPlan}
-              disabled={!status.connected || busy}
-              title="Show Oracle explain plan and which indexes the statement uses"
-            >
-              Explain Plan
-            </button>
-            <button
-              type="button"
-              className="success"
-              onClick={onCommit}
-              disabled={!status.connected || busy}
-              title={
-                pendingEditCount > 0
-                  ? `Apply ${pendingEditCount} cell update(s) then commit the transaction`
-                  : "Commit the current transaction"
-              }
-            >
-              Commit{pendingEditCount > 0 ? ` (${pendingEditCount})` : ""}
-            </button>
-            <button
-              type="button"
-              className="danger"
-              onClick={onRollback}
-              disabled={!status.connected || busy}
-              title={
-                pendingEditCount > 0
-                  ? "Discard cell edits and roll back the transaction"
-                  : "Roll back the current transaction"
-              }
-            >
-              Rollback
-            </button>
-            <button
-              type="button"
-              className="secondary format-sql-btn"
-              onClick={onFormatSql}
-              title="Reformat SQL query with 4-space indentations and subquery nesting on new lines (Cmd+Shift+F)"
-            >
-              ✨ Format SQL
-            </button>
-            <label
-              className="checkbox-row toolbar-auto-format"
-              title="Automatically format queries immediately after execution"
-            >
-              <input
-                type="checkbox"
-                checked={autoFormat}
-                onChange={(e) => setAutoFormat(e.target.checked)}
-              />
-              Auto Format
-            </label>
-            <button
-              type="button"
-              onClick={onExportCsv}
-              disabled={!canExport || busy}
-              title="Export current result grid to CSV"
-            >
-              Export CSV
-            </button>
-            <label className="toolbar-field" htmlFor="maxRows">
-              Max rows
-              <input
-                id="maxRows"
-                type="number"
-                min={1}
-                max={100000}
-                value={maxRows}
-                onChange={(e) => {
-                  const next = Number.parseInt(e.target.value, 10);
-                  if (!Number.isFinite(next)) return;
-                  setMaxRows(Math.min(Math.max(next, 1), 100_000));
-                }}
-              />
-            </label>
-            <button
-              type="button"
-              className={density !== "normal" ? "active-toggle" : ""}
-              onClick={() => setDensity((prev) => nextDensity(prev))}
-              title="Cycle grid density: Normal → Compact → Crammed"
-            >
-              {densityLabel(density)}
-            </button>
-          </div>
-
           <section className="results-pane">
-            <div className="results-header">
+            <div className="results-header toolbar">
               <div className="bottom-tabs">
                 <button
                   type="button"
@@ -5029,14 +4923,121 @@ export default function App() {
                   History ({history.length})
                 </button>
               </div>
-              {bottomTab === "results" ? (
-                <span>
+
+              <div className="toolbar-actions">
+                <button
+                  type="button"
+                  className="primary"
+                  onClick={onExecute}
+                  disabled={!status.connected || busy}
+                  title="Run statement under cursor (Cmd+Enter / Ctrl+Enter or Shift+Enter)"
+                >
+                  Run
+                </button>
+                {busy && (
+                  <button
+                    type="button"
+                    className="danger cancel-query-btn"
+                    onClick={onCancelQuery}
+                    title="Cancel running SQL query execution"
+                  >
+                    ⏹ Cancel Query
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={onExplainPlan}
+                  disabled={!status.connected || busy}
+                  title="Show Oracle explain plan and which indexes the statement uses"
+                >
+                  Explain Plan
+                </button>
+                <button
+                  type="button"
+                  className="success"
+                  onClick={onCommit}
+                  disabled={!status.connected || busy}
+                  title={
+                    pendingEditCount > 0
+                      ? `Apply ${pendingEditCount} cell update(s) then commit the transaction`
+                      : "Commit the current transaction"
+                  }
+                >
+                  Commit{pendingEditCount > 0 ? ` (${pendingEditCount})` : ""}
+                </button>
+                <button
+                  type="button"
+                  className="danger"
+                  onClick={onRollback}
+                  disabled={!status.connected || busy}
+                  title={
+                    pendingEditCount > 0
+                      ? "Discard cell edits and roll back the transaction"
+                      : "Roll back the current transaction"
+                  }
+                >
+                  Rollback
+                </button>
+                <button
+                  type="button"
+                  className="secondary format-sql-btn"
+                  onClick={onFormatSql}
+                  title="Reformat SQL query with 4-space indentations and subquery nesting on new lines (Cmd+Shift+F)"
+                >
+                  ✨ Format SQL
+                </button>
+                <label
+                  className="checkbox-row toolbar-auto-format"
+                  title="Automatically format queries immediately after execution"
+                >
+                  <input
+                    type="checkbox"
+                    checked={autoFormat}
+                    onChange={(e) => setAutoFormat(e.target.checked)}
+                  />
+                  Auto Format
+                </label>
+                <button
+                  type="button"
+                  onClick={onExportCsv}
+                  disabled={!canExport || busy}
+                  title="Export current result grid to CSV"
+                >
+                  Export CSV
+                </button>
+                <label className="toolbar-field" htmlFor="maxRows">
+                  Max rows
+                  <input
+                    id="maxRows"
+                    type="number"
+                    min={1}
+                    max={100000}
+                    value={maxRows}
+                    onChange={(e) => {
+                      const next = Number.parseInt(e.target.value, 10);
+                      if (!Number.isFinite(next)) return;
+                      setMaxRows(Math.min(Math.max(next, 1), 100_000));
+                    }}
+                  />
+                </label>
+                <button
+                  type="button"
+                  className={density !== "normal" ? "active-toggle" : ""}
+                  onClick={() => setDensity((prev) => nextDensity(prev))}
+                  title="Cycle grid density: Normal → Compact → Crammed"
+                >
+                  {densityLabel(density)}
+                </button>
+              </div>
+
+              {bottomTab === "results" && resultSummary ? (
+                <span className="results-summary">
                   <strong>{resultSummary}</strong>
                   {result?.truncated ? ` · first ${maxRows.toLocaleString()} rows` : ""}
                 </span>
               ) : null}
-              {bottomTab === "explain" ? (
-                <span>
+              {bottomTab === "explain" && explainSummary ? (
+                <span className="results-summary">
                   <strong>{explainSummary}</strong>
                 </span>
               ) : null}
