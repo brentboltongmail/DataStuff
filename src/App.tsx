@@ -1509,8 +1509,22 @@ export default function App() {
   const sql = activeTab?.sql ?? "";
 
   const [editorScrollTop, setEditorScrollTop] = useState(0);
+  const [editorTick, setEditorTick] = useState(0);
   const [editorLineHeight, setEditorLineHeight] = useState(18);
   const [copiedBlockId, setCopiedBlockId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleResize = () => setEditorTick((t) => t + 1);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (editorRef.current) {
+      setEditorScrollTop(editorRef.current.getScrollTop());
+      setEditorTick((t) => t + 1);
+    }
+  }, [activeTabId, fontScale]);
 
   const sqlBlocks = useMemo(() => parseSqlStatements(sql), [sql]);
 
@@ -3129,8 +3143,29 @@ export default function App() {
     });
 
     setEditorLineHeight(ed.getOption(monaco.editor.EditorOption.lineHeight) || 18);
+    setEditorScrollTop(ed.getScrollTop());
+    setEditorTick((t) => t + 1);
+
+    const refreshGutter = () => {
+      setEditorScrollTop(ed.getScrollTop());
+      setEditorTick((t) => t + 1);
+    };
+
     ed.onDidScrollChange((e) => {
       setEditorScrollTop(e.scrollTop);
+      setEditorTick((t) => t + 1);
+    });
+
+    ed.onDidChangeModelContent(() => {
+      refreshGutter();
+    });
+
+    ed.onDidLayoutChange(() => {
+      refreshGutter();
+    });
+
+    ed.onDidChangeModel(() => {
+      refreshGutter();
     });
 
     const runStatement = () => {
@@ -4672,6 +4707,7 @@ export default function App() {
                 <div className="editor-wrapper">
                   <div className="query-copy-gutter">
                     {(() => {
+                      void editorTick;
                       const viewportHeight =
                         editorRef.current?.getLayoutInfo().height ?? 600;
                       return sqlBlocks.map((block, idx) => {
@@ -4698,7 +4734,10 @@ export default function App() {
                               block.endLine + 1,
                             );
                           }
-                          top = startLineTop - editorScrollTop;
+                          const currentScrollTop = editorRef.current
+                            ? editorRef.current.getScrollTop()
+                            : editorScrollTop;
+                          top = startLineTop - currentScrollTop;
                           height = Math.max(editorLineHeight, endLineBottom - startLineTop);
                         }
 
