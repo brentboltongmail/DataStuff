@@ -885,10 +885,25 @@ body.is-row-resizing .monaco-editor {
 }
 
 .toolbar-field input {
-  width: 48px;
+  width: 54px;
   padding: 1px 4px;
   font-family: var(--font-mono);
   font-size: var(--base-font-size);
+}
+
+/* Remove arrow buttons / spin controls on number inputs (Max rows) */
+.toolbar-field input[type="number"]::-webkit-outer-spin-button,
+.toolbar-field input[type="number"]::-webkit-inner-spin-button,
+input#maxRows::-webkit-outer-spin-button,
+input#maxRows::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.toolbar-field input[type="number"],
+input#maxRows {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 button.active-toggle {
