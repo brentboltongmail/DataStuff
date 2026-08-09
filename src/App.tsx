@@ -37,6 +37,7 @@ import {
   themeOption,
   type AppThemeId,
 } from "./themes";
+import { generateSeededPlanets } from "./planetGenerator";
 import type {
   ConnectionConfig,
   ConnectionState,
@@ -1390,29 +1391,21 @@ export default function App() {
   const [fontScale, setFontScale] = useState(loadFontScale);
   const [themeId, setThemeId] = useState<AppThemeId>(loadTheme);
 
-  // Space theme initial on-screen planets randomization (always starts with 2 planets on screen)
-  const initialSpaceDelays = useMemo(() => {
-    if (themeId !== "spaceship") return [];
-    // 4 celestial bodies: 0=Gas Giant, 1=Ice Moon, 2=Lava Planet, 3=Purple Giant
-    // Pick 2 at random to start on-screen immediately via negative animation delays
-    const indices = [0, 1, 2, 3].sort(() => 0.5 - Math.random());
-    const onScreenSet = new Set([indices[0], indices[1]]);
+  const [planetSeed, setPlanetSeed] = useState(() =>
+    Math.floor(Date.now() + performance.now() * 1000 + Math.random() * 1000000)
+  );
 
-    const planetSpecs = [
-      { defaultDelay: "12s", minOnScreen: 80, maxOnScreen: 200 }, // Gas Giant (320s)
-      { defaultDelay: "70s", minOnScreen: 60, maxOnScreen: 150 }, // Ice Moon (240s)
-      { defaultDelay: "95s", minOnScreen: 70, maxOnScreen: 180 }, // Lava Planet (280s)
-      { defaultDelay: "40s", minOnScreen: 90, maxOnScreen: 220 }, // Purple Giant (360s)
-    ];
-
-    return planetSpecs.map((spec, i) => {
-      if (onScreenSet.has(i)) {
-        const randomNegativeSeconds = Math.floor(spec.minOnScreen + Math.random() * (spec.maxOnScreen - spec.minOnScreen));
-        return `-${randomNegativeSeconds}s`;
-      }
-      return spec.defaultDelay;
-    });
+  useEffect(() => {
+    setPlanetSeed(
+      Math.floor(Date.now() + performance.now() * 1000 + Math.random() * 1000000)
+    );
   }, [themeId]);
+
+  // Space theme procedurally generated celestial planets (seeded by Date-Time on app start & theme switch)
+  const spacePlanets = useMemo(() => {
+    if (themeId !== "spaceship") return [];
+    return generateSeededPlanets(planetSeed);
+  }, [themeId, planetSeed]);
 
   // Randomized 3D Race Track circuit layout generated on app load / theme selection
   const raceTrackPath = useMemo(() => {
@@ -3744,92 +3737,109 @@ export default function App() {
             </svg>
           </div>
 
-          {/* Celestial Body 1: Gas Giant with 3D Saturn Rings wrapping around planet */}
-          <div
-            className="space-celestial celestial-planet celestial-gas-giant"
-            style={initialSpaceDelays[0] ? { animationDelay: initialSpaceDelays[0] } : undefined}
-          >
-            {/* BACK RING HALF (Passes behind top hemisphere) */}
-            <span className="planet-ring-system ring-back outer-ice-ring" />
-            <span className="planet-ring-system ring-back inner-dust-ring" />
-            <span className="planet-ring-system ring-back cassini-division" />
+          {/* Procedurally Generated Celestial Bodies (Randomized Placement, Types, Colors & Random Directional Movement) */}
+          {spacePlanets.map((planet) => (
+            <div
+              key={planet.id}
+              className={`space-celestial space-celestial-dynamic celestial-${planet.type}`}
+              style={{
+                left: `${planet.xPct}%`,
+                top: `${planet.yPct}%`,
+                width: `${planet.size}px`,
+                height: `${planet.size}px`,
+                animationDuration: `${planet.duration}s`,
+                animationDelay: `${planet.delay}s`,
+                "--move-x": `${planet.moveX}px`,
+                "--move-y": `${planet.moveY}px`,
+                "--move-rot": `${planet.moveRot}deg`,
+                "--start-scale": planet.startScale,
+                "--end-scale": planet.endScale,
+              } as React.CSSProperties}
+              title={`Planet ${planet.name}`}
+            >
+              {/* RINGS BACK */}
+              {planet.rings?.map((ring, rIdx) => (
+                <span
+                  key={`ring-back-${rIdx}`}
+                  className="planet-ring-system ring-back"
+                  style={{
+                    width: `${ring.sizePx}px`,
+                    height: `${ring.sizePx}px`,
+                    border: ring.borderStyle,
+                    boxShadow: ring.boxShadow,
+                    transform: `translate(-50%, -50%) rotateX(${ring.tiltX}deg) rotateY(${ring.tiltY}deg) rotateZ(${ring.tiltZ}deg)`,
+                    animation: ring.spinDuration ? `debris-ring-spin ${ring.spinDuration}s linear infinite` : undefined,
+                  }}
+                />
+              ))}
 
-            {/* PLANET SPHERE BODY (Solid 3D sphere covering back ring) */}
-            <span className="planet-atmosphere-halo" />
-            <span className="planet-sphere-body gas-giant-body" />
-            <span className="planet-surface-texture" />
-            <span className="planet-cloud-bands" />
-            <span className="planet-aurora-boreal" />
-            <span className="planet-great-spot" />
+              {/* ATMOSPHERE HALO */}
+              <span
+                className="planet-atmosphere-halo"
+                style={{
+                  background: planet.haloBackground,
+                  filter: `blur(${planet.haloBlur}px)`,
+                }}
+              />
 
-            {/* FRONT RING HALF (Passes in front of lower hemisphere) */}
-            <span className="planet-ring-system ring-front outer-ice-ring" />
-            <span className="planet-ring-system ring-front inner-dust-ring" />
-            <span className="planet-ring-system ring-front cassini-division" />
+              {/* PLANET SPHERE BODY */}
+              <span
+                className="planet-sphere-body"
+                style={{
+                  background: planet.bodyGradient,
+                  boxShadow: planet.bodyShadow,
+                }}
+              />
 
-            <div className="orbiting-moon moon-alpha">
-              <span className="moon-shadow" />
+              {/* SURFACE TEXTURE & ATMOSPHERIC EFFECTS */}
+              {planet.textureClass && <span className={`planet-surface-texture ${planet.textureClass}`} />}
+              {planet.cloudStyle && <span className="planet-cloud-bands" style={planet.cloudStyle} />}
+              {planet.auroraStyle && <span className="planet-aurora-boreal" style={planet.auroraStyle} />}
+              {planet.spotStyle && <span className="planet-great-spot" style={planet.spotStyle} />}
+
+              {/* RINGS FRONT */}
+              {planet.rings?.map((ring, rIdx) => (
+                <span
+                  key={`ring-front-${rIdx}`}
+                  className="planet-ring-system ring-front"
+                  style={{
+                    width: `${ring.sizePx}px`,
+                    height: `${ring.sizePx}px`,
+                    border: ring.borderStyle,
+                    boxShadow: ring.boxShadow,
+                    transform: `translate(-50%, -50%) rotateX(${ring.tiltX}deg) rotateY(${ring.tiltY}deg) rotateZ(${ring.tiltZ}deg)`,
+                    animation: ring.spinDuration ? `debris-ring-spin ${ring.spinDuration}s linear infinite` : undefined,
+                  }}
+                />
+              ))}
+
+              {/* ORBITING MOONS */}
+              {planet.moons?.map((moon, mIdx) => (
+                <div
+                  key={`moon-${mIdx}`}
+                  className="orbiting-moon"
+                  style={{
+                    width: `${moon.size}px`,
+                    height: `${moon.size}px`,
+                    background: moon.gradient,
+                    boxShadow: moon.glow,
+                    top: `${moon.topPct}%`,
+                    left: `${moon.leftPct}%`,
+                    animation: `moon-dynamic-orbit ${moon.orbitDuration}s ease-in-out infinite alternate`,
+                    animationDelay: `${moon.orbitDelay}s`,
+                    "--moon-start-x": `${moon.startX}px`,
+                    "--moon-start-y": `${moon.startY}px`,
+                    "--moon-end-x": `${moon.endX}px`,
+                    "--moon-end-y": `${moon.endY}px`,
+                    "--moon-start-scale": moon.startScale,
+                    "--moon-end-scale": moon.endScale,
+                  } as React.CSSProperties}
+                >
+                  <span className="moon-shadow" />
+                </div>
+              ))}
             </div>
-            <div className="orbiting-moon moon-beta">
-              <span className="moon-shadow" />
-            </div>
-          </div>
-
-          {/* Celestial Body 2: Crystalline Ice World with 3D Encircling Silver Ring */}
-          <div
-            className="space-celestial celestial-moon celestial-ice-world"
-            style={initialSpaceDelays[1] ? { animationDelay: initialSpaceDelays[1] } : undefined}
-          >
-            <span className="planet-ring-system ring-back silver-ice-ring" />
-
-            <span className="planet-atmosphere-halo icy-cyan-glow" />
-            <span className="planet-sphere-body ice-moon-body" />
-            <span className="planet-surface-texture ice-crust" />
-
-            <span className="planet-ring-system ring-front silver-ice-ring" />
-
-            <div className="orbiting-moon moon-gamma">
-              <span className="moon-shadow" />
-            </div>
-          </div>
-
-          {/* Celestial Body 3: Volcanic Lava World with 3D Encircling Molten Debris Ring */}
-          <div
-            className="space-celestial celestial-lava-planet"
-            style={initialSpaceDelays[2] ? { animationDelay: initialSpaceDelays[2] } : undefined}
-          >
-            <span className="planet-ring-system ring-back molten-debris-ring" />
-
-            <span className="planet-atmosphere-halo magma-corona-glow" />
-            <span className="planet-sphere-body lava-planet-body" />
-            <span className="planet-surface-texture lava-rivers" />
-
-            <span className="planet-ring-system ring-front molten-debris-ring" />
-
-            <div className="orbiting-moon moon-delta">
-              <span className="moon-shadow" />
-            </div>
-          </div>
-
-          {/* Celestial Body 4: Violet Plasma Supergiant with 3D Encircling Plasma Rings */}
-          <div
-            className="space-celestial celestial-purple-giant"
-            style={initialSpaceDelays[3] ? { animationDelay: initialSpaceDelays[3] } : undefined}
-          >
-            <span className="planet-ring-system ring-back plasma-ring-outer" />
-            <span className="planet-ring-system ring-back plasma-ring-inner" />
-
-            <span className="planet-atmosphere-halo violet-aurora-glow" />
-            <span className="planet-sphere-body purple-giant-body" />
-            <span className="planet-surface-texture storm-swirls" />
-
-            <span className="planet-ring-system ring-front plasma-ring-outer" />
-            <span className="planet-ring-system ring-front plasma-ring-inner" />
-
-            <div className="orbiting-moon moon-epsilon">
-              <span className="moon-shadow" />
-            </div>
-          </div>
+          ))}
           <span className="shooting-star shooting-star-1" />
           <span className="shooting-star shooting-star-2" />
           {/* Ship 1: Astral Dreadnought Flagship */}
@@ -4655,16 +4665,22 @@ export default function App() {
                           editorLineHeight;
 
                         if (editorRef.current) {
-                          const lineTop =
-                            editorRef.current.getTopForLineNumber(
-                              block.startLine,
-                            );
-                          const nextLineTop =
-                            editorRef.current.getTopForLineNumber(
+                          const model = editorRef.current.getModel();
+                          const maxLine = model ? model.getLineCount() : block.endLine;
+                          const startLineTop = editorRef.current.getTopForLineNumber(
+                            Math.min(block.startLine, maxLine),
+                          );
+                          let endLineBottom: number;
+                          if (block.endLine >= maxLine) {
+                            const lastLineTop = editorRef.current.getTopForLineNumber(maxLine);
+                            endLineBottom = lastLineTop + editorLineHeight;
+                          } else {
+                            endLineBottom = editorRef.current.getTopForLineNumber(
                               block.endLine + 1,
                             );
-                          top = lineTop - editorScrollTop;
-                          height = nextLineTop - lineTop;
+                          }
+                          top = startLineTop - editorScrollTop;
+                          height = Math.max(editorLineHeight, endLineBottom - startLineTop);
                         }
 
                         const isCopied = copiedBlockId === block.id;
@@ -4672,7 +4688,8 @@ export default function App() {
                         if (top + height < -50 || top > viewportHeight + 100)
                           return null;
 
-                        const labelHeight = 56;
+                        const isShortBlock = height < 36;
+                        const labelHeight = isShortBlock ? 14 : 52;
                         const visibleStart = Math.max(top, 0);
                         const visibleEnd = Math.min(
                           top + height,
@@ -4681,9 +4698,9 @@ export default function App() {
                         const visibleCenter = (visibleStart + visibleEnd) / 2;
                         const idealTop = visibleCenter - top - labelHeight / 2;
                         const labelTop = Math.max(
-                          4,
+                          2,
                           Math.min(
-                            Math.max(4, height - labelHeight - 4),
+                            Math.max(2, height - labelHeight - 2),
                             idealTop,
                           ),
                         );
@@ -4706,7 +4723,9 @@ export default function App() {
                                 top: `${labelTop}px`,
                               }}
                             >
-                              {isCopied ? "✓ COPIED" : `Query ${idx + 1}`}
+                              {isCopied
+                                ? isShortBlock ? "✓" : "✓ COPIED"
+                                : isShortBlock ? `Q${idx + 1}` : `Query ${idx + 1}`}
                             </span>
                           </button>
                         );
@@ -4745,6 +4764,13 @@ export default function App() {
                       automaticLayout: true,
                       tabSize: 2,
                       padding: { top: 12 },
+                      scrollbar: {
+                        vertical: "visible",
+                        horizontal: "visible",
+                        verticalScrollbarSize: 12,
+                        horizontalScrollbarSize: 12,
+                        arrowSize: 0,
+                      },
                       // Required so Shift+Enter keybindings are not bypassed by
                       // Native EditContext's beforeinput newline insertion.
                       editContext: false,

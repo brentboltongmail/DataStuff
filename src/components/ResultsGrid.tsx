@@ -112,30 +112,39 @@ function computeNormalColWidths(
 ): Record<string, number> {
   const bodyFont = gridFontSizePx("normal", fontScale);
   const headerFont = 11 * fontScale;
-  const padX = 22; // horizontal cell padding + border breathing room
+  const padX = 26; // horizontal padding (10px left + 10px right + 6px breathing room for handle)
   const minW = minColWidthPx("normal", fontScale);
+  
+  // Width corresponding to 50 monospace characters
+  const widthOf50Chars = measureTextPx("0".repeat(NORMAL_MAX_DATA_CHARS), bodyFont) + padX;
+
   const widths: Record<string, number> = {};
 
   for (const { col, index } of columns) {
+    // Width of column header (at least header width)
     const headerText = col.name.toUpperCase();
-    const headerW =
-      measureTextPx(headerText, headerFont, 600, 0.04) + padX;
+    const headerW = measureTextPx(headerText, headerFont, 600, 0.04) + padX;
 
-    let maxDataW = 0;
-    for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+    // Measured data width across rows
+    let rawMaxDataW = 0;
+    const sampleCount = Math.min(rows.length, 500);
+    for (let rowIndex = 0; rowIndex < sampleCount; rowIndex++) {
       const pending = pendingEdits[cellEditKey(rowIndex, index)];
       const cell = pending ? pending.newValue : rows[rowIndex]?.[index];
-      let text = isNullCell(cell) ? "NULL" : formatCell(cell);
-      if (text.length > NORMAL_MAX_DATA_CHARS) {
-        text = text.slice(0, NORMAL_MAX_DATA_CHARS);
+      const text = isNullCell(cell) ? "NULL" : formatCell(cell);
+      if (text) {
+        const cellW = measureTextPx(text, bodyFont) + padX;
+        if (cellW > rawMaxDataW) {
+          rawMaxDataW = cellW;
+        }
       }
-      maxDataW = Math.max(
-        maxDataW,
-        measureTextPx(text, bodyFont) + padX,
-      );
     }
 
-    widths[col.name] = Math.max(minW, headerW, maxDataW);
+    // Lesser of data width and 50 characters
+    const cappedDataW = Math.min(rawMaxDataW, widthOf50Chars);
+
+    // Column width is at least header width and lesser of data width and 50 chars
+    widths[col.name] = Math.max(minW, headerW, cappedDataW);
   }
   return widths;
 }

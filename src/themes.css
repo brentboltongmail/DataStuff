@@ -495,9 +495,13 @@
   content: "";
   pointer-events: none;
   position: fixed;
-  inset: 0;
-  z-index: 50;
+  top: -400px;
+  bottom: -400px;
+  left: 0;
+  right: 0;
+  z-index: -2;
   opacity: 0.75;
+  background-repeat: repeat;
   background-image:
     radial-gradient(1.5px 1.5px at 63.7% 3.5%, rgba(255, 255, 255, 0.85), transparent),
     radial-gradient(1px 1px at 22.9% 73.2%, rgba(186, 230, 253, 0.85), transparent),
@@ -636,8 +640,11 @@
   content: "";
   pointer-events: none;
   position: fixed;
-  inset: 0;
-  z-index: 49;
+  top: -400px;
+  bottom: -400px;
+  left: 0;
+  right: 0;
+  z-index: -1;
   background-image:
     radial-gradient(1px 1px at 89.3% 8.1%, rgba(255, 255, 255, 0.19), transparent),
     radial-gradient(1px 1px at 38.3% 15.3%, rgba(255, 255, 255, 0.20), transparent),
@@ -1311,6 +1318,70 @@
 @keyframes moon-epsilon-orbit {
   0% { transform: translate3d(-180px, -50px, 0) scale(0.8); }
   100% { transform: translate3d(220px, 70px, 0) scale(1.15); }
+}
+
+/* Dynamic celestial planet floating in random directions */
+.spaceship-atmosphere .space-celestial-dynamic {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.95 !important;
+  z-index: 10 !important;
+  transform-style: preserve-3d;
+  background: transparent !important;
+  box-shadow: none !important;
+  animation-name: celestial-random-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+@keyframes celestial-random-drift {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(var(--start-scale, 0.96));
+  }
+  50% {
+    transform: translate3d(var(--move-x, 40px), var(--move-y, -30px), 0) rotate(var(--move-rot, 5deg)) scale(var(--end-scale, 1.04));
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(var(--start-scale, 0.96));
+  }
+}
+
+@keyframes moon-dynamic-orbit {
+  0% {
+    transform: translate3d(var(--moon-start-x, -140px), var(--moon-start-y, -40px), 0) scale(var(--moon-start-scale, 0.8));
+  }
+  100% {
+    transform: translate3d(var(--moon-end-x, 200px), var(--moon-end-y, 80px), 0) scale(var(--moon-end-scale, 1.15));
+  }
+}
+
+/* Query Copy Bar styling for Space theme */
+[data-theme="spaceship"] .query-copy-bar {
+  background: rgba(14, 165, 233, 0.35) !important;
+  border: 1px solid #22d3ee !important;
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.5), inset 0 0 6px rgba(34, 211, 238, 0.25) !important;
+  backdrop-filter: blur(6px);
+}
+
+[data-theme="spaceship"] .query-copy-bar:hover {
+  width: 18px !important;
+  background: rgba(34, 211, 238, 0.65) !important;
+  border-color: #67e8f9 !important;
+  box-shadow: 0 0 16px #22d3ee, inset 0 0 10px rgba(255, 255, 255, 0.5) !important;
+}
+
+[data-theme="spaceship"] .query-copy-bar.copied {
+  background: #10b981 !important;
+  border-color: #34d399 !important;
+  box-shadow: 0 0 16px #34d399 !important;
+}
+
+[data-theme="spaceship"] .query-copy-label {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  text-shadow: 0 0 6px rgba(34, 211, 238, 0.9), 0 0 2px #000000;
 }
 
 /* Gas giant planet with atmospheric ring - ON SCREEN (Top Right Sky) */
