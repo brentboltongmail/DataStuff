@@ -1496,13 +1496,16 @@ export default function App() {
       setStatus({ connected: false, mode: "jdbc" });
       setPendingEdits({});
       setEditMeta(null);
-      if (isProd && preProdThemeId) {
-        setThemeId(preProdThemeId);
+      if (isProd || themeId === "nuclear") {
+        const fallback = preProdThemeId && preProdThemeId !== "nuclear" ? preProdThemeId : "default";
+        setThemeId(fallback);
+        localStorage.setItem(THEME_KEY, fallback);
+        applyThemeToDocument(fallback);
       }
       setError(reason);
       setMessage("Connection lost — disconnected");
     },
-    [isProd, preProdThemeId],
+    [isProd, preProdThemeId, themeId],
   );
 
   const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0];
@@ -2008,6 +2011,10 @@ export default function App() {
             if (targetConn.isProd) {
               setPreProdThemeId(themeId);
               setThemeId("nuclear");
+            } else if (themeId === "nuclear") {
+              setThemeId("default");
+              localStorage.setItem(THEME_KEY, "default");
+              applyThemeToDocument("default");
             }
             setMessage(`Auto-connected as ${next.user}@${next.connectString}`);
           }
@@ -2150,6 +2157,10 @@ export default function App() {
       if (isProd) {
         setPreProdThemeId(themeId);
         setThemeId("nuclear");
+      } else if (themeId === "nuclear") {
+        setThemeId("default");
+        localStorage.setItem(THEME_KEY, "default");
+        applyThemeToDocument("default");
       }
       setMessage(
         `Connected as ${next.user}@${next.connectString} (${next.mode ?? "thin"})`,
@@ -2176,8 +2187,11 @@ export default function App() {
       setStatus(next);
       setPendingEdits({});
       setEditMeta(null);
-      if (isProd && preProdThemeId) {
-        setThemeId(preProdThemeId);
+      if (isProd || themeId === "nuclear") {
+        const fallback = preProdThemeId && preProdThemeId !== "nuclear" ? preProdThemeId : "default";
+        setThemeId(fallback);
+        localStorage.setItem(THEME_KEY, fallback);
+        applyThemeToDocument(fallback);
       }
       setMessage("Disconnected");
     } catch (err) {
