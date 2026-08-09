@@ -534,7 +534,12 @@ export default function ResultsGrid({
       ]
         .filter(Boolean)
         .join(" ")}
-      style={tableWidth != null ? { width: tableWidth } : undefined}
+      style={{
+        ...(tableWidth != null ? { width: tableWidth } : {}),
+        ...(density === "crammed" && crammedHeight
+          ? ({ "--crammed-header-height": `${crammedHeight}px` } as React.CSSProperties)
+          : {}),
+      }}
     >
       {hasColWidths ? (
         <colgroup>
