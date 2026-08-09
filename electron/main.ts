@@ -119,8 +119,8 @@ function createWindow() {
     minWidth: 1000,
     minHeight: 640,
     title: "DataStuff 1.0",
-    titleBarStyle: "hiddenInset",
-    trafficLightPosition: { x: 16, y: 16 },
+    titleBarStyle: "hidden",
+    trafficLightPosition: { x: 8, y: 6 },
     backgroundColor: "#16131a",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
