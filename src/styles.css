@@ -393,14 +393,14 @@ input:focus {
 
 .body {
   display: grid;
-  grid-template-columns: 1fr 3px 240px;
+  grid-template-columns: 1fr 2px 240px;
   min-height: 0;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.15), transparent 8%);
 }
 
 .sidebar-split {
-  width: 3px;
-  min-width: 3px;
+  width: 2px;
+  min-width: 2px;
   position: relative;
   z-index: 3;
   cursor: col-resize;
@@ -439,13 +439,12 @@ body.is-col-resizing .sidebar-split {
 .object-browser {
   display: grid;
   grid-template-rows: auto auto 1fr auto;
-  border-left: 1px solid var(--border-soft);
+  border-left: none;
   background:
     linear-gradient(270deg, rgba(0, 0, 0, 0.2) 0%, transparent 100%),
     var(--bg-panel);
   opacity: 0.9;
-  box-shadow: inset 1px 0 0 var(--panel-tint),
-    -4px 0 18px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
   min-height: 0;
 }
 
