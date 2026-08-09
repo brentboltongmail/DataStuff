@@ -4635,6 +4635,25 @@ export default function App() {
           />
         </div>
         <div className="titlebar-spacer" />
+        <button
+          type="button"
+          className="secondary format-sql-btn"
+          onClick={onFormatSql}
+          title="Reformat SQL query with 4-space indentations and subquery nesting on new lines (Cmd+Shift+F)"
+        >
+          ✨ Format
+        </button>
+        <label
+          className="checkbox-row toolbar-auto-format"
+          title="Automatically format queries immediately after execution"
+        >
+          <input
+            type="checkbox"
+            checked={autoFormat}
+            onChange={(e) => setAutoFormat(e.target.checked)}
+          />
+          Auto
+        </label>
         <div className="theme-picker">
           <label htmlFor="app-theme">Theme</label>
           <select
@@ -4658,7 +4677,7 @@ export default function App() {
             disabled={fontScale <= MIN_FONT_SCALE}
             aria-label="Decrease font size"
           >
-            A−
+            −
           </button>
           <span className="font-scale-label">{Math.round(fontScale * 100)}%</span>
           <button
@@ -4667,7 +4686,7 @@ export default function App() {
             disabled={fontScale >= MAX_FONT_SCALE}
             aria-label="Increase font size"
           >
-            A+
+            +
           </button>
         </div>
       </header>
@@ -4978,25 +4997,6 @@ export default function App() {
                 >
                   Rollback
                 </button>
-                <button
-                  type="button"
-                  className="secondary format-sql-btn"
-                  onClick={onFormatSql}
-                  title="Reformat SQL query with 4-space indentations and subquery nesting on new lines (Cmd+Shift+F)"
-                >
-                  ✨ Format SQL
-                </button>
-                <label
-                  className="checkbox-row toolbar-auto-format"
-                  title="Automatically format queries immediately after execution"
-                >
-                  <input
-                    type="checkbox"
-                    checked={autoFormat}
-                    onChange={(e) => setAutoFormat(e.target.checked)}
-                  />
-                  Auto
-                </label>
                 <button
                   type="button"
                   onClick={onExportCsv}

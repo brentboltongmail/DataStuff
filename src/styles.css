@@ -159,8 +159,8 @@ input:focus {
 .titlebar {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 12px 0 54px;
+  gap: 4px;
+  padding: 0 8px 0 54px;
   height: 24px;
   min-height: 24px;
   max-height: 24px;
@@ -175,7 +175,7 @@ input:focus {
 .titlebar-left {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   -webkit-app-region: no-drag;
 }
 
@@ -193,9 +193,20 @@ input:focus {
 .titlebar select {
   -webkit-app-region: no-drag;
   height: 18px !important;
-  padding: 0 8px;
+  padding: 0 4px !important;
   font-size: var(--base-font-size);
   line-height: 1;
+}
+
+.titlebar .checkbox-row {
+  -webkit-app-region: no-drag;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: var(--base-font-size);
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 .titlebar select.titlebar-conn-select {
@@ -216,21 +227,25 @@ input:focus {
 .font-controls {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   -webkit-app-region: no-drag;
 }
 
 .font-controls button {
-  width: 28px;
-  height: 18px;
-  padding: 0;
+  width: 18px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  padding: 0 !important;
   line-height: 1;
   font-size: var(--base-font-size);
-  font-weight: 600;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .font-controls .font-scale-label {
-  min-width: 40px;
+  min-width: 30px;
   text-align: center;
   font-size: var(--base-font-size);
   color: var(--text-muted);
