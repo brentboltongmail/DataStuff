@@ -1,10 +1,17 @@
 import type { QueryResult } from "./types";
 
+function formatDateString(val: string): string {
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(val)) {
+    return val.replace("T", " ").replace(/\.000Z$/, "").replace(/Z$/, "");
+  }
+  return val;
+}
+
 function formatCsvCell(value: unknown): string {
   if (value === null || value === undefined) return "";
   let text: string;
   if (value instanceof Date) {
-    text = value.toISOString();
+    text = formatDateString(value.toISOString());
   } else if (typeof value === "object") {
     try {
       text = JSON.stringify(value);
@@ -12,7 +19,7 @@ function formatCsvCell(value: unknown): string {
       text = String(value);
     }
   } else {
-    text = String(value);
+    text = formatDateString(String(value));
   }
   if (/[",\n\r]/.test(text)) {
     return `"${text.replace(/"/g, '""')}"`;
@@ -30,7 +37,8 @@ export function resultToCsv(result: QueryResult): string {
 
 export function formatCell(value: unknown): string {
   if (value === null || value === undefined) return "NULL";
-  if (value instanceof Date) return value.toISOString();
+  if (value instanceof Date) return formatDateString(value.toISOString());
+  if (typeof value === "string") return formatDateString(value);
   if (typeof value === "object") {
     try {
       return JSON.stringify(value);
