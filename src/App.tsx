@@ -2528,13 +2528,17 @@ export default function App() {
         return;
       }
 
-      if (blocks.length === 1) {
-        runExplainForBlockIndex(0);
+      // Always execute Explain Plan for the statement under cursor by default
+      const currentBlock = resolveExecutableSqlBlock();
+      if (currentBlock.statement) {
+        const matchIdx = blocks.findIndex((b) => b.startLine === currentBlock.startLine);
+        const idxToRun = matchIdx >= 0 ? matchIdx : 0;
+        runExplainForBlockIndex(idxToRun);
       } else {
-        setExplainModalOpen(true);
+        runExplainForBlockIndex(0);
       }
     },
-    [status.connected, sql, runExplainForBlockIndex],
+    [status.connected, sql, resolveExecutableSqlBlock, runExplainForBlockIndex],
   );
 
   const onConfirmBindModal = async (confirmedBinds: Record<string, BindVarParam>) => {
@@ -5038,6 +5042,16 @@ export default function App() {
                   <span className="results-summary">
                     <strong>{explainSummary}</strong>
                   </span>
+                ) : null}
+                {bottomTab === "explain" && sqlBlocks.length > 1 ? (
+                  <button
+                    type="button"
+                    className="secondary switch-explain-query-btn"
+                    onClick={() => setExplainModalOpen(true)}
+                    title="Change query for Explain Plan"
+                  >
+                    Q{selectedExplainQueryIndex + 1} of {sqlBlocks.length} ▾
+                  </button>
                 ) : null}
                 <button
                   type="button"
