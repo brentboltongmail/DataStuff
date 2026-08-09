@@ -1456,18 +1456,44 @@
   100% { transform: translate3d(-25px, -20px, 0) rotate(-5deg) scale(1.04); }
 }
 
+/* Dynamic celestial planet linear floating (never changes direction, moves off-screen to off-screen) */
+.spaceship-atmosphere .space-celestial-dynamic {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.95 !important;
+  z-index: 10 !important;
+  transform-style: preserve-3d;
+  background: transparent !important;
+  box-shadow: none !important;
+  animation-name: celestial-linear-glide;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
+  will-change: transform;
+}
+
+@keyframes celestial-linear-glide {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(var(--start-scale, 0.95));
+  }
+  100% {
+    transform: translate3d(var(--move-x, 180vw), var(--move-y, 180vh), 0) rotate(var(--move-rot, 15deg)) scale(var(--end-scale, 1.05));
+  }
+}
+
 /* Iconic Sci-Fi Ships (Star Trek & Star Wars silhouettes with glowing nacelles/engines) */
 .spaceship-atmosphere .distant-ship {
   position: absolute;
   pointer-events: none;
-  opacity: 0.85 !important;
-  z-index: 2 !important; /* Fly BEHIND planets & moons in deep space */
+  opacity: 0.55 !important;
+  z-index: 1 !important; /* Fly BEHIND planets & moons in deep space */
   will-change: transform;
   transform: translateZ(0);
   contain: layout style paint;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.9)) brightness(0.9);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.85)) blur(0.6px) brightness(0.75);
 }
 
 .spaceship-atmosphere .starship-svg {
@@ -1480,13 +1506,13 @@
 
 /* Engine Pulse & LED Strobe Animations */
 @keyframes engine-pulse-glow {
-  0%, 100% { opacity: 0.85; filter: drop-shadow(-8px 0 12px rgba(56, 189, 248, 0.7)); }
-  50% { opacity: 1; filter: drop-shadow(-14px 0 24px rgba(125, 211, 252, 0.95)); }
+  0%, 100% { opacity: 0.75; filter: drop-shadow(-6px 0 10px rgba(56, 189, 248, 0.6)); }
+  50% { opacity: 0.95; filter: drop-shadow(-10px 0 18px rgba(125, 211, 252, 0.85)); }
 }
 
 @keyframes nav-beacon-strobe {
   0%, 88%, 100% { opacity: 0.2; box-shadow: 0 0 2px #ffffff; }
-  92%, 96% { opacity: 1; box-shadow: 0 0 12px #ffffff, 0 0 20px #38bdf8; }
+  92%, 96% { opacity: 1; box-shadow: 0 0 10px #ffffff, 0 0 16px #38bdf8; }
 }
 
 /* Ship 1: Astral Dreadnought Flagship */
@@ -2046,126 +2072,70 @@
 /* Ship 1: Left to Right (Top Horizon - 15% Y) */
 @keyframes straight-flight-left-to-right-1 {
   0% {
-    transform: translate3d(-450px, 0, 0) scale(0.85);
-    opacity: 0;
-  }
-  3% {
-    opacity: 0.95;
-  }
-  97% {
-    opacity: 0.95;
+    transform: translate3d(-550px, 0, 0) scale(0.42);
   }
   100% {
-    transform: translate3d(calc(100vw + 450px), 0, 0) scale(0.85);
-    opacity: 0;
+    transform: translate3d(calc(100vw + 550px), 0, 0) scale(0.42);
   }
 }
 
 /* Ship 2: Left to Right (Upper-Mid Horizon - 32% Y) */
 @keyframes straight-flight-left-to-right-2 {
   0% {
-    transform: translate3d(-450px, 0, 0) scale(0.9);
-    opacity: 0;
-  }
-  3% {
-    opacity: 0.95;
-  }
-  97% {
-    opacity: 0.95;
+    transform: translate3d(-550px, 0, 0) scale(0.45);
   }
   100% {
-    transform: translate3d(calc(100vw + 450px), 0, 0) scale(0.9);
-    opacity: 0;
+    transform: translate3d(calc(100vw + 550px), 0, 0) scale(0.45);
   }
 }
 
 /* Ship 3: Right to Left (Mid Horizon - 48% Y) */
 @keyframes straight-flight-right-to-left-1 {
   0% {
-    transform: translate3d(calc(100vw + 450px), 0, 0) scaleX(-1) scale(1.0);
-    opacity: 0;
-  }
-  3% {
-    opacity: 1;
-  }
-  97% {
-    opacity: 1;
+    transform: translate3d(calc(100vw + 550px), 0, 0) scaleX(-1) scale(0.50);
   }
   100% {
-    transform: translate3d(-450px, 0, 0) scaleX(-1) scale(1.0);
-    opacity: 0;
+    transform: translate3d(-550px, 0, 0) scaleX(-1) scale(0.50);
   }
 }
 
 /* Ship 4: Right to Left (Lower-Mid Horizon - 64% Y) */
 @keyframes straight-flight-right-to-left-2 {
   0% {
-    transform: translate3d(calc(100vw + 450px), 0, 0) scaleX(-1) scale(0.88);
-    opacity: 0;
-  }
-  3% {
-    opacity: 0.95;
-  }
-  97% {
-    opacity: 0.95;
+    transform: translate3d(calc(100vw + 550px), 0, 0) scaleX(-1) scale(0.44);
   }
   100% {
-    transform: translate3d(-450px, 0, 0) scaleX(-1) scale(0.88);
-    opacity: 0;
+    transform: translate3d(-550px, 0, 0) scaleX(-1) scale(0.44);
   }
 }
 
 /* Ship 5: Left to Right (Lower Horizon - 78% Y) */
 @keyframes straight-flight-left-to-right-3 {
   0% {
-    transform: translate3d(-450px, 0, 0) scale(0.95);
-    opacity: 0;
-  }
-  3% {
-    opacity: 0.95;
-  }
-  97% {
-    opacity: 0.95;
+    transform: translate3d(-550px, 0, 0) scale(0.48);
   }
   100% {
-    transform: translate3d(calc(100vw + 450px), 0, 0) scale(0.95);
-    opacity: 0;
+    transform: translate3d(calc(100vw + 550px), 0, 0) scale(0.48);
   }
 }
 
 /* Ship 6: Right to Left (High Sky - 22% Y) */
 @keyframes straight-flight-right-to-left-3 {
   0% {
-    transform: translate3d(calc(100vw + 450px), 0, 0) scaleX(-1) scale(0.75);
-    opacity: 0;
-  }
-  3% {
-    opacity: 0.9;
-  }
-  97% {
-    opacity: 0.9;
+    transform: translate3d(calc(100vw + 550px), 0, 0) scaleX(-1) scale(0.38);
   }
   100% {
-    transform: translate3d(-450px, 0, 0) scaleX(-1) scale(0.75);
-    opacity: 0;
+    transform: translate3d(-550px, 0, 0) scaleX(-1) scale(0.38);
   }
 }
 
 /* Ship 7: Left to Right (Bottom Horizon - 85% Y) */
 @keyframes straight-flight-left-to-right-4 {
   0% {
-    transform: translate3d(-450px, 0, 0) scale(1.15);
-    opacity: 0;
-  }
-  3% {
-    opacity: 1;
-  }
-  97% {
-    opacity: 1;
+    transform: translate3d(-550px, 0, 0) scale(0.58);
   }
   100% {
-    transform: translate3d(calc(100vw + 450px), 0, 0) scale(1.15);
-    opacity: 0;
+    transform: translate3d(calc(100vw + 550px), 0, 0) scale(0.58);
   }
 }
 

@@ -2054,6 +2054,24 @@ export default function App() {
     [schedulePasswordSave],
   );
 
+  const reorderTabs = useCallback((fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex) return;
+    setTabs((prev) => {
+      if (
+        fromIndex < 0 ||
+        fromIndex >= prev.length ||
+        toIndex < 0 ||
+        toIndex >= prev.length
+      ) {
+        return prev;
+      }
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return next;
+    });
+  }, []);
+
   const setActiveSql = useCallback(
     (nextSql: string, syncEditor = false) => {
       setTabs((prev) =>
@@ -3743,14 +3761,14 @@ export default function App() {
               key={planet.id}
               className={`space-celestial space-celestial-dynamic celestial-${planet.type}`}
               style={{
-                left: `${planet.xPct}%`,
-                top: `${planet.yPct}%`,
+                left: `${planet.xPct}vw`,
+                top: `${planet.yPct}vh`,
                 width: `${planet.size}px`,
                 height: `${planet.size}px`,
                 animationDuration: `${planet.duration}s`,
                 animationDelay: `${planet.delay}s`,
-                "--move-x": `${planet.moveX}px`,
-                "--move-y": `${planet.moveY}px`,
+                "--move-x": planet.moveX,
+                "--move-y": planet.moveY,
                 "--move-rot": `${planet.moveRot}deg`,
                 "--start-scale": planet.startScale,
                 "--end-scale": planet.endScale,
@@ -4634,6 +4652,7 @@ export default function App() {
                   onRename={(id, title) => {
                     void renameTab(id, title);
                   }}
+                  onReorder={reorderTabs}
                   width={queryTabsWidth}
                 />
 

@@ -31,8 +31,8 @@ export interface RandomPlanet {
   size: number;
   xPct: number;
   yPct: number;
-  moveX: number;
-  moveY: number;
+  moveX: string;
+  moveY: string;
   moveRot: number;
   startScale: number;
   endScale: number;
@@ -81,46 +81,8 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
   const randInt = (min: number, max: number) => Math.floor(randRange(min, max + 1));
   const randChoice = <T>(arr: T[]): T => arr[Math.floor(rand() * arr.length)];
 
-  // Generate 4 to 6 planets with wild placement variety
-  const count = randInt(4, 6);
-
-  // Poisson-Disc / Candidate-based free viewport placement (x: 2% to 88%, y: 2% to 82%)
-  const positions: { x: number; y: number }[] = [];
-  const minDistPct = 22; // Minimum distance between planet centers in % coordinates
-
-  for (let i = 0; i < count; i++) {
-    let candidateX = 0;
-    let candidateY = 0;
-    let valid = false;
-
-    for (let attempt = 0; attempt < 80; attempt++) {
-      candidateX = randRange(2, 88);
-      candidateY = randRange(2, 82);
-
-      let tooClose = false;
-      for (const pos of positions) {
-        const dx = candidateX - pos.x;
-        const dy = candidateY - pos.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < minDistPct) {
-          tooClose = true;
-          break;
-        }
-      }
-
-      if (!tooClose) {
-        valid = true;
-        break;
-      }
-    }
-
-    if (!valid) {
-      candidateX = randRange(2, 88);
-      candidateY = randRange(2, 82);
-    }
-
-    positions.push({ x: candidateX, y: candidateY });
-  }
+  // Generate 5 to 7 planets floating slowly in unconstrained linear paths
+  const count = randInt(5, 7);
 
   const archetypes = [
     "gas-giant",
@@ -142,26 +104,37 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
   const planets: RandomPlanet[] = [];
 
   for (let i = 0; i < count; i++) {
-    const pos = positions[i];
-    const xPct = parseFloat(pos.x.toFixed(1));
-    const yPct = parseFloat(pos.y.toFixed(1));
-
     const archetype = archetypes[i % archetypes.length];
     const name = `${randChoice(PLANET_NAMES_PREFIX)} ${randChoice(PLANET_NAMES_SUFFIX)}`;
-    
-    // Vary size significantly from 130px to 460px
-    const size = randInt(130, 460);
 
-    // Wild, unconstrained movement vectors in random directions!
+    // Size variety from 140px to 460px
+    const size = randInt(140, 460);
+
+    // Straight linear travel vector from off-screen start to off-screen end
+    // Angle in radians (0 to 2pi)
     const angleRad = randRange(0, Math.PI * 2);
-    const speedDist = randRange(150, 450);
-    const moveX = Math.round(Math.cos(angleRad) * speedDist);
-    const moveY = Math.round(Math.sin(angleRad) * speedDist);
-    const moveRot = randInt(-25, 25);
+    
+    // Off-screen orbit radius (88vw/vh ensures start & end are 100% off-screen)
+    const R = 88;
+    const startXvw = 50 - R * Math.cos(angleRad);
+    const startYvh = 50 - R * Math.sin(angleRad);
+    
+    const deltaXvw = 2 * R * Math.cos(angleRad);
+    const deltaYvh = 2 * R * Math.sin(angleRad);
 
-    const startScale = parseFloat(randRange(0.85, 0.98).toFixed(2));
-    const endScale = parseFloat(randRange(1.02, 1.15).toFixed(2));
-    const duration = randInt(22, 85);
+    const xPct = parseFloat(startXvw.toFixed(1));
+    const yPct = parseFloat(startYvh.toFixed(1));
+    const moveX = `${deltaXvw.toFixed(1)}vw`;
+    const moveY = `${deltaYvh.toFixed(1)}vh`;
+    const moveRot = randInt(-30, 30);
+
+    const startScale = parseFloat(randRange(0.88, 0.98).toFixed(2));
+    const endScale = parseFloat(randRange(1.02, 1.12).toFixed(2));
+
+    // Slow, stately space movement duration (140s to 320s = 2.3 to 5.3 minutes)
+    const duration = randInt(140, 320);
+
+    // Staggered negative delays so planets start along their paths immediately
     const delay = -parseFloat((rand() * duration).toFixed(1));
 
     // Dynamic light origin position for body radial gradient
