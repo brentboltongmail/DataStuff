@@ -4518,6 +4518,15 @@ export default function App() {
                   onRename={(id, title) => {
                     void renameTab(id, title);
                   }}
+                  onSplitPointerDown={onSplitPointerDown}
+                  onSplitPointerMove={onSplitPointerMove}
+                  onSplitPointerUp={onSplitPointerUp}
+                  onSplitPointerCancel={endSplitDrag}
+                  onDoubleClickSplit={() =>
+                    setEditorSplit((prev) =>
+                      prev > 0.65 ? DEFAULT_EDITOR_SPLIT : MAX_EDITOR_SPLIT,
+                    )
+                  }
                 />
                 <div className="editor-wrapper">
                   <div className="query-copy-gutter">

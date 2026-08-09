@@ -9,6 +9,11 @@ interface Props {
   onAdd: () => void;
   onOpen: () => void;
   onRename: (id: string, title: string) => void;
+  onSplitPointerDown?: (event: React.PointerEvent<HTMLDivElement>) => void;
+  onSplitPointerMove?: (event: React.PointerEvent<HTMLDivElement>) => void;
+  onSplitPointerUp?: (event: React.PointerEvent<HTMLDivElement>) => void;
+  onSplitPointerCancel?: () => void;
+  onDoubleClickSplit?: () => void;
 }
 
 export default function SqlTabs({
@@ -19,6 +24,11 @@ export default function SqlTabs({
   onAdd,
   onOpen,
   onRename,
+  onSplitPointerDown,
+  onSplitPointerMove,
+  onSplitPointerUp,
+  onSplitPointerCancel,
+  onDoubleClickSplit,
 }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
@@ -127,6 +137,25 @@ export default function SqlTabs({
           </div>
         ))}
       </div>
+
+      {onSplitPointerDown ? (
+        <div
+          className="sql-tabs-drag-handle"
+          role="separator"
+          aria-orientation="horizontal"
+          title="Drag to expand query editor section · double-click to maximize/reset"
+          onPointerDown={onSplitPointerDown}
+          onPointerMove={onSplitPointerMove}
+          onPointerUp={onSplitPointerUp}
+          onPointerCancel={onSplitPointerCancel}
+          onDoubleClick={onDoubleClickSplit}
+        >
+          <span className="sql-tabs-drag-grip">
+            <span className="drag-icon">⇕</span>
+            <span className="drag-text">Drag to Expand</span>
+          </span>
+        </div>
+      ) : null}
     </div>
   );
 }
