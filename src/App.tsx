@@ -1515,6 +1515,8 @@ export default function App() {
   const [editorTick, setEditorTick] = useState(0);
   const [editorLineHeight, setEditorLineHeight] = useState(18);
   const [copiedBlockId, setCopiedBlockId] = useState<string | null>(null);
+  const lastCursorLineRef = useRef<number>(1);
+  const lastSelectionTextRef = useRef<string>("");
 
   useEffect(() => {
     const handleResize = () => setEditorTick((t) => t + 1);
@@ -2224,9 +2226,11 @@ export default function App() {
     let selectedText = "";
     if (model && selection && !selection.isEmpty()) {
       selectedText = model.getValueInRange(selection);
+    } else if (lastSelectionTextRef.current) {
+      selectedText = lastSelectionTextRef.current;
     }
 
-    const cursorLine = position?.lineNumber ?? 1;
+    const cursorLine = position?.lineNumber ?? lastCursorLineRef.current ?? 1;
     return statementBlockAtCursor(text, cursorLine, selectedText);
   }, [sql]);
 
@@ -3171,6 +3175,21 @@ export default function App() {
     ed.onDidScrollChange((e) => {
       setEditorScrollTop(e.scrollTop);
       setEditorTick((t) => t + 1);
+    });
+
+    ed.onDidChangeCursorPosition((e) => {
+      if (e.position) {
+        lastCursorLineRef.current = e.position.lineNumber;
+      }
+    });
+
+    ed.onDidChangeCursorSelection((e) => {
+      const model = ed.getModel();
+      if (model && e.selection && !e.selection.isEmpty()) {
+        lastSelectionTextRef.current = model.getValueInRange(e.selection);
+      } else {
+        lastSelectionTextRef.current = "";
+      }
     });
 
     ed.onDidChangeModelContent(() => {
