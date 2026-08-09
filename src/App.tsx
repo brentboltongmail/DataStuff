@@ -4695,8 +4695,8 @@ export default function App() {
         className="body"
         style={{
           gridTemplateColumns: sidebarCollapsed
-            ? "1fr 0px 28px"
-            : `1fr 2px ${sidebarWidth}px`,
+            ? "minmax(0, 1fr) 0px 28px"
+            : `minmax(0, 1fr) 2px ${sidebarWidth}px`,
         }}
       >
         <main

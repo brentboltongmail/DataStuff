@@ -409,8 +409,11 @@ input:focus {
 
 .body {
   display: grid;
-  grid-template-columns: 1fr 2px 240px;
+  grid-template-columns: minmax(0, 1fr) 2px 240px;
   min-height: 0;
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.15), transparent 8%);
 }
 
@@ -455,13 +458,14 @@ body.is-col-resizing .sidebar-split {
 .object-browser {
   display: grid;
   grid-template-rows: auto auto 1fr auto;
-  border-left: none;
+  border-left: 1px solid var(--border-soft);
   background:
     linear-gradient(270deg, rgba(0, 0, 0, 0.2) 0%, transparent 100%),
     var(--bg-panel);
   opacity: 0.9;
   box-shadow: none;
   min-height: 0;
+  min-width: 0;
 }
 
 .object-browser-header {
@@ -678,7 +682,18 @@ body.is-col-resizing .sidebar-split {
   grid-template-rows: minmax(120px, 0.42fr) 2px minmax(120px, 0.58fr);
   min-height: 0;
   min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
   background: var(--bg-deep);
+}
+
+.results-pane {
+  min-height: 0;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
 }
 
 .workspace-split {
