@@ -4585,7 +4585,7 @@ export default function App() {
             disabled={busy}
             title="Manage saved connection profiles and credentials"
           >
-            Manage Connections...
+            Connections...
           </button>
           <select
             id="saved-connections"
