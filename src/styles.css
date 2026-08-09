@@ -25,6 +25,31 @@ body {
   position: relative;
 }
 
+/* Custom 12px scrollbars */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-deep, rgba(0, 0, 0, 0.2));
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--border) 70%, var(--accent));
+  border-radius: 6px;
+  border: 2px solid var(--bg-deep, #14161a);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg-deep, #14161a);
+}
+
 button,
 input {
   font: inherit;
@@ -870,7 +895,7 @@ body.is-col-resizing .query-tabs-split {
   left: 2px;
   top: 0;
   bottom: 0;
-  width: 22px;
+  width: 14px;
   z-index: 100;
   pointer-events: none;
 }
@@ -878,11 +903,11 @@ body.is-col-resizing .query-tabs-split {
 .query-copy-bar {
   position: absolute;
   left: 0;
-  width: 18px;
+  width: 12px;
   pointer-events: auto;
   background: color-mix(in srgb, var(--accent) 30%, rgba(0, 0, 0, 0.4));
   border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
-  border-radius: 4px;
+  border-radius: 3px;
   cursor: pointer;
   padding: 0;
   margin: 0;
@@ -895,17 +920,17 @@ body.is-col-resizing .query-tabs-split {
 }
 
 .query-copy-bar:hover {
-  width: 20px;
+  width: 13px;
   background: color-mix(in srgb, var(--accent) 70%, var(--bg-panel));
   border-color: var(--accent);
-  box-shadow: 0 0 12px var(--accent);
+  box-shadow: 0 0 10px var(--accent);
 }
 
 .query-copy-bar.copied {
-  width: 20px;
+  width: 13px;
   background: #10b981 !important;
   border-color: #10b981 !important;
-  box-shadow: 0 0 14px #10b981 !important;
+  box-shadow: 0 0 12px #10b981 !important;
 }
 
 .query-copy-label {
@@ -918,9 +943,9 @@ body.is-col-resizing .query-tabs-split {
   user-select: none;
   pointer-events: none;
   font-family: var(--font-mono, monospace);
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text-muted);
   opacity: 0.85;
