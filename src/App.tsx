@@ -2226,8 +2226,6 @@ export default function App() {
     let selectedText = "";
     if (model && selection && !selection.isEmpty()) {
       selectedText = model.getValueInRange(selection);
-    } else if (lastSelectionTextRef.current) {
-      selectedText = lastSelectionTextRef.current;
     }
 
     const cursorLine = position?.lineNumber ?? lastCursorLineRef.current ?? 1;

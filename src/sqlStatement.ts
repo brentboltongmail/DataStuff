@@ -50,7 +50,7 @@ export function statementAtCursor(sql: string, cursorLine: number): string {
     .replace(/;+\s*$/g, "");
 }
 
-/** Prefer a non-empty selection; otherwise the blank-line statement at the cursor with startLine info. */
+/** Prefer a non-empty selection; otherwise the statement at the cursor separated by blank lines or semicolons. */
 export function statementBlockAtCursor(
   sql: string,
   cursorLine: number,
@@ -61,24 +61,59 @@ export function statementBlockAtCursor(
     return { statement: selected.replace(/;+\s*$/g, ""), startLine: Math.max(1, cursorLine) };
   }
 
-  const blocks = parseSqlStatements(sql);
-  if (blocks.length === 0) return { statement: "", startLine: 1 };
+  const lines = sql.split(/\r?\n/);
+  if (lines.length === 0) return { statement: "", startLine: 1 };
 
-  const match = blocks.find((b) => cursorLine >= b.startLine && cursorLine <= b.endLine);
-  if (match) {
-    return { statement: match.text, startLine: match.startLine };
-  }
+  let idx = Math.min(Math.max(cursorLine - 1, 0), lines.length - 1);
 
-  let closest = blocks[0];
-  let minDiff = Math.abs(cursorLine - blocks[0].startLine);
-  for (const b of blocks) {
-    const diff = Math.min(Math.abs(cursorLine - b.startLine), Math.abs(cursorLine - b.endLine));
-    if (diff < minDiff) {
-      minDiff = diff;
-      closest = b;
+  // If the cursor is on a blank line, find the closest non-blank line
+  if (isBlank(lines[idx] ?? "")) {
+    let up = idx;
+    while (up > 0 && isBlank(lines[up] ?? "")) up -= 1;
+    if (!isBlank(lines[up] ?? "")) {
+      idx = up;
+    } else {
+      let down = idx;
+      while (down < lines.length - 1 && isBlank(lines[down] ?? "")) down += 1;
+      if (!isBlank(lines[down] ?? "")) {
+        idx = down;
+      }
     }
   }
-  return { statement: closest.text, startLine: closest.startLine };
+
+  if (isBlank(lines[idx] ?? "")) return { statement: "", startLine: 1 };
+
+  // Expand start upwards until blank line or preceding line ends with ';'
+  let start = idx;
+  while (start > 0) {
+    const prevLine = lines[start - 1] ?? "";
+    if (isBlank(prevLine) || prevLine.trim().endsWith(";")) {
+      break;
+    }
+    start -= 1;
+  }
+
+  // Expand end downwards until blank line or line ends with ';'
+  let end = idx;
+  while (end < lines.length - 1) {
+    const currLine = lines[end] ?? "";
+    if (currLine.trim().endsWith(";")) {
+      break;
+    }
+    const nextLine = lines[end + 1] ?? "";
+    if (isBlank(nextLine)) {
+      break;
+    }
+    end += 1;
+  }
+
+  const statement = lines
+    .slice(start, end + 1)
+    .join("\n")
+    .trim()
+    .replace(/;+\s*$/g, "");
+
+  return { statement, startLine: start + 1 };
 }
 
 /** Prefer a non-empty selection; otherwise the blank-line statement at the cursor. */
