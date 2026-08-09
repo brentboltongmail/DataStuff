@@ -42,7 +42,7 @@ export function cellEditKey(rowIndex: number, columnIndex: number): string {
 }
 
 function crammedHeaderHeightPx(columnNames: string[], fontScale: number): number {
-  if (columnNames.length === 0) return 28;
+  if (columnNames.length === 0) return 32;
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
   const fontSize = 9 * fontScale;
@@ -56,7 +56,7 @@ function crammedHeaderHeightPx(columnNames: string[], fontScale: number): number
     maxWidth = Math.max(...columnNames.map((name) => name.length)) * fontSize * 0.6;
   }
   const radians = (CRAMMED_HEADER_ANGLE_DEG * Math.PI) / 180;
-  return Math.max(28, Math.ceil(maxWidth * Math.sin(radians)) + 8);
+  return Math.max(36, Math.ceil(maxWidth * Math.sin(radians)) + 32);
 }
 
 function gridFontSizePx(density: GridDensity, fontScale: number): number {
@@ -286,7 +286,7 @@ export default function ResultsGrid({
     });
     if (maxWidth <= 0) return;
     const radians = (CRAMMED_HEADER_ANGLE_DEG * Math.PI) / 180;
-    const measured = Math.max(28, Math.ceil(maxWidth * Math.sin(radians)) + 8);
+    const measured = Math.max(36, Math.ceil(maxWidth * Math.sin(radians)) + 32);
     headerRowRef.current.style.height = `${measured}px`;
   }, [density, headerNames, fontScale, crammedHeight, colWidths]);
 

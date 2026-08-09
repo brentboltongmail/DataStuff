@@ -1350,11 +1350,11 @@ body.is-col-resizing .monaco-editor {
   transform: rotate(-30deg);
   transform-origin: bottom left;
   white-space: nowrap;
-  max-width: none;
-  overflow: visible;
-  text-overflow: clip;
+  max-width: none !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
   line-height: 1;
-  margin-left: 22px;
+  margin-left: 8px;
   color: var(--text-muted);
   pointer-events: none;
 }
