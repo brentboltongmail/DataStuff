@@ -1515,6 +1515,7 @@ export default function App() {
   const [editorTick, setEditorTick] = useState(0);
   const [editorLineHeight, setEditorLineHeight] = useState(18);
   const [selectedExplainQueryIndex, setSelectedExplainQueryIndex] = useState<number>(0);
+  const [explainModalOpen, setExplainModalOpen] = useState<boolean>(false);
   const [copiedBlockId, setCopiedBlockId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -2487,6 +2488,28 @@ export default function App() {
     setMessage,
   ]);
 
+  const runExplainForBlockIndex = useCallback(
+    (index: number) => {
+      const blocks = parseSqlStatements(sql);
+      if (index < 0 || index >= blocks.length) return;
+      setSelectedExplainQueryIndex(index);
+      setExplainModalOpen(false);
+      const targetBlock = blocks[index];
+      const detectedBinds = parseBindVariables(targetBlock.text);
+      if (detectedBinds.length > 0) {
+        setBindModalState({
+          open: true,
+          varNames: detectedBinds,
+          action: "explain",
+          rawSql: targetBlock.text,
+        });
+        return;
+      }
+      void executeExplainWithBinds(targetBlock.text, bindValues);
+    },
+    [sql, executeExplainWithBinds, bindValues],
+  );
+
   const handleExplainTabClick = useCallback(
     (targetQueryIdx?: number) => {
       setBottomTab("explain");
@@ -2500,36 +2523,18 @@ export default function App() {
         return;
       }
 
-      let chosenIdx = 0;
-      if (typeof targetQueryIdx === "number" && targetQueryIdx >= 0 && targetQueryIdx < blocks.length) {
-        chosenIdx = targetQueryIdx;
-      } else if (blocks.length > 1) {
-        const currentBlock = resolveExecutableSqlBlock();
-        const matchIdx = blocks.findIndex((b) => b.startLine === currentBlock.startLine);
-        chosenIdx = matchIdx >= 0 ? matchIdx : 0;
-      }
-
-      setSelectedExplainQueryIndex(chosenIdx);
-      const targetBlock = blocks[chosenIdx];
-      const detectedBinds = parseBindVariables(targetBlock.text);
-      if (detectedBinds.length > 0) {
-        setBindModalState({
-          open: true,
-          varNames: detectedBinds,
-          action: "explain",
-          rawSql: targetBlock.text,
-        });
+      if (typeof targetQueryIdx === "number") {
+        runExplainForBlockIndex(targetQueryIdx);
         return;
       }
-      void executeExplainWithBinds(targetBlock.text, bindValues);
+
+      if (blocks.length === 1) {
+        runExplainForBlockIndex(0);
+      } else {
+        setExplainModalOpen(true);
+      }
     },
-    [
-      status.connected,
-      sql,
-      resolveExecutableSqlBlock,
-      executeExplainWithBinds,
-      bindValues,
-    ],
+    [status.connected, sql, runExplainForBlockIndex],
   );
 
   const onConfirmBindModal = async (confirmedBinds: Record<string, BindVarParam>) => {
@@ -5022,23 +5027,6 @@ export default function App() {
                 </label>
               </div>
 
-              {bottomTab === "explain" && sqlBlocks.length > 1 ? (
-                <div className="explain-query-selector">
-                  <span className="explain-query-label">Explain Query:</span>
-                  {sqlBlocks.map((block, idx) => (
-                    <button
-                      key={block.id}
-                      type="button"
-                      className={`explain-query-btn ${selectedExplainQueryIndex === idx ? "active" : ""}`}
-                      onClick={() => handleExplainTabClick(idx)}
-                      title={`Run Explain Plan for Query ${idx + 1} (Lines ${block.startLine}–${block.endLine})`}
-                    >
-                      Q{idx + 1}
-                    </button>
-                  ))}
-                </div>
-              ) : null}
-
               <div className="results-header-right">
                 {bottomTab === "results" && resultSummary ? (
                   <span className="results-summary">
@@ -5404,6 +5392,62 @@ export default function App() {
           </div>
         </div>
       ) : null}
+
+      {explainModalOpen && (
+        <div className="modal-backdrop" onClick={() => setExplainModalOpen(false)}>
+          <div
+            className="modal explain-query-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <h2>Select Query for Explain Plan</h2>
+              <button
+                type="button"
+                className="icon-button"
+                onClick={() => setExplainModalOpen(false)}
+                title="Close modal"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="explain-modal-body">
+              <p className="explain-modal-subtitle">
+                Multiple SQL statements detected in editor. Choose which query number to run Explain Plan for:
+              </p>
+              <div className="explain-query-list">
+                {sqlBlocks.map((block, idx) => {
+                  const firstLine = block.text.trim().split("\n")[0] ?? "";
+                  const preview = firstLine.length > 65 ? `${firstLine.slice(0, 65)}…` : firstLine;
+                  const isSelected = selectedExplainQueryIndex === idx;
+                  return (
+                    <button
+                      key={block.id}
+                      type="button"
+                      className={`explain-query-card ${isSelected ? "selected" : ""}`}
+                      onClick={() => runExplainForBlockIndex(idx)}
+                    >
+                      <div className="explain-card-header">
+                        <span className="explain-card-num">Query {idx + 1}</span>
+                        <span className="explain-card-lines">Lines {block.startLine}–{block.endLine}</span>
+                      </div>
+                      <div className="explain-card-snippet">{preview}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="modal-actions" style={{ padding: "12px 16px" }}>
+              <button
+                type="button"
+                className="secondary"
+                onClick={() => setExplainModalOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {bindModalState?.open && (
         <BindVariablesModal
