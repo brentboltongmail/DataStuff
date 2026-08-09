@@ -1514,10 +1514,6 @@ export default function App() {
   const [editorScrollTop, setEditorScrollTop] = useState(0);
   const [editorTick, setEditorTick] = useState(0);
   const [editorLineHeight, setEditorLineHeight] = useState(18);
-  const [selectedExplainQueryIndex, setSelectedExplainQueryIndex] = useState<number>(0);
-  const [explainModalOpen, setExplainModalOpen] = useState<boolean>(false);
-  const [selectedQueryIndex, setSelectedQueryIndex] = useState<number>(0);
-  const [queryModalOpen, setQueryModalOpen] = useState<boolean>(false);
   const [copiedBlockId, setCopiedBlockId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -2452,28 +2448,6 @@ export default function App() {
     ],
   );
 
-  const runQueryForBlockIndex = useCallback(
-    (index: number) => {
-      const blocks = parseSqlStatements(sql);
-      if (index < 0 || index >= blocks.length) return;
-      setSelectedQueryIndex(index);
-      setQueryModalOpen(false);
-      const targetBlock = blocks[index];
-      const detectedBinds = parseBindVariables(targetBlock.text);
-      if (detectedBinds.length > 0) {
-        setBindModalState({
-          open: true,
-          varNames: detectedBinds,
-          action: "execute",
-          rawSql: targetBlock.text,
-        });
-        return;
-      }
-      void executeQueryWithBinds(targetBlock.text, bindValues, targetBlock.startLine);
-    },
-    [sql, executeQueryWithBinds, bindValues],
-  );
-
   const onExecute = useCallback(async () => {
     if (!status.connected) {
       setError("Connect to Oracle first");
@@ -2491,12 +2465,6 @@ export default function App() {
       return;
     }
 
-    const blocks = parseSqlStatements(sql);
-    const matchIdx = blocks.findIndex((b) => b.startLine === startLine);
-    if (matchIdx >= 0) {
-      setSelectedQueryIndex(matchIdx);
-    }
-
     const detectedBinds = parseBindVariables(statement);
     if (detectedBinds.length > 0) {
       setBindModalState({
@@ -2512,7 +2480,6 @@ export default function App() {
   }, [
     status.connected,
     autoFormat,
-    sql,
     resolveExecutableSqlBlock,
     bindValues,
     executeQueryWithBinds,
@@ -2520,58 +2487,40 @@ export default function App() {
     setMessage,
   ]);
 
-  const runExplainForBlockIndex = useCallback(
-    (index: number) => {
-      const blocks = parseSqlStatements(sql);
-      if (index < 0 || index >= blocks.length) return;
-      setSelectedExplainQueryIndex(index);
-      setExplainModalOpen(false);
-      const targetBlock = blocks[index];
-      const detectedBinds = parseBindVariables(targetBlock.text);
-      if (detectedBinds.length > 0) {
-        setBindModalState({
-          open: true,
-          varNames: detectedBinds,
-          action: "explain",
-          rawSql: targetBlock.text,
-        });
-        return;
-      }
-      void executeExplainWithBinds(targetBlock.text, bindValues);
-    },
-    [sql, executeExplainWithBinds, bindValues],
-  );
+  const handleExplainTabClick = useCallback(async () => {
+    setBottomTab("explain");
+    if (!status.connected) {
+      setError("Connect to Oracle database first");
+      return;
+    }
 
-  const handleExplainTabClick = useCallback(
-    (targetQueryIdx?: number) => {
-      setBottomTab("explain");
-      if (!status.connected) {
-        setExplainError("Connect to Oracle database first");
-        return;
-      }
-      const blocks = parseSqlStatements(sql);
-      if (blocks.length === 0) {
-        setExplainError("No SQL statement in editor to explain");
-        return;
-      }
+    const { statement } = resolveExecutableSqlBlock();
+    if (!statement) {
+      setError("No statement under the cursor (separate statements with a blank line)");
+      setMessage("Nothing to explain");
+      return;
+    }
 
-      if (typeof targetQueryIdx === "number") {
-        runExplainForBlockIndex(targetQueryIdx);
-        return;
-      }
+    const detectedBinds = parseBindVariables(statement);
+    if (detectedBinds.length > 0) {
+      setBindModalState({
+        open: true,
+        varNames: detectedBinds,
+        action: "explain",
+        rawSql: statement,
+      });
+      return;
+    }
 
-      // Always execute Explain Plan for the statement under cursor by default
-      const currentBlock = resolveExecutableSqlBlock();
-      if (currentBlock.statement) {
-        const matchIdx = blocks.findIndex((b) => b.startLine === currentBlock.startLine);
-        const idxToRun = matchIdx >= 0 ? matchIdx : 0;
-        runExplainForBlockIndex(idxToRun);
-      } else {
-        runExplainForBlockIndex(0);
-      }
-    },
-    [status.connected, sql, resolveExecutableSqlBlock, runExplainForBlockIndex],
-  );
+    await executeExplainWithBinds(statement, bindValues);
+  }, [
+    status.connected,
+    resolveExecutableSqlBlock,
+    bindValues,
+    executeExplainWithBinds,
+    setError,
+    setMessage,
+  ]);
 
   const onConfirmBindModal = async (confirmedBinds: Record<string, BindVarParam>) => {
     if (!bindModalState) return;
@@ -5070,30 +5019,10 @@ export default function App() {
                     {result?.truncated ? ` · first ${maxRows.toLocaleString()} rows` : ""}
                   </span>
                 ) : null}
-                {bottomTab === "results" && sqlBlocks.length > 1 ? (
-                  <button
-                    type="button"
-                    className="secondary switch-explain-query-btn"
-                    onClick={() => setQueryModalOpen(true)}
-                    title="Change which query number to execute"
-                  >
-                    Q{selectedQueryIndex + 1} of {sqlBlocks.length} ▾
-                  </button>
-                ) : null}
                 {bottomTab === "explain" && explainSummary ? (
                   <span className="results-summary">
                     <strong>{explainSummary}</strong>
                   </span>
-                ) : null}
-                {bottomTab === "explain" && sqlBlocks.length > 1 ? (
-                  <button
-                    type="button"
-                    className="secondary switch-explain-query-btn"
-                    onClick={() => setExplainModalOpen(true)}
-                    title="Change query for Explain Plan"
-                  >
-                    Q{selectedExplainQueryIndex + 1} of {sqlBlocks.length} ▾
-                  </button>
                 ) : null}
                 <button
                   type="button"
@@ -5449,117 +5378,7 @@ export default function App() {
         </div>
       ) : null}
 
-      {queryModalOpen && (
-        <div className="modal-backdrop" onClick={() => setQueryModalOpen(false)}>
-          <div
-            className="modal explain-query-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal-header">
-              <h2>Select Query to Run</h2>
-              <button
-                type="button"
-                className="icon-button"
-                onClick={() => setQueryModalOpen(false)}
-                title="Close modal"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="explain-modal-body">
-              <p className="explain-modal-subtitle">
-                Multiple SQL statements detected in editor. Choose which query number to execute:
-              </p>
-              <div className="explain-query-list">
-                {sqlBlocks.map((block, idx) => {
-                  const firstLine = block.text.trim().split("\n")[0] ?? "";
-                  const preview = firstLine.length > 65 ? `${firstLine.slice(0, 65)}…` : firstLine;
-                  const isSelected = selectedQueryIndex === idx;
-                  return (
-                    <button
-                      key={block.id}
-                      type="button"
-                      className={`explain-query-card ${isSelected ? "selected" : ""}`}
-                      onClick={() => runQueryForBlockIndex(idx)}
-                    >
-                      <div className="explain-card-header">
-                        <span className="explain-card-num">Query {idx + 1}</span>
-                        <span className="explain-card-lines">Lines {block.startLine}–{block.endLine}</span>
-                      </div>
-                      <div className="explain-card-snippet">{preview}</div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="modal-actions" style={{ padding: "12px 16px" }}>
-              <button
-                type="button"
-                className="secondary"
-                onClick={() => setQueryModalOpen(false)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {explainModalOpen && (
-        <div className="modal-backdrop" onClick={() => setExplainModalOpen(false)}>
-          <div
-            className="modal explain-query-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal-header">
-              <h2>Select Query for Explain Plan</h2>
-              <button
-                type="button"
-                className="icon-button"
-                onClick={() => setExplainModalOpen(false)}
-                title="Close modal"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="explain-modal-body">
-              <p className="explain-modal-subtitle">
-                Multiple SQL statements detected in editor. Choose which query number to run Explain Plan for:
-              </p>
-              <div className="explain-query-list">
-                {sqlBlocks.map((block, idx) => {
-                  const firstLine = block.text.trim().split("\n")[0] ?? "";
-                  const preview = firstLine.length > 65 ? `${firstLine.slice(0, 65)}…` : firstLine;
-                  const isSelected = selectedExplainQueryIndex === idx;
-                  return (
-                    <button
-                      key={block.id}
-                      type="button"
-                      className={`explain-query-card ${isSelected ? "selected" : ""}`}
-                      onClick={() => runExplainForBlockIndex(idx)}
-                    >
-                      <div className="explain-card-header">
-                        <span className="explain-card-num">Query {idx + 1}</span>
-                        <span className="explain-card-lines">Lines {block.startLine}–{block.endLine}</span>
-                      </div>
-                      <div className="explain-card-snippet">{preview}</div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="modal-actions" style={{ padding: "12px 16px" }}>
-              <button
-                type="button"
-                className="secondary"
-                onClick={() => setExplainModalOpen(false)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {bindModalState?.open && (
         <BindVariablesModal
