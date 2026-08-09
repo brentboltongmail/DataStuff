@@ -201,20 +201,9 @@ function computeCrammedColWidths(
     const isDate = isDateColumn(rows, index);
 
     if (isDate) {
-      // Date types use full formatted date width
-      let maxDateW = 0;
-      const sampleCount = Math.min(rows.length, 100);
-      for (let r = 0; r < sampleCount; r++) {
-        const pending = pendingEdits[cellEditKey(r, index)];
-        const cell = pending ? pending.newValue : rows[r]?.[index];
-        const text = isNullCell(cell) ? "NULL" : formatCell(cell);
-        if (text) {
-          const w = measureTextPx(text, bodyFont) + padX;
-          if (w > maxDateW) maxDateW = w;
-        }
-      }
-      const defaultDateW = measureTextPx("2026-08-09 00:00:00", bodyFont) + padX;
-      widths[col.name] = Math.max(minW, maxDateW || defaultDateW);
+      // Date type columns are exactly 20 characters wide + cell padding
+      const widthOf20Chars = measureTextPx("0".repeat(20), bodyFont) + padX;
+      widths[col.name] = Math.max(minW, widthOf20Chars);
     } else {
       // Non-date columns: average width of the first 100 rows of data in each column
       let totalWidth = 0;
