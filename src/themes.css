@@ -5049,7 +5049,7 @@
 
   --editor-bg: rgba(6, 30, 48, 0.9);
   --editor-gutter: #082f49;
-  --grid-header: #0c4a6e;
+  --grid-header: rgba(12, 74, 110, 0.5);
   --grid-zebra: rgba(6, 182, 212, 0.03);
 
   --font-display: "Outfit", sans-serif;
