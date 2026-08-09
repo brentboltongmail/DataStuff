@@ -1070,7 +1070,7 @@ body.is-col-resizing .query-tabs-split {
   background: transparent;
   color: var(--text-muted);
   border-right: 1px solid var(--border);
-  padding: 0 12px;
+  padding: 0 6px;
 }
 
 .bottom-tabs button.active {
