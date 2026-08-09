@@ -1160,7 +1160,7 @@ kbd {
 .results-grid td {
   border-bottom: 1px solid var(--border);
   border-right: 1px solid var(--border);
-  padding: 1px 1px !important;
+  padding: 1px 2px !important;
   text-align: left;
   white-space: nowrap;
   max-width: 420px;
@@ -1460,7 +1460,7 @@ body.is-col-resizing .monaco-editor {
 }
 
 .results-grid.density-crammed td {
-  padding: 1px 1px !important;
+  padding: 1px 2px !important;
   line-height: 1.15;
 }
 
