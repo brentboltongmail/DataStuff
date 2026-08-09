@@ -1500,8 +1500,8 @@ body.is-col-resizing .monaco-editor {
 }
 
 .results-grid.density-crammed.has-col-widths th:not(.row-num) {
-  width: auto;
-  max-width: none;
+  width: 0;
+  max-width: 0;
   overflow: visible;
 }
 

@@ -617,6 +617,7 @@ export default function ResultsGrid({
                 <td
                   key={columnIndex}
                   title={title}
+                  style={colWidths[col.name] ? { width: colWidths[col.name], minWidth: colWidths[col.name], maxWidth: colWidths[col.name] } : undefined}
                   className={[
                     nullCell ? "cell-null" : "",
                     dirty ? "cell-dirty" : "",
