@@ -785,22 +785,22 @@
   position: relative;
   z-index: 2;
   isolation: isolate;
-  opacity: 0.85 !important;
+  opacity: 0.9 !important;
   background: transparent !important;
 }
 
 [data-theme="spaceship"] .titlebar {
   position: relative;
   z-index: 20;
-  background: rgba(6, 12, 22, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(6, 12, 22, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 [data-theme="spaceship"] .connection-bar {
   position: relative;
   z-index: 20;
-  background: rgba(8, 14, 26, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(8, 14, 26, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 [data-theme="spaceship"] .workspace {
@@ -812,44 +812,44 @@
 [data-theme="spaceship"] .sidebar {
   position: relative;
   z-index: 20;
-  background: rgba(10, 18, 32, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(10, 18, 32, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 [data-theme="spaceship"] .editor-pane {
   position: relative;
   z-index: 20;
-  background: rgba(10, 18, 32, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(10, 18, 32, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 [data-theme="spaceship"] .results-pane {
   position: relative;
   z-index: 20;
-  background: rgba(10, 18, 32, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(10, 18, 32, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 [data-theme="spaceship"] .toolbar {
   position: relative;
   z-index: 20;
-  background: rgba(12, 20, 36, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(12, 20, 36, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 [data-theme="spaceship"] .status-bar {
   position: relative;
   z-index: 20;
-  background: rgba(6, 12, 22, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(6, 12, 22, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 [data-theme="spaceship"] .modal-backdrop,
 [data-theme="spaceship"] .modal {
   position: relative;
   z-index: 100;
-  background: rgba(10, 18, 32, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(10, 18, 32, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 [data-theme="spaceship"] .monaco-editor,
@@ -4783,8 +4783,8 @@
 [data-theme="ice"] .editor-pane,
 [data-theme="ice"] .object-browser,
 [data-theme="ice"] .results-pane {
-  background: rgba(11, 19, 32, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(11, 19, 32, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 [data-theme="ice"] .titlebar::after {
@@ -4924,7 +4924,7 @@
   --sql-tab-active-bg: linear-gradient(180deg, #092b14 0%, #051409 100%);
   --sql-tab-active-border: #00ff66;
 
-  --editor-bg: rgba(3, 15, 7, 0.85);
+  --editor-bg: rgba(3, 15, 7, 0.9);
   --editor-gutter: #051409;
   --grid-header: #082110;
   --grid-zebra: rgba(0, 255, 102, 0.03);
@@ -4938,8 +4938,8 @@
 [data-theme="matrix"] .editor-pane,
 [data-theme="matrix"] .object-browser,
 [data-theme="matrix"] .results-pane {
-  background: rgba(3, 15, 7, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(3, 15, 7, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 .matrix-atmosphere {
@@ -5047,7 +5047,7 @@
   --sql-tab-active-bg: linear-gradient(180deg, #0c4a6e 0%, #082f49 100%);
   --sql-tab-active-border: #06b6d4;
 
-  --editor-bg: rgba(6, 30, 48, 0.85);
+  --editor-bg: rgba(6, 30, 48, 0.9);
   --editor-gutter: #082f49;
   --grid-header: #0c4a6e;
   --grid-zebra: rgba(6, 182, 212, 0.03);
@@ -5061,8 +5061,8 @@
 [data-theme="deepsea"] .editor-pane,
 [data-theme="deepsea"] .object-browser,
 [data-theme="deepsea"] .results-pane {
-  background: rgba(6, 30, 48, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(6, 30, 48, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 .deepsea-atmosphere {
@@ -5283,7 +5283,7 @@
   --sql-tab-active-bg: linear-gradient(180deg, #2d0e52 0%, #1d0936 100%);
   --sql-tab-active-border: #ec4899;
 
-  --editor-bg: rgba(22, 6, 42, 0.85);
+  --editor-bg: rgba(22, 6, 42, 0.9);
   --editor-gutter: #1d0936;
   --grid-header: #2d0e52;
   --grid-zebra: rgba(236, 72, 153, 0.03);
@@ -5297,8 +5297,8 @@
 [data-theme="synthwave"] .editor-pane,
 [data-theme="synthwave"] .object-browser,
 [data-theme="synthwave"] .results-pane {
-  background: rgba(22, 6, 42, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(22, 6, 42, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -5452,7 +5452,7 @@
   --sql-tab-active-bg: linear-gradient(180deg, #114533 0%, #0a2e22 100%);
   --sql-tab-active-border: #f59e0b;
 
-  --editor-bg: rgba(6, 26, 19, 0.85);
+  --editor-bg: rgba(6, 26, 19, 0.9);
   --editor-gutter: #0a2e22;
   --grid-header: #114533;
   --grid-zebra: rgba(245, 158, 11, 0.03);
@@ -5466,8 +5466,8 @@
 [data-theme="enchanted"] .editor-pane,
 [data-theme="enchanted"] .object-browser,
 [data-theme="enchanted"] .results-pane {
-  background: rgba(6, 26, 19, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(6, 26, 19, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 .enchanted-atmosphere {
@@ -5590,7 +5590,7 @@
   --sql-tab-active-bg: linear-gradient(180deg, #1b2947 0%, #111a2e 100%);
   --sql-tab-active-border: #fbbf24;
 
-  --editor-bg: rgba(10, 16, 28, 0.85);
+  --editor-bg: rgba(10, 16, 28, 0.9);
   --editor-gutter: #111a2e;
   --grid-header: #1b2947;
   --grid-zebra: rgba(251, 191, 36, 0.03);
@@ -5604,8 +5604,8 @@
 [data-theme="hud"] .editor-pane,
 [data-theme="hud"] .object-browser,
 [data-theme="hud"] .results-pane {
-  background: rgba(10, 16, 28, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(10, 16, 28, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 .hud-atmosphere {
@@ -5785,7 +5785,7 @@
   --sql-tab-active-bg: linear-gradient(180deg, #26161c 0%, #181014 100%);
   --sql-tab-active-border: #dc2626;
 
-  --editor-bg: rgba(24, 16, 20, 0.85);
+  --editor-bg: rgba(24, 16, 20, 0.9);
   --editor-gutter: #181014;
   --grid-header: #26161c;
   --grid-zebra: rgba(220, 38, 38, 0.03);
@@ -5799,8 +5799,8 @@
 [data-theme="dragon"] .editor-pane,
 [data-theme="dragon"] .object-browser,
 [data-theme="dragon"] .results-pane {
-  background: rgba(24, 16, 20, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(24, 16, 20, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 .dragon-atmosphere {
@@ -5941,7 +5941,7 @@
   --sql-tab-active-bg: linear-gradient(180deg, #201142 0%, #130a2a 100%);
   --sql-tab-active-border: #a855f7;
 
-  --editor-bg: rgba(19, 10, 42, 0.85);
+  --editor-bg: rgba(19, 10, 42, 0.9);
   --editor-gutter: #130a2a;
   --grid-header: #201142;
   --grid-zebra: rgba(168, 85, 247, 0.03);
@@ -5955,8 +5955,8 @@
 [data-theme="nebula"] .editor-pane,
 [data-theme="nebula"] .object-browser,
 [data-theme="nebula"] .results-pane {
-  background: rgba(19, 10, 42, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(19, 10, 42, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 .nebula-atmosphere {
@@ -6272,7 +6272,7 @@
   --sql-tab-active-bg: linear-gradient(180deg, #1e2942 0%, #141c2e 100%);
   --sql-tab-active-border: #ef4444;
 
-  --editor-bg: rgba(20, 28, 46, 0.85);
+  --editor-bg: rgba(20, 28, 46, 0.9);
   --editor-gutter: #141c2e;
   --grid-header: #1e2942;
   --grid-zebra: rgba(239, 68, 68, 0.03);
@@ -6286,8 +6286,8 @@
 [data-theme="drift"] .editor-pane,
 [data-theme="drift"] .object-browser,
 [data-theme="drift"] .results-pane {
-  background: rgba(20, 28, 46, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(20, 28, 46, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 .drift-atmosphere {
@@ -6465,7 +6465,7 @@
   --sql-tab-active-bg: linear-gradient(180deg, #44403c 0%, #292524 100%);
   --sql-tab-active-border: #d97706;
 
-  --editor-bg: rgba(41, 37, 36, 0.85);
+  --editor-bg: rgba(41, 37, 36, 0.9);
   --editor-gutter: #292524;
   --grid-header: #44403c;
   --grid-zebra: rgba(217, 119, 6, 0.03);
@@ -6479,8 +6479,8 @@
 [data-theme="codex"] .editor-pane,
 [data-theme="codex"] .object-browser,
 [data-theme="codex"] .results-pane {
-  background: rgba(41, 37, 36, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(41, 37, 36, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 .codex-atmosphere {
@@ -6652,7 +6652,7 @@
   --sql-tab-active-bg: linear-gradient(180deg, #3d2419 0%, #291811 100%);
   --sql-tab-active-border: #f97316;
 
-  --editor-bg: rgba(41, 24, 17, 0.85);
+  --editor-bg: rgba(41, 24, 17, 0.9);
   --editor-gutter: #291811;
   --grid-header: #3d2419;
   --grid-zebra: rgba(249, 115, 22, 0.03);
@@ -6666,8 +6666,8 @@
 [data-theme="dune"] .editor-pane,
 [data-theme="dune"] .object-browser,
 [data-theme="dune"] .results-pane {
-  background: rgba(41, 24, 17, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(41, 24, 17, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 .dune-atmosphere {
@@ -6841,7 +6841,7 @@
   --sql-tab-active-bg: linear-gradient(180deg, #2e1065 0%, #1e1b4b 100%);
   --sql-tab-active-border: #9333ea;
 
-  --editor-bg: rgba(30, 27, 75, 0.85);
+  --editor-bg: rgba(30, 27, 75, 0.9);
   --editor-gutter: #1e1b4b;
   --grid-header: #2e1065;
   --grid-zebra: rgba(147, 51, 234, 0.03);
@@ -6855,8 +6855,8 @@
 [data-theme="crystal"] .editor-pane,
 [data-theme="crystal"] .object-browser,
 [data-theme="crystal"] .results-pane {
-  background: rgba(30, 27, 75, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(30, 27, 75, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 .crystal-atmosphere {
@@ -7042,7 +7042,7 @@
   --sql-tab-active-bg: linear-gradient(180deg, #1f2937 0%, #111827 100%);
   --sql-tab-active-border: #00ffcc;
 
-  --editor-bg: rgba(17, 24, 39, 0.85);
+  --editor-bg: rgba(17, 24, 39, 0.9);
   --editor-gutter: #111827;
   --grid-header: #1f2937;
   --grid-zebra: rgba(0, 255, 204, 0.03);
@@ -7056,8 +7056,8 @@
 [data-theme="cyberpunk"] .editor-pane,
 [data-theme="cyberpunk"] .object-browser,
 [data-theme="cyberpunk"] .results-pane {
-  background: rgba(17, 24, 39, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(17, 24, 39, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 .cyberpunk-atmosphere {
@@ -7273,7 +7273,7 @@
   --sql-tab-active-bg: linear-gradient(180deg, #451a03 0%, #290d09 100%);
   --sql-tab-active-border: #fef08a;
 
-  --editor-bg: rgba(41, 13, 9, 0.85);
+  --editor-bg: rgba(41, 13, 9, 0.9);
   --editor-gutter: #290d09;
   --grid-header: #451a03;
   --grid-zebra: rgba(254, 240, 138, 0.03);
@@ -7287,8 +7287,8 @@
 [data-theme="solar"] .editor-pane,
 [data-theme="solar"] .object-browser,
 [data-theme="solar"] .results-pane {
-  background: rgba(41, 13, 9, 0.85) !important;
-  opacity: 0.85 !important;
+  background: rgba(41, 13, 9, 0.9) !important;
+  opacity: 0.9 !important;
 }
 
 .solar-atmosphere {

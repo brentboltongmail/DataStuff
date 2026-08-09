@@ -443,7 +443,7 @@ body.is-col-resizing .sidebar-split {
   background:
     linear-gradient(270deg, rgba(0, 0, 0, 0.2) 0%, transparent 100%),
     var(--bg-panel);
-  opacity: 0.85;
+  opacity: 0.9;
   box-shadow: inset 1px 0 0 var(--panel-tint),
     -4px 0 18px rgba(0, 0, 0, 0.2);
   min-height: 0;
@@ -741,7 +741,7 @@ body.is-row-resizing .monaco-editor {
   height: 100%;
   border-right: 1px solid var(--border);
   background: var(--bg-panel);
-  opacity: 0.85;
+  opacity: 0.9;
   min-height: 0;
   user-select: none;
   flex-shrink: 0;
@@ -899,7 +899,7 @@ body.is-col-resizing .query-tabs-split {
   position: relative;
   min-height: 0;
   background: var(--editor-bg);
-  opacity: 0.85;
+  opacity: 0.9;
   backdrop-filter: blur(2px) saturate(110%);
   -webkit-backdrop-filter: blur(2px) saturate(110%);
   overflow: hidden;
@@ -1097,7 +1097,7 @@ button.active-toggle {
   display: grid;
   grid-template-rows: auto 1fr;
   background: var(--bg);
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 .results-header {
