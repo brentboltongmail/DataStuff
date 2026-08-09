@@ -1829,10 +1829,13 @@ export default function App() {
       "--font-scale",
       String(roundScale(fontScale * 0.75)),
     );
+    const currentFontSize = Math.round(EDITOR_BASE_FONT_SIZE * fontScale);
+    const currentLineHeight = currentFontSize + 1;
     editorRef.current?.updateOptions({
-      fontSize: Math.round(EDITOR_BASE_FONT_SIZE * fontScale),
-      lineHeight: Math.round(EDITOR_BASE_FONT_SIZE * fontScale * 1.22),
+      fontSize: currentFontSize,
+      lineHeight: currentLineHeight,
     });
+    setEditorLineHeight(currentLineHeight);
     window.oracle?.saveSettings?.({ fontScale });
   }, [fontScale]);
 
@@ -3137,12 +3140,14 @@ export default function App() {
   const onEditorMount: OnMount = useCallback((ed, monaco) => {
     editorRef.current = ed;
     monaco.editor.setTheme(themeOption(themeId).monacoTheme);
+    const currentFontSize = Math.round(EDITOR_BASE_FONT_SIZE * loadFontScale());
+    const currentLineHeight = currentFontSize + 1;
     ed.updateOptions({
-      fontSize: Math.round(EDITOR_BASE_FONT_SIZE * loadFontScale()),
-      lineHeight: Math.round(EDITOR_BASE_FONT_SIZE * loadFontScale() * 1.22),
+      fontSize: currentFontSize,
+      lineHeight: currentLineHeight,
     });
 
-    setEditorLineHeight(ed.getOption(monaco.editor.EditorOption.lineHeight) || 18);
+    setEditorLineHeight(currentLineHeight);
     setEditorScrollTop(ed.getScrollTop());
     setEditorTick((t) => t + 1);
 
@@ -4814,7 +4819,7 @@ export default function App() {
                     onMount={onEditorMount}
                     options={{
                       fontSize: Math.round(EDITOR_BASE_FONT_SIZE * fontScale),
-                      lineHeight: Math.round(EDITOR_BASE_FONT_SIZE * fontScale * 1.22),
+                      lineHeight: Math.round(EDITOR_BASE_FONT_SIZE * fontScale) + 1,
                       fontFamily: "IBM Plex Mono, SF Mono, Menlo, Monaco, Consolas, monospace",
                       minimap: { enabled: false },
                       scrollBeyondLastLine: false,

@@ -112,7 +112,7 @@ function computeNormalColWidths(
 ): Record<string, number> {
   const bodyFont = gridFontSizePx("normal", fontScale);
   const headerFont = 11 * fontScale;
-  const padX = 26; // horizontal padding (10px left + 10px right + 6px breathing room for handle)
+  const padX = 8; // horizontal padding (1px left + 1px right + 6px breathing room for handle)
   const minW = minColWidthPx("normal", fontScale);
   
   // Width corresponding to 50 monospace characters
@@ -155,7 +155,7 @@ function computeCompactColWidths(
   fontScale: number,
 ): Record<string, number> {
   const headerFont = 10 * fontScale;
-  const padX = 14; // compact padding 2px 6px + border breathing room
+  const padX = 8; // compact padding 1px 1px + border breathing room
   const minW = minColWidthPx("compact", fontScale);
   const widths: Record<string, number> = {};
 
