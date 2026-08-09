@@ -4995,7 +4995,7 @@ export default function App() {
                     checked={autoFormat}
                     onChange={(e) => setAutoFormat(e.target.checked)}
                   />
-                  Auto Format
+                  Auto
                 </label>
                 <button
                   type="button"
