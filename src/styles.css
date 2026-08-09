@@ -180,13 +180,14 @@ input:focus {
 }
 
 .titlebar h1.titlebar-app-name {
-  margin: 0;
+  margin: 0 6px 0 10px;
   font-family: var(--font-display);
-  font-size: var(--base-font-size);
-  font-weight: 700;
+  font-size: calc(var(--base-font-size) * 1.22);
+  font-weight: 800;
   color: var(--brand-color, var(--accent));
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
   white-space: nowrap;
+  text-shadow: 0 0 12px color-mix(in srgb, var(--brand-color, var(--accent)) 35%, transparent);
 }
 
 .titlebar button,
