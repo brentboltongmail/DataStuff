@@ -24,7 +24,12 @@ import {
 } from "./editableQuery";
 import { formatElapsed } from "./formatElapsed";
 import { formatSql } from "./sqlFormatter";
-import { parseSqlStatements, sqlToExecute, type SqlStatementBlock } from "./sqlStatement";
+import {
+  parseSqlStatements,
+  statementBlockAtCursor,
+  sqlToExecute,
+  type SqlStatementBlock,
+} from "./sqlStatement";
 import {
   APP_THEMES,
   THEME_KEY,
@@ -2168,7 +2173,7 @@ export default function App() {
     }
   };
 
-  const resolveExecutableSql = useCallback(() => {
+  const resolveExecutableSqlBlock = useCallback(() => {
     const editor = editorRef.current;
     const model = editor?.getModel();
     const position = editor?.getPosition();
@@ -2181,17 +2186,33 @@ export default function App() {
     }
 
     const cursorLine = position?.lineNumber ?? 1;
-    return sqlToExecute(text, cursorLine, selectedText);
+    return statementBlockAtCursor(text, cursorLine, selectedText);
   }, [sql]);
 
+  const resolveExecutableSql = useCallback(() => {
+    return resolveExecutableSqlBlock().statement;
+  }, [resolveExecutableSqlBlock]);
+
   const executeQueryWithBinds = useCallback(
-    async (statement: string, currentBinds: Record<string, BindVarParam>) => {
+    async (
+      statement: string,
+      currentBinds: Record<string, BindVarParam>,
+      startLine = 1,
+    ) => {
       setBusy(true);
       setQueryStartTime(Date.now());
       setError(null);
       setBottomTab("results");
       setPendingEdits({});
       setEditMeta(null);
+
+      if (editorRef.current && monacoApiRef.current) {
+        const model = editorRef.current.getModel();
+        if (model) {
+          monacoApiRef.current.editor.setModelMarkers(model, "oracle-error", []);
+        }
+      }
+
       try {
         const { preparedSql, positionalBinds } = prepareSqlWithBinds(
           statement,
@@ -2271,10 +2292,54 @@ export default function App() {
         );
         pushHistory(statement, true, summary);
       } catch (err) {
-        const text = err instanceof Error ? err.message : String(err);
+        let text = err instanceof Error ? err.message : String(err);
+        text = text
+          .replace(/^Error invoking remote method '[^']+': Error:\s*/i, "")
+          .trim();
+
         if (isNotConnectedError(err)) {
           await forceDisconnect(text);
         } else {
+          const lineMatch = text.match(/at line (\d+)(?:,\s*column (\d+))?/i);
+          if (lineMatch) {
+            const relLine = Number.parseInt(lineMatch[1], 10);
+            const relCol = lineMatch[2] ? Number.parseInt(lineMatch[2], 10) : 1;
+            const fileLine = Math.max(1, startLine + (relLine - 1));
+            const fileCol = Math.max(1, relCol);
+
+            text = text.replace(
+              /at line \d+(?:,\s*column \d+)?/i,
+              `at line ${fileLine}, column ${fileCol}`,
+            );
+
+            if (editorRef.current && monacoApiRef.current) {
+              const model = editorRef.current.getModel();
+              if (model) {
+                monacoApiRef.current.editor.setModelMarkers(
+                  model,
+                  "oracle-error",
+                  [
+                    {
+                      startLineNumber: fileLine,
+                      startColumn: fileCol,
+                      endLineNumber: fileLine,
+                      endColumn: Math.max(
+                        fileCol + 4,
+                        model.getLineMaxColumn(fileLine),
+                      ),
+                      message: text,
+                      severity: monacoApiRef.current.MarkerSeverity.Error,
+                    },
+                  ],
+                );
+                editorRef.current.setPosition({
+                  lineNumber: fileLine,
+                  column: fileCol,
+                });
+                editorRef.current.revealLineInCenter(fileLine);
+              }
+            }
+          }
           setError(text);
           setMessage("Execute failed");
         }
@@ -2356,7 +2421,7 @@ export default function App() {
       onFormatSqlRef.current();
     }
 
-    const statement = resolveExecutableSql();
+    const { statement, startLine } = resolveExecutableSqlBlock();
     if (!statement) {
       setError("No statement under the cursor (separate statements with a blank line)");
       setMessage("Nothing to run");
@@ -2374,10 +2439,10 @@ export default function App() {
       return;
     }
 
-    await executeQueryWithBinds(statement, bindValues);
+    await executeQueryWithBinds(statement, bindValues, startLine);
   }, [
     status.connected,
-    resolveExecutableSql,
+    resolveExecutableSqlBlock,
     bindValues,
     executeQueryWithBinds,
     setError,
@@ -4615,7 +4680,19 @@ export default function App() {
                     defaultLanguage="sql"
                     theme={themeOption(themeId).monacoTheme}
                     defaultValue={sql}
-                    onChange={(value) => setActiveSql(value ?? "")}
+                    onChange={(value) => {
+                      if (monacoApiRef.current && editorRef.current) {
+                        const model = editorRef.current.getModel();
+                        if (model) {
+                          monacoApiRef.current.editor.setModelMarkers(
+                            model,
+                            "oracle-error",
+                            [],
+                          );
+                        }
+                      }
+                      setActiveSql(value ?? "");
+                    }}
                     beforeMount={onEditorBeforeMount}
                     onMount={onEditorMount}
                     options={{
@@ -4855,7 +4932,31 @@ export default function App() {
                   <div className="empty-state">Explain plan returned no rows.</div>
                 )
               ) : error ? (
-                <div className="error-state">{error}</div>
+                <div className="error-state">
+                  <div className="error-text">{error}</div>
+                  {(() => {
+                    const match = error.match(/at line (\d+)(?:,\s*column (\d+))?/i);
+                    if (!match) return null;
+                    const targetLine = Number.parseInt(match[1], 10);
+                    const targetCol = match[2] ? Number.parseInt(match[2], 10) : 1;
+                    return (
+                      <button
+                        type="button"
+                        className="secondary jump-to-error-btn"
+                        style={{ marginTop: 8, fontSize: 12, padding: "3px 10px", display: "inline-flex", alignItems: "center", gap: 4, cursor: "pointer" }}
+                        onClick={() => {
+                          if (editorRef.current) {
+                            editorRef.current.setPosition({ lineNumber: targetLine, column: targetCol });
+                            editorRef.current.revealLineInCenter(targetLine);
+                            editorRef.current.focus();
+                          }
+                        }}
+                      >
+                        📍 Jump to Line {targetLine}, Column {targetCol}
+                      </button>
+                    );
+                  })()}
+                </div>
               ) : !result ? (
                 <div className="empty-state">
                   Connect, write SQL, then Run to see rows here.

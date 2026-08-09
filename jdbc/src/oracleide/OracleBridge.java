@@ -51,9 +51,43 @@ public final class OracleBridge {
       try {
         write(handle(id, cmd, request));
       } catch (Exception ex) {
-        write(response(id, false, null, ex.getMessage() == null ? ex.toString() : ex.getMessage()));
+        int offset = getErrorOffset(ex);
+        String msg = ex.getMessage() == null ? ex.toString() : ex.getMessage();
+        String sql = stringVal(request.get("sql"));
+        if (offset >= 0 && sql != null && !sql.isEmpty()) {
+          int errLine = 1;
+          int errCol = 1;
+          int len = Math.min(offset, sql.length());
+          for (int i = 0; i < len; i++) {
+            if (sql.charAt(i) == '\n') {
+              errLine++;
+              errCol = 1;
+            } else {
+              errCol++;
+            }
+          }
+          if (!msg.contains("at line ")) {
+            msg = msg + " at line " + errLine + ", column " + errCol;
+          }
+        }
+        write(response(id, false, null, msg));
       }
     }
+  }
+
+  private static int getErrorOffset(Throwable t) {
+    if (t == null) return -1;
+    try {
+      java.lang.reflect.Method m = t.getClass().getMethod("getOffset");
+      Object val = m.invoke(t);
+      if (val instanceof Integer intVal && intVal >= 0) {
+        return intVal;
+      }
+    } catch (Throwable ignored) {}
+    if (t.getCause() != null && t.getCause() != t) {
+      return getErrorOffset(t.getCause());
+    }
+    return -1;
   }
 
   private static Map<String, Object> handle(Object id, String cmd, Map<String, Object> request)
