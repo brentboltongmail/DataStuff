@@ -79,6 +79,7 @@ const FONT_SCALE_KEY = "oracle-ide.fontScale";
 const EDITOR_SPLIT_KEY = "oracle-ide.editorSplit";
 const SIDEBAR_WIDTH_KEY = "oracle-ide.sidebarWidth";
 const SIDEBAR_COLLAPSED_KEY = "oracle-ide.sidebarCollapsed";
+const QUERY_TABS_WIDTH_KEY = "oracle-ide.queryTabsWidth";
 const REMEMBER_PASSWORD_KEY = "oracle-ide.rememberPassword";
 
 const loadSidebarCollapsed = (): boolean => {
@@ -86,6 +87,20 @@ const loadSidebarCollapsed = (): boolean => {
     return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "true";
   } catch {
     return false;
+  }
+};
+
+const DEFAULT_QUERY_TABS_WIDTH = 130;
+const MIN_QUERY_TABS_WIDTH = 80;
+const MAX_QUERY_TABS_WIDTH = 380;
+
+const loadQueryTabsWidth = (): number => {
+  try {
+    const raw = localStorage.getItem(QUERY_TABS_WIDTH_KEY);
+    const val = raw ? Number.parseInt(raw, 10) : NaN;
+    return Number.isFinite(val) && val >= MIN_QUERY_TABS_WIDTH ? val : DEFAULT_QUERY_TABS_WIDTH;
+  } catch {
+    return DEFAULT_QUERY_TABS_WIDTH;
   }
 };
 const MAX_HISTORY = 100;
@@ -1408,6 +1423,7 @@ export default function App() {
   }, [themeId]);
   const [editorSplit, setEditorSplit] = useState(loadEditorSplit);
   const [sidebarWidth, setSidebarWidth] = useState(loadSidebarWidth);
+  const [queryTabsWidth, setQueryTabsWidth] = useState(loadQueryTabsWidth);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(loadSidebarCollapsed);
 
   const toggleSidebarCollapsed = () => {
@@ -3149,6 +3165,59 @@ export default function App() {
     },
     [endSidebarDrag],
   );
+  const tabsDragRef = useRef<{ startX: number; startWidth: number } | null>(null);
+
+  useEffect(() => {
+    localStorage.setItem(QUERY_TABS_WIDTH_KEY, String(queryTabsWidth));
+    window.oracle?.saveSettings?.({ queryTabsWidth });
+  }, [queryTabsWidth]);
+
+  const endTabsDrag = useCallback(() => {
+    tabsDragRef.current = null;
+    document.body.classList.remove("is-col-resizing");
+  }, []);
+
+  const onTabsPointerDown = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (event.button !== 0) return;
+      tabsDragRef.current = {
+        startX: event.clientX,
+        startWidth: queryTabsWidth,
+      };
+      document.body.classList.add("is-col-resizing");
+      event.currentTarget.setPointerCapture(event.pointerId);
+      event.preventDefault();
+    },
+    [queryTabsWidth],
+  );
+
+  const onTabsPointerMove = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      const drag = tabsDragRef.current;
+      if (!drag) return;
+      const delta = event.clientX - drag.startX;
+      const next = Math.min(
+        MAX_QUERY_TABS_WIDTH,
+        Math.max(MIN_QUERY_TABS_WIDTH, drag.startWidth + delta),
+      );
+      setQueryTabsWidth(next);
+    },
+    [],
+  );
+
+  const onTabsPointerUp = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (tabsDragRef.current) {
+        try {
+          event.currentTarget.releasePointerCapture(event.pointerId);
+        } catch {
+          // already released
+        }
+      }
+      endTabsDrag();
+    },
+    [endTabsDrag],
+  );
 
   const onSplitPointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -4491,16 +4560,22 @@ export default function App() {
                   onRename={(id, title) => {
                     void renameTab(id, title);
                   }}
-                  onSplitPointerDown={onSplitPointerDown}
-                  onSplitPointerMove={onSplitPointerMove}
-                  onSplitPointerUp={onSplitPointerUp}
-                  onSplitPointerCancel={endSplitDrag}
-                  onDoubleClickSplit={() =>
-                    setEditorSplit((prev) =>
-                      prev > 0.65 ? DEFAULT_EDITOR_SPLIT : MAX_EDITOR_SPLIT,
-                    )
-                  }
+                  width={queryTabsWidth}
                 />
+
+                <div
+                  className="query-tabs-split"
+                  role="separator"
+                  aria-orientation="vertical"
+                  aria-label="Resize query tabs and editor"
+                  title="Drag to resize query tabs panel · double-click to reset width"
+                  onPointerDown={onTabsPointerDown}
+                  onPointerMove={onTabsPointerMove}
+                  onPointerUp={onTabsPointerUp}
+                  onPointerCancel={endTabsDrag}
+                  onDoubleClick={() => setQueryTabsWidth(DEFAULT_QUERY_TABS_WIDTH)}
+                />
+
                 <div className="editor-wrapper">
                   <div className="query-copy-gutter">
                     {sqlBlocks.map((block) => {

@@ -709,9 +709,6 @@ body.is-row-resizing .monaco-editor {
 .sql-tabs {
   display: flex;
   flex-direction: column;
-  width: 130px;
-  min-width: 130px;
-  max-width: 160px;
   height: 100%;
   border-right: 1px solid var(--border);
   background: var(--bg-panel);
@@ -722,47 +719,25 @@ body.is-row-resizing .monaco-editor {
   z-index: 10;
 }
 
-.sql-tabs-drag-handle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 4px;
-  margin-top: auto;
-  border-top: 1px solid var(--border-soft);
-  background: linear-gradient(180deg, transparent 0%, var(--panel-tint) 100%);
-  cursor: row-resize;
+.query-tabs-split {
+  width: 4px;
+  min-width: 4px;
+  height: 100%;
+  cursor: col-resize;
+  background: var(--border-soft);
   user-select: none;
   touch-action: none;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  position: relative;
+  z-index: 12;
+  flex-shrink: 0;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
 }
 
-.sql-tabs-drag-handle:hover,
-.sql-tabs-drag-handle:active,
-body.is-row-resizing .sql-tabs-drag-handle {
-  background: var(--hover-tint, rgba(255, 255, 255, 0.12));
-  border-top-color: var(--accent);
-}
-
-.sql-tabs-drag-grip {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--text-muted);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  opacity: 0.85;
-}
-
-.sql-tabs-drag-handle:hover .sql-tabs-drag-grip,
-body.is-row-resizing .sql-tabs-drag-grip {
-  color: var(--accent);
-  opacity: 1;
-}
-
-.drag-icon {
-  font-size: 12px;
-  line-height: 1;
+.query-tabs-split:hover,
+.query-tabs-split:active,
+body.is-col-resizing .query-tabs-split {
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
 }
 
 .sql-tabs-list {
