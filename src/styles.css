@@ -865,13 +865,12 @@ body.is-col-resizing .query-tabs-split {
   height: 100%;
   min-width: 0;
 }
-
 .query-copy-gutter {
   position: absolute;
   left: 2px;
   top: 0;
   bottom: 0;
-  width: 8px;
+  width: 22px;
   z-index: 100;
   pointer-events: none;
 }
@@ -879,29 +878,59 @@ body.is-col-resizing .query-tabs-split {
 .query-copy-bar {
   position: absolute;
   left: 0;
-  width: 4px;
+  width: 18px;
   pointer-events: auto;
-  background: color-mix(in srgb, var(--accent) 45%, rgba(255, 255, 255, 0.2));
-  border: 1px solid color-mix(in srgb, var(--accent) 65%, transparent);
-  border-radius: 3px;
+  background: color-mix(in srgb, var(--accent) 30%, rgba(0, 0, 0, 0.4));
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: 4px;
   cursor: pointer;
   padding: 0;
   margin: 0;
-  transition: width 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  transition: width 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .query-copy-bar:hover {
-  width: 7px;
-  background: var(--accent);
-  box-shadow: 0 0 10px var(--accent);
+  width: 20px;
+  background: color-mix(in srgb, var(--accent) 70%, var(--bg-panel));
+  border-color: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
 }
 
 .query-copy-bar.copied {
-  width: 7px;
+  width: 20px;
   background: #10b981 !important;
   border-color: #10b981 !important;
-  box-shadow: 0 0 12px #10b981 !important;
+  box-shadow: 0 0 14px #10b981 !important;
+}
+
+.query-copy-label {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: none;
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0.85;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+.query-copy-bar:hover .query-copy-label,
+.query-copy-bar.copied .query-copy-label {
+  color: #ffffff;
+  opacity: 1;
 }
 
 .query-copied-toast {

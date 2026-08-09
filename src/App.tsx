@@ -4642,35 +4642,76 @@ export default function App() {
 
                 <div className="editor-wrapper">
                   <div className="query-copy-gutter">
-                    {sqlBlocks.map((block) => {
-                      let top = 12 + (block.startLine - 1) * editorLineHeight - editorScrollTop;
-                      let height = (block.endLine - block.startLine + 1) * editorLineHeight;
+                    {(() => {
+                      const viewportHeight =
+                        editorRef.current?.getLayoutInfo().height ?? 600;
+                      return sqlBlocks.map((block, idx) => {
+                        let top =
+                          12 +
+                          (block.startLine - 1) * editorLineHeight -
+                          editorScrollTop;
+                        let height =
+                          (block.endLine - block.startLine + 1) *
+                          editorLineHeight;
 
-                      if (editorRef.current) {
-                        const lineTop = editorRef.current.getTopForLineNumber(block.startLine);
-                        const nextLineTop = editorRef.current.getTopForLineNumber(block.endLine + 1);
-                        top = lineTop - editorScrollTop;
-                        height = nextLineTop - lineTop;
-                      }
+                        if (editorRef.current) {
+                          const lineTop =
+                            editorRef.current.getTopForLineNumber(
+                              block.startLine,
+                            );
+                          const nextLineTop =
+                            editorRef.current.getTopForLineNumber(
+                              block.endLine + 1,
+                            );
+                          top = lineTop - editorScrollTop;
+                          height = nextLineTop - lineTop;
+                        }
 
-                      const isCopied = copiedBlockId === block.id;
+                        const isCopied = copiedBlockId === block.id;
 
-                      if (top + height < -50 || top > 2500) return null;
+                        if (top + height < -50 || top > viewportHeight + 100)
+                          return null;
 
-                      return (
-                        <button
-                          key={block.id}
-                          type="button"
-                          className={`query-copy-bar ${isCopied ? "copied" : ""}`}
-                          style={{
-                            top: `${top}px`,
-                            height: `${height}px`,
-                          }}
-                          title={`Click to copy query (Lines ${block.startLine}–${block.endLine})`}
-                          onClick={() => handleCopyQueryBlock(block)}
-                        />
-                      );
-                    })}
+                        const labelHeight = 56;
+                        const visibleStart = Math.max(top, 0);
+                        const visibleEnd = Math.min(
+                          top + height,
+                          viewportHeight,
+                        );
+                        const visibleCenter = (visibleStart + visibleEnd) / 2;
+                        const idealTop = visibleCenter - top - labelHeight / 2;
+                        const labelTop = Math.max(
+                          4,
+                          Math.min(
+                            Math.max(4, height - labelHeight - 4),
+                            idealTop,
+                          ),
+                        );
+
+                        return (
+                          <button
+                            key={block.id}
+                            type="button"
+                            className={`query-copy-bar ${isCopied ? "copied" : ""}`}
+                            style={{
+                              top: `${top}px`,
+                              height: `${height}px`,
+                            }}
+                            title={`Click to copy Query ${idx + 1} (Lines ${block.startLine}–${block.endLine})`}
+                            onClick={() => handleCopyQueryBlock(block)}
+                          >
+                            <span
+                              className="query-copy-label"
+                              style={{
+                                top: `${labelTop}px`,
+                              }}
+                            >
+                              {isCopied ? "✓ COPIED" : `Query ${idx + 1}`}
+                            </span>
+                          </button>
+                        );
+                      });
+                    })()}
                   </div>
                   {copiedBlockId && <div className="query-copied-toast">✓ Query Copied!</div>}
                   <Editor
