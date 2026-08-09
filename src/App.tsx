@@ -1514,6 +1514,7 @@ export default function App() {
   const [editorScrollTop, setEditorScrollTop] = useState(0);
   const [editorTick, setEditorTick] = useState(0);
   const [editorLineHeight, setEditorLineHeight] = useState(18);
+  const [selectedExplainQueryIndex, setSelectedExplainQueryIndex] = useState<number>(0);
   const [copiedBlockId, setCopiedBlockId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -2230,10 +2231,6 @@ export default function App() {
     return statementBlockAtCursor(text, cursorLine, selectedText);
   }, [sql]);
 
-  const resolveExecutableSql = useCallback(() => {
-    return resolveExecutableSqlBlock().statement;
-  }, [resolveExecutableSqlBlock]);
-
   const executeQueryWithBinds = useCallback(
     async (
       statement: string,
@@ -2490,39 +2487,50 @@ export default function App() {
     setMessage,
   ]);
 
-  const onExplainPlan = useCallback(async () => {
-    if (!status.connected) {
-      setError("Connect to Oracle first");
-      return;
-    }
+  const handleExplainTabClick = useCallback(
+    (targetQueryIdx?: number) => {
+      setBottomTab("explain");
+      if (!status.connected) {
+        setExplainError("Connect to Oracle database first");
+        return;
+      }
+      const blocks = parseSqlStatements(sql);
+      if (blocks.length === 0) {
+        setExplainError("No SQL statement in editor to explain");
+        return;
+      }
 
-    const statement = resolveExecutableSql();
-    if (!statement) {
-      setError("No statement under the cursor (separate statements with a blank line)");
-      setMessage("Nothing to explain");
-      return;
-    }
+      let chosenIdx = 0;
+      if (typeof targetQueryIdx === "number" && targetQueryIdx >= 0 && targetQueryIdx < blocks.length) {
+        chosenIdx = targetQueryIdx;
+      } else if (blocks.length > 1) {
+        const currentBlock = resolveExecutableSqlBlock();
+        const matchIdx = blocks.findIndex((b) => b.startLine === currentBlock.startLine);
+        chosenIdx = matchIdx >= 0 ? matchIdx : 0;
+      }
 
-    const detectedBinds = parseBindVariables(statement);
-    if (detectedBinds.length > 0) {
-      setBindModalState({
-        open: true,
-        varNames: detectedBinds,
-        action: "explain",
-        rawSql: statement,
-      });
-      return;
-    }
-
-    await executeExplainWithBinds(statement, bindValues);
-  }, [
-    status.connected,
-    resolveExecutableSql,
-    bindValues,
-    executeExplainWithBinds,
-    setError,
-    setMessage,
-  ]);
+      setSelectedExplainQueryIndex(chosenIdx);
+      const targetBlock = blocks[chosenIdx];
+      const detectedBinds = parseBindVariables(targetBlock.text);
+      if (detectedBinds.length > 0) {
+        setBindModalState({
+          open: true,
+          varNames: detectedBinds,
+          action: "explain",
+          rawSql: targetBlock.text,
+        });
+        return;
+      }
+      void executeExplainWithBinds(targetBlock.text, bindValues);
+    },
+    [
+      status.connected,
+      sql,
+      resolveExecutableSqlBlock,
+      executeExplainWithBinds,
+      bindValues,
+    ],
+  );
 
   const onConfirmBindModal = async (confirmedBinds: Record<string, BindVarParam>) => {
     if (!bindModalState) return;
@@ -4929,7 +4937,8 @@ export default function App() {
                 <button
                   type="button"
                   className={bottomTab === "explain" ? "active" : ""}
-                  onClick={() => setBottomTab("explain")}
+                  onClick={() => handleExplainTabClick()}
+                  title="Generate Explain Plan for SQL statement in editor"
                 >
                   Explain Plan
                 </button>
@@ -5013,14 +5022,6 @@ export default function App() {
                 </label>
                 <button
                   type="button"
-                  onClick={onExplainPlan}
-                  disabled={!status.connected || busy}
-                  title="Show Oracle explain plan and which indexes the statement uses"
-                >
-                  Explain Plan
-                </button>
-                <button
-                  type="button"
                   onClick={onExportCsv}
                   disabled={!canExport || busy}
                   title="Export current result grid to CSV"
@@ -5028,6 +5029,23 @@ export default function App() {
                   Export CSV
                 </button>
               </div>
+
+              {bottomTab === "explain" && sqlBlocks.length > 1 ? (
+                <div className="explain-query-selector">
+                  <span className="explain-query-label">Explain Query:</span>
+                  {sqlBlocks.map((block, idx) => (
+                    <button
+                      key={block.id}
+                      type="button"
+                      className={`explain-query-btn ${selectedExplainQueryIndex === idx ? "active" : ""}`}
+                      onClick={() => handleExplainTabClick(idx)}
+                      title={`Run Explain Plan for Query ${idx + 1} (Lines ${block.startLine}–${block.endLine})`}
+                    >
+                      Q{idx + 1}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
 
               {bottomTab === "results" && resultSummary ? (
                 <span className="results-summary">

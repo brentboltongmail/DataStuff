@@ -1109,6 +1109,36 @@ body.is-col-resizing .query-tabs-split {
   letter-spacing: 0.03em;
 }
 
+.explain-query-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+  -webkit-app-region: no-drag;
+}
+
+.explain-query-label {
+  font-size: var(--base-font-size);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.explain-query-btn {
+  height: 16px !important;
+  line-height: 1 !important;
+  font-size: var(--base-font-size) !important;
+  padding: 0 5px !important;
+  cursor: pointer;
+  border-radius: 3px !important;
+}
+
+.explain-query-btn.active {
+  background: var(--accent) !important;
+  color: #ffffff !important;
+  border-color: var(--accent-hover) !important;
+  font-weight: 700 !important;
+}
+
 .bottom-tabs {
   display: flex;
   align-items: stretch;
