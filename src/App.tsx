@@ -86,6 +86,28 @@ const SIDEBAR_WIDTH_KEY = "oracle-ide.sidebarWidth";
 const SIDEBAR_COLLAPSED_KEY = "oracle-ide.sidebarCollapsed";
 const QUERY_TABS_WIDTH_KEY = "oracle-ide.queryTabsWidth";
 const REMEMBER_PASSWORD_KEY = "oracle-ide.rememberPassword";
+const SAVED_BIND_VALUES_KEY = "oracle-ide.savedBindValues";
+
+function loadSavedBindValues(): Record<string, BindVarParam> {
+  try {
+    const raw = localStorage.getItem(SAVED_BIND_VALUES_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object") return parsed as Record<string, BindVarParam>;
+  } catch {
+    // ignore
+  }
+  return {};
+}
+
+function saveSavedBindValues(binds: Record<string, BindVarParam>) {
+  try {
+    localStorage.setItem(SAVED_BIND_VALUES_KEY, JSON.stringify(binds));
+    window.oracle?.saveSettings?.({ bindValues: binds });
+  } catch {
+    // ignore
+  }
+}
 
 const loadSidebarCollapsed = (): boolean => {
   try {
@@ -1211,7 +1233,7 @@ export default function App() {
       pendingEdits: {},
       bottomTab: "results",
       history: globalHistory,
-      bindValues: {},
+      bindValues: loadSavedBindValues(),
       message: "Ready",
       error: null,
       queryStartTime: null,
@@ -1808,6 +1830,11 @@ export default function App() {
         if (typeof diskSettings.autoFormat === "boolean") {
           setAutoFormat(diskSettings.autoFormat);
           localStorage.setItem(AUTO_FORMAT_KEY, String(diskSettings.autoFormat));
+        }
+        if (diskSettings.bindValues && typeof diskSettings.bindValues === "object") {
+          const loadedBinds = diskSettings.bindValues as Record<string, BindVarParam>;
+          localStorage.setItem(SAVED_BIND_VALUES_KEY, JSON.stringify(loadedBinds));
+          setBindValues((prev) => ({ ...loadedBinds, ...prev }));
         }
       })
       .catch(() => {});
@@ -2527,6 +2554,9 @@ export default function App() {
   const onConfirmBindModal = async (confirmedBinds: Record<string, BindVarParam>) => {
     if (!bindModalState) return;
 
+    const mergedBinds = { ...bindValues, ...confirmedBinds };
+    saveSavedBindValues(mergedBinds);
+
     setBindValues((prev) => ({
       ...prev,
       ...confirmedBinds,
@@ -2534,8 +2564,6 @@ export default function App() {
 
     const { action, rawSql } = bindModalState;
     setBindModalState(null);
-
-    const mergedBinds = { ...bindValues, ...confirmedBinds };
 
     if (action === "execute") {
       await executeQueryWithBinds(rawSql, mergedBinds);
