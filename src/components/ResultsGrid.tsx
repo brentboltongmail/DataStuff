@@ -344,19 +344,9 @@ export default function ResultsGrid({
   }, [density, headerNames, fontScale]);
 
   useLayoutEffect(() => {
-    if (density !== "crammed" || !headerRowRef.current) return;
-    const labels = headerRowRef.current.querySelectorAll<HTMLElement>(
-      "th:not(.row-num) .th-label",
-    );
-    let maxWidth = 0;
-    labels.forEach((label) => {
-      maxWidth = Math.max(maxWidth, label.scrollWidth);
-    });
-    if (maxWidth <= 0) return;
-    const radians = (CRAMMED_HEADER_ANGLE_DEG * Math.PI) / 180;
-    const measured = Math.max(36, Math.ceil(maxWidth * Math.sin(radians)) + 32);
-    headerRowRef.current.style.height = `${measured}px`;
-  }, [density, headerNames, fontScale, crammedHeight, colWidths]);
+    if (density !== "crammed" || !headerRowRef.current || !crammedHeight) return;
+    headerRowRef.current.style.height = `${crammedHeight}px`;
+  }, [density, crammedHeight]);
 
   useEffect(() => {
     if (editing && inputRef.current) {
