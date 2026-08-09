@@ -27,7 +27,6 @@ import { formatSql } from "./sqlFormatter";
 import {
   parseSqlStatements,
   statementBlockAtCursor,
-  sqlToExecute,
   type SqlStatementBlock,
 } from "./sqlStatement";
 import {
