@@ -5026,7 +5026,7 @@ export default function App() {
                   disabled={!canExport || busy}
                   title="Export current result grid to CSV"
                 >
-                  Export CSV
+                  Export...
                 </button>
               </div>
 
