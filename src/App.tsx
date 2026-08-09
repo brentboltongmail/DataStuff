@@ -4964,14 +4964,6 @@ export default function App() {
                 )}
                 <button
                   type="button"
-                  onClick={onExplainPlan}
-                  disabled={!status.connected || busy}
-                  title="Show Oracle explain plan and which indexes the statement uses"
-                >
-                  Explain Plan
-                </button>
-                <button
-                  type="button"
                   className="success"
                   onClick={onCommit}
                   disabled={!status.connected || busy}
@@ -4998,11 +4990,11 @@ export default function App() {
                 </button>
                 <button
                   type="button"
-                  onClick={onExportCsv}
-                  disabled={!canExport || busy}
-                  title="Export current result grid to CSV"
+                  className={density !== "normal" ? "active-toggle" : ""}
+                  onClick={() => setDensity((prev) => nextDensity(prev))}
+                  title="Cycle grid density: Normal → Compact → Crammed"
                 >
-                  Export CSV
+                  {densityLabel(density)}
                 </button>
                 <label className="toolbar-field" htmlFor="maxRows">
                   Max rows
@@ -5021,11 +5013,19 @@ export default function App() {
                 </label>
                 <button
                   type="button"
-                  className={density !== "normal" ? "active-toggle" : ""}
-                  onClick={() => setDensity((prev) => nextDensity(prev))}
-                  title="Cycle grid density: Normal → Compact → Crammed"
+                  onClick={onExplainPlan}
+                  disabled={!status.connected || busy}
+                  title="Show Oracle explain plan and which indexes the statement uses"
                 >
-                  {densityLabel(density)}
+                  Explain Plan
+                </button>
+                <button
+                  type="button"
+                  onClick={onExportCsv}
+                  disabled={!canExport || busy}
+                  title="Export current result grid to CSV"
+                >
+                  Export CSV
                 </button>
               </div>
 
