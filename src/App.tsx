@@ -4782,7 +4782,7 @@ export default function App() {
               {densityLabel(density)}
             </button>
             <span className="hint">
-              Ctrl/Cmd+Enter or Shift+Enter run · double-click cell to edit · Commit applies
+              Ctrl/Cmd+Enter or Shift+Enter run · Commit applies
             </span>
           </div>
 
