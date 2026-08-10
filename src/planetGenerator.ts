@@ -131,8 +131,8 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
     const startScale = parseFloat(randRange(0.88, 0.98).toFixed(2));
     const endScale = parseFloat(randRange(1.02, 1.12).toFixed(2));
 
-    // Slow, stately space movement duration (140s to 320s = 2.3 to 5.3 minutes)
-    const duration = randInt(140, 320);
+    // Slow, stately astronomical space movement duration (360s to 850s = 6.0 to 14.1 minutes)
+    const duration = randInt(360, 850);
 
     // Staggered negative delays so planets start along their paths immediately
     const delay = -parseFloat((rand() * duration).toFixed(1));
@@ -221,18 +221,18 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
       }
     }
 
-    // Generate Ring Systems (~70% chance)
+    // Generate Ring Systems (~95% chance with multiple wide rings)
     const rings: PlanetRing[] = [];
-    const hasRings = rand() < 0.72;
+    const hasRings = rand() < 0.95;
 
     if (hasRings) {
-      const ringCount = randInt(1, 3);
+      const ringCount = randInt(2, 6);
       const tiltX = randInt(55, 85);
       const tiltY = randInt(-35, 35);
       const tiltZ = randInt(0, 360);
 
       for (let r = 0; r < ringCount; r++) {
-        const ringScale = 1.32 + r * 0.26;
+        const ringScale = 1.45 + r * 0.35;
         const sizePx = Math.round(size * ringScale);
         let borderStyle = "";
         let boxShadow = "";
@@ -240,28 +240,35 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
 
         if (r === 0) {
           if (archetype === "lava-planet") {
-            borderStyle = "16px dashed rgba(249, 115, 22, 0.65)";
-            boxShadow = "0 0 35px rgba(239, 68, 68, 0.6)";
-            spinDuration = randInt(50, 95);
+            borderStyle = "45px dashed rgba(249, 115, 22, 0.75)";
+            boxShadow = "0 0 55px rgba(239, 68, 68, 0.75)";
+            spinDuration = randInt(60, 110);
           } else if (archetype === "purple-giant" || archetype === "dark-void") {
-            borderStyle = "18px solid rgba(192, 132, 252, 0.6)";
-            boxShadow = "0 0 45px rgba(168, 85, 247, 0.65)";
+            borderStyle = "52px solid rgba(192, 132, 252, 0.65)";
+            boxShadow = "0 0 65px rgba(168, 85, 247, 0.75)";
           } else if (archetype === "emerald-world") {
-            borderStyle = "14px solid rgba(52, 211, 153, 0.6)";
-            boxShadow = "0 0 35px rgba(16, 185, 129, 0.55)";
+            borderStyle = "40px solid rgba(52, 211, 153, 0.65)";
+            boxShadow = "0 0 50px rgba(16, 185, 129, 0.65)";
           } else if (archetype === "solar-supergiant") {
-            borderStyle = "16px solid rgba(253, 224, 71, 0.65)";
-            boxShadow = "0 0 42px rgba(234, 179, 8, 0.65)";
+            borderStyle = "48px solid rgba(253, 224, 71, 0.7)";
+            boxShadow = "0 0 60px rgba(234, 179, 8, 0.75)";
           } else {
-            borderStyle = "14px solid rgba(186, 230, 253, 0.55)";
-            boxShadow = "0 0 35px rgba(56, 189, 248, 0.45)";
+            borderStyle = "42px solid rgba(186, 230, 253, 0.65)";
+            boxShadow = "0 0 55px rgba(56, 189, 248, 0.6)";
           }
         } else if (r === 1) {
-          borderStyle = "20px solid rgba(253, 224, 71, 0.4)";
-          boxShadow = "0 0 22px rgba(234, 179, 8, 0.35)";
-        } else {
-          borderStyle = "6px solid rgba(3, 7, 18, 0.85)";
+          borderStyle = "38px solid rgba(253, 224, 71, 0.5)";
+          boxShadow = "0 0 35px rgba(234, 179, 8, 0.45)";
+        } else if (r === 2) {
+          borderStyle = "28px solid rgba(224, 242, 254, 0.45)";
+          boxShadow = "0 0 25px rgba(56, 189, 248, 0.4)";
+        } else if (r === 3) {
+          borderStyle = "18px solid rgba(3, 7, 18, 0.85)";
           boxShadow = "none";
+        } else {
+          borderStyle = "32px dashed rgba(192, 132, 252, 0.4)";
+          boxShadow = "0 0 30px rgba(192, 132, 252, 0.4)";
+          spinDuration = randInt(70, 130);
         }
 
         rings.push({
