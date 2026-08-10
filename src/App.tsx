@@ -4874,145 +4874,153 @@ export default function App() {
                 />
 
                 <div className="editor-wrapper">
-                  <div className="query-copy-gutter">
-                    {(() => {
-                      void editorTick;
-                      const viewportHeight =
-                        editorRef.current?.getLayoutInfo().height ?? 600;
-                      return sqlBlocks.map((block, idx) => {
-                        let top =
-                          12 +
-                          (block.startLine - 1) * editorLineHeight -
-                          editorScrollTop;
-                        let height =
-                          (block.endLine - block.startLine + 1) *
-                          editorLineHeight;
+                  {(() => {
+                    void editorTick;
+                    const layoutInfo = editorRef.current?.getLayoutInfo();
+                    const lineNumbersRight = layoutInfo
+                      ? layoutInfo.lineNumbersLeft + layoutInfo.lineNumbersWidth
+                      : 40;
+                    const gutterLeft = Math.max(40, lineNumbersRight + 2);
+                    const viewportHeight = layoutInfo?.height ?? 600;
 
-                        if (editorRef.current) {
-                          const model = editorRef.current.getModel();
-                          const maxLine = model ? model.getLineCount() : block.endLine;
-                          const startLineTop = editorRef.current.getTopForLineNumber(
-                            Math.min(block.startLine, maxLine),
-                          );
-                          let endLineBottom: number;
-                          if (block.endLine >= maxLine) {
-                            const lastLineTop = editorRef.current.getTopForLineNumber(maxLine);
-                            endLineBottom = lastLineTop + editorLineHeight;
-                          } else {
-                            endLineBottom = editorRef.current.getTopForLineNumber(
-                              block.endLine + 1,
+                    return (
+                      <div
+                        className="query-copy-gutter"
+                        style={{ left: `${gutterLeft}px` }}
+                      >
+                        {sqlBlocks.map((block, idx) => {
+                          let top =
+                            12 +
+                            (block.startLine - 1) * editorLineHeight -
+                            editorScrollTop;
+                          let height =
+                            (block.endLine - block.startLine + 1) *
+                            editorLineHeight;
+
+                          if (editorRef.current) {
+                            const model = editorRef.current.getModel();
+                            const maxLine = model ? model.getLineCount() : block.endLine;
+                            const startLineTop = editorRef.current.getTopForLineNumber(
+                              Math.min(block.startLine, maxLine),
                             );
+                            let endLineBottom: number;
+                            if (block.endLine >= maxLine) {
+                              const lastLineTop = editorRef.current.getTopForLineNumber(maxLine);
+                              endLineBottom = lastLineTop + editorLineHeight;
+                            } else {
+                              endLineBottom = editorRef.current.getTopForLineNumber(
+                                block.endLine + 1,
+                              );
+                            }
+                            const currentScrollTop = editorRef.current.getScrollTop();
+                            top = startLineTop - currentScrollTop;
+                            height = Math.max(editorLineHeight, endLineBottom - startLineTop);
                           }
-                          const currentScrollTop = editorRef.current
-                            ? editorRef.current.getScrollTop()
-                            : editorScrollTop;
-                          top = startLineTop - currentScrollTop;
-                          height = Math.max(editorLineHeight, endLineBottom - startLineTop);
-                        }
 
-                        const isCopied = copiedBlockId === block.id;
+                          const isCopied = copiedBlockId === block.id;
 
-                        if (top + height < -50 || top > viewportHeight + 100)
-                          return null;
+                          if (top + height < -50 || top > viewportHeight + 100)
+                            return null;
 
-                        const isShortBlock = height < 36;
-                        const labelHeight = isShortBlock ? 14 : 52;
-                        const visibleStart = Math.max(top, 0);
-                        const visibleEnd = Math.min(
-                          top + height,
-                          viewportHeight,
-                        );
-                        const visibleCenter = (visibleStart + visibleEnd) / 2;
-                        const idealTop = visibleCenter - top - labelHeight / 2;
-                        const labelTop = Math.max(
-                          2,
-                          Math.min(
-                            Math.max(2, height - labelHeight - 2),
-                            idealTop,
-                          ),
-                        );
+                          const isShortBlock = height < 36;
+                          const labelHeight = isShortBlock ? 14 : 52;
+                          const visibleStart = Math.max(top, 0);
+                          const visibleEnd = Math.min(
+                            top + height,
+                            viewportHeight,
+                          );
+                          const visibleCenter = (visibleStart + visibleEnd) / 2;
+                          const idealTop = visibleCenter - top - labelHeight / 2;
+                          const labelTop = Math.max(
+                            2,
+                            Math.min(
+                              Math.max(2, height - labelHeight - 2),
+                              idealTop,
+                            ),
+                          );
 
-                        const isThisRunning =
-                          busy &&
-                          (runningBlockId === block.id ||
-                            (runningBlockId === null && sqlBlocks.length === 1));
-                        const isOtherRunning = busy && !isThisRunning;
+                          const isThisRunning =
+                            busy &&
+                            (runningBlockId === block.id ||
+                              (runningBlockId === null && sqlBlocks.length === 1));
+                          const isOtherRunning = busy && !isThisRunning;
 
-                        return (
-                          <Fragment key={block.id}>
-                            {/* 1. QUERY COPY BAR */}
-                            <button
-                              type="button"
-                              className={`query-copy-bar ${isCopied ? "copied" : ""}`}
-                              style={{
-                                top: `${top}px`,
-                                height: `${height}px`,
-                              }}
-                              title={`Click to copy Query ${idx + 1} (Lines ${block.startLine}–${block.endLine})`}
-                              onClick={() => handleCopyQueryBlock(block)}
-                            >
-                              <span
-                                className="query-copy-label"
+                          return (
+                            <Fragment key={block.id}>
+                              {/* 1. QUERY COPY BAR */}
+                              <button
+                                type="button"
+                                className={`query-copy-bar ${isCopied ? "copied" : ""}`}
                                 style={{
-                                  top: `${labelTop}px`,
+                                  top: `${top}px`,
+                                  height: `${height}px`,
                                 }}
+                                title={`Click to copy Query ${idx + 1} (Lines ${block.startLine}–${block.endLine})`}
+                                onClick={() => handleCopyQueryBlock(block)}
                               >
-                                {isCopied
-                                  ? isShortBlock ? "✓" : "✓ COPIED"
-                                  : "COPY"}
-                              </span>
-                            </button>
+                                <span
+                                  className="query-copy-label"
+                                  style={{
+                                    top: `${labelTop}px`,
+                                  }}
+                                >
+                                  {isCopied
+                                    ? isShortBlock ? "✓" : "✓ COPIED"
+                                    : "COPY"}
+                                </span>
+                              </button>
 
-                            {/* 2. QUERY RUN / CANCEL BAR (GREEN WHEN IDLE, RED WHEN RUNNING, GRAY WHEN OTHER RUNNING) */}
-                            <button
-                              type="button"
-                              className={`query-run-bar ${
-                                isThisRunning
-                                  ? "running"
-                                  : isOtherRunning
-                                    ? "disabled-running"
-                                    : ""
-                              }`}
-                              style={{
-                                top: `${top}px`,
-                                height: `${height}px`,
-                              }}
-                              disabled={isOtherRunning || !status.connected}
-                              title={
-                                isThisRunning
-                                  ? "Click to CANCEL running SQL query execution"
-                                  : isOtherRunning
-                                    ? "Another query is currently executing"
-                                    : !status.connected
-                                      ? "Connect to Oracle database first"
-                                      : `Click to RUN Query ${idx + 1} (Lines ${block.startLine}–${block.endLine})`
-                              }
-                              onClick={() => {
-                                if (isThisRunning) {
-                                  void onCancelQuery();
-                                } else if (!isOtherRunning && status.connected) {
-                                  void handleRunQueryBlock(block);
+                              {/* 2. QUERY RUN / CANCEL BAR (GREEN WHEN IDLE, RED WHEN RUNNING, GRAY WHEN OTHER RUNNING) */}
+                              <button
+                                type="button"
+                                className={`query-run-bar ${
+                                  isThisRunning
+                                    ? "running"
+                                    : isOtherRunning
+                                      ? "disabled-running"
+                                      : ""
+                                }`}
+                                style={{
+                                  top: `${top}px`,
+                                  height: `${height}px`,
+                                }}
+                                disabled={isOtherRunning || !status.connected}
+                                title={
+                                  isThisRunning
+                                    ? "Click to CANCEL running SQL query execution"
+                                    : isOtherRunning
+                                      ? "Another query is currently executing"
+                                      : !status.connected
+                                        ? "Connect to Oracle database first"
+                                        : `Click to RUN Query ${idx + 1} (Lines ${block.startLine}–${block.endLine})`
                                 }
-                              }}
-                            >
-                              <span
-                                className="query-run-label"
-                                style={{
-                                  top: `${labelTop}px`,
+                                onClick={() => {
+                                  if (isThisRunning) {
+                                    void onCancelQuery();
+                                  } else if (!isOtherRunning && status.connected) {
+                                    void handleRunQueryBlock(block);
+                                  }
                                 }}
                               >
-                                {isThisRunning
-                                  ? isShortBlock ? "■" : "CANCEL"
-                                  : isOtherRunning
-                                    ? isShortBlock ? "▶" : "RUN"
-                                    : isShortBlock ? "▶" : "RUN"}
-                              </span>
-                            </button>
-                          </Fragment>
-                        );
-                      });
-                    })()}
-                  </div>
+                                <span
+                                  className="query-run-label"
+                                  style={{
+                                    top: `${labelTop}px`,
+                                  }}
+                                >
+                                  {isThisRunning
+                                    ? isShortBlock ? "■" : "CANCEL"
+                                    : isOtherRunning
+                                      ? isShortBlock ? "▶" : "RUN"
+                                      : isShortBlock ? "▶" : "RUN"}
+                                </span>
+                              </button>
+                            </Fragment>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
                   {copiedBlockId && <div className="query-copied-toast">✓ Query Copied!</div>}
                   <Editor
                     key={activeTabId}
