@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import Editor, { type BeforeMount, type OnMount } from "@monaco-editor/react";
 import type { editor as MonacoEditor } from "monaco-editor";
 import HistoryPanel from "./components/HistoryPanel";
@@ -37,7 +37,7 @@ import {
   themeOption,
   type AppThemeId,
 } from "./themes";
-import { generateSeededPlanets, generateSeededShips } from "./planetGenerator";
+import { generateSeededPlanets, generateSeededShips, type RandomPlanet, type RandomShip, type PlanetRing, type PlanetMoon } from "./planetGenerator";
 import type {
   ConnectionConfig,
   ConnectionState,
@@ -929,11 +929,7 @@ const MatrixAtmosphere: React.FC = () => {
   );
 };
 
-const DefaultAtmosphere: React.FC = () => {
-  return null;
-};
-
-const SynthwaveAtmosphere: React.FC = () => {
+const SynthwaveAtmosphere = memo(() => {
   return (
     <div className="synthwave-atmosphere">
       <div className="synth-sky-glow" />
@@ -978,6 +974,253 @@ const SynthwaveAtmosphere: React.FC = () => {
       </div>
     </div>
   );
+});
+
+interface SpaceshipAtmosphereProps {
+  galaxyStars: SpiralStar[];
+  spacePlanets: RandomPlanet[];
+  spaceShips: RandomShip[];
+}
+
+const SpaceshipAtmosphere = memo<SpaceshipAtmosphereProps>(({ galaxyStars, spacePlanets, spaceShips }) => {
+  return (
+    <div className="theme-atmosphere spaceship-atmosphere" aria-hidden="true">
+      {/* Full-screen sparkling deep space starfield layers behind planets */}
+      <div className="space-starfield" />
+      <div className="space-starfield space-starfield-2" />
+
+      {/* Large Deep-Space 3D Spiral Galaxy (300+ Individual Star Particles) */}
+      <div className="spiral-galaxy-container">
+        <svg className="spiral-galaxy-svg" viewBox="0 0 800 800" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <radialGradient id="galaxy-core-glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+              <stop offset="20%" stopColor="#fef08a" stopOpacity="0.9" />
+              <stop offset="45%" stopColor="#f472b6" stopOpacity="0.65" />
+              <stop offset="75%" stopColor="#c084fc" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#0f172a" stopOpacity="0" />
+            </radialGradient>
+
+            <filter id="galaxy-core-blur" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="16" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+            <filter id="star-glare-filter" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+
+          <circle cx="400" cy="400" r="160" fill="url(#galaxy-core-glow)" filter="url(#galaxy-core-blur)" />
+
+          <g className="galaxy-stars-group">
+            {galaxyStars.map((star, idx) => (
+              <circle
+                key={idx}
+                cx={star.cx}
+                cy={star.cy}
+                r={star.r}
+                fill={star.fill}
+                opacity={star.opacity}
+                className={star.animationClass}
+                filter={star.r > 3.2 ? "url(#star-glare-filter)" : undefined}
+              />
+            ))}
+          </g>
+        </svg>
+      </div>
+
+      {/* Procedurally Generated Celestial Bodies */}
+      {spacePlanets.map((planet) => (
+        <div
+          key={planet.id}
+          className={`space-celestial space-celestial-dynamic celestial-${planet.type}`}
+          style={{
+            left: `${planet.xPct}vw`,
+            top: `${planet.yPct}vh`,
+            width: `${planet.size}px`,
+            height: `${planet.size}px`,
+            animationDuration: `${planet.duration}s`,
+            animationDelay: `${planet.delay}s`,
+            "--move-x": planet.moveX,
+            "--move-y": planet.moveY,
+            "--move-rot": `${planet.moveRot}deg`,
+            "--start-scale": planet.startScale,
+            "--end-scale": planet.endScale,
+          } as React.CSSProperties}
+          title={`Planet ${planet.name}`}
+        >
+          {/* RINGS BACK */}
+          {planet.rings?.map((ring: PlanetRing, rIdx: number) => (
+            <span
+              key={`ring-back-${rIdx}`}
+              className="planet-ring-system ring-back"
+              style={{
+                width: `${ring.sizePx}px`,
+                height: `${ring.sizePx}px`,
+                border: ring.borderStyle,
+                boxShadow: ring.boxShadow,
+                transform: `translate(-50%, -50%) rotateX(${ring.tiltX}deg) rotateY(${ring.tiltY}deg) rotateZ(${ring.tiltZ}deg)`,
+              }}
+            />
+          ))}
+
+          {/* ATMOSPHERE HALO */}
+          <span
+            className="planet-atmosphere-halo"
+            style={{
+              background: planet.haloBackground,
+              filter: `blur(${planet.haloBlur}px)`,
+            }}
+          />
+
+          {/* PLANET SPHERE BODY */}
+          <span
+            className="planet-sphere-body"
+            style={{
+              background: planet.bodyGradient,
+              boxShadow: planet.bodyShadow,
+            }}
+          />
+
+          {/* SURFACE TEXTURE & ATMOSPHERIC EFFECTS */}
+          {planet.textureClass && <span className={`planet-surface-texture ${planet.textureClass}`} />}
+          {planet.cloudStyle && <span className="planet-cloud-bands" style={planet.cloudStyle} />}
+          {planet.auroraStyle && <span className="planet-aurora-boreal" style={planet.auroraStyle} />}
+          {planet.spotStyle && <span className="planet-great-spot" style={planet.spotStyle} />}
+
+          {/* RINGS FRONT */}
+          {planet.rings?.map((ring: PlanetRing, rIdx: number) => (
+            <span
+              key={`ring-front-${rIdx}`}
+              className="planet-ring-system ring-front"
+              style={{
+                width: `${ring.sizePx}px`,
+                height: `${ring.sizePx}px`,
+                border: ring.borderStyle,
+                boxShadow: ring.boxShadow,
+                transform: `translate(-50%, -50%) rotateX(${ring.tiltX}deg) rotateY(${ring.tiltY}deg) rotateZ(${ring.tiltZ}deg)`,
+              }}
+            />
+          ))}
+
+          {/* ORBITING MOONS */}
+          {planet.moons?.map((moon: PlanetMoon, mIdx: number) => (
+            <div
+              key={`moon-${mIdx}`}
+              className="orbiting-moon"
+              style={{
+                width: `${moon.size}px`,
+                height: `${moon.size}px`,
+                background: moon.gradient,
+                boxShadow: moon.glow,
+                top: `${moon.topPct}%`,
+                left: `${moon.leftPct}%`,
+                animation: `moon-dynamic-orbit ${moon.orbitDuration}s ease-in-out infinite alternate`,
+                animationDelay: `${moon.orbitDelay}s`,
+                "--moon-start-x": `${moon.startX}px`,
+                "--moon-start-y": `${moon.startY}px`,
+                "--moon-end-x": `${moon.endX}px`,
+                "--moon-end-y": `${moon.endY}px`,
+                "--moon-start-scale": moon.startScale,
+                "--moon-end-scale": moon.endScale,
+              } as React.CSSProperties}
+            >
+              <span className="moon-shadow" />
+            </div>
+          ))}
+        </div>
+      ))}
+
+      {/* Procedurally Generated Starships */}
+      {spaceShips.map((ship, idx) => (
+        <div
+          key={ship.id}
+          className={`distant-ship space-ship-dynamic ship-${ship.type}`}
+          style={{
+            left: `${ship.startXvw}vw`,
+            top: `${ship.startYvh}vh`,
+            animationName: "ship-straight-vector",
+            animationDuration: `${ship.duration}s`,
+            animationDelay: `${ship.delay}s`,
+            animationTimingFunction: "linear",
+            animationIterationCount: "infinite",
+            "--ship-delta-x": `${ship.deltaXvw}vw`,
+            "--ship-delta-y": `${ship.deltaYvh}vh`,
+            "--ship-rot": `${ship.rotationDeg}deg`,
+            "--ship-scale": ship.scale,
+          } as React.CSSProperties}
+        >
+          {idx % 4 === 0 ? (
+            <svg className="starship-svg" viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id={`ship-hull-${idx}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#0f172a" />
+                  <stop offset="35%" stopColor="#334155" />
+                  <stop offset="70%" stopColor="#64748b" />
+                  <stop offset="100%" stopColor="#94a3b8" />
+                </linearGradient>
+              </defs>
+              <polygon points="0,28 40,32 0,36" fill="#38bdf8" opacity="0.95" />
+              <polygon points="0,44 40,48 0,52" fill="#38bdf8" opacity="0.95" />
+              <polygon points="35,40 60,20 180,24 230,40 180,56 60,60" fill={`url(#ship-hull-${idx})`} stroke="#cbd5e1" strokeWidth="1.5" />
+              <ellipse cx="90" cy="40" rx="14" ry="26" fill="none" stroke="#38bdf8" strokeWidth="4" />
+              <ellipse cx="90" cy="40" rx="8" ry="18" fill="none" stroke="#f1f5f9" strokeWidth="2" />
+              <polygon points="120,40 140,28 175,32 165,40" fill="#f8fafc" stroke="#38bdf8" strokeWidth="1" />
+              <polygon points="120,40 140,52 175,48 165,40" fill="#cbd5e1" stroke="#38bdf8" strokeWidth="1" />
+              <rect x="100" y="34" width="24" height="12" rx="2" fill="#0284c7" opacity="0.8" />
+            </svg>
+          ) : idx % 4 === 1 ? (
+            <svg className="starship-svg" viewBox="0 0 220 80" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id={`ship-hull-${idx}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#1e1b4b" />
+                  <stop offset="50%" stopColor="#4338ca" />
+                  <stop offset="100%" stopColor="#818cf8" />
+                </linearGradient>
+              </defs>
+              <polygon points="0,32 45,36 0,40" fill="#c084fc" opacity="0.95" />
+              <polygon points="0,40 45,44 0,48" fill="#f472b6" opacity="0.95" />
+              <polygon points="40,40 100,10 210,40 100,70" fill={`url(#ship-hull-${idx})`} stroke="#c7d2fe" strokeWidth="1.5" />
+              <line x1="210" y1="36" x2="220" y2="34" stroke="#a5b4fc" strokeWidth="3" />
+              <line x1="210" y1="44" x2="220" y2="46" stroke="#a5b4fc" strokeWidth="3" />
+              <polygon points="120,40 160,32 185,40 160,48" fill="#e0e7ff" stroke="#38bdf8" strokeWidth="1.5" />
+            </svg>
+          ) : idx % 4 === 2 ? (
+            <svg className="starship-svg" viewBox="0 0 210 80" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id={`ship-hull-${idx}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#78350f" />
+                  <stop offset="50%" stopColor="#d97706" />
+                  <stop offset="100%" stopColor="#fef08a" />
+                </linearGradient>
+              </defs>
+              <polygon points="0,35 50,40 0,45" fill="#f59e0b" opacity="0.95" />
+              <rect x="40" y="14" width="140" height="14" rx="7" fill="#451a03" stroke="#fbbf24" strokeWidth="1.5" />
+              <rect x="40" y="52" width="140" height="14" rx="7" fill="#451a03" stroke="#fbbf24" strokeWidth="1.5" />
+              <ellipse cx="120" cy="40" rx="35" ry="18" fill={`url(#ship-hull-${idx})`} stroke="#ffffff" strokeWidth="1.5" />
+            </svg>
+          ) : (
+            <svg className="starship-svg" viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id={`ship-hull-${idx}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#0284c7" />
+                  <stop offset="50%" stopColor="#0369a1" />
+                  <stop offset="100%" stopColor="#e0f2fe" />
+                </linearGradient>
+              </defs>
+              <polygon points="0,30 45,35 0,40" fill="#38bdf8" opacity="0.95" />
+              <polygon points="40,40 80,18 200,22 235,40 200,58 80,62" fill={`url(#ship-hull-${idx})`} stroke="#bae6fd" strokeWidth="1.5" />
+            </svg>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+});
+
+const DefaultAtmosphere: React.FC = () => {
+  return null;
 };
 
 const CIRCUIT_PRESETS = [
@@ -2513,7 +2756,45 @@ export default function App() {
     ],
   );
 
+  const editorChangeTimerRef = useRef<number | null>(null);
+
+  const flushPendingSqlUpdate = useCallback(() => {
+    if (editorChangeTimerRef.current != null) {
+      window.clearTimeout(editorChangeTimerRef.current);
+      editorChangeTimerRef.current = null;
+    }
+    if (editorRef.current) {
+      const val = editorRef.current.getValue();
+      setActiveSql(val);
+    }
+  }, [setActiveSql]);
+
+  const handleEditorChange = useCallback(
+    (value: string | undefined) => {
+      const nextValue = value ?? "";
+      if (monacoApiRef.current && editorRef.current) {
+        const model = editorRef.current.getModel();
+        if (model) {
+          monacoApiRef.current.editor.setModelMarkers(
+            model,
+            "oracle-error",
+            [],
+          );
+        }
+      }
+      if (editorChangeTimerRef.current != null) {
+        window.clearTimeout(editorChangeTimerRef.current);
+      }
+      editorChangeTimerRef.current = window.setTimeout(() => {
+        editorChangeTimerRef.current = null;
+        setActiveSql(nextValue);
+      }, 150);
+    },
+    [setActiveSql],
+  );
+
   const onExecute = useCallback(async () => {
+    flushPendingSqlUpdate();
     if (!status.connected) {
       setError("Connect to Oracle first");
       return;
@@ -2543,6 +2824,7 @@ export default function App() {
 
     await executeQueryWithBinds(statement, bindValues, startLine);
   }, [
+    flushPendingSqlUpdate,
     status.connected,
     autoFormat,
     resolveExecutableSqlBlock,
@@ -2553,6 +2835,7 @@ export default function App() {
   ]);
 
   const handleExplainTabClick = useCallback(async () => {
+    flushPendingSqlUpdate();
     setBottomTab("explain");
     if (!status.connected) {
       setError("Connect to Oracle database first");
@@ -3863,240 +4146,11 @@ export default function App() {
       {themeId === "aetherium" ? <AetheriumAtmosphere /> : null}
       {themeId === "brass" ? <BrassAtmosphere /> : null}
       {themeId === "spaceship" ? (
-        <div className="theme-atmosphere spaceship-atmosphere" aria-hidden="true">
-          {/* Full-screen sparkling deep space starfield layers behind planets */}
-          <div className="space-starfield" />
-          <div className="space-starfield space-starfield-2" />
-
-          {/* Large Deep-Space 3D Spiral Galaxy (300+ Individual Star Particles) */}
-          <div className="spiral-galaxy-container">
-            <svg className="spiral-galaxy-svg" viewBox="0 0 800 800" preserveAspectRatio="xMidYMid meet">
-              <defs>
-                {/* Galactic Core Bright White/Yellow Nucleus */}
-                <radialGradient id="galaxy-core-glow" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-                  <stop offset="20%" stopColor="#fef08a" stopOpacity="0.9" />
-                  <stop offset="45%" stopColor="#f472b6" stopOpacity="0.65" />
-                  <stop offset="75%" stopColor="#c084fc" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="#0f172a" stopOpacity="0" />
-                </radialGradient>
-
-                <filter id="galaxy-core-blur" x="-40%" y="-40%" width="180%" height="180%">
-                  <feGaussianBlur stdDeviation="16" result="blur" />
-                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
-                <filter id="star-glare-filter" x="-40%" y="-40%" width="180%" height="180%">
-                  <feGaussianBlur stdDeviation="3" result="blur" />
-                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
-              </defs>
-
-              {/* Central Nucleus Core Glow */}
-              <circle cx="400" cy="400" r="160" fill="url(#galaxy-core-glow)" filter="url(#galaxy-core-blur)" />
-
-              {/* 300+ Individual Star Particles tracing logarithmic spiral arms */}
-              <g className="galaxy-stars-group">
-                {galaxyStars.map((star, idx) => (
-                  <circle
-                    key={idx}
-                    cx={star.cx}
-                    cy={star.cy}
-                    r={star.r}
-                    fill={star.fill}
-                    opacity={star.opacity}
-                    className={star.animationClass}
-                    filter={star.r > 3.2 ? "url(#star-glare-filter)" : undefined}
-                  />
-                ))}
-              </g>
-            </svg>
-          </div>
-
-          {/* Procedurally Generated Celestial Bodies (Randomized Placement, Types, Colors & Random Directional Movement) */}
-          {spacePlanets.map((planet) => (
-            <div
-              key={planet.id}
-              className={`space-celestial space-celestial-dynamic celestial-${planet.type}`}
-              style={{
-                left: `${planet.xPct}vw`,
-                top: `${planet.yPct}vh`,
-                width: `${planet.size}px`,
-                height: `${planet.size}px`,
-                animationDuration: `${planet.duration}s`,
-                animationDelay: `${planet.delay}s`,
-                "--move-x": planet.moveX,
-                "--move-y": planet.moveY,
-                "--move-rot": `${planet.moveRot}deg`,
-                "--start-scale": planet.startScale,
-                "--end-scale": planet.endScale,
-              } as React.CSSProperties}
-              title={`Planet ${planet.name}`}
-            >
-              {/* RINGS BACK */}
-              {planet.rings?.map((ring, rIdx) => (
-                <span
-                  key={`ring-back-${rIdx}`}
-                  className="planet-ring-system ring-back"
-                  style={{
-                    width: `${ring.sizePx}px`,
-                    height: `${ring.sizePx}px`,
-                    border: ring.borderStyle,
-                    boxShadow: ring.boxShadow,
-                    transform: `translate(-50%, -50%) rotateX(${ring.tiltX}deg) rotateY(${ring.tiltY}deg) rotateZ(${ring.tiltZ}deg)`,
-                  }}
-                />
-              ))}
-
-              {/* ATMOSPHERE HALO */}
-              <span
-                className="planet-atmosphere-halo"
-                style={{
-                  background: planet.haloBackground,
-                  filter: `blur(${planet.haloBlur}px)`,
-                }}
-              />
-
-              {/* PLANET SPHERE BODY */}
-              <span
-                className="planet-sphere-body"
-                style={{
-                  background: planet.bodyGradient,
-                  boxShadow: planet.bodyShadow,
-                }}
-              />
-
-              {/* SURFACE TEXTURE & ATMOSPHERIC EFFECTS */}
-              {planet.textureClass && <span className={`planet-surface-texture ${planet.textureClass}`} />}
-              {planet.cloudStyle && <span className="planet-cloud-bands" style={planet.cloudStyle} />}
-              {planet.auroraStyle && <span className="planet-aurora-boreal" style={planet.auroraStyle} />}
-              {planet.spotStyle && <span className="planet-great-spot" style={planet.spotStyle} />}
-
-              {/* RINGS FRONT */}
-              {planet.rings?.map((ring, rIdx) => (
-                <span
-                  key={`ring-front-${rIdx}`}
-                  className="planet-ring-system ring-front"
-                  style={{
-                    width: `${ring.sizePx}px`,
-                    height: `${ring.sizePx}px`,
-                    border: ring.borderStyle,
-                    boxShadow: ring.boxShadow,
-                    transform: `translate(-50%, -50%) rotateX(${ring.tiltX}deg) rotateY(${ring.tiltY}deg) rotateZ(${ring.tiltZ}deg)`,
-                  }}
-                />
-              ))}
-
-              {/* ORBITING MOONS */}
-              {planet.moons?.map((moon, mIdx) => (
-                <div
-                  key={`moon-${mIdx}`}
-                  className="orbiting-moon"
-                  style={{
-                    width: `${moon.size}px`,
-                    height: `${moon.size}px`,
-                    background: moon.gradient,
-                    boxShadow: moon.glow,
-                    top: `${moon.topPct}%`,
-                    left: `${moon.leftPct}%`,
-                    animation: `moon-dynamic-orbit ${moon.orbitDuration}s ease-in-out infinite alternate`,
-                    animationDelay: `${moon.orbitDelay}s`,
-                    "--moon-start-x": `${moon.startX}px`,
-                    "--moon-start-y": `${moon.startY}px`,
-                    "--moon-end-x": `${moon.endX}px`,
-                    "--moon-end-y": `${moon.endY}px`,
-                    "--moon-start-scale": moon.startScale,
-                    "--moon-end-scale": moon.endScale,
-                  } as React.CSSProperties}
-                >
-                  <span className="moon-shadow" />
-                </div>
-              ))}
-            </div>
-          ))}
-          {/* Procedurally Generated Starships (Random 360° Vectors, 50% Reduced Scale & On-Screen Starts) */}
-          {spaceShips.map((ship, idx) => (
-            <div
-              key={ship.id}
-              className={`distant-ship space-ship-dynamic ship-${ship.type}`}
-              style={{
-                left: `${ship.startXvw}vw`,
-                top: `${ship.startYvh}vh`,
-                animationName: "ship-straight-vector",
-                animationDuration: `${ship.duration}s`,
-                animationDelay: `${ship.delay}s`,
-                animationTimingFunction: "linear",
-                animationIterationCount: "infinite",
-                "--ship-delta-x": `${ship.deltaXvw}vw`,
-                "--ship-delta-y": `${ship.deltaYvh}vh`,
-                "--ship-rot": `${ship.rotationDeg}deg`,
-                "--ship-scale": ship.scale,
-              } as React.CSSProperties}
-            >
-              {idx % 4 === 0 ? (
-                <svg className="starship-svg" viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id={`ship-hull-${idx}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#0f172a" />
-                      <stop offset="35%" stopColor="#334155" />
-                      <stop offset="70%" stopColor="#64748b" />
-                      <stop offset="100%" stopColor="#94a3b8" />
-                    </linearGradient>
-                  </defs>
-                  <polygon points="0,28 40,32 0,36" fill="#38bdf8" opacity="0.95" />
-                  <polygon points="0,44 40,48 0,52" fill="#38bdf8" opacity="0.95" />
-                  <polygon points="35,40 60,20 180,24 230,40 180,56 60,60" fill={`url(#ship-hull-${idx})`} stroke="#cbd5e1" strokeWidth="1.5" />
-                  <ellipse cx="90" cy="40" rx="14" ry="26" fill="none" stroke="#38bdf8" strokeWidth="4" />
-                  <ellipse cx="90" cy="40" rx="8" ry="18" fill="none" stroke="#f1f5f9" strokeWidth="2" />
-                  <polygon points="120,40 140,28 175,32 165,40" fill="#f8fafc" stroke="#38bdf8" strokeWidth="1" />
-                  <polygon points="120,40 140,52 175,48 165,40" fill="#cbd5e1" stroke="#38bdf8" strokeWidth="1" />
-                  <rect x="100" y="34" width="24" height="12" rx="2" fill="#0284c7" opacity="0.8" />
-                </svg>
-              ) : idx % 4 === 1 ? (
-                <svg className="starship-svg" viewBox="0 0 220 80" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id={`ship-hull-${idx}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#1e1b4b" />
-                      <stop offset="50%" stopColor="#4338ca" />
-                      <stop offset="100%" stopColor="#818cf8" />
-                    </linearGradient>
-                  </defs>
-                  <polygon points="0,32 45,36 0,40" fill="#c084fc" opacity="0.95" />
-                  <polygon points="0,40 45,44 0,48" fill="#f472b6" opacity="0.95" />
-                  <polygon points="40,40 100,10 210,40 100,70" fill={`url(#ship-hull-${idx})`} stroke="#c7d2fe" strokeWidth="1.5" />
-                  <line x1="210" y1="36" x2="220" y2="34" stroke="#a5b4fc" strokeWidth="3" />
-                  <line x1="210" y1="44" x2="220" y2="46" stroke="#a5b4fc" strokeWidth="3" />
-                  <polygon points="120,40 160,32 185,40 160,48" fill="#e0e7ff" stroke="#38bdf8" strokeWidth="1.5" />
-                </svg>
-              ) : idx % 4 === 2 ? (
-                <svg className="starship-svg" viewBox="0 0 210 80" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id={`ship-hull-${idx}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#78350f" />
-                      <stop offset="50%" stopColor="#d97706" />
-                      <stop offset="100%" stopColor="#fef08a" />
-                    </linearGradient>
-                  </defs>
-                  <polygon points="0,35 50,40 0,45" fill="#f59e0b" opacity="0.95" />
-                  <rect x="40" y="14" width="140" height="14" rx="7" fill="#451a03" stroke="#fbbf24" strokeWidth="1.5" />
-                  <rect x="40" y="52" width="140" height="14" rx="7" fill="#451a03" stroke="#fbbf24" strokeWidth="1.5" />
-                  <ellipse cx="120" cy="40" rx="35" ry="18" fill={`url(#ship-hull-${idx})`} stroke="#ffffff" strokeWidth="1.5" />
-                </svg>
-              ) : (
-                <svg className="starship-svg" viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id={`ship-hull-${idx}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#0284c7" />
-                      <stop offset="50%" stopColor="#0369a1" />
-                      <stop offset="100%" stopColor="#e0f2fe" />
-                    </linearGradient>
-                  </defs>
-                  <polygon points="0,30 45,35 0,40" fill="#38bdf8" opacity="0.95" />
-                  <polygon points="40,40 80,18 200,22 235,40 200,58 80,62" fill={`url(#ship-hull-${idx})`} stroke="#bae6fd" strokeWidth="1.5" />
-                </svg>
-              )}
-            </div>
-          ))}
-        </div>
+        <SpaceshipAtmosphere
+          galaxyStars={galaxyStars}
+          spacePlanets={spacePlanets}
+          spaceShips={spaceShips}
+        />
       ) : null}
       {themeId === "racecar" ? (
         <div
@@ -4863,19 +4917,7 @@ export default function App() {
                     defaultLanguage="sql"
                     theme={themeOption(themeId).monacoTheme}
                     defaultValue={sql}
-                    onChange={(value) => {
-                      if (monacoApiRef.current && editorRef.current) {
-                        const model = editorRef.current.getModel();
-                        if (model) {
-                          monacoApiRef.current.editor.setModelMarkers(
-                            model,
-                            "oracle-error",
-                            [],
-                          );
-                        }
-                      }
-                      setActiveSql(value ?? "");
-                    }}
+                    onChange={handleEditorChange}
                     beforeMount={onEditorBeforeMount}
                     onMount={onEditorMount}
                     options={{
