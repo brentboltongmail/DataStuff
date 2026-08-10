@@ -524,132 +524,157 @@ export default function ResultsGrid({
     return rowNumWidthRef.current + dataWidth;
   }, [hasColWidths, visibleColumns, colWidths]);
 
-  return (
-    <table
-      ref={tableRef}
-      className={[
-        `results-grid density-${density}`,
-        hasColWidths ? "has-col-widths" : "",
-        fitColumnsToContent ? "fit-content" : "",
-      ]
-        .filter(Boolean)
-        .join(" ")}
-      style={{
-        ...(tableWidth != null ? { width: tableWidth } : {}),
-        ...(density === "crammed" && crammedHeight
-          ? ({ "--crammed-header-height": `${crammedHeight}px` } as React.CSSProperties)
-          : {}),
-      }}
-    >
-      {hasColWidths ? (
-        <colgroup>
-          <col className="col-row-num" style={{ width: rowNumWidthRef.current }} />
-          {visibleColumns.map(({ col }) => (
-            <col
-              key={col.name}
-              style={{ width: colWidths[col.name] ?? 1 }}
-            />
-          ))}
-        </colgroup>
-      ) : null}
-      <thead>
-        <tr
-          ref={headerRowRef}
-          style={
-            density === "crammed" && crammedHeight
-              ? { height: crammedHeight }
-              : undefined
-          }
-        >
-          <th className="row-num">
-            <span className="th-label">#</span>
-          </th>
-          {visibleColumns.map(({ col }) => (
-            <th key={`${col.name}`} title={col.type}>
-              <span className="th-label">{col.name}</span>
-              <span
-                className="col-resize"
-                title="Drag to resize · double-click to reset"
-                onPointerDown={(event) => onResizePointerDown(col.name, event)}
-                onPointerMove={onResizePointerMove}
-                onPointerUp={onResizePointerUp}
-                onPointerCancel={endResize}
-                onDoubleClick={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  resetColumnWidth(col.name);
-                }}
-              />
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {result.rows.map((row, rowIndex) => (
-          <tr key={rowIndex}>
-            <td className="row-num">{rowIndex + 1}</td>
-            {visibleColumns.map(({ col, index: columnIndex }) => {
-              const cell = displayValue(rowIndex, columnIndex, row[columnIndex]);
-              const text = formatCell(cell);
-              const nullCell = isNullCell(cell);
-              const dirty = !!pendingEdits[cellEditKey(rowIndex, columnIndex)];
-              const isEditing =
-                editing?.rowIndex === rowIndex && editing.columnIndex === columnIndex;
-              const customTitle = getCellTitle?.(
-                rowIndex,
-                columnIndex,
-                col.name,
-                cell,
-                text,
-              );
-              const title =
-                customTitle ??
-                (editable
-                  ? `${text} — double-click to edit; empty or NULL clears`
-                  : text);
+  const headerWrapRef = useRef<HTMLDivElement | null>(null);
+  const bodyWrapRef = useRef<HTMLDivElement | null>(null);
 
-              return (
-                <td
-                  key={columnIndex}
-                  title={title}
-                  style={colWidths[col.name] ? { width: colWidths[col.name], minWidth: colWidths[col.name], maxWidth: colWidths[col.name] } : undefined}
-                  className={[
-                    nullCell ? "cell-null" : "",
-                    dirty ? "cell-dirty" : "",
-                    editable ? "cell-editable" : "",
-                    isEditing ? "cell-editing" : "",
-                    customTitle ? "cell-has-def" : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
-                  onDoubleClick={() => beginEdit(rowIndex, columnIndex)}
-                >
-                  {isEditing ? (
-                    <input
-                      ref={inputRef}
-                      className="cell-editor"
-                      value={draft}
-                      onChange={(event) => setDraft(event.target.value)}
-                      onBlur={commitEdit}
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter") {
-                          event.preventDefault();
-                          commitEdit();
-                        } else if (event.key === "Escape") {
-                          event.preventDefault();
-                          cancelEdit();
-                        }
-                      }}
-                    />
-                  ) : (
-                    text
-                  )}
-                </td>
-              );
-            })}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+  const handleBodyScroll = useCallback(() => {
+    if (bodyWrapRef.current && headerWrapRef.current) {
+      headerWrapRef.current.scrollLeft = bodyWrapRef.current.scrollLeft;
+    }
+  }, []);
+
+  const colGroupMarkup = hasColWidths ? (
+    <colgroup>
+      <col className="col-row-num" style={{ width: rowNumWidthRef.current }} />
+      {visibleColumns.map(({ col }) => (
+        <col
+          key={col.name}
+          style={{ width: colWidths[col.name] ?? 1 }}
+        />
+      ))}
+    </colgroup>
+  ) : null;
+
+  const tableClasses = [
+    `results-grid density-${density}`,
+    hasColWidths ? "has-col-widths" : "",
+    fitColumnsToContent ? "fit-content" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const tableStyle: React.CSSProperties = {
+    ...(tableWidth != null ? { width: tableWidth } : {}),
+  };
+
+  return (
+    <div className="grid-split-viewport">
+      <div ref={headerWrapRef} className="grid-header-wrap">
+        <table className={tableClasses} style={tableStyle}>
+          {colGroupMarkup}
+          <thead>
+            <tr
+              ref={headerRowRef}
+              style={
+                density === "crammed" && crammedHeight
+                  ? { height: crammedHeight }
+                  : undefined
+              }
+            >
+              <th className="row-num">
+                <span className="th-label">#</span>
+              </th>
+              {visibleColumns.map(({ col }) => (
+                <th key={`${col.name}`} title={col.type}>
+                  <span className="th-label">{col.name}</span>
+                  <span
+                    className="col-resize"
+                    title="Drag to resize · double-click to reset"
+                    onPointerDown={(event) => onResizePointerDown(col.name, event)}
+                    onPointerMove={onResizePointerMove}
+                    onPointerUp={onResizePointerUp}
+                    onPointerCancel={endResize}
+                    onDoubleClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      resetColumnWidth(col.name);
+                    }}
+                  />
+                </th>
+              ))}
+            </tr>
+          </thead>
+        </table>
+      </div>
+      <div ref={bodyWrapRef} className="grid-body-wrap" onScroll={handleBodyScroll}>
+        <table ref={tableRef} className={tableClasses} style={tableStyle}>
+          {colGroupMarkup}
+          <tbody>
+            {result.rows.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                <td className="row-num">{rowIndex + 1}</td>
+                {visibleColumns.map(({ col, index: columnIndex }) => {
+                  const cell = displayValue(rowIndex, columnIndex, row[columnIndex]);
+                  const text = formatCell(cell);
+                  const nullCell = isNullCell(cell);
+                  const dirty = !!pendingEdits[cellEditKey(rowIndex, columnIndex)];
+                  const isEditing =
+                    editing?.rowIndex === rowIndex && editing.columnIndex === columnIndex;
+                  const customTitle = getCellTitle?.(
+                    rowIndex,
+                    columnIndex,
+                    col.name,
+                    cell,
+                    text,
+                  );
+                  const title =
+                    customTitle ??
+                    (editable
+                      ? `${text} — double-click to edit; empty or NULL clears`
+                      : text);
+
+                  return (
+                    <td
+                      key={columnIndex}
+                      title={title}
+                      style={
+                        colWidths[col.name]
+                          ? {
+                              width: colWidths[col.name],
+                              minWidth: colWidths[col.name],
+                              maxWidth: colWidths[col.name],
+                            }
+                          : undefined
+                      }
+                      className={[
+                        nullCell ? "cell-null" : "",
+                        dirty ? "cell-dirty" : "",
+                        editable ? "cell-editable" : "",
+                        isEditing ? "cell-editing" : "",
+                        customTitle ? "cell-has-def" : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                      onDoubleClick={() => beginEdit(rowIndex, columnIndex)}
+                    >
+                      {isEditing ? (
+                        <input
+                          ref={inputRef}
+                          className="cell-editor"
+                          value={draft}
+                          onChange={(event) => setDraft(event.target.value)}
+                          onBlur={commitEdit}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter") {
+                              event.preventDefault();
+                              commitEdit();
+                            } else if (event.key === "Escape") {
+                              event.preventDefault();
+                              cancelEdit();
+                            }
+                          }}
+                        />
+                      ) : (
+                        text
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }

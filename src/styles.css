@@ -1187,11 +1187,47 @@ input#maxRows::-webkit-inner-spin-button {
 }
 
 .grid-wrap {
-  overflow: auto;
+  overflow: hidden;
   min-height: 0;
+  height: 100%;
   background-image: var(--noise);
   background-size: 220px 220px;
   background-blend-mode: soft-light;
+}
+
+.grid-split-viewport {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  min-height: 0;
+  position: relative;
+}
+
+.grid-header-wrap {
+  overflow-x: hidden;
+  overflow-y: visible;
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--grid-header) 30%, transparent) !important;
+}
+
+.grid-body-wrap {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.grid-header-wrap table.results-grid {
+  table-layout: fixed;
+  margin-bottom: 0;
+}
+
+.grid-body-wrap table.results-grid {
+  table-layout: fixed;
 }
 
 kbd {
