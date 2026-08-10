@@ -710,6 +710,19 @@ export default function ResultsGrid({
                       ) : (
                         text
                       )}
+                      <span
+                        className="col-resize"
+                        title="Drag to resize · double-click to reset"
+                        onPointerDown={(event) => onResizePointerDown(col.name, event)}
+                        onPointerMove={onResizePointerMove}
+                        onPointerUp={onResizePointerUp}
+                        onPointerCancel={endResize}
+                        onDoubleClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          resetColumnWidth(col.name);
+                        }}
+                      />
                     </td>
                   );
                 })}

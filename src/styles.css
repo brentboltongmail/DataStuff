@@ -1250,6 +1250,7 @@ kbd {
 
 .results-grid th,
 .results-grid td {
+  position: relative;
   border-bottom: 1px solid var(--border);
   border-right: 1px solid var(--border);
   padding: 1px 2px !important;
@@ -1290,11 +1291,11 @@ kbd {
 .results-grid .col-resize {
   position: absolute;
   top: 0;
-  right: -3px;
-  width: 7px;
+  right: -5px;
+  width: 10px;
   height: 100%;
   cursor: col-resize;
-  z-index: 4;
+  z-index: 10;
   touch-action: none;
   user-select: none;
 }
@@ -1302,7 +1303,8 @@ kbd {
 .results-grid .col-resize:hover,
 .results-grid .col-resize:active,
 body.is-col-resizing .results-grid .col-resize:active {
-  background: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 70%, transparent);
+  box-shadow: 0 0 6px var(--accent);
 }
 
 body.is-col-resizing {
