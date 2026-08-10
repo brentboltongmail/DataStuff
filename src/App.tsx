@@ -4958,7 +4958,7 @@ export default function App() {
                               >
                                 {isCopied
                                   ? isShortBlock ? "✓" : "✓ COPIED"
-                                  : isShortBlock ? `Q${idx + 1}` : `Query ${idx + 1}`}
+                                  : "COPY"}
                               </span>
                             </button>
 
