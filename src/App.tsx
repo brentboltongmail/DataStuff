@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import Editor, { type BeforeMount, type OnMount } from "@monaco-editor/react";
 import type { editor as MonacoEditor } from "monaco-editor";
 import HistoryPanel from "./components/HistoryPanel";
@@ -1785,6 +1785,7 @@ export default function App() {
   const [editorTick, setEditorTick] = useState(0);
   const [editorLineHeight, setEditorLineHeight] = useState(18);
   const [copiedBlockId, setCopiedBlockId] = useState<string | null>(null);
+  const [runningBlockId, setRunningBlockId] = useState<string | null>(null);
   const lastCursorLineRef = useRef<number>(1);
   const lastSelectionTextRef = useRef<string>("");
 
@@ -2517,6 +2518,7 @@ export default function App() {
       // ignore
     } finally {
       setBusy(false);
+      setRunningBlockId(null);
       setError("Query execution cancelled by user");
       setMessage("Query cancelled");
     }
@@ -2692,6 +2694,7 @@ export default function App() {
       } finally {
         setQueryStartTime(null);
         setBusy(false);
+        setRunningBlockId(null);
       }
     },
     [
@@ -2793,10 +2796,44 @@ export default function App() {
     [setActiveSql],
   );
 
+  const handleRunQueryBlock = useCallback(
+    async (block: SqlStatementBlock) => {
+      flushPendingSqlUpdate();
+      if (!status.connected || busy) return;
+      setRunningBlockId(block.id);
+      const statement = block.text;
+      const startLine = block.startLine;
+
+      const detectedBinds = parseBindVariables(statement);
+      if (detectedBinds.length > 0) {
+        setBindModalState({
+          open: true,
+          varNames: detectedBinds,
+          action: "execute",
+          rawSql: statement,
+        });
+        return;
+      }
+
+      try {
+        await executeQueryWithBinds(statement, bindValues, startLine);
+      } finally {
+        setRunningBlockId(null);
+      }
+    },
+    [
+      flushPendingSqlUpdate,
+      status.connected,
+      busy,
+      bindValues,
+      executeQueryWithBinds,
+    ],
+  );
+
   const onExecute = useCallback(async () => {
     flushPendingSqlUpdate();
-    if (!status.connected) {
-      setError("Connect to Oracle first");
+    if (!status.connected || busy) {
+      if (!status.connected) setError("Connect to Oracle first");
       return;
     }
 
@@ -2811,6 +2848,11 @@ export default function App() {
       return;
     }
 
+    const matchingBlock = sqlBlocks.find((b) => b.startLine === startLine) ?? sqlBlocks[0];
+    if (matchingBlock) {
+      setRunningBlockId(matchingBlock.id);
+    }
+
     const detectedBinds = parseBindVariables(statement);
     if (detectedBinds.length > 0) {
       setBindModalState({
@@ -2822,12 +2864,18 @@ export default function App() {
       return;
     }
 
-    await executeQueryWithBinds(statement, bindValues, startLine);
+    try {
+      await executeQueryWithBinds(statement, bindValues, startLine);
+    } finally {
+      setRunningBlockId(null);
+    }
   }, [
     flushPendingSqlUpdate,
     status.connected,
+    busy,
     autoFormat,
     resolveExecutableSqlBlock,
+    sqlBlocks,
     bindValues,
     executeQueryWithBinds,
     setError,
@@ -4883,29 +4931,83 @@ export default function App() {
                           ),
                         );
 
+                        const isThisRunning =
+                          busy &&
+                          (runningBlockId === block.id ||
+                            (runningBlockId === null && sqlBlocks.length === 1));
+                        const isOtherRunning = busy && !isThisRunning;
+
                         return (
-                          <button
-                            key={block.id}
-                            type="button"
-                            className={`query-copy-bar ${isCopied ? "copied" : ""}`}
-                            style={{
-                              top: `${top}px`,
-                              height: `${height}px`,
-                            }}
-                            title={`Click to copy Query ${idx + 1} (Lines ${block.startLine}–${block.endLine})`}
-                            onClick={() => handleCopyQueryBlock(block)}
-                          >
-                            <span
-                              className="query-copy-label"
+                          <Fragment key={block.id}>
+                            {/* 1. QUERY COPY BAR */}
+                            <button
+                              type="button"
+                              className={`query-copy-bar ${isCopied ? "copied" : ""}`}
                               style={{
-                                top: `${labelTop}px`,
+                                top: `${top}px`,
+                                height: `${height}px`,
+                              }}
+                              title={`Click to copy Query ${idx + 1} (Lines ${block.startLine}–${block.endLine})`}
+                              onClick={() => handleCopyQueryBlock(block)}
+                            >
+                              <span
+                                className="query-copy-label"
+                                style={{
+                                  top: `${labelTop}px`,
+                                }}
+                              >
+                                {isCopied
+                                  ? isShortBlock ? "✓" : "✓ COPIED"
+                                  : isShortBlock ? `Q${idx + 1}` : `Query ${idx + 1}`}
+                              </span>
+                            </button>
+
+                            {/* 2. QUERY RUN / CANCEL BAR (GREEN WHEN IDLE, RED WHEN RUNNING, GRAY WHEN OTHER RUNNING) */}
+                            <button
+                              type="button"
+                              className={`query-run-bar ${
+                                isThisRunning
+                                  ? "running"
+                                  : isOtherRunning
+                                    ? "disabled-running"
+                                    : ""
+                              }`}
+                              style={{
+                                top: `${top}px`,
+                                height: `${height}px`,
+                              }}
+                              disabled={isOtherRunning || !status.connected}
+                              title={
+                                isThisRunning
+                                  ? "Click to CANCEL running SQL query execution"
+                                  : isOtherRunning
+                                    ? "Another query is currently executing"
+                                    : !status.connected
+                                      ? "Connect to Oracle database first"
+                                      : `Click to RUN Query ${idx + 1} (Lines ${block.startLine}–${block.endLine})`
+                              }
+                              onClick={() => {
+                                if (isThisRunning) {
+                                  void onCancelQuery();
+                                } else if (!isOtherRunning && status.connected) {
+                                  void handleRunQueryBlock(block);
+                                }
                               }}
                             >
-                              {isCopied
-                                ? isShortBlock ? "✓" : "✓ COPIED"
-                                : isShortBlock ? `Q${idx + 1}` : `Query ${idx + 1}`}
-                            </span>
-                          </button>
+                              <span
+                                className="query-run-label"
+                                style={{
+                                  top: `${labelTop}px`,
+                                }}
+                              >
+                                {isThisRunning
+                                  ? isShortBlock ? "■" : "CANCEL"
+                                  : isOtherRunning
+                                    ? isShortBlock ? "▶" : "RUN"
+                                    : isShortBlock ? "▶" : "RUN"}
+                              </span>
+                            </button>
+                          </Fragment>
                         );
                       });
                     })()}
@@ -4930,6 +5032,8 @@ export default function App() {
                       automaticLayout: true,
                       tabSize: 2,
                       padding: { top: 12 },
+                      lineDecorationsWidth: 44,
+                      lineNumbersMinChars: 3,
                       scrollbar: {
                         vertical: "visible",
                         horizontal: "visible",
@@ -5015,25 +5119,6 @@ export default function App() {
               </div>
 
               <div className="toolbar-actions">
-                <button
-                  type="button"
-                  className="primary"
-                  onClick={onExecute}
-                  disabled={!status.connected || busy}
-                  title="Run statement under cursor (Cmd+Enter / Ctrl+Enter or Shift+Enter)"
-                >
-                  Run
-                </button>
-                {busy && (
-                  <button
-                    type="button"
-                    className="danger cancel-query-btn"
-                    onClick={onCancelQuery}
-                    title="Cancel running SQL query execution"
-                  >
-                    ⏹ Cancel Query
-                  </button>
-                )}
                 <button
                   type="button"
                   className="success"
@@ -5219,16 +5304,6 @@ export default function App() {
           <span className="live-query-timer" title="Current SQL query execution length in real time">
             ⏱ {formatLiveElapsedTime(queryElapsedTimeMs)}
           </span>
-        ) : null}
-        {busy ? (
-          <button
-            type="button"
-            className="danger cancel-query-btn status-bar-cancel-btn"
-            onClick={onCancelQuery}
-            title="Cancel running SQL query execution"
-          >
-            ⏹ Cancel Query
-          </button>
         ) : null}
         <span className="save-status">
           {saveState === "saving"
