@@ -514,15 +514,41 @@ export default function ResultsGrid({
     return pending ? pending.newValue : cell;
   };
 
-  const hasColWidths = Object.keys(colWidths).length > 0;
+  const computedAutoWidths = useMemo(() => {
+    if (fitColumnsToContent) return {};
+    return computeAutoColWidths(
+      density,
+      visibleColumns,
+      result.rows,
+      pendingEdits,
+      fontScale,
+    );
+  }, [
+    density,
+    fitColumnsToContent,
+    visibleColumns,
+    result.rows,
+    pendingEdits,
+    fontScale,
+  ]);
+
+  const effectiveColWidths = useMemo(() => {
+    const merged = { ...computedAutoWidths };
+    for (const name of userResizedRef.current) {
+      if (colWidths[name] != null) merged[name] = colWidths[name];
+    }
+    return merged;
+  }, [computedAutoWidths, colWidths]);
+
+  const hasColWidths = Object.keys(effectiveColWidths).length > 0;
   const tableWidth = useMemo(() => {
     if (!hasColWidths) return undefined;
     const dataWidth = visibleColumns.reduce(
-      (sum, { col }) => sum + (colWidths[col.name] ?? 0),
+      (sum, { col }) => sum + (effectiveColWidths[col.name] ?? 0),
       0,
     );
     return rowNumWidthRef.current + dataWidth;
-  }, [hasColWidths, visibleColumns, colWidths]);
+  }, [hasColWidths, visibleColumns, effectiveColWidths]);
 
   const headerWrapRef = useRef<HTMLDivElement | null>(null);
   const bodyWrapRef = useRef<HTMLDivElement | null>(null);
@@ -539,7 +565,7 @@ export default function ResultsGrid({
       {visibleColumns.map(({ col }) => (
         <col
           key={col.name}
-          style={{ width: colWidths[col.name] ?? 1 }}
+          style={{ width: effectiveColWidths[col.name] ?? 1 }}
         />
       ))}
     </colgroup>
@@ -574,24 +600,39 @@ export default function ResultsGrid({
               <th className="row-num">
                 <span className="th-label">#</span>
               </th>
-              {visibleColumns.map(({ col }) => (
-                <th key={`${col.name}`} title={col.type}>
-                  <span className="th-label">{col.name}</span>
-                  <span
-                    className="col-resize"
-                    title="Drag to resize · double-click to reset"
-                    onPointerDown={(event) => onResizePointerDown(col.name, event)}
-                    onPointerMove={onResizePointerMove}
-                    onPointerUp={onResizePointerUp}
-                    onPointerCancel={endResize}
-                    onDoubleClick={(event) => {
-                      event.preventDefault();
-                      event.stopPropagation();
-                      resetColumnWidth(col.name);
-                    }}
-                  />
-                </th>
-              ))}
+              {visibleColumns.map(({ col }) => {
+                const w = effectiveColWidths[col.name];
+                return (
+                  <th
+                    key={`${col.name}`}
+                    title={col.type}
+                    style={
+                      w
+                        ? {
+                            width: w,
+                            minWidth: w,
+                            maxWidth: w,
+                          }
+                        : undefined
+                    }
+                  >
+                    <span className="th-label">{col.name}</span>
+                    <span
+                      className="col-resize"
+                      title="Drag to resize · double-click to reset"
+                      onPointerDown={(event) => onResizePointerDown(col.name, event)}
+                      onPointerMove={onResizePointerMove}
+                      onPointerUp={onResizePointerUp}
+                      onPointerCancel={endResize}
+                      onDoubleClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        resetColumnWidth(col.name);
+                      }}
+                    />
+                  </th>
+                );
+              })}
             </tr>
           </thead>
         </table>
@@ -623,16 +664,18 @@ export default function ResultsGrid({
                       ? `${text} — double-click to edit; empty or NULL clears`
                       : text);
 
+                  const w = effectiveColWidths[col.name];
+
                   return (
                     <td
                       key={columnIndex}
                       title={title}
                       style={
-                        colWidths[col.name]
+                        w
                           ? {
-                              width: colWidths[col.name],
-                              minWidth: colWidths[col.name],
-                              maxWidth: colWidths[col.name],
+                              width: w,
+                              minWidth: w,
+                              maxWidth: w,
                             }
                           : undefined
                       }
