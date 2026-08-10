@@ -3003,7 +3003,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "6B7A90" },
+        { token: "comment", foreground: "38BDF8", fontStyle: "italic" },
         { token: "keyword", foreground: "3D8BFD" },
         { token: "number", foreground: "3DD68C" },
         { token: "string", foreground: "C084FC" },
@@ -3031,7 +3031,7 @@ export default function App() {
         { token: "string", foreground: "D4B56E" },
         { token: "string.sql", foreground: "D4B56E" },
         { token: "string.escape", foreground: "E8D5A3" },
-        { token: "comment", foreground: "7A7168" },
+        { token: "comment", foreground: "F43F5E", fontStyle: "italic" },
         { token: "keyword", foreground: "C4A35A" },
         { token: "number", foreground: "6FAF8A" },
       ],
@@ -3053,7 +3053,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "475569" },
+        { token: "comment", foreground: "F472B6", fontStyle: "italic" },
         { token: "keyword", foreground: "38bdf8" },
         { token: "number", foreground: "34d399" },
         { token: "string", foreground: "c084fc" },
@@ -3078,7 +3078,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "64748b" },
+        { token: "comment", foreground: "38BDF8", fontStyle: "italic" },
         { token: "keyword", foreground: "818cf8" },
         { token: "number", foreground: "38bdf8" },
         { token: "string", foreground: "e879f9" },
@@ -3103,7 +3103,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "71717a" },
+        { token: "comment", foreground: "FACC15", fontStyle: "italic" },
         { token: "keyword", foreground: "ef4444" },
         { token: "number", foreground: "f59e0b" },
         { token: "string", foreground: "38bdf8" },
@@ -3128,7 +3128,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "78350f" },
+        { token: "comment", foreground: "F43F5E", fontStyle: "italic" },
         { token: "keyword", foreground: "f97316" },
         { token: "number", foreground: "eab308" },
         { token: "string", foreground: "ef4444" },
@@ -3153,7 +3153,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "475569" },
+        { token: "comment", foreground: "34D399", fontStyle: "italic" },
         { token: "keyword", foreground: "38bdf8" },
         { token: "number", foreground: "34d399" },
         { token: "string", foreground: "818cf8" },
@@ -3178,7 +3178,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "991B1B" },
+        { token: "comment", foreground: "FACC15", fontStyle: "italic" },
         { token: "keyword", foreground: "EF4444" },
         { token: "number", foreground: "F59E0B" },
         { token: "string", foreground: "F87171" },
@@ -3203,7 +3203,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "15803d" },
+        { token: "comment", foreground: "22C55E", fontStyle: "italic" },
         { token: "keyword", foreground: "00ff66" },
         { token: "number", foreground: "a7f3d0" },
         { token: "string", foreground: "34d399" },
@@ -3228,7 +3228,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "475569" },
+        { token: "comment", foreground: "F472B6", fontStyle: "italic" },
         { token: "keyword", foreground: "06b6d4" },
         { token: "number", foreground: "c084fc" },
         { token: "string", foreground: "38bdf8" },
@@ -3253,7 +3253,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "6b21a8" },
+        { token: "comment", foreground: "F43F5E", fontStyle: "italic" },
         { token: "keyword", foreground: "ec4899" },
         { token: "number", foreground: "f97316" },
         { token: "string", foreground: "06b6d4" },
@@ -3278,7 +3278,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "064e3b" },
+        { token: "comment", foreground: "38BDF8", fontStyle: "italic" },
         { token: "keyword", foreground: "f59e0b" },
         { token: "number", foreground: "34d399" },
         { token: "string", foreground: "fbbf24" },
@@ -3303,7 +3303,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "78350f" },
+        { token: "comment", foreground: "22C55E", fontStyle: "italic" },
         { token: "keyword", foreground: "fbbf24" },
         { token: "number", foreground: "22c55e" },
         { token: "string", foreground: "f59e0b" },
@@ -3328,7 +3328,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "7f1d1d" },
+        { token: "comment", foreground: "FACC15", fontStyle: "italic" },
         { token: "keyword", foreground: "dc2626" },
         { token: "number", foreground: "f59e0b" },
         { token: "string", foreground: "f97316" },
@@ -3352,7 +3352,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "581c87" },
+        { token: "comment", foreground: "38BDF8", fontStyle: "italic" },
         { token: "keyword", foreground: "a855f7" },
         { token: "number", foreground: "06b6d4" },
         { token: "string", foreground: "ec4899" },
@@ -3376,7 +3376,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "831843" },
+        { token: "comment", foreground: "F43F5E", fontStyle: "italic" },
         { token: "keyword", foreground: "f472b6" },
         { token: "number", foreground: "fde047" },
         { token: "string", foreground: "fb7185" },
@@ -3400,7 +3400,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "1e3a8a" },
+        { token: "comment", foreground: "FDE047", fontStyle: "italic" },
         { token: "keyword", foreground: "38bdf8" },
         { token: "number", foreground: "facc15" },
         { token: "string", foreground: "22d3ee" },
@@ -3424,7 +3424,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "7f1d1d" },
+        { token: "comment", foreground: "38BDF8", fontStyle: "italic" },
         { token: "keyword", foreground: "ef4444" },
         { token: "number", foreground: "f59e0b" },
         { token: "string", foreground: "f8fafc" },
@@ -3448,7 +3448,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "78350f" },
+        { token: "comment", foreground: "F472B6", fontStyle: "italic" },
         { token: "keyword", foreground: "d97706" },
         { token: "number", foreground: "fde047" },
         { token: "string", foreground: "fbbf24" },
@@ -3472,7 +3472,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "7c2d12" },
+        { token: "comment", foreground: "22D3EE", fontStyle: "italic" },
         { token: "keyword", foreground: "f97316" },
         { token: "number", foreground: "eab308" },
         { token: "string", foreground: "fb7185" },
@@ -3496,7 +3496,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "581c87" },
+        { token: "comment", foreground: "FACC15", fontStyle: "italic" },
         { token: "keyword", foreground: "9333ea" },
         { token: "number", foreground: "14b8a6" },
         { token: "string", foreground: "f472b6" },
@@ -3520,7 +3520,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "831843" },
+        { token: "comment", foreground: "F43F5E", fontStyle: "italic" },
         { token: "keyword", foreground: "00ffcc" },
         { token: "number", foreground: "facc15" },
         { token: "string", foreground: "be185d" },
@@ -3544,7 +3544,7 @@ export default function App() {
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "comment", foreground: "7f1d1d" },
+        { token: "comment", foreground: "38BDF8", fontStyle: "italic" },
         { token: "keyword", foreground: "fef08a" },
         { token: "number", foreground: "fbbf24" },
         { token: "string", foreground: "f97316" },
