@@ -1531,10 +1531,7 @@ body.is-col-resizing .monaco-editor {
   background: color-mix(in srgb, var(--grid-header) 30%, transparent) !important;
 }
 
-.results-grid.density-crammed tbody {
-  -webkit-mask-image: linear-gradient(to bottom, transparent var(--crammed-header-height, 100px), black var(--crammed-header-height, 100px));
-  mask-image: linear-gradient(to bottom, transparent var(--crammed-header-height, 100px), black var(--crammed-header-height, 100px));
-}
+
 
 .results-grid.density-crammed.has-col-widths th:not(.row-num) {
   overflow: visible;
