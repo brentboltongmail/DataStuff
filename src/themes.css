@@ -70,6 +70,230 @@
   --modal-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
 }
 
+[data-theme="rainbow"] {
+  color-scheme: dark;
+  --bg: #0b0716;
+  --bg-deep: #05030b;
+  --bg-elevated: #1a0f30;
+  --bg-panel: rgba(22, 12, 42, 0.78);
+  --bg-panel-glow: #331557;
+  --border: #ff007f;
+  --border-soft: #8b5cf6;
+  --border-bright: #00f0ff;
+  --text: #ffffff;
+  --text-muted: #f472b6;
+  --accent: #00ffcc;
+  --accent-hover: #ff007f;
+  --accent-deep: #7928ca;
+  --danger: #ff0055;
+  --danger-hover: #ff3300;
+  --success: #00ff66;
+  --warning: #ffcc00;
+  --input-bg: #120824;
+  --grid-header: rgba(51, 21, 87, 0.85);
+  --grid-row-alt: rgba(26, 12, 45, 0.65);
+  --grid-hover: rgba(236, 72, 153, 0.3);
+  --null: #c084fc;
+  --shadow-inset: inset 0 0 12px rgba(255, 0, 128, 0.35);
+  --shadow-panel: 0 0 24px rgba(0, 240, 255, 0.3), 0 8px 32px rgba(236, 72, 153, 0.35);
+  --shadow-float: 0 0 36px rgba(255, 0, 128, 0.6);
+  --font-ui: "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+  --font-display: "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+  --font-mono: "SF Mono", "Menlo", "Monaco", "Consolas", monospace;
+  --brand-color: #ff007f;
+  --btn-bg: linear-gradient(135deg, rgba(255, 0, 128, 0.45), rgba(0, 240, 255, 0.45));
+  --btn-bg-hover: linear-gradient(135deg, rgba(255, 0, 128, 0.8), rgba(0, 240, 255, 0.8));
+  --btn-border-hover: #ffcc00;
+  --btn-shadow: 0 0 14px rgba(255, 0, 128, 0.5);
+  --btn-shadow-hover: 0 0 24px rgba(0, 255, 204, 0.9);
+  --primary-bg: linear-gradient(135deg, #ff007f, #7928ca, #00f0ff);
+  --primary-bg-hover: linear-gradient(135deg, #ff3300, #ff007f, #00ffcc);
+  --primary-color: #fff;
+  --primary-border: #ffcc00;
+  --primary-shadow: 0 0 18px rgba(255, 0, 128, 0.7);
+  --primary-text-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
+  --input-shadow: inset 0 0 12px rgba(0, 240, 255, 0.35);
+  --input-focus-ring: 0 0 18px rgba(255, 0, 204, 0.85);
+  --body-bg: var(--bg);
+  --titlebar-bg: rgba(22, 12, 42, 0.92);
+  --titlebar-border: #ff007f;
+  --titlebar-shadow: 0 4px 24px rgba(255, 0, 128, 0.4);
+  --connection-bg: rgba(26, 16, 43, 0.85);
+  --connection-shadow: 0 0 18px rgba(0, 240, 255, 0.4);
+  --panel-tint: rgba(255, 0, 128, 0.08);
+  --hover-tint: rgba(0, 255, 204, 0.25);
+  --ghost-hover: rgba(236, 72, 153, 0.25);
+  --status-ok-glow: rgba(0, 255, 102, 0.5);
+  --editor-bg: rgba(11, 7, 22, 0.72);
+  --dirty-bg: rgba(255, 204, 0, 0.25);
+  --dirty-outline: #ffcc00;
+  --editing-outline: #00ffcc;
+  --editing-bg: rgba(26, 16, 43, 0.92);
+  --modal-bg: rgba(22, 12, 42, 0.96);
+  --modal-border: #ff007f;
+  --modal-shadow: 0 0 44px rgba(255, 0, 128, 0.7);
+}
+
+/* RAINBOW MODE SPECIAL SPLATTER EFFECTS */
+[data-theme="rainbow"] .app-header {
+  border-bottom: 3px solid transparent !important;
+  border-image: linear-gradient(90deg, #ff0055, #ff5500, #ffcc00, #00ff66, #00ccff, #9900ff, #ff0055) 1 !important;
+}
+
+[data-theme="rainbow"] .app-title {
+  background: linear-gradient(90deg, #ff0055, #ff5500, #ffcc00, #00ff66, #00ccff, #9900ff, #ff0055);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbow-text-flow 3s linear infinite;
+}
+
+@keyframes rainbow-text-flow {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+[data-theme="rainbow"] .sql-tab.active {
+  background: linear-gradient(135deg, rgba(255, 0, 128, 0.5), rgba(0, 240, 255, 0.5)) !important;
+  border: 1px solid #ffcc00 !important;
+  box-shadow: 0 0 16px rgba(255, 0, 204, 0.7) !important;
+}
+
+[data-theme="rainbow"] .sql-tab-title {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  text-shadow: 0 0 8px rgba(0, 255, 204, 0.8);
+}
+
+[data-theme="rainbow"] .query-run-bar {
+  background: linear-gradient(180deg, #00ff66, #00ccff, #9900ff) !important;
+  border-color: #ffcc00 !important;
+  box-shadow: 0 0 14px rgba(0, 255, 204, 0.9) !important;
+}
+
+[data-theme="rainbow"] .query-copy-bar {
+  background: linear-gradient(180deg, #ff0055, #ffcc00, #00ff66) !important;
+  border-color: #00f0ff !important;
+  box-shadow: 0 0 14px rgba(255, 0, 128, 0.9) !important;
+}
+
+.rainbow-atmosphere-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.rainbow-splatter-blob {
+  position: absolute;
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  filter: blur(55px);
+  opacity: 0.5;
+  animation: rainbow-blob-morph 10s infinite alternate ease-in-out;
+}
+
+.rainbow-blob-1 {
+  width: 480px;
+  height: 480px;
+  top: -120px;
+  left: -120px;
+  background: radial-gradient(circle, #ff0055, #ff007f);
+}
+
+.rainbow-blob-2 {
+  width: 520px;
+  height: 520px;
+  bottom: -160px;
+  right: -120px;
+  background: radial-gradient(circle, #00f0ff, #00ff66);
+  animation-delay: -3s;
+}
+
+.rainbow-blob-3 {
+  width: 420px;
+  height: 420px;
+  top: 30%;
+  left: 42%;
+  background: radial-gradient(circle, #ffcc00, #ff5500);
+  animation-delay: -6s;
+}
+
+.rainbow-blob-4 {
+  width: 380px;
+  height: 380px;
+  bottom: 18%;
+  left: 10%;
+  background: radial-gradient(circle, #9900ff, #ff007f);
+  animation-delay: -2s;
+}
+
+.rainbow-blob-5 {
+  width: 440px;
+  height: 440px;
+  top: 12%;
+  right: 12%;
+  background: radial-gradient(circle, #00ff66, #00ccff);
+  animation-delay: -7s;
+}
+
+@keyframes rainbow-blob-morph {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  }
+  50% {
+    transform: translate(45px, -35px) scale(1.18) rotate(120deg);
+    border-radius: 60% 40% 30% 70% / 50% 30% 70% 40%;
+  }
+  100% {
+    transform: translate(-35px, 45px) scale(0.88) rotate(240deg);
+    border-radius: 30% 70% 50% 50% / 60% 40% 40% 60%;
+  }
+}
+
+.rainbow-light-stream {
+  position: absolute;
+  inset: -50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 0, 85, 0.16),
+    rgba(255, 85, 0, 0.16),
+    rgba(255, 204, 0, 0.16),
+    rgba(0, 255, 102, 0.16),
+    rgba(0, 204, 255, 0.16),
+    rgba(153, 0, 255, 0.16),
+    rgba(255, 0, 85, 0.16)
+  );
+  animation: rainbow-spin 18s linear infinite;
+}
+
+@keyframes rainbow-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.rainbow-paint-drop {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: 0 0 16px currentColor;
+  opacity: 0.75;
+  animation: rainbow-float-drop 4.5s infinite ease-in-out alternate;
+}
+
+@keyframes rainbow-float-drop {
+  0% {
+    transform: translateY(0) scale(0.8);
+    opacity: 0.45;
+  }
+  100% {
+    transform: translateY(-30px) scale(1.35);
+    opacity: 0.95;
+  }
+}
+
 [data-theme="brass"] {
   color-scheme: dark;
   --bg: #16131a;

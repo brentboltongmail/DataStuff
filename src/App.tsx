@@ -1223,6 +1223,49 @@ const DefaultAtmosphere: React.FC = () => {
   return null;
 };
 
+const RainbowAtmosphere = memo(() => {
+  return (
+    <div className="rainbow-atmosphere-container" aria-hidden="true">
+      <div className="rainbow-light-stream" />
+      <div className="rainbow-splatter-blob rainbow-blob-1" />
+      <div className="rainbow-splatter-blob rainbow-blob-2" />
+      <div className="rainbow-splatter-blob rainbow-blob-3" />
+      <div className="rainbow-splatter-blob rainbow-blob-4" />
+      <div className="rainbow-splatter-blob rainbow-blob-5" />
+      {Array.from({ length: 24 }).map((_, i) => (
+        <span
+          key={i}
+          className="rainbow-paint-drop"
+          style={{
+            left: `${(i * 17 + 5) % 95}%`,
+            top: `${(i * 23 + 10) % 90}%`,
+            animationDelay: `${(i % 5) * 0.7}s`,
+            animationDuration: `${3.5 + (i % 4)}s`,
+            color: [
+              "#ff0055",
+              "#ff5500",
+              "#ffcc00",
+              "#00ff66",
+              "#00ccff",
+              "#9900ff",
+              "#ff007f",
+            ][i % 7],
+            background: [
+              "#ff0055",
+              "#ff5500",
+              "#ffcc00",
+              "#00ff66",
+              "#00ccff",
+              "#9900ff",
+              "#ff007f",
+            ][i % 7],
+          }}
+        />
+      ))}
+    </div>
+  );
+});
+
 const CIRCUIT_PRESETS = [
   // Preset 1: Silverstone Sweeping Loop
   "M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z",
@@ -3024,6 +3067,33 @@ export default function App() {
         "editorWidget.border": "#323843",
       },
     });
+    monaco.editor.defineTheme("datastuff-rainbow", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "00FF66", fontStyle: "italic bold" },
+        { token: "keyword", foreground: "FFCC00", fontStyle: "bold" },
+        { token: "number", foreground: "00F0FF" },
+        { token: "string", foreground: "FF007F" },
+        { token: "string.sql", foreground: "FF007F" },
+        { token: "string.escape", foreground: "FF5500" },
+        { token: "type", foreground: "A855F7" },
+        { token: "identifier", foreground: "F472B6" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#FFFFFF",
+        "editorLineNumber.foreground": "#FF007F",
+        "editorLineNumber.activeForeground": "#00FF66",
+        "editorCursor.foreground": "#00F0FF",
+        "editor.selectionBackground": "#FF007F55",
+        "editor.lineHighlightBackground": "#2D184788",
+        "editorIndentGuide.background": "#8B5CF6",
+        "editorIndentGuide.activeBackground": "#00F0FFaa",
+        "editorWidget.background": "#120824",
+        "editorWidget.border": "#FF007F",
+      },
+    });
     monaco.editor.defineTheme("datastuff-brass", {
       base: "vs-dark",
       inherit: true,
@@ -4191,6 +4261,7 @@ export default function App() {
   return (
     <div className="app">
       {themeId === "default" ? <DefaultAtmosphere /> : null}
+      {themeId === "rainbow" ? <RainbowAtmosphere /> : null}
       {themeId === "aetherium" ? <AetheriumAtmosphere /> : null}
       {themeId === "brass" ? <BrassAtmosphere /> : null}
       {themeId === "spaceship" ? (
