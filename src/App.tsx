@@ -1572,13 +1572,17 @@ export default function App() {
     [setMessage],
   );
 
-  const persistPassword = useCallback(async (password: string, remember: boolean) => {
+  const selectedConnectionIdRef = useRef(selectedConnectionId);
+  selectedConnectionIdRef.current = selectedConnectionId;
+
+  const persistPassword = useCallback(async (password: string, remember: boolean, profileId?: string) => {
     try {
+      const targetId = profileId || selectedConnectionIdRef.current;
       if (!remember || !password) {
-        await window.oracle.clearPassword();
+        await window.oracle?.clearPassword(targetId);
         return;
       }
-      await window.oracle.savePassword(password);
+      await window.oracle?.savePassword(password, targetId);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     }
@@ -1899,6 +1903,8 @@ export default function App() {
       if (!connId) {
         setConnectionName("");
         setIsProd(false);
+        setConfig((prev) => ({ ...prev, password: "" }));
+        setRememberPassword(false);
         localStorage.removeItem(LAST_CONNECTION_ID_KEY);
         return;
       }
@@ -1913,6 +1919,7 @@ export default function App() {
           port: match.port,
           service: match.service,
           tcps: !!match.tcps,
+          password: "",
         }));
         localStorage.setItem(LAST_CONNECTION_ID_KEY, match.id);
         localStorage.setItem(
@@ -1925,6 +1932,18 @@ export default function App() {
             tcps: !!match.tcps,
           }),
         );
+
+        if (window.oracle?.loadPassword) {
+          window.oracle.loadPassword(match.id).then((pass) => {
+            if (pass) {
+              setConfig((prev) => ({ ...prev, password: pass }));
+              setRememberPassword(true);
+            } else {
+              setConfig((prev) => ({ ...prev, password: "" }));
+              setRememberPassword(false);
+            }
+          });
+        }
       }
     },
     [savedConnections],
@@ -1935,13 +1954,18 @@ export default function App() {
     const defaultName = `${config.user}@${config.host}/${config.service}`;
     const nameToSave = connectionName.trim() || defaultName;
 
+    let targetId = selectedConnectionId;
+    if (!targetId) {
+      targetId = crypto.randomUUID();
+      setSelectedConnectionId(targetId);
+    }
+
     setSavedConnections((prev) => {
       let updated: SavedConnection[];
-      const existing = prev.find((item) => item.id === selectedConnectionId);
-      let targetId = selectedConnectionId;
+      const existing = prev.find((item) => item.id === targetId);
       if (existing) {
         updated = prev.map((item) =>
-          item.id === selectedConnectionId
+          item.id === targetId
             ? {
                 ...item,
                 name: nameToSave,
@@ -1956,7 +1980,7 @@ export default function App() {
         );
       } else {
         const newConn: SavedConnection = {
-          id: crypto.randomUUID(),
+          id: targetId,
           name: nameToSave,
           user: config.user,
           host: config.host,
@@ -1966,8 +1990,6 @@ export default function App() {
           isProd,
         };
         updated = [newConn, ...prev];
-        targetId = newConn.id;
-        setSelectedConnectionId(newConn.id);
       }
       localStorage.setItem(SAVED_CONNECTIONS_KEY, JSON.stringify(updated));
       void window.oracle?.saveSavedConnections?.(updated);
@@ -1976,8 +1998,15 @@ export default function App() {
       }
       return updated;
     });
-    setMessage(`Connection "${nameToSave}" saved`);
-  }, [config, connectionName, isProd, selectedConnectionId]);
+
+    if (rememberPassword && config.password) {
+      void window.oracle?.savePassword(config.password, targetId);
+    } else if (!rememberPassword) {
+      void window.oracle?.clearPassword(targetId);
+    }
+
+    setMessage(`Connection profile "${nameToSave}" saved securely in Apple Keychain`);
+  }, [config, connectionName, isProd, rememberPassword, selectedConnectionId]);
 
   const autoConnectAttemptedRef = useRef(false);
 
@@ -2020,7 +2049,7 @@ export default function App() {
 
         let loadedPass = "";
         if (window.oracle?.loadPassword) {
-          loadedPass = (await window.oracle.loadPassword()) || "";
+          loadedPass = (await window.oracle.loadPassword(targetConn.id)) || "";
         }
         connConfig.password = loadedPass;
         setConfig(connConfig);
@@ -2066,10 +2095,12 @@ export default function App() {
 
   const handleDeleteConnection = useCallback(() => {
     if (!selectedConnectionId) return;
-    const remaining = savedConnections.filter((item) => item.id !== selectedConnectionId);
+    const idToDelete = selectedConnectionId;
+    const remaining = savedConnections.filter((item) => item.id !== idToDelete);
     setSavedConnections(remaining);
     localStorage.setItem(SAVED_CONNECTIONS_KEY, JSON.stringify(remaining));
     void window.oracle?.saveSavedConnections?.(remaining);
+    void window.oracle?.clearPassword(idToDelete);
 
     if (remaining.length > 0) {
       handleSelectConnection(remaining[0].id);
@@ -2199,7 +2230,7 @@ export default function App() {
       setMessage(
         `Connected as ${next.user}@${next.connectString} (${next.mode ?? "thin"})`,
       );
-      await persistPassword(config.password, rememberPassword);
+      await persistPassword(config.password, rememberPassword, selectedConnectionId);
     } catch (err) {
       if (!hasTimedOut) {
         clearTimeout(timeoutTimer);
@@ -3833,8 +3864,9 @@ export default function App() {
       {themeId === "brass" ? <BrassAtmosphere /> : null}
       {themeId === "spaceship" ? (
         <div className="theme-atmosphere spaceship-atmosphere" aria-hidden="true">
-          {/* Full-screen sparkling deep space starfield behind planets */}
+          {/* Full-screen sparkling deep space starfield layers behind planets */}
           <div className="space-starfield" />
+          <div className="space-starfield space-starfield-2" />
 
           {/* Large Deep-Space 3D Spiral Galaxy (300+ Individual Star Particles) */}
           <div className="spiral-galaxy-container">

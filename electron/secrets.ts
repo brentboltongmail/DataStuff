@@ -2,10 +2,15 @@ import { app, safeStorage } from "electron";
 import fs from "node:fs/promises";
 import path from "node:path";
 
-const SECRET_FILE = "connection-password.enc";
+const SECRETS_MAP_FILE = "connection-passwords-map.enc";
+const LEGACY_SECRET_FILE = "connection-password.enc";
 
-function secretPath(): string {
-  return path.join(app.getPath("userData"), SECRET_FILE);
+function secretsMapPath(): string {
+  return path.join(app.getPath("userData"), SECRETS_MAP_FILE);
+}
+
+function legacySecretPath(): string {
+  return path.join(app.getPath("userData"), LEGACY_SECRET_FILE);
 }
 
 export function isPasswordStorageAvailable(): boolean {
@@ -16,34 +21,72 @@ export function isPasswordStorageAvailable(): boolean {
   }
 }
 
-/** Encrypt with OS Keychain-backed key and write to userData. */
-export async function savePassword(password: string): Promise<{ saved: boolean }> {
-  if (!password) {
-    await clearPassword();
-    return { saved: true };
+/** Load all profile passwords from encrypted disk storage (backed by Apple Keychain / OS Keyring). */
+async function loadAllPasswordsMap(): Promise<Record<string, string>> {
+  if (!isPasswordStorageAvailable()) return {};
+  try {
+    const fileContent = await fs.readFile(secretsMapPath());
+    if (!fileContent.length) return {};
+    const jsonStr = safeStorage.decryptString(fileContent);
+    return JSON.parse(jsonStr) as Record<string, string>;
+  } catch {
+    // If map file doesn't exist, check for legacy single password file and migrate
+    try {
+      const legacyEncrypted = await fs.readFile(legacySecretPath());
+      if (legacyEncrypted.length) {
+        const legacyPass = safeStorage.decryptString(legacyEncrypted);
+        if (legacyPass) {
+          return { default: legacyPass };
+        }
+      }
+    } catch {
+      // ignore
+    }
+    return {};
   }
+}
+
+/** Save all profile passwords encrypted with safeStorage (Apple Keychain). */
+async function saveAllPasswordsMap(map: Record<string, string>): Promise<void> {
   if (!isPasswordStorageAvailable()) {
     throw new Error("Secure password storage is unavailable on this system");
   }
-  const encrypted = safeStorage.encryptString(password);
-  await fs.writeFile(secretPath(), encrypted);
+  const jsonStr = JSON.stringify(map);
+  const encrypted = safeStorage.encryptString(jsonStr);
+  await fs.writeFile(secretsMapPath(), encrypted);
+}
+
+/** Encrypt and save a password under a specific connection profile ID in Apple Keychain. */
+export async function savePassword(
+  password: string,
+  profileId?: string,
+): Promise<{ saved: boolean }> {
+  const key = profileId && profileId.trim() ? profileId.trim() : "default";
+  const map = await loadAllPasswordsMap();
+
+  if (!password) {
+    delete map[key];
+  } else {
+    map[key] = password;
+  }
+
+  await saveAllPasswordsMap(map);
   return { saved: true };
 }
 
-export async function loadPassword(): Promise<string> {
-  try {
-    const encrypted = await fs.readFile(secretPath());
-    if (!encrypted.length || !isPasswordStorageAvailable()) return "";
-    return safeStorage.decryptString(encrypted);
-  } catch {
-    return "";
-  }
+/** Load password associated with a connection profile ID from Apple Keychain. */
+export async function loadPassword(profileId?: string): Promise<string> {
+  const key = profileId && profileId.trim() ? profileId.trim() : "default";
+  const map = await loadAllPasswordsMap();
+  return map[key] || (key !== "default" ? map["default"] || "" : "");
 }
 
-export async function clearPassword(): Promise<void> {
-  try {
-    await fs.unlink(secretPath());
-  } catch {
-    // missing is fine
+/** Clear password associated with a connection profile ID from Apple Keychain. */
+export async function clearPassword(profileId?: string): Promise<void> {
+  const key = profileId && profileId.trim() ? profileId.trim() : "default";
+  const map = await loadAllPasswordsMap();
+  if (map[key]) {
+    delete map[key];
+    await saveAllPasswordsMap(map);
   }
 }

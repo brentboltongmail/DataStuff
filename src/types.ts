@@ -138,9 +138,9 @@ export interface OracleApi {
   closeSqlPage: (fileName: string) => Promise<void>;
   openSqlPages: () => Promise<OpenSqlResult>;
   isPasswordStorageAvailable: () => Promise<boolean>;
-  savePassword: (password: string) => Promise<{ saved: boolean }>;
-  loadPassword: () => Promise<string>;
-  clearPassword: () => Promise<void>;
+  savePassword: (password: string, profileId?: string) => Promise<{ saved: boolean }>;
+  loadPassword: (profileId?: string) => Promise<string>;
+  clearPassword: (profileId?: string) => Promise<void>;
   loadSavedConnections: <T = unknown>() => Promise<T[]>;
   saveSavedConnections: <T = unknown>(connections: T[]) => Promise<{ saved: boolean }>;
   loadSettings?: () => Promise<Record<string, unknown>>;

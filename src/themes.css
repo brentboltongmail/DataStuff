@@ -810,6 +810,24 @@
   animation: starfield-twinkle 5s ease-in-out infinite alternate;
 }
 
+.spaceship-atmosphere .space-starfield-2 {
+  background-image: 
+    radial-gradient(0.5px 0.5px at 15vw 25vh, #ffffff 100%, transparent),
+    radial-gradient(0.7px 0.7px at 35vw 45vh, #67e8f9 100%, transparent),
+    radial-gradient(0.4px 0.4px at 45vw 15vh, #ffffff 100%, transparent),
+    radial-gradient(0.8px 0.8px at 65vw 75vh, #c084fc 100%, transparent),
+    radial-gradient(0.5px 0.5px at 75vw 35vh, #ffffff 100%, transparent),
+    radial-gradient(0.6px 0.6px at 85vw 85vh, #38bdf8 100%, transparent),
+    radial-gradient(0.4px 0.4px at 25vw 65vh, #ffffff 100%, transparent),
+    radial-gradient(0.7px 0.7px at 55vw 25vh, #e0e7ff 100%, transparent),
+    radial-gradient(0.5px 0.5px at 92vw 62vh, #ffffff 100%, transparent),
+    radial-gradient(0.6px 0.6px at 5vw 85vh, #fef08a 100%, transparent),
+    radial-gradient(0.4px 0.4px at 50vw 95vh, #ffffff 100%, transparent),
+    radial-gradient(0.7px 0.7px at 70vw 5vh, #38bdf8 100%, transparent);
+  animation-duration: 7s;
+  animation-delay: -2.5s;
+}
+
 @keyframes starfield-twinkle {
   0% { opacity: 0.75; }
   100% { opacity: 1; }

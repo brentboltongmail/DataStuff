@@ -31,10 +31,12 @@ const api: OracleApi = {
     ipcRenderer.invoke("workspace:close", fileName),
   openSqlPages: () => ipcRenderer.invoke("workspace:open"),
   isPasswordStorageAvailable: () => ipcRenderer.invoke("secrets:isAvailable"),
-  savePassword: (password: string) =>
-    ipcRenderer.invoke("secrets:savePassword", password),
-  loadPassword: () => ipcRenderer.invoke("secrets:loadPassword"),
-  clearPassword: () => ipcRenderer.invoke("secrets:clearPassword"),
+  savePassword: (password: string, profileId?: string) =>
+    ipcRenderer.invoke("secrets:savePassword", password, profileId),
+  loadPassword: (profileId?: string) =>
+    ipcRenderer.invoke("secrets:loadPassword", profileId),
+  clearPassword: (profileId?: string) =>
+    ipcRenderer.invoke("secrets:clearPassword", profileId),
   loadSavedConnections: () => ipcRenderer.invoke("connections:load"),
   saveSavedConnections: (connections: unknown[]) =>
     ipcRenderer.invoke("connections:save", connections),

@@ -210,12 +210,16 @@ function registerIpc() {
     saveSettingsToDisk(settings),
   );
   ipcMain.handle("secrets:isAvailable", () => isPasswordStorageAvailable());
-  ipcMain.handle("secrets:savePassword", async (_event, password: string) =>
-    savePassword(password ?? ""),
+  ipcMain.handle(
+    "secrets:savePassword",
+    async (_event, password: string, profileId?: string) =>
+      savePassword(password ?? "", profileId),
   );
-  ipcMain.handle("secrets:loadPassword", async () => loadPassword());
-  ipcMain.handle("secrets:clearPassword", async () => {
-    await clearPassword();
+  ipcMain.handle("secrets:loadPassword", async (_event, profileId?: string) =>
+    loadPassword(profileId),
+  );
+  ipcMain.handle("secrets:clearPassword", async (_event, profileId?: string) => {
+    await clearPassword(profileId);
   });
   ipcMain.handle(
     "app:saveCsv",
