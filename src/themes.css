@@ -1306,14 +1306,8 @@
 .spaceship-atmosphere .molten-debris-ring {
   width: 440px;
   height: 440px;
-  border: 16px dashed rgba(249, 115, 22, 0.55);
+  border: 16px solid rgba(249, 115, 22, 0.55);
   box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
-  animation: debris-ring-spin 90s linear infinite;
-}
-
-@keyframes debris-ring-spin {
-  0% { transform: translate(-50%, -50%) rotateX(75deg) rotateY(-18deg) rotateZ(0deg); }
-  100% { transform: translate(-50%, -50%) rotateX(75deg) rotateY(-18deg) rotateZ(360deg); }
 }
 
 .spaceship-atmosphere .plasma-ring-outer {

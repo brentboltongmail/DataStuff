@@ -3943,7 +3943,6 @@ export default function App() {
                     border: ring.borderStyle,
                     boxShadow: ring.boxShadow,
                     transform: `translate(-50%, -50%) rotateX(${ring.tiltX}deg) rotateY(${ring.tiltY}deg) rotateZ(${ring.tiltZ}deg)`,
-                    animation: ring.spinDuration ? `debris-ring-spin ${ring.spinDuration}s linear infinite` : undefined,
                   }}
                 />
               ))}
@@ -3983,7 +3982,6 @@ export default function App() {
                     border: ring.borderStyle,
                     boxShadow: ring.boxShadow,
                     transform: `translate(-50%, -50%) rotateX(${ring.tiltX}deg) rotateY(${ring.tiltY}deg) rotateZ(${ring.tiltZ}deg)`,
-                    animation: ring.spinDuration ? `debris-ring-spin ${ring.spinDuration}s linear infinite` : undefined,
                   }}
                 />
               ))}

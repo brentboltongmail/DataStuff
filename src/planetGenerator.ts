@@ -237,46 +237,46 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
       }
     }
 
-    // Generate Ring Systems (~98% chance with 4 to 8 wide, detailed rings)
+    // Generate Ring Systems (~98% chance with 8 to 16 wide, semi-transparent rings)
     const rings: PlanetRing[] = [];
     const hasRings = rand() < 0.98;
 
     if (hasRings) {
-      const ringCount = randInt(4, 8);
+      const ringCount = randInt(8, 16);
       const tiltX = randInt(55, 82);
       const tiltY = randInt(-32, 32);
       const tiltZ = randInt(0, 360);
 
+      const baseHue = randChoice([195, 215, 265, 285, 38, 160, 330]);
+
       for (let r = 0; r < ringCount; r++) {
-        const ringScale = 1.38 + r * 0.28;
+        // Concentric scaling from 1.30 to 3.8x diameter
+        const ringScale = 1.3 + r * 0.18;
         const sizePx = Math.round(size * ringScale);
+
+        // Every 4th ring is a dark Cassini division gap
+        const isGap = r % 4 === 2;
         let borderStyle = "";
         let boxShadow = "";
-        let spinDuration: number | undefined;
 
-        if (r === 0) {
-          borderStyle = "56px solid rgba(186, 230, 253, 0.75)";
-          boxShadow = "0 0 65px rgba(56, 189, 248, 0.75)";
-        } else if (r === 1) {
-          borderStyle = "44px dashed rgba(253, 224, 71, 0.7)";
-          boxShadow = "0 0 50px rgba(234, 179, 8, 0.65)";
-          spinDuration = randInt(50, 110);
-        } else if (r === 2) {
-          borderStyle = "20px solid rgba(3, 7, 18, 0.9)";
+        if (isGap) {
+          const borderWidth = randInt(6, 24);
+          borderStyle = `${borderWidth}px solid rgba(3, 7, 18, 0.85)`;
           boxShadow = "none";
-        } else if (r === 3) {
-          borderStyle = "48px solid rgba(192, 132, 252, 0.65)";
-          boxShadow = "0 0 55px rgba(168, 85, 247, 0.7)";
-        } else if (r === 4) {
-          borderStyle = "36px solid rgba(52, 211, 153, 0.6)";
-          boxShadow = "0 0 40px rgba(16, 185, 129, 0.55)";
-        } else if (r === 5) {
-          borderStyle = "16px solid rgba(255, 255, 255, 0.85)";
-          boxShadow = "0 0 30px rgba(255, 255, 255, 0.85)";
         } else {
-          borderStyle = "40px dashed rgba(244, 114, 182, 0.5)";
-          boxShadow = "0 0 45px rgba(244, 114, 182, 0.55)";
-          spinDuration = randInt(70, 150);
+          // Highly randomized ring thickness from 4px razor rings to 68px wide ice belts
+          const borderWidth = randChoice([
+            randInt(4, 10),   // Razor-thin ring
+            randInt(12, 28),  // Medium ring band
+            randInt(30, 48),  // Wide ring band
+            randInt(50, 68),  // Massive ice belt
+          ]);
+          const alpha = parseFloat(randRange(0.1, 0.26).toFixed(2));
+          const glowAlpha = parseFloat(randRange(0.12, 0.28).toFixed(2));
+          const ringHue = (baseHue + randInt(-30, 30)) % 360;
+
+          borderStyle = `${borderWidth}px solid hsla(${ringHue}, 90%, 75%, ${alpha})`;
+          boxShadow = `0 0 ${randInt(15, 45)}px hsla(${ringHue}, 85%, 65%, ${glowAlpha})`;
         }
 
         rings.push({
@@ -286,7 +286,6 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
           tiltX,
           tiltY,
           tiltZ,
-          spinDuration,
         });
       }
     }
