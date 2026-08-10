@@ -1444,7 +1444,7 @@ body.is-col-resizing .monaco-editor {
   top: 0;
   z-index: 10;
   border-right: none;
-  background: color-mix(in srgb, var(--grid-header) 30%, transparent) !important;
+  background: color-mix(in srgb, var(--grid-header) 30%, var(--bg-panel)) !important;
 }
 
 .results-grid.density-crammed th:not(.row-num)::after {
@@ -1492,12 +1492,7 @@ body.is-col-resizing .monaco-editor {
   padding: 0 2px 2px;
   position: relative;
   overflow: visible;
-  background: color-mix(in srgb, var(--grid-header) 30%, transparent) !important;
-}
-
-.results-grid.density-crammed tbody {
-  -webkit-mask-image: linear-gradient(to bottom, transparent var(--crammed-header-height, 100px), black var(--crammed-header-height, 100px));
-  mask-image: linear-gradient(to bottom, transparent var(--crammed-header-height, 100px), black var(--crammed-header-height, 100px));
+  background: color-mix(in srgb, var(--grid-header) 30%, var(--bg-panel)) !important;
 }
 
 .results-grid.density-crammed.has-col-widths th:not(.row-num) {
