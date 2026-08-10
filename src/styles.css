@@ -1210,7 +1210,7 @@ input#maxRows::-webkit-inner-spin-button {
   position: relative;
   z-index: 10;
   flex-shrink: 0;
-  background: color-mix(in srgb, var(--grid-header) 30%, transparent) !important;
+  background: transparent !important;
 }
 
 .grid-body-wrap {
@@ -1480,7 +1480,7 @@ body.is-col-resizing .monaco-editor {
   top: 0;
   z-index: 10;
   border-right: none;
-  background: color-mix(in srgb, var(--grid-header) 30%, transparent) !important;
+  background: transparent !important;
 }
 
 .results-grid.density-crammed th:not(.row-num)::after {
@@ -1528,7 +1528,7 @@ body.is-col-resizing .monaco-editor {
   padding: 0 2px 2px;
   position: relative;
   overflow: visible;
-  background: color-mix(in srgb, var(--grid-header) 30%, transparent) !important;
+  background: transparent !important;
 }
 
 
