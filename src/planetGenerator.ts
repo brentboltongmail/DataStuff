@@ -81,8 +81,8 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
   const randInt = (min: number, max: number) => Math.floor(randRange(min, max + 1));
   const randChoice = <T>(arr: T[]): T => arr[Math.floor(rand() * arr.length)];
 
-  // Generate 5 to 7 planets floating slowly in unconstrained linear paths
-  const count = randInt(5, 7);
+  // Generate 2 to 3 large majestic planets floating slowly in unconstrained linear paths
+  const count = randInt(2, 3);
 
   const archetypes = [
     "gas-giant",
@@ -107,8 +107,8 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
     const archetype = archetypes[i % archetypes.length];
     const name = `${randChoice(PLANET_NAMES_PREFIX)} ${randChoice(PLANET_NAMES_SUFFIX)}`;
 
-    // Size variety from 140px to 460px
-    const size = randInt(140, 460);
+    // Size variety from 420px to 780px
+    const size = randInt(420, 780);
 
     // Straight linear travel vector from off-screen start to off-screen end
     // Angle in radians (0 to 2pi)
@@ -345,4 +345,66 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
   }
 
   return planets;
+}
+
+export interface RandomShip {
+  id: string;
+  type: string;
+  startXvw: number;
+  startYvh: number;
+  deltaXvw: number;
+  deltaYvh: number;
+  rotationDeg: number;
+  scale: number;
+  duration: number;
+  delay: number;
+}
+
+export function generateSeededShips(seed: number): RandomShip[] {
+  const rand = createSeededRandom(seed + 9999);
+  const randRange = (min: number, max: number) => min + rand() * (max - min);
+  const randInt = (min: number, max: number) => Math.floor(randRange(min, max + 1));
+
+  const shipTypes = ["dreadnought", "interceptor", "cruiser", "shuttle", "explorer"];
+  const count = randInt(4, 6);
+  const ships: RandomShip[] = [];
+
+  for (let i = 0; i < count; i++) {
+    const type = shipTypes[i % shipTypes.length];
+    // Angle in radians (0 to 2pi - random 360 degree path directions)
+    const angleRad = randRange(0, Math.PI * 2);
+    const rotationDeg = parseFloat(((angleRad * 180) / Math.PI).toFixed(1));
+
+    // Distance vector across viewport (160vw)
+    const D = 160;
+    const deltaXvw = parseFloat((D * Math.cos(angleRad)).toFixed(1));
+    const deltaYvh = parseFloat((D * Math.sin(angleRad)).toFixed(1));
+
+    // Start point randomly distributed on-screen (8vw to 82vw, 8vh to 82vh)
+    const startXvw = parseFloat(randRange(8, 82).toFixed(1));
+    const startYvh = parseFloat(randRange(8, 82).toFixed(1));
+
+    // Scale reduced by 50% (0.3 to 0.42)
+    const scale = parseFloat(randRange(0.3, 0.42).toFixed(2));
+
+    // Slow stately cruise duration (45s to 90s)
+    const duration = randInt(45, 90);
+    // Negative delay so ships start ON-SCREEN at random points along their vectors
+    const delay = -parseFloat((rand() * duration).toFixed(1));
+
+    ships.push({
+      id: `ship-${seed}-${i}`,
+      type,
+      startXvw,
+      startYvh,
+      deltaXvw,
+      deltaYvh,
+      rotationDeg,
+      scale,
+      duration,
+      delay,
+    });
+  }
+
+  return ships;
 }

@@ -776,6 +776,40 @@
   transform: translateZ(0);
 }
 
+.spaceship-atmosphere .space-starfield {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    radial-gradient(1.5px 1.5px at 8vw 12vh, #ffffff 100%, transparent),
+    radial-gradient(2px 2px at 22vw 32vh, #38bdf8 100%, transparent),
+    radial-gradient(1.2px 1.2px at 38vw 8vh, #ffffff 100%, transparent),
+    radial-gradient(2.5px 2.5px at 52vw 58vh, #e0e7ff 100%, transparent),
+    radial-gradient(1.5px 1.5px at 68vw 22vh, #f472b6 100%, transparent),
+    radial-gradient(2px 2px at 84vw 72vh, #ffffff 100%, transparent),
+    radial-gradient(1.2px 1.2px at 14vw 78vh, #c084fc 100%, transparent),
+    radial-gradient(2px 2px at 28vw 88vh, #ffffff 100%, transparent),
+    radial-gradient(1.5px 1.5px at 48vw 42vh, #38bdf8 100%, transparent),
+    radial-gradient(2px 2px at 64vw 82vh, #ffffff 100%, transparent),
+    radial-gradient(1.2px 1.2px at 79vw 38vh, #e0e7ff 100%, transparent),
+    radial-gradient(2.5px 2.5px at 91vw 14vh, #67e8f9 100%, transparent),
+    radial-gradient(1.5px 1.5px at 4vw 48vh, #ffffff 100%, transparent),
+    radial-gradient(2px 2px at 36vw 70vh, #fef08a 100%, transparent),
+    radial-gradient(1.5px 1.5px at 76vw 90vh, #ffffff 100%, transparent),
+    radial-gradient(2px 2px at 18vw 40vh, #ffffff 100%, transparent),
+    radial-gradient(1.5px 1.5px at 60vw 18vh, #38bdf8 100%, transparent),
+    radial-gradient(2px 2px at 88vw 48vh, #c084fc 100%, transparent);
+  background-size: 100% 100%;
+  opacity: 0.95;
+  animation: starfield-twinkle 5s ease-in-out infinite alternate;
+}
+
+@keyframes starfield-twinkle {
+  0% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
 /* Guarantee 85% opacity on all windows and panels in space theme so backdrop shines through */
 [data-theme="spaceship"] {
   background: #020610 !important;
@@ -1489,14 +1523,27 @@
 .spaceship-atmosphere .distant-ship {
   position: absolute;
   pointer-events: none;
-  opacity: 0.55 !important;
-  z-index: 1 !important; /* Fly BEHIND planets & moons in deep space */
+  opacity: 0.65 !important;
+  z-index: 2 !important; /* Fly BEHIND planets (z-index 10) in deep space */
   will-change: transform;
   transform: translateZ(0);
+  width: 140px;
+  height: 50px;
   contain: layout style paint;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.85)) blur(0.6px) brightness(0.75);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.85)) brightness(0.9);
+}
+
+@keyframes ship-straight-vector {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(var(--ship-rot, 0deg)) scale(var(--ship-scale, 0.38));
+    opacity: 0.65;
+  }
+  100% {
+    transform: translate3d(var(--ship-delta-x, 120vw), var(--ship-delta-y, 120vh), 0) rotate(var(--ship-rot, 0deg)) scale(var(--ship-scale, 0.38));
+    opacity: 0.65;
+  }
 }
 
 .spaceship-atmosphere .starship-svg {
@@ -2459,170 +2506,91 @@
 
 @keyframes distant-ship-cruise-1 {
   0% {
-    transform: translate3d(-100px, -40px, -400px) rotateY(-18deg) rotateX(12deg) rotateZ(5deg) scale(0.25);
+    transform: translate3d(-15vw, -10vh, 0) rotate(22deg) scale(0.38);
     opacity: 0;
   }
-  5% {
-    opacity: 0.55;
-  }
-  30% {
-    transform: translate3d(calc(28vw + 40px), 80px, -150px) rotateY(-8deg) rotateX(4deg) rotateZ(-3deg) scale(0.48);
-  }
-  60% {
-    transform: translate3d(calc(58vw + 90px), 20px, 180px) rotateY(14deg) rotateX(-12deg) rotateZ(8deg) scale(0.75);
-  }
-  85% {
-    transform: translate3d(calc(82vw + 140px), 120px, -80px) rotateY(-10deg) rotateX(6deg) rotateZ(-4deg) scale(0.52);
-  }
-  94% {
-    opacity: 0.55;
-  }
+  3% { opacity: 0.55; }
+  97% { opacity: 0.55; }
   100% {
-    transform: translate3d(calc(100vw + 240px), 180px, -350px) rotateY(-22deg) rotateX(15deg) rotateZ(6deg) scale(0.3);
+    transform: translate3d(115vw, 42vh, 0) rotate(22deg) scale(0.38);
     opacity: 0;
   }
 }
 
 @keyframes distant-ship-cruise-2 {
   0% {
-    transform: translate3d(-120px, 200px, 250px) rotateY(25deg) rotateX(-18deg) rotateZ(-12deg) scale(0.72);
+    transform: translate3d(115vw, 25vh, 0) rotate(180deg) scale(0.35);
     opacity: 0;
   }
-  4% {
-    opacity: 0.5;
-  }
-  28% {
-    transform: translate3d(calc(32vw + 30px), 80px, -100px) rotateY(-12deg) rotateX(8deg) rotateZ(6deg) scale(0.46);
-  }
-  62% {
-    transform: translate3d(calc(62vw + 100px), -40px, -380px) rotateY(-28deg) rotateX(16deg) rotateZ(-8deg) scale(0.28);
-  }
-  88% {
-    transform: translate3d(calc(85vw + 150px), 50px, -120px) rotateY(10deg) rotateX(-6deg) rotateZ(4deg) scale(0.45);
-  }
-  95% {
-    opacity: 0.5;
-  }
+  3% { opacity: 0.5; }
+  97% { opacity: 0.5; }
   100% {
-    transform: translate3d(calc(100vw + 250px), 110px, 150px) rotateY(20deg) rotateX(-14deg) rotateZ(-10deg) scale(0.65);
+    transform: translate3d(-15vw, 25vh, 0) rotate(180deg) scale(0.35);
     opacity: 0;
   }
 }
 
 @keyframes distant-ship-cruise-3 {
   0% {
-    transform: translate3d(120px, -120px, -420px) rotateY(28deg) rotateX(-18deg) rotateZ(12deg) scale(0.25);
+    transform: translate3d(-15vw, 105vh, 0) rotate(-35deg) scale(0.32);
     opacity: 0;
   }
-  4% {
-    opacity: 0.55;
-  }
-  35% {
-    transform: translate3d(calc(-35vw - 60px), 90px, 120px) rotateY(-18deg) rotateX(14deg) rotateZ(-10deg) scale(0.68);
-  }
-  65% {
-    transform: translate3d(calc(-65vw - 130px), -60px, 280px) rotateY(-28deg) rotateX(20deg) rotateZ(16deg) scale(0.85);
-  }
-  90% {
-    opacity: 0.55;
-  }
+  3% { opacity: 0.55; }
+  97% { opacity: 0.55; }
   100% {
-    transform: translate3d(calc(-100vw - 300px), -160px, -240px) rotateY(22deg) rotateX(-14deg) rotateZ(-8deg) scale(0.38);
+    transform: translate3d(115vw, 15vh, 0) rotate(-35deg) scale(0.32);
     opacity: 0;
   }
 }
 
 @keyframes distant-ship-cruise-4 {
   0% {
-    transform: translate3d(140px, 180px, 220px) rotateY(-25deg) rotateX(18deg) rotateZ(-12deg) scale(0.72);
+    transform: translate3d(115vw, 10vh, 0) rotate(150deg) scale(0.36);
     opacity: 0;
   }
-  4% {
-    opacity: 0.45;
-  }
-  32% {
-    transform: translate3d(calc(-32vw - 50px), -50px, -260px) rotateY(22deg) rotateX(-14deg) rotateZ(8deg) scale(0.3);
-  }
-  68% {
-    transform: translate3d(calc(-68vw - 120px), 140px, -480px) rotateY(35deg) rotateX(-22deg) rotateZ(-14deg) scale(0.18);
-  }
-  90% {
-    opacity: 0.45;
-  }
+  3% { opacity: 0.45; }
+  97% { opacity: 0.45; }
   100% {
-    transform: translate3d(calc(-100vw - 250px), 70px, -100px) rotateY(-16deg) rotateX(10deg) rotateZ(6deg) scale(0.44);
+    transform: translate3d(-15vw, 85vh, 0) rotate(150deg) scale(0.36);
     opacity: 0;
   }
 }
 
 @keyframes distant-ship-cruise-5 {
   0% {
-    transform: translate3d(-150px, -100px, -500px) rotateY(-35deg) rotateX(22deg) rotateZ(-14deg) scale(0.15);
+    transform: translate3d(-15vw, 65vh, 0) rotate(10deg) scale(0.3);
     opacity: 0;
   }
-  5% {
-    opacity: 0.55;
-  }
-  28% {
-    transform: translate3d(calc(28vw + 60px), 140px, -200px) rotateY(18deg) rotateX(-12deg) rotateZ(10deg) scale(0.38);
-  }
-  58% {
-    transform: translate3d(calc(58vw + 120px), -80px, 320px) rotateY(-26deg) rotateX(18deg) rotateZ(-16deg) scale(0.88);
-  }
-  85% {
-    transform: translate3d(calc(85vw + 180px), 90px, -140px) rotateY(20deg) rotateX(-14deg) rotateZ(8deg) scale(0.45);
-  }
-  95% {
-    opacity: 0.55;
-  }
+  3% { opacity: 0.55; }
+  97% { opacity: 0.55; }
   100% {
-    transform: translate3d(calc(100vw + 300px), 200px, -450px) rotateY(-38deg) rotateX(25deg) rotateZ(-18deg) scale(0.2);
+    transform: translate3d(115vw, 88vh, 0) rotate(10deg) scale(0.3);
     opacity: 0;
   }
 }
 
 @keyframes distant-ship-cruise-6 {
   0% {
-    transform: translate3d(160px, -140px, 280px) rotateY(32deg) rotateX(-24deg) rotateZ(18deg) scale(0.82);
+    transform: translate3d(115vw, 95vh, 0) rotate(-145deg) scale(0.34);
     opacity: 0;
   }
-  4% {
-    opacity: 0.5;
-  }
-  35% {
-    transform: translate3d(calc(-35vw - 80px), 120px, -220px) rotateY(-20deg) rotateX(15deg) rotateZ(-10deg) scale(0.35);
-  }
-  72% {
-    transform: translate3d(calc(-72vw - 160px), -100px, -460px) rotateY(-38deg) rotateX(26deg) rotateZ(20deg) scale(0.18);
-  }
-  92% {
-    opacity: 0.5;
-  }
+  3% { opacity: 0.5; }
+  97% { opacity: 0.5; }
   100% {
-    transform: translate3d(calc(-100vw - 280px), -40px, 120px) rotateY(24deg) rotateX(-16deg) rotateZ(-12deg) scale(0.65);
+    transform: translate3d(-15vw, 15vh, 0) rotate(-145deg) scale(0.34);
     opacity: 0;
   }
 }
 
 @keyframes distant-ship-cruise-7 {
   0% {
-    transform: translate3d(-180px, 160px, -420px) rotateY(25deg) rotateX(-18deg) rotateZ(12deg) scale(0.22);
+    transform: translate3d(-15vw, 45vh, 0) rotate(-15deg) scale(0.4);
     opacity: 0;
   }
-  4% {
-    opacity: 0.52;
-  }
-  30% {
-    transform: translate3d(calc(30vw + 70px), -120px, 180px) rotateY(-28deg) rotateX(20deg) rotateZ(-15deg) scale(0.75);
-  }
-  65% {
-    transform: translate3d(calc(65vw + 140px), 100px, -260px) rotateY(22deg) rotateX(-15deg) rotateZ(10deg) scale(0.35);
-  }
-  88% {
-    opacity: 0.52;
-  }
+  3% { opacity: 0.52; }
+  97% { opacity: 0.52; }
   100% {
-    transform: translate3d(calc(100vw + 320px), -80px, -520px) rotateY(-34deg) rotateX(24deg) rotateZ(-18deg) scale(0.15);
+    transform: translate3d(115vw, 10vh, 0) rotate(-15deg) scale(0.4);
     opacity: 0;
   }
 }
