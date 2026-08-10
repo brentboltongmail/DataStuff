@@ -237,12 +237,12 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
       }
     }
 
-    // Generate Ring Systems (~98% chance with 8 to 16 wide, semi-transparent rings)
+    // Generate Ring Systems (~98% chance with 8 to 12 wide, semi-transparent rings)
     const rings: PlanetRing[] = [];
     const hasRings = rand() < 0.98;
 
     if (hasRings) {
-      const ringCount = randInt(8, 16);
+      const ringCount = randInt(8, 12);
       const tiltX = randInt(55, 82);
       const tiltY = randInt(-32, 32);
       const tiltZ = randInt(0, 360);
@@ -250,8 +250,8 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
       const baseHue = randChoice([195, 215, 265, 285, 38, 160, 330]);
 
       for (let r = 0; r < ringCount; r++) {
-        // Concentric scaling from 1.30 to 3.8x diameter
-        const ringScale = 1.3 + r * 0.18;
+        // Concentric scaling from 1.30 to 3.2x diameter
+        const ringScale = 1.3 + r * 0.19;
         const sizePx = Math.round(size * ringScale);
 
         // Every 4th ring is a dark Cassini division gap
@@ -260,23 +260,23 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
         let boxShadow = "";
 
         if (isGap) {
-          const borderWidth = randInt(6, 24);
+          const borderWidth = randInt(6, 18);
           borderStyle = `${borderWidth}px solid rgba(3, 7, 18, 0.85)`;
           boxShadow = "none";
         } else {
-          // Highly randomized ring thickness from 4px razor rings to 68px wide ice belts
+          // Highly randomized ring thickness from 4px razor rings to 56px wide ice belts
           const borderWidth = randChoice([
             randInt(4, 10),   // Razor-thin ring
-            randInt(12, 28),  // Medium ring band
-            randInt(30, 48),  // Wide ring band
-            randInt(50, 68),  // Massive ice belt
+            randInt(12, 24),  // Medium ring band
+            randInt(26, 40),  // Wide ring band
+            randInt(42, 56),  // Massive ice belt
           ]);
-          const alpha = parseFloat(randRange(0.1, 0.26).toFixed(2));
-          const glowAlpha = parseFloat(randRange(0.12, 0.28).toFixed(2));
-          const ringHue = (baseHue + randInt(-30, 30)) % 360;
+          const alpha = parseFloat(randRange(0.1, 0.24).toFixed(2));
+          const glowAlpha = parseFloat(randRange(0.1, 0.22).toFixed(2));
+          const ringHue = (baseHue + randInt(-25, 25)) % 360;
 
           borderStyle = `${borderWidth}px solid hsla(${ringHue}, 90%, 75%, ${alpha})`;
-          boxShadow = `0 0 ${randInt(15, 45)}px hsla(${ringHue}, 85%, 65%, ${glowAlpha})`;
+          boxShadow = `0 0 ${randInt(10, 25)}px hsla(${ringHue}, 85%, 65%, ${glowAlpha})`;
         }
 
         rings.push({
