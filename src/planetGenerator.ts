@@ -81,8 +81,8 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
   const randInt = (min: number, max: number) => Math.floor(randRange(min, max + 1));
   const randChoice = <T>(arr: T[]): T => arr[Math.floor(rand() * arr.length)];
 
-  // Generate 2 to 3 large majestic planets floating slowly in unconstrained linear paths
-  const count = randInt(2, 3);
+  // Generate 1 focal planet floating slowly on a straight 360-degree linear path (like ships)
+  const count = 1;
 
   const archetypes = [
     "gas-giant",
@@ -107,34 +107,34 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
     const archetype = archetypes[i % archetypes.length];
     const name = `${randChoice(PLANET_NAMES_PREFIX)} ${randChoice(PLANET_NAMES_SUFFIX)}`;
 
-    // Size variety from 420px to 780px
-    const size = randInt(420, 780);
+    // Size variety from 450px to 750px
+    const size = randInt(450, 750);
 
-    // Straight linear travel vector from off-screen start to off-screen end
-    // Angle in radians (0 to 2pi)
+    // Straight 360-degree linear travel vector matching ship movement
     const angleRad = randRange(0, Math.PI * 2);
     
-    // Off-screen orbit radius (88vw/vh ensures start & end are 100% off-screen)
-    const R = 88;
-    const startXvw = 50 - R * Math.cos(angleRad);
-    const startYvh = 50 - R * Math.sin(angleRad);
-    
-    const deltaXvw = 2 * R * Math.cos(angleRad);
-    const deltaYvh = 2 * R * Math.sin(angleRad);
+    // Vector distance (180vw/vh)
+    const D = 180;
+    const deltaXvw = parseFloat((D * Math.cos(angleRad)).toFixed(1));
+    const deltaYvh = parseFloat((D * Math.sin(angleRad)).toFixed(1));
 
-    const xPct = parseFloat(startXvw.toFixed(1));
-    const yPct = parseFloat(startYvh.toFixed(1));
-    const moveX = `${deltaXvw.toFixed(1)}vw`;
-    const moveY = `${deltaYvh.toFixed(1)}vh`;
-    const moveRot = randInt(-30, 30);
+    // Start point randomly distributed on-screen (10vw to 80vw, 10vh to 80vh)
+    const startXvw = parseFloat(randRange(10, 80).toFixed(1));
+    const startYvh = parseFloat(randRange(10, 80).toFixed(1));
 
-    const startScale = parseFloat(randRange(0.88, 0.98).toFixed(2));
-    const endScale = parseFloat(randRange(1.02, 1.12).toFixed(2));
+    const xPct = startXvw;
+    const yPct = startYvh;
+    const moveX = `${deltaXvw}vw`;
+    const moveY = `${deltaYvh}vh`;
+    const moveRot = randInt(-25, 25);
 
-    // Slow, stately astronomical space movement duration (360s to 850s = 6.0 to 14.1 minutes)
-    const duration = randInt(360, 850);
+    const startScale = parseFloat(randRange(0.9, 0.98).toFixed(2));
+    const endScale = parseFloat(randRange(1.02, 1.1).toFixed(2));
 
-    // Staggered negative delays so planets start along their paths immediately
+    // Slow, stately astronomical space movement duration (400s to 900s = 6.6 to 15 minutes)
+    const duration = randInt(400, 900);
+
+    // Negative delay so the planet starts on-screen along its vector immediately
     const delay = -parseFloat((rand() * duration).toFixed(1));
 
     // Dynamic light origin position for body radial gradient
@@ -283,8 +283,8 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
       }
     }
 
-    // Generate Orbiting Moons (0 to 3 moons)
-    const moonCount = randInt(0, 3);
+    // Generate Orbiting Moons (2 to 4 moons accompanying the planet)
+    const moonCount = randInt(2, 4);
     const moons: PlanetMoon[] = [];
 
     const moonPalettes = [
