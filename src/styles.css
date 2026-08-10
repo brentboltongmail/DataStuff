@@ -864,6 +864,59 @@ body.is-col-resizing .query-tabs-split {
   border-radius: 0 !important;
 }
 
+.sql-tab.is-running {
+  border-left: 3px solid #10b981 !important;
+  background: color-mix(in srgb, #10b981 22%, var(--bg-panel)) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.45), inset 0 0 0 1px #10b981 !important;
+  animation: tab-running-pulse 1.2s infinite alternate ease-in-out;
+}
+
+@keyframes tab-running-pulse {
+  0% {
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.35), inset 0 0 0 1px #10b981;
+  }
+  100% {
+    box-shadow: 0 0 16px rgba(52, 211, 153, 0.8), inset 0 0 0 1px #34d399;
+  }
+}
+
+.sql-tab-running-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 5px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.sql-tab-running-spinner {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border: 2px solid rgba(16, 185, 129, 0.3);
+  border-top-color: #34d399;
+  border-radius: 50%;
+  animation: tab-spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+.sql-tab-running-icon {
+  font-size: 10px;
+  color: #34d399;
+  animation: tab-bolt-pulse 0.8s infinite alternate ease-in-out;
+}
+
+@keyframes tab-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes tab-bolt-pulse {
+  0% { opacity: 0.6; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1.2); }
+}
+
 .sql-tab[draggable="true"] {
   cursor: grab;
 }

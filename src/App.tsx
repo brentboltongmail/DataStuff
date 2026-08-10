@@ -4842,6 +4842,7 @@ export default function App() {
                 <SqlTabs
                   tabs={tabs}
                   activeId={activeTabId}
+                  isBusy={busy}
                   onSelect={setActiveTabId}
                   onClose={(id) => {
                     void closeTab(id);

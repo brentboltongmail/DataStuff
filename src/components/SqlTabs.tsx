@@ -4,6 +4,8 @@ import type { SqlTab } from "../types";
 interface Props {
   tabs: SqlTab[];
   activeId: string;
+  isBusy?: boolean;
+  runningTabId?: string | null;
   onSelect: (id: string) => void;
   onClose: (id: string) => void;
   onAdd: () => void;
@@ -16,6 +18,8 @@ interface Props {
 export default function SqlTabs({
   tabs,
   activeId,
+  isBusy,
+  runningTabId,
   onSelect,
   onClose,
   onAdd,
@@ -107,6 +111,8 @@ export default function SqlTabs({
       <div className="sql-tabs-list">
         {tabs.map((tab, index) => {
           const isActive = tab.id === activeId;
+          const isRunning =
+            !!isBusy && (runningTabId ? tab.id === runningTabId : tab.id === activeId);
           const isEditing = editingId === tab.id;
           const isDragging = draggedIndex === index;
           const isDropTarget = dragOverIndex === index && draggedIndex !== index;
@@ -114,7 +120,7 @@ export default function SqlTabs({
           return (
             <div
               key={tab.id}
-              className={`sql-tab ${isActive ? "active" : ""} ${isDragging ? "is-dragging" : ""} ${isDropTarget ? "drop-target" : ""}`}
+              className={`sql-tab ${isActive ? "active" : ""} ${isRunning ? "is-running" : ""} ${isDragging ? "is-dragging" : ""} ${isDropTarget ? "drop-target" : ""}`}
               role="tab"
               aria-selected={isActive}
               draggable={!isEditing}
@@ -126,7 +132,11 @@ export default function SqlTabs({
                 if (isEditing) return;
                 onSelect(tab.id);
               }}
-              title={`${tab.fileName} (click & drag to reorder)`}
+              title={
+                isRunning
+                  ? `${tab.fileName} (Query running...)`
+                  : `${tab.fileName} (click & drag to reorder)`
+              }
             >
               {isEditing ? (
                 <input
@@ -160,6 +170,12 @@ export default function SqlTabs({
                     beginRename(tab);
                   }}
                 >
+                  {isRunning && (
+                    <span className="sql-tab-running-indicator" title="Query execution in progress...">
+                      <span className="sql-tab-running-spinner" />
+                      <span className="sql-tab-running-icon">⚡</span>
+                    </span>
+                  )}
                   {tab.title}
                 </button>
               )}
