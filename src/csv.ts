@@ -1,10 +1,14 @@
 import type { QueryResult } from "./types";
 
 function formatDateString(val: string): string {
-  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(val)) {
-    return val.replace("T", " ").replace(/\.000Z$/, "").replace(/Z$/, "");
+  let s = val;
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(s)) {
+    s = s.replace("T", " ").replace(/\.000Z$/, "").replace(/Z$/, "");
   }
-  return val;
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+    s = s.replace(/^(\d{4})-(\d{2})-(\d{2})/, "$1/$2/$3");
+  }
+  return s;
 }
 
 function formatCsvCell(value: unknown): string {

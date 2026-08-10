@@ -177,7 +177,7 @@ function isDateColumn(rows: unknown[][], colIndex: number): boolean {
     sampled++;
     if (val instanceof Date) return true;
     const str = String(val);
-    if (/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}/.test(str)) {
+    if (/^\d{4}[-/]\d{2}[-/]\d{2}([ T]\d{2}:\d{2}:\d{2})?/.test(str)) {
       return true;
     }
     if (sampled >= 20) break;

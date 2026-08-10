@@ -68,20 +68,20 @@ export function buildUpdate(
 
   if (isDateType && typeof newValue === "string" && newValue.trim() !== "") {
     const val = newValue.trim();
-    if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
-      valExpr = "TO_DATE(?, 'YYYY-MM-DD')";
-      bindValue = val;
+    if (/^\d{4}[-/]\d{2}[-/]\d{2}$/.test(val)) {
+      valExpr = "TO_DATE(?, 'YYYY/MM/DD')";
+      bindValue = val.replace(/-/g, "/");
     } else if (
-      /^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(\.\d+)?$/.test(val)
+      /^\d{4}[-/]\d{2}[-/]\d{2}[ T]\d{2}:\d{2}:\d{2}(\.\d+)?$/.test(val)
     ) {
-      valExpr = "TO_TIMESTAMP(?, 'YYYY-MM-DD HH24:MI:SS.FF')";
-      bindValue = val.replace("T", " ");
+      valExpr = "TO_TIMESTAMP(?, 'YYYY/MM/DD HH24:MI:SS.FF')";
+      bindValue = val.replace("T", " ").replace(/-/g, "/");
     } else if (/^\d{2}-[A-Z]{3}-\d{2,4}$/i.test(val)) {
       valExpr = "TO_DATE(?, 'DD-MON-YYYY')";
       bindValue = val.toUpperCase();
     } else {
-      valExpr = "TO_DATE(?, 'YYYY-MM-DD HH24:MI:SS')";
-      bindValue = val;
+      valExpr = "TO_DATE(?, 'YYYY/MM/DD HH24:MI:SS')";
+      bindValue = val.replace(/-/g, "/");
     }
   }
 
