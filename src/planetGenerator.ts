@@ -81,11 +81,12 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
   const randInt = (min: number, max: number) => Math.floor(randRange(min, max + 1));
   const randChoice = <T>(arr: T[]): T => arr[Math.floor(rand() * arr.length)];
 
-  // Generate 1 focal planet floating slowly on a straight 360-degree linear path (like ships)
+  // Generate 1 focal planet floating slowly on a straight 360-degree linear path (starting off-screen and gliding on-screen)
   const count = 1;
 
   const archetypes = [
     "gas-giant",
+    "oceanic-super-earth",
     "ice-world",
     "lava-planet",
     "purple-giant",
@@ -93,6 +94,8 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
     "solar-supergiant",
     "dark-void",
     "crystal-nebula",
+    "inferno-lava-world",
+    "bioluminescent-ocean",
   ];
 
   // Fisher-Yates shuffle archetypes using seeded rand
@@ -107,20 +110,21 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
     const archetype = archetypes[i % archetypes.length];
     const name = `${randChoice(PLANET_NAMES_PREFIX)} ${randChoice(PLANET_NAMES_SUFFIX)}`;
 
-    // Size variety from 450px to 750px
-    const size = randInt(450, 750);
+    // Majestic focal size from 500px to 780px
+    const size = randInt(500, 780);
 
     // Straight 360-degree linear travel vector matching ship movement
     const angleRad = randRange(0, Math.PI * 2);
     
-    // Vector distance (180vw/vh)
-    const D = 180;
-    const deltaXvw = parseFloat((D * Math.cos(angleRad)).toFixed(1));
-    const deltaYvh = parseFloat((D * Math.sin(angleRad)).toFixed(1));
-
-    // Start point randomly distributed on-screen (10vw to 80vw, 10vh to 80vh)
-    const startXvw = parseFloat(randRange(10, 80).toFixed(1));
-    const startYvh = parseFloat(randRange(10, 80).toFixed(1));
+    // Start 100% COMPLETELY OFF-SCREEN:
+    // Radius R = 92vw/vh ensures start position is fully outside visible viewport
+    const R = 92;
+    const startXvw = parseFloat((50 - R * Math.cos(angleRad)).toFixed(1));
+    const startYvh = parseFloat((50 - R * Math.sin(angleRad)).toFixed(1));
+    
+    // Vector carries planet completely across viewport to opposite side
+    const deltaXvw = parseFloat((2 * R * Math.cos(angleRad)).toFixed(1));
+    const deltaYvh = parseFloat((2 * R * Math.sin(angleRad)).toFixed(1));
 
     const xPct = startXvw;
     const yPct = startYvh;
@@ -131,20 +135,20 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
     const startScale = parseFloat(randRange(0.9, 0.98).toFixed(2));
     const endScale = parseFloat(randRange(1.02, 1.1).toFixed(2));
 
-    // Slow, stately astronomical space movement duration (400s to 900s = 6.6 to 15 minutes)
-    const duration = randInt(400, 900);
+    // Slow, stately astronomical space movement duration (240s to 500s = ~4 to 8.3 minutes to cross space)
+    const duration = randInt(240, 500);
 
-    // Negative delay so the planet starts on-screen along its vector immediately
-    const delay = -parseFloat((rand() * duration).toFixed(1));
+    // Delay = 0 so planet starts OFF-SCREEN and glides smoothly ON-SCREEN into view!
+    const delay = 0;
 
-    // Dynamic light origin position for body radial gradient
+    // Dynamic light origin position for 3D body radial gradient
     const lx = randInt(20, 75);
     const ly = randInt(20, 75);
 
     let bodyGradient = "";
     let bodyShadow = "";
     let haloBackground = "";
-    let haloBlur = randInt(10, 26);
+    let haloBlur = randInt(14, 30);
     let textureClass: string | undefined;
     let textureStyle: React.CSSProperties | undefined;
     let cloudStyle: React.CSSProperties | undefined;
@@ -152,6 +156,15 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
     let spotStyle: React.CSSProperties | undefined;
 
     switch (archetype) {
+      case "oceanic-super-earth": {
+        bodyGradient = `radial-gradient(circle at ${lx}% ${ly}%, #38bdf8 0%, #0284c7 28%, #0f172a 75%, #020617 100%)`;
+        bodyShadow = `inset -45px -45px 75px rgba(2, 6, 23, 0.95), 0 0 ${randInt(100, 160)}px #38bdf8`;
+        haloBackground = `radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.6) 0%, rgba(14, 165, 233, 0.35) 45%, transparent 70%)`;
+        cloudStyle = { opacity: randRange(0.65, 0.92) };
+        auroraStyle = { opacity: randRange(0.7, 0.98) };
+        textureClass = "cloud-bands";
+        break;
+      }
       case "gas-giant": {
         const h1 = randInt(170, 225);
         const h2 = randInt(195, 250);
@@ -171,7 +184,8 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
         textureClass = "ice-crust";
         break;
       }
-      case "lava-planet": {
+      case "lava-planet":
+      case "inferno-lava-world": {
         const h = randInt(5, 38);
         bodyGradient = `radial-gradient(circle at ${lx}% ${ly}%, hsl(${h}, 98%, 62%) 0%, #dc2626 40%, #7f1d1d 75%, #0f172a 100%)`;
         bodyShadow = `inset -35px -35px 60px rgba(15, 23, 42, 0.95), 0 0 ${randInt(80, 130)}px hsl(${h}, 95%, 52%)`;
@@ -187,7 +201,8 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
         textureClass = "storm-swirls";
         break;
       }
-      case "emerald-world": {
+      case "emerald-world":
+      case "bioluminescent-ocean": {
         const h = randInt(130, 168);
         bodyGradient = `radial-gradient(circle at ${lx}% ${ly}%, #a7f3d0 0%, hsl(${h}, 90%, 50%) 38%, #064e3b 75%, #022c22 100%)`;
         bodyShadow = `inset -35px -35px 60px rgba(2, 44, 34, 0.95), 0 0 ${randInt(75, 125)}px hsl(${h}, 85%, 48%)`;
@@ -211,7 +226,8 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
         textureClass = "ice-crust";
         break;
       }
-      case "crystal-nebula": {
+      case "crystal-nebula":
+      default: {
         const h = randInt(305, 345);
         bodyGradient = `radial-gradient(circle at ${lx}% ${ly}%, #fce7f3 0%, hsl(${h}, 95%, 78%) 35%, #be185d 72%, #4c0519 100%)`;
         bodyShadow = `inset -35px -35px 60px rgba(76, 5, 25, 0.95), 0 0 ${randInt(85, 135)}px hsl(${h}, 90%, 72%)`;
@@ -221,54 +237,46 @@ export function generateSeededPlanets(seed: number): RandomPlanet[] {
       }
     }
 
-    // Generate Ring Systems (~95% chance with multiple wide rings)
+    // Generate Ring Systems (~98% chance with 4 to 8 wide, detailed rings)
     const rings: PlanetRing[] = [];
-    const hasRings = rand() < 0.95;
+    const hasRings = rand() < 0.98;
 
     if (hasRings) {
-      const ringCount = randInt(2, 6);
-      const tiltX = randInt(55, 85);
-      const tiltY = randInt(-35, 35);
+      const ringCount = randInt(4, 8);
+      const tiltX = randInt(55, 82);
+      const tiltY = randInt(-32, 32);
       const tiltZ = randInt(0, 360);
 
       for (let r = 0; r < ringCount; r++) {
-        const ringScale = 1.45 + r * 0.35;
+        const ringScale = 1.38 + r * 0.28;
         const sizePx = Math.round(size * ringScale);
         let borderStyle = "";
         let boxShadow = "";
         let spinDuration: number | undefined;
 
         if (r === 0) {
-          if (archetype === "lava-planet") {
-            borderStyle = "45px dashed rgba(249, 115, 22, 0.75)";
-            boxShadow = "0 0 55px rgba(239, 68, 68, 0.75)";
-            spinDuration = randInt(60, 110);
-          } else if (archetype === "purple-giant" || archetype === "dark-void") {
-            borderStyle = "52px solid rgba(192, 132, 252, 0.65)";
-            boxShadow = "0 0 65px rgba(168, 85, 247, 0.75)";
-          } else if (archetype === "emerald-world") {
-            borderStyle = "40px solid rgba(52, 211, 153, 0.65)";
-            boxShadow = "0 0 50px rgba(16, 185, 129, 0.65)";
-          } else if (archetype === "solar-supergiant") {
-            borderStyle = "48px solid rgba(253, 224, 71, 0.7)";
-            boxShadow = "0 0 60px rgba(234, 179, 8, 0.75)";
-          } else {
-            borderStyle = "42px solid rgba(186, 230, 253, 0.65)";
-            boxShadow = "0 0 55px rgba(56, 189, 248, 0.6)";
-          }
+          borderStyle = "56px solid rgba(186, 230, 253, 0.75)";
+          boxShadow = "0 0 65px rgba(56, 189, 248, 0.75)";
         } else if (r === 1) {
-          borderStyle = "38px solid rgba(253, 224, 71, 0.5)";
-          boxShadow = "0 0 35px rgba(234, 179, 8, 0.45)";
+          borderStyle = "44px dashed rgba(253, 224, 71, 0.7)";
+          boxShadow = "0 0 50px rgba(234, 179, 8, 0.65)";
+          spinDuration = randInt(50, 110);
         } else if (r === 2) {
-          borderStyle = "28px solid rgba(224, 242, 254, 0.45)";
-          boxShadow = "0 0 25px rgba(56, 189, 248, 0.4)";
-        } else if (r === 3) {
-          borderStyle = "18px solid rgba(3, 7, 18, 0.85)";
+          borderStyle = "20px solid rgba(3, 7, 18, 0.9)";
           boxShadow = "none";
+        } else if (r === 3) {
+          borderStyle = "48px solid rgba(192, 132, 252, 0.65)";
+          boxShadow = "0 0 55px rgba(168, 85, 247, 0.7)";
+        } else if (r === 4) {
+          borderStyle = "36px solid rgba(52, 211, 153, 0.6)";
+          boxShadow = "0 0 40px rgba(16, 185, 129, 0.55)";
+        } else if (r === 5) {
+          borderStyle = "16px solid rgba(255, 255, 255, 0.85)";
+          boxShadow = "0 0 30px rgba(255, 255, 255, 0.85)";
         } else {
-          borderStyle = "32px dashed rgba(192, 132, 252, 0.4)";
-          boxShadow = "0 0 30px rgba(192, 132, 252, 0.4)";
-          spinDuration = randInt(70, 130);
+          borderStyle = "40px dashed rgba(244, 114, 182, 0.5)";
+          boxShadow = "0 0 45px rgba(244, 114, 182, 0.55)";
+          spinDuration = randInt(70, 150);
         }
 
         rings.push({

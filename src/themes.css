@@ -782,31 +782,36 @@
   pointer-events: none;
   z-index: 0;
   background-image: 
-    radial-gradient(1.5px 1.5px at 8vw 12vh, #ffffff 100%, transparent),
-    radial-gradient(2px 2px at 22vw 32vh, #38bdf8 100%, transparent),
-    radial-gradient(1.2px 1.2px at 38vw 8vh, #ffffff 100%, transparent),
-    radial-gradient(2.5px 2.5px at 52vw 58vh, #e0e7ff 100%, transparent),
-    radial-gradient(1.5px 1.5px at 68vw 22vh, #f472b6 100%, transparent),
-    radial-gradient(2px 2px at 84vw 72vh, #ffffff 100%, transparent),
-    radial-gradient(1.2px 1.2px at 14vw 78vh, #c084fc 100%, transparent),
-    radial-gradient(2px 2px at 28vw 88vh, #ffffff 100%, transparent),
-    radial-gradient(1.5px 1.5px at 48vw 42vh, #38bdf8 100%, transparent),
-    radial-gradient(2px 2px at 64vw 82vh, #ffffff 100%, transparent),
-    radial-gradient(1.2px 1.2px at 79vw 38vh, #e0e7ff 100%, transparent),
-    radial-gradient(2.5px 2.5px at 91vw 14vh, #67e8f9 100%, transparent),
-    radial-gradient(1.5px 1.5px at 4vw 48vh, #ffffff 100%, transparent),
-    radial-gradient(2px 2px at 36vw 70vh, #fef08a 100%, transparent),
-    radial-gradient(1.5px 1.5px at 76vw 90vh, #ffffff 100%, transparent),
-    radial-gradient(2px 2px at 18vw 40vh, #ffffff 100%, transparent),
-    radial-gradient(1.5px 1.5px at 60vw 18vh, #38bdf8 100%, transparent),
-    radial-gradient(2px 2px at 88vw 48vh, #c084fc 100%, transparent);
+    radial-gradient(0.6px 0.6px at 8vw 12vh, #ffffff 100%, transparent),
+    radial-gradient(0.9px 0.9px at 22vw 32vh, #38bdf8 100%, transparent),
+    radial-gradient(0.5px 0.5px at 38vw 8vh, #ffffff 100%, transparent),
+    radial-gradient(1px 1px at 52vw 58vh, #e0e7ff 100%, transparent),
+    radial-gradient(0.7px 0.7px at 68vw 22vh, #f472b6 100%, transparent),
+    radial-gradient(0.8px 0.8px at 84vw 72vh, #ffffff 100%, transparent),
+    radial-gradient(0.5px 0.5px at 14vw 78vh, #c084fc 100%, transparent),
+    radial-gradient(1px 1px at 28vw 88vh, #ffffff 100%, transparent),
+    radial-gradient(0.7px 0.7px at 48vw 42vh, #38bdf8 100%, transparent),
+    radial-gradient(0.9px 0.9px at 64vw 82vh, #ffffff 100%, transparent),
+    radial-gradient(0.6px 0.6px at 79vw 38vh, #e0e7ff 100%, transparent),
+    radial-gradient(1.1px 1.1px at 91vw 14vh, #67e8f9 100%, transparent),
+    radial-gradient(0.7px 0.7px at 4vw 48vh, #ffffff 100%, transparent),
+    radial-gradient(0.9px 0.9px at 36vw 70vh, #fef08a 100%, transparent),
+    radial-gradient(0.6px 0.6px at 76vw 90vh, #ffffff 100%, transparent),
+    radial-gradient(0.8px 0.8px at 18vw 40vh, #ffffff 100%, transparent),
+    radial-gradient(0.7px 0.7px at 60vw 18vh, #38bdf8 100%, transparent),
+    radial-gradient(1px 1px at 88vw 48vh, #c084fc 100%, transparent),
+    radial-gradient(0.5px 0.5px at 12vw 60vh, #ffffff 100%, transparent),
+    radial-gradient(0.8px 0.8px at 32vw 20vh, #38bdf8 100%, transparent),
+    radial-gradient(0.6px 0.6px at 56vw 88vh, #ffffff 100%, transparent),
+    radial-gradient(0.9px 0.9px at 74vw 54vh, #fef08a 100%, transparent),
+    radial-gradient(0.5px 0.5px at 95vw 30vh, #ffffff 100%, transparent);
   background-size: 100% 100%;
   opacity: 0.95;
   animation: starfield-twinkle 5s ease-in-out infinite alternate;
 }
 
 @keyframes starfield-twinkle {
-  0% { opacity: 0.7; }
+  0% { opacity: 0.75; }
   100% { opacity: 1; }
 }
 
@@ -1111,11 +1116,45 @@
   background:
     repeating-linear-gradient(
       175deg,
-      rgba(255, 255, 255, 0.18) 0px,
-      rgba(255, 255, 255, 0.04) 14px,
-      transparent 28px,
-      rgba(14, 165, 233, 0.15) 42px
-    );
+      rgba(255, 255, 255, 0.22) 0px,
+      rgba(255, 255, 255, 0.05) 16px,
+      transparent 32px,
+      rgba(14, 165, 233, 0.18) 48px
+    ),
+    radial-gradient(circle at 40% 30%, rgba(255, 255, 255, 0.25) 0%, transparent 60%);
+  mix-blend-mode: overlay;
+  opacity: 0.9;
+}
+
+.spaceship-atmosphere .planet-surface-texture.ice-crust {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 40% 40%, transparent 40%, rgba(186, 230, 253, 0.4) 65%, rgba(15, 23, 42, 0.8) 100%),
+    repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15) 0px, transparent 18px, rgba(56, 189, 248, 0.2) 36px);
+  mix-blend-mode: color-dodge;
+  opacity: 0.9;
+}
+
+.spaceship-atmosphere .planet-surface-texture.lava-rivers {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    repeating-linear-gradient(45deg, rgba(249, 115, 22, 0.35) 0px, transparent 12px, rgba(239, 68, 68, 0.4) 24px),
+    radial-gradient(circle at 30% 30%, rgba(253, 224, 71, 0.5) 0%, transparent 50%);
+  mix-blend-mode: screen;
+  opacity: 0.95;
+}
+
+.spaceship-atmosphere .planet-surface-texture.storm-swirls {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse at 60% 40%, rgba(192, 132, 252, 0.45) 0%, transparent 60%),
+    repeating-linear-gradient(160deg, rgba(168, 85, 247, 0.25) 0px, transparent 16px, rgba(236, 72, 153, 0.2) 32px);
   mix-blend-mode: overlay;
   opacity: 0.85;
 }
@@ -1124,11 +1163,11 @@
   position: absolute;
   top: 38%;
   left: 48%;
-  width: 48px;
-  height: 28px;
+  width: 56px;
+  height: 32px;
   border-radius: 50%;
   background: radial-gradient(ellipse at 50% 50%, #38bdf8 0%, #0284c7 60%, transparent 100%);
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.8);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.85);
 }
 
 .spaceship-atmosphere .planet-aurora-boreal {
@@ -1136,9 +1175,9 @@
   top: 4%;
   left: 20%;
   right: 20%;
-  height: 24px;
+  height: 28px;
   border-radius: 50%;
-  background: radial-gradient(ellipse at 50% 50%, rgba(52, 211, 153, 0.85) 0%, rgba(34, 211, 238, 0.4) 60%, transparent 100%);
+  background: radial-gradient(ellipse at 50% 50%, rgba(52, 211, 153, 0.9) 0%, rgba(34, 211, 238, 0.45) 60%, transparent 100%);
   filter: blur(4px);
   animation: aurora-glow-pulse 4.5s ease-in-out infinite alternate;
 }
