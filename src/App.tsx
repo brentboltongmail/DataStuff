@@ -1229,20 +1229,53 @@ const RainbowAtmosphere = memo(() => {
   return (
     <div className="rainbow-atmosphere-container" aria-hidden="true">
       <div className="rainbow-light-stream" />
+      <div className="rainbow-prism-ray" />
+      
+      {/* 10 Morphing Splatter Paint Blobs */}
       <div className="rainbow-splatter-blob rainbow-blob-1" />
       <div className="rainbow-splatter-blob rainbow-blob-2" />
       <div className="rainbow-splatter-blob rainbow-blob-3" />
       <div className="rainbow-splatter-blob rainbow-blob-4" />
       <div className="rainbow-splatter-blob rainbow-blob-5" />
+      <div className="rainbow-splatter-blob rainbow-blob-6" />
+      <div className="rainbow-splatter-blob rainbow-blob-7" />
+      <div className="rainbow-splatter-blob rainbow-blob-8" />
+      <div className="rainbow-splatter-blob rainbow-blob-9" />
+      <div className="rainbow-splatter-blob rainbow-blob-10" />
+
+      {/* Floating Paint Starburst Splatters */}
       {Array.from({ length: 24 }).map((_, i) => (
         <span
-          key={i}
+          key={`starburst-${i}`}
+          className="rainbow-splatter-starburst"
+          style={{
+            left: `${(i * 21 + 8) % 94}%`,
+            top: `${(i * 31 + 12) % 88}%`,
+            animationDelay: `${(i % 6) * 0.35}s`,
+            animationDuration: `${1.8 + (i % 4) * 0.5}s`,
+            color: [
+              "#ff0055",
+              "#ff5500",
+              "#ffcc00",
+              "#00ff66",
+              "#00ffff",
+              "#9900ff",
+              "#ff007f",
+            ][i % 7],
+          }}
+        />
+      ))}
+
+      {/* 48 Floating Glowing Paint Drops */}
+      {Array.from({ length: 48 }).map((_, i) => (
+        <span
+          key={`drop-${i}`}
           className="rainbow-paint-drop"
           style={{
             left: `${(i * 17 + 5) % 95}%`,
             top: `${(i * 23 + 10) % 90}%`,
-            animationDelay: `${(i % 5) * 0.7}s`,
-            animationDuration: `${3.5 + (i % 4)}s`,
+            animationDelay: `${(i % 5) * 0.4}s`,
+            animationDuration: `${2.8 + (i % 4) * 0.6}s`,
             color: [
               "#ff0055",
               "#ff5500",

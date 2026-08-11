@@ -237,6 +237,102 @@
   animation-delay: -7s;
 }
 
+.rainbow-blob-6 {
+  width: 360px;
+  height: 360px;
+  top: 50%;
+  left: 15%;
+  background: radial-gradient(circle, #ff0055, #ffcc00);
+  animation-delay: -4s;
+}
+
+.rainbow-blob-7 {
+  width: 460px;
+  height: 460px;
+  bottom: 10%;
+  right: 25%;
+  background: radial-gradient(circle, #00ff66, #9900ff);
+  animation-delay: -8s;
+}
+
+.rainbow-blob-8 {
+  width: 400px;
+  height: 400px;
+  top: 5%;
+  left: 35%;
+  background: radial-gradient(circle, #ff007f, #00ffff);
+  animation-delay: -1s;
+}
+
+.rainbow-blob-9 {
+  width: 380px;
+  height: 380px;
+  bottom: 35%;
+  left: 60%;
+  background: radial-gradient(circle, #ffe600, #ff0055);
+  animation-delay: -5s;
+}
+
+.rainbow-blob-10 {
+  width: 420px;
+  height: 420px;
+  top: 65%;
+  right: 5%;
+  background: radial-gradient(circle, #00ffff, #ff007f);
+  animation-delay: -9s;
+}
+
+.rainbow-prism-ray {
+  position: absolute;
+  inset: -60%;
+  pointer-events: none;
+  background: conic-gradient(
+    from 180deg,
+    transparent 0deg,
+    rgba(255, 0, 127, 0.22) 15deg,
+    transparent 30deg,
+    rgba(0, 255, 204, 0.22) 60deg,
+    transparent 75deg,
+    rgba(255, 230, 0, 0.22) 105deg,
+    transparent 120deg,
+    rgba(153, 0, 255, 0.22) 150deg,
+    transparent 165deg,
+    rgba(0, 255, 102, 0.22) 210deg,
+    transparent 225deg,
+    rgba(255, 85, 0, 0.22) 270deg,
+    transparent 285deg
+  );
+  animation: rainbow-prism-spin 22s linear infinite reverse;
+}
+
+@keyframes rainbow-prism-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.rainbow-splatter-starburst {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: rainbow-starburst-pulse 2.2s infinite ease-in-out alternate;
+}
+
+@keyframes rainbow-starburst-pulse {
+  0% { transform: scale(0.4) rotate(0deg); opacity: 0.3; }
+  100% { transform: scale(1.5) rotate(180deg); opacity: 1; filter: drop-shadow(0 0 12px currentColor); }
+}
+
+[data-theme="rainbow"] .grid-header-cell {
+  border-bottom: 2px solid transparent !important;
+  border-image: linear-gradient(90deg, #ff0055, #ffcc00, #00ff66, #00ffff, #9900ff) 1 !important;
+}
+
+[data-theme="rainbow"] .status-bar {
+  border-top: 2px solid transparent !important;
+  border-image: linear-gradient(90deg, #9900ff, #00ffff, #00ff66, #ffcc00, #ff0055) 1 !important;
+}
+
 @keyframes rainbow-blob-morph {
   0% {
     transform: translate(0, 0) scale(1) rotate(0deg);
