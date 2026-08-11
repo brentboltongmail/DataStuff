@@ -5367,16 +5367,12 @@ export default function App() {
                   {(() => {
                     void editorTick;
                     const layoutInfo = editorRef.current?.getLayoutInfo();
-                    const lineNumbersRight = layoutInfo
-                      ? layoutInfo.lineNumbersLeft + layoutInfo.lineNumbersWidth
-                      : 40;
-                    const gutterLeft = Math.max(40, lineNumbersRight + 2);
                     const viewportHeight = layoutInfo?.height ?? 600;
 
                     return (
                       <div
                         className="query-copy-gutter"
-                        style={{ left: `${gutterLeft}px` }}
+                        style={{ left: "0px" }}
                       >
                         {sqlBlocks.map((block, idx) => {
                           let top =

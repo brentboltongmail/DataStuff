@@ -1019,33 +1019,38 @@ body.is-col-resizing .query-tabs-split {
 }
 .query-copy-gutter {
   position: absolute;
-  left: 44px;
+  left: 0;
   top: 0;
   bottom: 0;
-  width: 38px;
+  width: 21px;
   z-index: 100;
   pointer-events: none;
+}
+
+.editor-wrapper .monaco-editor {
+  margin-left: 22px;
+  width: calc(100% - 22px) !important;
 }
 
 .query-copy-bar {
   position: absolute;
   left: 0;
-  width: 14px;
+  width: 10px !important;
   opacity: 0.5;
   pointer-events: auto;
   background: color-mix(in srgb, var(--accent) 35%, rgba(0, 0, 0, 0.5));
   border: 1px solid color-mix(in srgb, var(--accent) 65%, transparent);
-  border-radius: 4px;
+  border-radius: 3px;
   cursor: pointer;
   padding: 0;
   margin: 0;
   overflow: hidden;
-  transition: width 0.15s ease, opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  transition: opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .query-copy-bar:hover {
-  width: 18px;
+  width: 10px !important;
   opacity: 1;
   background: color-mix(in srgb, var(--accent) 75%, var(--bg-panel));
   border-color: var(--accent);
@@ -1053,7 +1058,7 @@ body.is-col-resizing .query-tabs-split {
 }
 
 .query-copy-bar.copied {
-  width: 18px;
+  width: 10px !important;
   opacity: 1;
   background: #10b981 !important;
   border-color: #34d399 !important;
@@ -1062,23 +1067,23 @@ body.is-col-resizing .query-tabs-split {
 
 .query-run-bar {
   position: absolute;
-  left: 18px;
-  width: 16px;
+  left: 11px;
+  width: 10px !important;
   opacity: 0.5;
   pointer-events: auto;
   background: color-mix(in srgb, #10b981 50%, rgba(0, 0, 0, 0.65));
   border: 1px solid #34d399;
-  border-radius: 4px;
+  border-radius: 3px;
   cursor: pointer;
   padding: 0;
   margin: 0;
   overflow: hidden;
-  transition: width 0.15s ease, opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  transition: opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .query-run-bar:hover:not(:disabled) {
-  width: 20px;
+  width: 10px !important;
   opacity: 1;
   background: #059669;
   border-color: #6ee7b7;
@@ -1086,7 +1091,7 @@ body.is-col-resizing .query-tabs-split {
 }
 
 .query-run-bar.running {
-  width: 20px;
+  width: 10px !important;
   opacity: 1;
   background: #dc2626 !important;
   border-color: #f87171 !important;
@@ -1118,15 +1123,15 @@ body.is-col-resizing .query-tabs-split {
   user-select: none;
   pointer-events: none;
   font-family: var(--font-mono, monospace);
-  font-size: 9px;
+  font-size: 7.5px;
   font-weight: 800;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: #ffffff;
   opacity: 0.95;
   text-align: center;
   margin: 0 auto;
-  line-height: 16px;
+  line-height: 10px;
 }
 
 .query-copy-label {
@@ -1139,15 +1144,15 @@ body.is-col-resizing .query-tabs-split {
   user-select: none;
   pointer-events: none;
   font-family: var(--font-mono, monospace);
-  font-size: 9px;
+  font-size: 7.5px;
   font-weight: 800;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text);
   opacity: 0.95;
   text-align: center;
   margin: 0 auto;
-  line-height: 14px;
+  line-height: 10px;
   transition: color 0.15s ease, opacity 0.15s ease;
 }
 
