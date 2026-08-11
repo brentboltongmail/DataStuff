@@ -5354,14 +5354,16 @@ export default function App() {
 
                           const isCopied = copiedBlockId === block.id;
 
-                          if (top + height < -50 || top > viewportHeight + 100)
+                          const MIN_BAR_HEIGHT = 56;
+                          const barHeight = Math.max(MIN_BAR_HEIGHT, height);
+
+                          if (top + barHeight < -50 || top > viewportHeight + 100)
                             return null;
 
-                          const isShortBlock = height < 36;
-                          const labelHeight = isShortBlock ? 14 : 52;
+                          const labelHeight = 56;
                           const visibleStart = Math.max(top, 0);
                           const visibleEnd = Math.min(
-                            top + height,
+                            top + barHeight,
                             viewportHeight,
                           );
                           const visibleCenter = (visibleStart + visibleEnd) / 2;
@@ -5369,7 +5371,7 @@ export default function App() {
                           const labelTop = Math.max(
                             2,
                             Math.min(
-                              Math.max(2, height - labelHeight - 2),
+                              Math.max(2, barHeight - labelHeight - 2),
                               idealTop,
                             ),
                           );
@@ -5388,7 +5390,7 @@ export default function App() {
                                 className={`query-copy-bar ${isCopied ? "copied" : ""}`}
                                 style={{
                                   top: `${top}px`,
-                                  height: `${height}px`,
+                                  height: `${barHeight}px`,
                                 }}
                                 title={`Click to copy Query ${idx + 1} (Lines ${block.startLine}–${block.endLine})`}
                                 onClick={() => handleCopyQueryBlock(block)}
@@ -5399,9 +5401,7 @@ export default function App() {
                                     top: `${labelTop}px`,
                                   }}
                                 >
-                                  {isCopied
-                                    ? isShortBlock ? "✓" : "✓ COPIED"
-                                    : "COPY"}
+                                  {isCopied ? "✓ COPIED" : "COPY"}
                                 </span>
                               </button>
 
@@ -5417,7 +5417,7 @@ export default function App() {
                                 }`}
                                 style={{
                                   top: `${top}px`,
-                                  height: `${height}px`,
+                                  height: `${barHeight}px`,
                                 }}
                                 disabled={isOtherRunning || !status.connected}
                                 title={
@@ -5443,11 +5443,7 @@ export default function App() {
                                     top: `${labelTop}px`,
                                   }}
                                 >
-                                  {isThisRunning
-                                    ? isShortBlock ? "■" : "CANCEL"
-                                    : isOtherRunning
-                                      ? isShortBlock ? "▶" : "RUN"
-                                      : isShortBlock ? "▶" : "RUN"}
+                                  {isThisRunning ? "CANCEL" : "RUN"}
                                 </span>
                               </button>
                             </Fragment>
