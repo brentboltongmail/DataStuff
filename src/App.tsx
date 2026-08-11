@@ -1266,6 +1266,47 @@ const RainbowAtmosphere = memo(() => {
   );
 });
 
+const DiscoAtmosphere = memo(() => {
+  return (
+    <div className="disco-atmosphere-container" aria-hidden="true">
+      {/* 1. Hanging 3D Mirror Disco Ball */}
+      <div className="disco-ball-stage">
+        <div className="disco-string" />
+        <div className="disco-ball">
+          <div className="disco-facet-grid" />
+        </div>
+      </div>
+
+      {/* 2. Sweeping Spotlight Beams */}
+      <div className="disco-beam beam-cyan" />
+      <div className="disco-beam beam-magenta" />
+      <div className="disco-beam beam-gold" />
+
+      {/* 3. Floating Sparkling Lights */}
+      {Array.from({ length: 30 }).map((_, i) => (
+        <span
+          key={i}
+          className="disco-sparkle"
+          style={{
+            left: `${(i * 19 + 7) % 96}%`,
+            top: `${(i * 29 + 15) % 92}%`,
+            animationDelay: `${(i % 7) * 0.4}s`,
+            animationDuration: `${2 + (i % 3) * 0.8}s`,
+            color: [
+              "#ff007f",
+              "#00ffff",
+              "#ffe600",
+              "#e600ff",
+              "#00ff66",
+              "#ff4500",
+            ][i % 6],
+          }}
+        />
+      ))}
+    </div>
+  );
+});
+
 const CIRCUIT_PRESETS = [
   // Preset 1: Silverstone Sweeping Loop
   "M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z",
@@ -3094,6 +3135,33 @@ export default function App() {
         "editorWidget.border": "#FF007F",
       },
     });
+    monaco.editor.defineTheme("datastuff-disco", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "FFE600", fontStyle: "italic bold" },
+        { token: "keyword", foreground: "FF007F", fontStyle: "bold" },
+        { token: "number", foreground: "00FFFF" },
+        { token: "string", foreground: "B500FF" },
+        { token: "string.sql", foreground: "B500FF" },
+        { token: "string.escape", foreground: "FF4500" },
+        { token: "type", foreground: "00FF66" },
+        { token: "identifier", foreground: "FF77D6" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#FFFFFF",
+        "editorLineNumber.foreground": "#E600FF",
+        "editorLineNumber.activeForeground": "#FFE600",
+        "editorCursor.foreground": "#00FFFF",
+        "editor.selectionBackground": "#E600FF55",
+        "editor.lineHighlightBackground": "#380D5288",
+        "editorIndentGuide.background": "#9900FF",
+        "editorIndentGuide.activeBackground": "#00FFFFaa",
+        "editorWidget.background": "#10061E",
+        "editorWidget.border": "#E600FF",
+      },
+    });
     monaco.editor.defineTheme("datastuff-brass", {
       base: "vs-dark",
       inherit: true,
@@ -4262,6 +4330,7 @@ export default function App() {
     <div className="app">
       {themeId === "default" ? <DefaultAtmosphere /> : null}
       {themeId === "rainbow" ? <RainbowAtmosphere /> : null}
+      {themeId === "disco" ? <DiscoAtmosphere /> : null}
       {themeId === "aetherium" ? <AetheriumAtmosphere /> : null}
       {themeId === "brass" ? <BrassAtmosphere /> : null}
       {themeId === "spaceship" ? (

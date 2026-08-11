@@ -294,6 +294,216 @@
   }
 }
 
+[data-theme="disco"] {
+  color-scheme: dark;
+  --bg: #090514;
+  --bg-deep: #040209;
+  --bg-elevated: #160a28;
+  --bg-panel: rgba(22, 10, 38, 0.78);
+  --bg-panel-glow: #380d52;
+  --border: #e600ff;
+  --border-soft: #9900ff;
+  --border-bright: #00ffff;
+  --text: #ffffff;
+  --text-muted: #ff77d6;
+  --accent: #00ffff;
+  --accent-hover: #ff007f;
+  --accent-deep: #7000cc;
+  --danger: #ff0055;
+  --danger-hover: #ff3300;
+  --success: #00ff66;
+  --warning: #ffe600;
+  --input-bg: #10061e;
+  --grid-header: rgba(56, 13, 82, 0.85);
+  --grid-row-alt: rgba(26, 8, 44, 0.65);
+  --grid-hover: rgba(230, 0, 255, 0.3);
+  --null: #d843ff;
+  --shadow-inset: inset 0 0 14px rgba(230, 0, 255, 0.4);
+  --shadow-panel: 0 0 28px rgba(0, 255, 255, 0.35), 0 8px 32px rgba(230, 0, 255, 0.4);
+  --shadow-float: 0 0 40px rgba(255, 0, 127, 0.65);
+  --font-ui: "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+  --font-display: "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+  --font-mono: "SF Mono", "Menlo", "Monaco", "Consolas", monospace;
+  --brand-color: #ff007f;
+  --btn-bg: linear-gradient(135deg, rgba(230, 0, 255, 0.45), rgba(0, 255, 255, 0.45));
+  --btn-bg-hover: linear-gradient(135deg, rgba(230, 0, 255, 0.8), rgba(0, 255, 255, 0.8));
+  --btn-border-hover: #ffe600;
+  --btn-shadow: 0 0 16px rgba(230, 0, 255, 0.6);
+  --btn-shadow-hover: 0 0 26px rgba(0, 255, 255, 0.95);
+  --primary-bg: linear-gradient(135deg, #ff007f, #e600ff, #00ffff);
+  --primary-bg-hover: linear-gradient(135deg, #ffe600, #ff007f, #00ff66);
+  --primary-color: #fff;
+  --primary-border: #ffe600;
+  --primary-shadow: 0 0 20px rgba(230, 0, 255, 0.8);
+  --primary-text-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
+  --input-shadow: inset 0 0 14px rgba(0, 255, 255, 0.4);
+  --input-focus-ring: 0 0 20px rgba(230, 0, 255, 0.9);
+  --body-bg: var(--bg);
+  --titlebar-bg: rgba(22, 10, 38, 0.92);
+  --titlebar-border: #e600ff;
+  --titlebar-shadow: 0 4px 24px rgba(230, 0, 255, 0.45);
+  --connection-bg: rgba(28, 12, 48, 0.85);
+  --connection-shadow: 0 0 20px rgba(0, 255, 255, 0.45);
+  --panel-tint: rgba(230, 0, 255, 0.08);
+  --hover-tint: rgba(0, 255, 255, 0.28);
+  --ghost-hover: rgba(230, 0, 255, 0.28);
+  --status-ok-glow: rgba(0, 255, 102, 0.55);
+  --editor-bg: rgba(9, 5, 20, 0.75);
+  --dirty-bg: rgba(255, 230, 0, 0.28);
+  --dirty-outline: #ffe600;
+  --editing-outline: #00ffff;
+  --editing-bg: rgba(28, 12, 48, 0.92);
+  --modal-bg: rgba(22, 10, 38, 0.96);
+  --modal-border: #e600ff;
+  --modal-shadow: 0 0 48px rgba(230, 0, 255, 0.75);
+}
+
+/* DISCO PARTY MODE SPECIAL EFFECTS */
+[data-theme="disco"] .app-header {
+  border-bottom: 3px solid transparent !important;
+  border-image: linear-gradient(90deg, #ff007f, #e600ff, #00ffff, #ffe600, #00ff66, #ff007f) 1 !important;
+  box-shadow: 0 4px 20px rgba(230, 0, 255, 0.5);
+}
+
+[data-theme="disco"] .app-title {
+  background: linear-gradient(90deg, #ff007f, #00ffff, #ffe600, #e600ff, #00ff66);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: disco-title-strobe 2.5s linear infinite;
+  text-shadow: 0 0 12px rgba(255, 0, 127, 0.8);
+}
+
+@keyframes disco-title-strobe {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+[data-theme="disco"] .sql-tab.active {
+  background: linear-gradient(135deg, rgba(230, 0, 255, 0.55), rgba(0, 255, 255, 0.55)) !important;
+  border: 1px solid #ffe600 !important;
+  box-shadow: 0 0 18px rgba(230, 0, 255, 0.8) !important;
+}
+
+[data-theme="disco"] .query-run-bar {
+  background: linear-gradient(180deg, #00ffff, #e600ff, #ffe600) !important;
+  border-color: #00ffff !important;
+  box-shadow: 0 0 16px rgba(0, 255, 255, 0.95) !important;
+}
+
+[data-theme="disco"] .query-copy-bar {
+  background: linear-gradient(180deg, #ff007f, #ffe600, #00ff66) !important;
+  border-color: #ff007f !important;
+  box-shadow: 0 0 16px rgba(255, 0, 127, 0.95) !important;
+}
+
+/* 3D DISCO BALL & DANCEFLOOR STAGE */
+.disco-atmosphere-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.disco-ball-stage {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+
+.disco-string {
+  width: 2px;
+  height: 50px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(0, 255, 255, 0.5));
+  box-shadow: 0 0 8px #ffffff;
+}
+
+.disco-ball {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ffffff, #a3a3a3, #404040, #171717);
+  box-shadow: 0 0 35px rgba(255, 255, 255, 0.8), 0 0 70px rgba(0, 255, 255, 0.6), 0 0 100px rgba(230, 0, 255, 0.5);
+  animation: disco-ball-spin 12s linear infinite;
+  overflow: hidden;
+}
+
+.disco-facet-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(0deg, transparent 9%, rgba(255, 255, 255, 0.7) 10%, rgba(255, 255, 255, 0.7) 12%, transparent 13%),
+    linear-gradient(90deg, transparent 9%, rgba(255, 255, 255, 0.7) 10%, rgba(255, 255, 255, 0.7) 12%, transparent 13%);
+  background-size: 10px 10px;
+  opacity: 0.65;
+  animation: disco-facets-glimmer 2s infinite alternate ease-in-out;
+}
+
+@keyframes disco-facets-glimmer {
+  0% { filter: brightness(1) contrast(1); }
+  100% { filter: brightness(1.8) contrast(1.5); }
+}
+
+@keyframes disco-ball-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.disco-beam {
+  position: absolute;
+  top: 40px;
+  width: 400px;
+  height: 1000px;
+  pointer-events: none;
+  opacity: 0.35;
+  filter: blur(25px);
+  transform-origin: top center;
+  animation: disco-beam-sweep 6s infinite alternate ease-in-out;
+}
+
+.beam-cyan {
+  left: 30%;
+  background: conic-gradient(from 160deg at 50% 0%, transparent, rgba(0, 255, 255, 0.6), transparent);
+}
+
+.beam-magenta {
+  right: 30%;
+  background: conic-gradient(from 200deg at 50% 0%, transparent, rgba(255, 0, 127, 0.6), transparent);
+  animation-delay: -2s;
+}
+
+.beam-gold {
+  left: 45%;
+  background: conic-gradient(from 180deg at 50% 0%, transparent, rgba(255, 230, 0, 0.5), transparent);
+  animation-delay: -4s;
+}
+
+@keyframes disco-beam-sweep {
+  0% { transform: rotate(-25deg) scaleX(0.9); }
+  100% { transform: rotate(25deg) scaleX(1.2); }
+}
+
+.disco-sparkle {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  clip-path: polygon(50% 0%, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0% 50%, 35% 35%);
+  animation: disco-sparkle-flash 2.5s infinite ease-in-out alternate;
+}
+
+@keyframes disco-sparkle-flash {
+  0% { transform: scale(0.3) rotate(0deg); opacity: 0.2; }
+  50% { transform: scale(1.4) rotate(90deg); opacity: 1; filter: drop-shadow(0 0 10px currentColor); }
+  100% { transform: scale(0.4) rotate(180deg); opacity: 0.3; }
+}
+
 [data-theme="brass"] {
   color-scheme: dark;
   --bg: #16131a;
