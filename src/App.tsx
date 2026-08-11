@@ -2217,7 +2217,7 @@ export default function App() {
       setMessage(`Copied query (Lines ${block.startLine}–${block.endLine}) to clipboard`);
       window.setTimeout(() => {
         setCopiedBlockId(null);
-      }, 1800);
+      }, 3200);
     },
     [setMessage],
   );
@@ -5505,7 +5505,7 @@ export default function App() {
                       </div>
                     );
                   })()}
-                  {/* FUN PARTICLE ANIMATION RACING AROUND COPIED QUERY BLOCK */}
+                  {/* SPARKLES ALL OVER COPIED QUERY BLOCK WITH SLOW FADE AWAY */}
                   {sqlBlocks.map((block) => {
                     if (copiedBlockId !== block.id) return null;
                     let top = (block.startLine - 1) * editorLineHeight - editorScrollTop;
@@ -5530,26 +5530,34 @@ export default function App() {
 
                     return (
                       <div
-                        key={`copy-particle-${block.id}`}
-                        className="query-copied-particle-box"
+                        key={`copy-sparkles-${block.id}`}
+                        className="query-copied-sparkle-field"
                         style={{
                           top: `${top}px`,
                           height: `${height}px`,
                         }}
                       >
-                        <div className="copy-particle-track" />
-                        <span className="copy-spark-particle p1" />
-                        <span className="copy-spark-particle p2" />
-                        <span className="copy-spark-particle p3" />
-                        <span className="copy-spark-particle p4" />
-                        <span className="copy-spark-particle p5" />
-                        <span className="copy-spark-particle p6" />
-                        <span className="copy-spark-particle p7" />
-                        <span className="copy-spark-particle p8" />
+                        <div className="copy-glow-backdrop" />
+                        <span className="query-sparkle sp1" style={{ top: "15%", left: "10%" }} />
+                        <span className="query-sparkle sp2" style={{ top: "25%", left: "35%" }} />
+                        <span className="query-sparkle sp3" style={{ top: "10%", left: "65%" }} />
+                        <span className="query-sparkle sp4" style={{ top: "30%", left: "85%" }} />
+                        <span className="query-sparkle sp5" style={{ top: "50%", left: "20%" }} />
+                        <span className="query-sparkle sp6" style={{ top: "45%", left: "50%" }} />
+                        <span className="query-sparkle sp7" style={{ top: "60%", left: "78%" }} />
+                        <span className="query-sparkle sp8" style={{ top: "75%", left: "15%" }} />
+                        <span className="query-sparkle sp9" style={{ top: "80%", left: "42%" }} />
+                        <span className="query-sparkle sp10" style={{ top: "70%", left: "90%" }} />
+                        <span className="query-sparkle sp11" style={{ top: "35%", left: "5%" }} />
+                        <span className="query-sparkle sp12" style={{ top: "85%", left: "68%" }} />
+                        <span className="query-sparkle sp13" style={{ top: "20%", left: "48%" }} />
+                        <span className="query-sparkle sp14" style={{ top: "65%", left: "30%" }} />
+                        <span className="query-sparkle sp15" style={{ top: "90%", left: "25%" }} />
+                        <span className="query-sparkle sp16" style={{ top: "40%", left: "92%" }} />
                       </div>
                     );
                   })}
-                  {/* FUN CONTINUOUS PLASMA COMETS RACING AROUND EXECUTING QUERY BLOCK */}
+                  {/* ULTRA-EFFICIENT KITT LASER SCANNER LIGHT BARS FOR EXECUTING QUERY BLOCK */}
                   {sqlBlocks.map((block) => {
                     const isThisRunning =
                       busy &&
@@ -5579,24 +5587,18 @@ export default function App() {
 
                     return (
                       <div
-                        key={`exec-particle-${block.id}`}
-                        className="query-executing-particle-box"
+                        key={`exec-kitt-${block.id}`}
+                        className="query-executing-kitt-box"
                         style={{
                           top: `${top}px`,
                           height: `${height}px`,
                         }}
                       >
-                        <div className="exec-conduit-track" />
-                        <span className="exec-corner-beacon tl" />
-                        <span className="exec-corner-beacon tr" />
-                        <span className="exec-corner-beacon br" />
-                        <span className="exec-corner-beacon bl" />
-
-                        <span className="exec-plasma-comet c1" />
-                        <span className="exec-plasma-comet c2" />
-                        <span className="exec-plasma-comet c3" />
-                        <span className="exec-plasma-comet c4" />
-                        <span className="exec-plasma-comet c5" />
+                        <div className="kitt-exec-outline" />
+                        <span className="kitt-exec-line top-scanner" />
+                        <span className="kitt-exec-line bottom-scanner" />
+                        <span className="kitt-exec-line left-scanner" />
+                        <span className="kitt-exec-line right-scanner" />
                       </div>
                     );
                   })}
