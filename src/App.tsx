@@ -5505,6 +5505,50 @@ export default function App() {
                       </div>
                     );
                   })()}
+                  {/* FUN PARTICLE ANIMATION RACING AROUND COPIED QUERY BLOCK */}
+                  {sqlBlocks.map((block) => {
+                    if (copiedBlockId !== block.id) return null;
+                    let top = (block.startLine - 1) * editorLineHeight - editorScrollTop;
+                    let height = (block.endLine - block.startLine + 1) * editorLineHeight;
+                    if (editorRef.current) {
+                      const model = editorRef.current.getModel();
+                      const maxLine = model ? model.getLineCount() : block.endLine;
+                      const startLineTop = editorRef.current.getTopForLineNumber(
+                        Math.min(block.startLine, maxLine),
+                      );
+                      let endLineBottom: number;
+                      if (block.endLine >= maxLine) {
+                        const lastLineTop = editorRef.current.getTopForLineNumber(maxLine);
+                        endLineBottom = lastLineTop + editorLineHeight;
+                      } else {
+                        endLineBottom = editorRef.current.getTopForLineNumber(block.endLine + 1);
+                      }
+                      const currentScrollTop = editorRef.current.getScrollTop();
+                      top = startLineTop - currentScrollTop;
+                      height = Math.max(editorLineHeight, endLineBottom - startLineTop);
+                    }
+
+                    return (
+                      <div
+                        key={`copy-particle-${block.id}`}
+                        className="query-copied-particle-box"
+                        style={{
+                          top: `${top}px`,
+                          height: `${height}px`,
+                        }}
+                      >
+                        <div className="copy-particle-track" />
+                        <span className="copy-spark-particle p1" />
+                        <span className="copy-spark-particle p2" />
+                        <span className="copy-spark-particle p3" />
+                        <span className="copy-spark-particle p4" />
+                        <span className="copy-spark-particle p5" />
+                        <span className="copy-spark-particle p6" />
+                        <span className="copy-spark-particle p7" />
+                        <span className="copy-spark-particle p8" />
+                      </div>
+                    );
+                  })}
                   {copiedBlockId && <div className="query-copied-toast">✓ Query Copied!</div>}
                   <Editor
                     key={activeTabId}
