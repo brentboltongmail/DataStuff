@@ -4236,6 +4236,33 @@ export default function App() {
         "editorWidget.border": "#7f1d1d",
       },
     });
+    monaco.editor.defineTheme("datastuff-knightrider", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "4ADE80", fontStyle: "italic" },
+        { token: "keyword", foreground: "FF2A4B", fontStyle: "bold" },
+        { token: "number", foreground: "FFB700" },
+        { token: "string", foreground: "FF88A5" },
+        { token: "string.sql", foreground: "FF88A5" },
+        { token: "identifier", foreground: "FFFFFF" },
+        { token: "delimiter", foreground: "FF6677" },
+        { token: "operator", foreground: "FF3355" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#FFFFFF",
+        "editorLineNumber.foreground": "#FF5566",
+        "editorLineNumber.activeForeground": "#FFFFFF",
+        "editorCursor.foreground": "#FF0033",
+        "editor.selectionBackground": "#FF003355",
+        "editor.lineHighlightBackground": "#450a12aa",
+        "editorIndentGuide.background": "#800a18",
+        "editorIndentGuide.activeBackground": "#FF0033aa",
+        "editorWidget.background": "#140409",
+        "editorWidget.border": "#FF1A40",
+      },
+    });
   }, []);
 
   const onEditorMount: OnMount = useCallback((ed, monaco) => {
