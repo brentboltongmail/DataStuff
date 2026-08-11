@@ -297,10 +297,17 @@ export default function ResultsGrid({
     [headerNames],
   );
 
-  // New result shape → drop custom widths / resize memory.
+  const [sortState, setSortState] = useState<{
+    colIndex: number;
+    colName: string;
+    direction: "asc" | "desc";
+  } | null>(null);
+
+  // New result shape → drop custom widths / resize memory / sort state.
   useEffect(() => {
     userResizedRef.current.clear();
     setColWidths({});
+    setSortState(null);
   }, [columnKey]);
 
   // Leaving auto-sized densities: drop widths on density/fit toggle.
@@ -509,6 +516,65 @@ export default function ResultsGrid({
 
   const cancelEdit = () => setEditing(null);
 
+  const handleHeaderClick = useCallback((colIndex: number, colName: string) => {
+    setSortState((prev) => {
+      if (!prev || prev.colIndex !== colIndex) {
+        return { colIndex, colName, direction: "asc" };
+      }
+      if (prev.direction === "asc") {
+        return { colIndex, colName, direction: "desc" };
+      }
+      return null;
+    });
+  }, []);
+
+  const sortedRowIndices = useMemo(() => {
+    const indices = result.rows.map((_, idx) => idx);
+    if (!sortState) return indices;
+
+    const { colIndex, direction } = sortState;
+
+    return indices.slice().sort((aIdx, bIdx) => {
+      const rawA = pendingEdits[cellEditKey(aIdx, colIndex)]
+        ? pendingEdits[cellEditKey(aIdx, colIndex)].newValue
+        : result.rows[aIdx]?.[colIndex];
+
+      const rawB = pendingEdits[cellEditKey(bIdx, colIndex)]
+        ? pendingEdits[cellEditKey(bIdx, colIndex)].newValue
+        : result.rows[bIdx]?.[colIndex];
+
+      const nullA = isNullCell(rawA);
+      const nullB = isNullCell(rawB);
+
+      if (nullA && nullB) return 0;
+      if (nullA) return 1;
+      if (nullB) return -1;
+
+      let comp = 0;
+
+      if (typeof rawA === "number" && typeof rawB === "number") {
+        comp = rawA - rawB;
+      } else if (rawA instanceof Date && rawB instanceof Date) {
+        comp = rawA.getTime() - rawB.getTime();
+      } else {
+        const numA = Number(rawA);
+        const numB = Number(rawB);
+        const strRawA = String(rawA ?? "").trim();
+        const strRawB = String(rawB ?? "").trim();
+
+        if (strRawA !== "" && strRawB !== "" && !isNaN(numA) && !isNaN(numB)) {
+          comp = numA - numB;
+        } else {
+          const strA = formatCell(rawA).toLowerCase();
+          const strB = formatCell(rawB).toLowerCase();
+          comp = strA.localeCompare(strB, undefined, { numeric: true, sensitivity: "base" });
+        }
+      }
+
+      return direction === "asc" ? comp : -comp;
+    });
+  }, [result.rows, pendingEdits, sortState]);
+
   const displayValue = (rowIndex: number, columnIndex: number, cell: unknown) => {
     const pending = pendingEdits[cellEditKey(rowIndex, columnIndex)];
     return pending ? pending.newValue : cell;
@@ -600,12 +666,22 @@ export default function ResultsGrid({
               <th className="row-num">
                 <span className="th-label">#</span>
               </th>
-              {visibleColumns.map(({ col }) => {
+              {visibleColumns.map(({ col, index: colIndex }) => {
                 const w = effectiveColWidths[col.name];
+                const isSorted = sortState?.colIndex === colIndex;
+                const sortDir = isSorted ? sortState.direction : null;
+
                 return (
                   <th
                     key={`${col.name}`}
-                    title={col.type}
+                    className={`grid-header-cell ${isSorted ? "sorted" : ""}`}
+                    title={`Click to sort by ${col.name} ${
+                      isSorted
+                        ? sortDir === "asc"
+                          ? "(▲ Ascending — click for Descending)"
+                          : "(▼ Descending — click to reset)"
+                        : "(click for Ascending)"
+                    } · ${col.type}`}
                     style={
                       w
                         ? {
@@ -615,8 +691,19 @@ export default function ResultsGrid({
                           }
                         : undefined
                     }
+                    onClick={(e) => {
+                      if ((e.target as HTMLElement).classList.contains("col-resize")) return;
+                      handleHeaderClick(colIndex, col.name);
+                    }}
                   >
-                    <span className="th-label">{col.name}</span>
+                    <span className="th-label">
+                      {col.name}
+                      {isSorted && (
+                        <span className="sort-indicator" aria-hidden="true">
+                          {sortDir === "asc" ? " ▲" : " ▼"}
+                        </span>
+                      )}
+                    </span>
                     <span
                       className="col-resize"
                       title="Drag to resize · double-click to reset"
@@ -641,9 +728,11 @@ export default function ResultsGrid({
         <table ref={tableRef} className={tableClasses} style={tableStyle}>
           {colGroupMarkup}
           <tbody>
-            {result.rows.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                <td className="row-num">{rowIndex + 1}</td>
+            {sortedRowIndices.map((rowIndex, displayIndex) => {
+              const row = result.rows[rowIndex];
+              return (
+                <tr key={rowIndex}>
+                  <td className="row-num">{displayIndex + 1}</td>
                 {visibleColumns.map(({ col, index: columnIndex }) => {
                   const cell = displayValue(rowIndex, columnIndex, row[columnIndex]);
                   const text = formatCell(cell);
@@ -727,7 +816,8 @@ export default function ResultsGrid({
                   );
                 })}
               </tr>
-            ))}
+            );
+          })}
           </tbody>
         </table>
       </div>
