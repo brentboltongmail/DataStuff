@@ -8218,3 +8218,75 @@
 .theme-picker select:focus {
   border-color: var(--accent);
 }
+
+/* ENHANCED KNIGHT RIDER K.I.T.T. THEME */
+[data-theme="knightrider"] {
+  color-scheme: dark;
+  --bg: #050508;
+  --bg-deep: #020204;
+  --bg-elevated: #120408;
+  --bg-panel: rgba(14, 4, 8, 0.94);
+  --bg-panel-glow: #2b040a;
+  --border: #800a18;
+  --border-soft: #4d050f;
+  --border-bright: #ff0033;
+  --text: #ff3344;
+  --text-muted: #b8404e;
+  --accent: #ff0033;
+  --accent-hover: #ff3355;
+  --accent-deep: #99001f;
+  --danger: #ff0033;
+  --danger-hover: #ff3355;
+  --success: #ff2244;
+  --warning: #ffaa00;
+  --input-bg: #0a0204;
+  --grid-header: #1c050a;
+  --grid-row-alt: #0d0205;
+  --grid-hover: #380812;
+  --null: #772630;
+  --shadow-inset: inset 0 0 12px rgba(255, 0, 51, 0.2);
+  --shadow-panel: 0 0 24px rgba(255, 0, 51, 0.3);
+  --shadow-float: 0 12px 36px rgba(255, 0, 51, 0.5);
+  --noise: none;
+  --font-ui: "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+  --font-display: "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+  --font-mono: "SF Mono", "Menlo", "Monaco", "Consolas", monospace;
+  --brand-color: #ff0033;
+  --btn-bg: #1a0409;
+  --btn-bg-hover: #2e0610;
+  --btn-border-hover: #ff0033;
+  --btn-shadow: 0 0 10px rgba(255, 0, 51, 0.35);
+  --btn-shadow-hover: 0 0 18px rgba(255, 0, 51, 0.7);
+  --primary-bg: #ff0033;
+  --primary-bg-hover: #ff3355;
+  --primary-color: #ffffff;
+  --primary-border: #ff3355;
+  --primary-shadow: 0 0 18px rgba(255, 0, 51, 0.8);
+  --body-bg: #050508;
+  --titlebar-bg: #0c0306;
+  --titlebar-border: #800a18;
+  --editor-bg: rgba(5, 5, 8, 0.78);
+  --hover-tint: rgba(255, 0, 51, 0.15);
+  --status-ok-glow: rgba(255, 0, 51, 0.3);
+  --modal-bg: #0f0307;
+  --modal-border: #ff0033;
+  --modal-shadow: 0 20px 60px rgba(255, 0, 51, 0.6);
+}
+
+[data-theme="knightrider"] .monaco-editor,
+[data-theme="knightrider"] .monaco-editor-background,
+[data-theme="knightrider"] .monaco-editor .margin {
+  background-color: #050508 !important;
+}
+
+[data-theme="knightrider"] .query-copy-bar,
+[data-theme="knightrider"] .query-run-bar {
+  background: #1a0408 !important;
+  border: 1px solid #660814 !important;
+}
+
+[data-theme="knightrider"] .query-copy-bar:hover,
+[data-theme="knightrider"] .query-run-bar:hover {
+  background: #380812 !important;
+  box-shadow: 0 0 12px rgba(255, 0, 51, 0.5) !important;
+}

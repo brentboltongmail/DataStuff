@@ -23,7 +23,8 @@ export type AppThemeId =
   | "dune"
   | "crystal"
   | "cyberpunk"
-  | "solar";
+  | "solar"
+  | "knightrider";
 
 export interface AppThemeOption {
   id: AppThemeId;
@@ -59,6 +60,7 @@ export const APP_THEMES: AppThemeOption[] = [
   { id: "crystal", label: "Crystal Cavern", monacoTheme: "datastuff-crystal" },
   { id: "cyberpunk", label: "Cyberpunk City 2077", monacoTheme: "datastuff-cyberpunk" },
   { id: "solar", label: "Solar Flare", monacoTheme: "datastuff-solar" },
+  { id: "knightrider", label: "🏎️ Knight Rider K.I.T.T.", monacoTheme: "datastuff-knightrider" },
 ];
 
 const THEME_IDS = new Set<AppThemeId>(APP_THEMES.map((theme) => theme.id));

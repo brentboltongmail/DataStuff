@@ -2301,3 +2301,123 @@ button.status-bar-cancel-btn {
   font-size: 0.8rem !important;
   margin-left: 6px;
 }
+
+/* ENHANCED KNIGHT RIDER K.I.T.T. AUDIO PLAYER & ATMOSPHERE */
+.kitt-player-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  -webkit-app-region: no-drag;
+  margin-right: 8px;
+}
+
+.kitt-play-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #140306 !important;
+  color: #ff0033 !important;
+  border: 1px solid #99001f !important;
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: calc(11px * var(--font-scale));
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 0, 51, 0.4);
+  transition: all 0.2s ease;
+}
+
+.kitt-play-btn:hover {
+  background: #2b040a !important;
+  border-color: #ff0033 !important;
+  box-shadow: 0 0 18px rgba(255, 0, 51, 0.7) !important;
+}
+
+.kitt-play-btn.playing {
+  background: #3d050f !important;
+  border-color: #ff3355 !important;
+  box-shadow: 0 0 22px rgba(255, 0, 51, 0.9) !important;
+}
+
+.kitt-voice-analyzer {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 14px;
+}
+
+.kitt-vbar {
+  width: 4px;
+  height: 100%;
+  background: #ff0033;
+  border-radius: 1px;
+  box-shadow: 0 0 8px #ff0033;
+}
+
+.kitt-vbar.bounce-1 { animation: kitt-vbar-anim 0.35s infinite alternate ease-in-out; }
+.kitt-vbar.bounce-2 { animation: kitt-vbar-anim 0.25s infinite alternate ease-in-out 0.1s; }
+.kitt-vbar.bounce-3 { animation: kitt-vbar-anim 0.45s infinite alternate ease-in-out 0.05s; }
+
+@keyframes kitt-vbar-anim {
+  0% { transform: scaleY(0.2); opacity: 0.4; }
+  100% { transform: scaleY(1.3); opacity: 1; box-shadow: 0 0 12px #ff0033; }
+}
+
+.kitt-repeat-btn {
+  background: #140306 !important;
+  border: 1px solid #660814 !important;
+  color: #ff3344 !important;
+  border-radius: 6px;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+
+.kitt-repeat-btn.active {
+  border-color: #ff0033 !important;
+  box-shadow: 0 0 12px rgba(255, 0, 51, 0.6) !important;
+}
+
+/* KNIGHT RIDER ATMOSPHERE OVERLAY */
+.knightrider-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 10%, rgba(153, 0, 31, 0.15) 0%, transparent 70%);
+}
+
+.kitt-top-scanner-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #ff0033 50%, transparent 100%);
+  box-shadow: 0 0 14px #ff0033, 0 0 24px #ff0033;
+  animation: kitt-top-scanner-sweep 2.4s linear infinite alternate;
+}
+
+@keyframes kitt-top-scanner-sweep {
+  0% { transform: translate3d(-50%, 0, 0); }
+  100% { transform: translate3d(50%, 0, 0); }
+}
+
+.kitt-cyber-grid-floor {
+  position: absolute;
+  bottom: 0;
+  left: -50%;
+  right: -50%;
+  height: 35vh;
+  background-image:
+    linear-gradient(to right, rgba(255, 0, 51, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 0, 51, 0.12) 1px, transparent 1px);
+  background-size: 50px 30px;
+  transform: perspective(400px) rotateX(65deg);
+  transform-origin: 50% 100%;
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+  opacity: 0.6;
+}

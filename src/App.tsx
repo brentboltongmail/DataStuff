@@ -1628,6 +1628,210 @@ const DiscoAudioPlayer: React.FC = () => {
   );
 };
 
+const KnightRiderAudioPlayer: React.FC = () => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isRepeat, setIsRepeat] = useState(true);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const isPlayingRef = useRef(false);
+  const isRepeatRef = useRef(true);
+  const stepRef = useRef(0);
+  const timerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
+
+  useEffect(() => {
+    isRepeatRef.current = isRepeat;
+  }, [isRepeat]);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current !== null) {
+        window.clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      if (audioCtxRef.current && audioCtxRef.current.state !== "closed") {
+        void audioCtxRef.current.close();
+        audioCtxRef.current = null;
+      }
+    };
+  }, []);
+
+  const playStep = (ctx: AudioContext, step: number) => {
+    const now = ctx.currentTime;
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(0.24, now);
+    masterGain.connect(ctx.destination);
+
+    // 1. K.I.T.T. STACCATO BASSLINE (F#2, F#2, A2, B2, C#3)
+    const bassNotes = [
+      92.5, 92.5, 92.5, 92.5,
+      110.0, 110.0, 123.47, 123.47,
+      138.59, 138.59, 123.47, 123.47,
+      110.0, 110.0, 92.5, 92.5,
+    ];
+    const bassFreq = bassNotes[step % 16];
+    const bassOsc = ctx.createOscillator();
+    const bassFilter = ctx.createBiquadFilter();
+    const bassGain = ctx.createGain();
+
+    bassOsc.type = "sawtooth";
+    bassOsc.frequency.setValueAtTime(bassFreq, now);
+
+    bassFilter.type = "lowpass";
+    bassFilter.frequency.setValueAtTime(1400, now);
+    bassFilter.frequency.exponentialRampToValueAtTime(320, now + 0.1);
+
+    bassGain.gain.setValueAtTime(0.6, now);
+    bassGain.gain.exponentialRampToValueAtTime(0.01, now + 0.11);
+
+    bassOsc.connect(bassFilter);
+    bassFilter.connect(bassGain);
+    bassGain.connect(masterGain);
+    bassOsc.start(now);
+    bassOsc.stop(now + 0.12);
+
+    // 2. KNIGHT RIDER LEAD SYNTH HOOK (Ascending 80s lead stabs)
+    const leadNotes = [
+      370.0, 0, 554.37, 0, 440.0, 0, 370.0, 0,
+      415.3, 440.0, 415.3, 370.0, 440.0, 554.37, 740.0, 0,
+    ];
+    const leadFreq = leadNotes[step % 16];
+    if (leadFreq > 0) {
+      const leadOsc1 = ctx.createOscillator();
+      const leadOsc2 = ctx.createOscillator();
+      const leadGain = ctx.createGain();
+      leadOsc1.type = "sawtooth";
+      leadOsc2.type = "square";
+      leadOsc1.frequency.setValueAtTime(leadFreq, now);
+      leadOsc2.frequency.setValueAtTime(leadFreq * 1.004, now); // Chorus detune
+
+      leadGain.gain.setValueAtTime(0.28, now);
+      leadGain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+      leadOsc1.connect(leadGain);
+      leadOsc2.connect(leadGain);
+      leadGain.connect(masterGain);
+
+      leadOsc1.start(now);
+      leadOsc2.start(now);
+      leadOsc1.stop(now + 0.19);
+      leadOsc2.stop(now + 0.19);
+    }
+
+    // 3. PUNCHY DRUM BEAT (Kick on 0,4,8,12; Snare on 4,12)
+    if (step % 4 === 0) {
+      const kickOsc = ctx.createOscillator();
+      const kickGain = ctx.createGain();
+      kickOsc.type = "sine";
+      kickOsc.frequency.setValueAtTime(150, now);
+      kickOsc.frequency.exponentialRampToValueAtTime(38, now + 0.08);
+      kickGain.gain.setValueAtTime(0.9, now);
+      kickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+      kickOsc.connect(kickGain);
+      kickGain.connect(masterGain);
+      kickOsc.start(now);
+      kickOsc.stop(now + 0.11);
+    }
+
+    if (step === 4 || step === 12) {
+      const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.1, ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < noiseBuffer.length; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+      const whiteNoise = ctx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      const snareFilter = ctx.createBiquadFilter();
+      snareFilter.type = "highpass";
+      snareFilter.frequency.setValueAtTime(900, now);
+      const snareGain = ctx.createGain();
+      snareGain.gain.setValueAtTime(0.4, now);
+      snareGain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+      whiteNoise.connect(snareFilter);
+      snareFilter.connect(snareGain);
+      snareGain.connect(masterGain);
+      whiteNoise.start(now);
+    }
+  };
+
+  const togglePlay = async () => {
+    if (isPlaying) {
+      setIsPlaying(false);
+      if (timerRef.current !== null) {
+        window.clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    } else {
+      if (!audioCtxRef.current) {
+        const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        audioCtxRef.current = new AudioCtx();
+      }
+      if (audioCtxRef.current.state === "suspended") {
+        await audioCtxRef.current.resume();
+      }
+      setIsPlaying(true);
+      stepRef.current = 0;
+
+      // 116 BPM = 129ms step time
+      timerRef.current = window.setInterval(() => {
+        if (!isPlayingRef.current || !audioCtxRef.current) return;
+
+        playStep(audioCtxRef.current, stepRef.current);
+        stepRef.current = (stepRef.current + 1) % 16;
+
+        if (stepRef.current === 0 && !isRepeatRef.current) {
+          setIsPlaying(false);
+          if (timerRef.current !== null) {
+            window.clearInterval(timerRef.current);
+            timerRef.current = null;
+          }
+        }
+      }, 129);
+    }
+  };
+
+  return (
+    <div className="kitt-player-bar">
+      <button
+        type="button"
+        className={`kitt-play-btn ${isPlaying ? "playing" : ""}`}
+        onClick={() => { void togglePlay(); }}
+        title={isPlaying ? "Pause Knight Rider K.I.T.T. Audio" : "Play Knight Rider K.I.T.T. Theme Track (Loop on repeat)"}
+      >
+        <span className="kitt-play-icon">{isPlaying ? "⏸" : "🏎️ ▶"}</span>
+        <span className="kitt-play-text">
+          {isPlaying ? "K.I.T.T. AUDIO PLAYING" : "PLAY K.I.T.T. THEME"}
+        </span>
+        {/* K.I.T.T. Voice Analyzer LED Bars */}
+        <div className="kitt-voice-analyzer">
+          <span className={`kitt-vbar v1 ${isPlaying ? "bounce-1" : ""}`} />
+          <span className={`kitt-vbar v2 ${isPlaying ? "bounce-2" : ""}`} />
+          <span className={`kitt-vbar v3 ${isPlaying ? "bounce-3" : ""}`} />
+        </div>
+      </button>
+      <button
+        type="button"
+        className={`kitt-repeat-btn ${isRepeat ? "active" : ""}`}
+        onClick={() => setIsRepeat((prev) => !prev)}
+        title={isRepeat ? "Loop mode enabled" : "Loop mode disabled"}
+      >
+        🔁
+      </button>
+    </div>
+  );
+};
+
+const KnightRiderAtmosphere: React.FC = () => {
+  return (
+    <div className="knightrider-atmosphere">
+      <div className="kitt-top-scanner-line" />
+      <div className="kitt-cyber-grid-floor" />
+    </div>
+  );
+};
+
 const CIRCUIT_PRESETS = [
   // Preset 1: Silverstone Sweeping Loop
   "M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z",
@@ -5196,6 +5400,7 @@ export default function App() {
       {themeId === "cyberpunk" ? <CyberpunkAtmosphere /> : null}
 
       {themeId === "solar" ? <SolarAtmosphere /> : null}
+      {themeId === "knightrider" ? <KnightRiderAtmosphere /> : null}
       <header className="titlebar">
         <div className="titlebar-left">
           <h1 className="titlebar-app-name">DataStuff</h1>
@@ -5291,6 +5496,7 @@ export default function App() {
           </select>
         </div>
         {themeId === "disco" ? <DiscoAudioPlayer /> : null}
+        {themeId === "knightrider" ? <KnightRiderAudioPlayer /> : null}
         <div className="font-controls" title="App font size">
           <button
             type="button"
