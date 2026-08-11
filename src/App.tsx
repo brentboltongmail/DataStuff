@@ -4058,9 +4058,15 @@ export default function App() {
       setEditorTick((t) => t + 1);
     };
 
+    let scrollRaf: number | null = null;
     ed.onDidScrollChange((e) => {
       setEditorScrollTop(e.scrollTop);
-      setEditorTick((t) => t + 1);
+      if (scrollRaf == null) {
+        scrollRaf = requestAnimationFrame(() => {
+          scrollRaf = null;
+          setEditorTick((t) => t + 1);
+        });
+      }
     });
 
     ed.onDidChangeCursorPosition((e) => {
@@ -4078,8 +4084,15 @@ export default function App() {
       }
     });
 
+    let contentTimer: number | null = null;
     ed.onDidChangeModelContent(() => {
-      refreshGutter();
+      if (contentTimer != null) {
+        window.clearTimeout(contentTimer);
+      }
+      contentTimer = window.setTimeout(() => {
+        contentTimer = null;
+        refreshGutter();
+      }, 150);
     });
 
     ed.onDidLayoutChange(() => {
