@@ -1269,7 +1269,7 @@ const RainbowAtmosphere = memo(() => {
 const DiscoAtmosphere = memo(() => {
   return (
     <div className="disco-atmosphere-container" aria-hidden="true">
-      {/* 1. Hanging 3D Mirror Disco Ball */}
+      {/* 1. Main Center Disco Ball */}
       <div className="disco-ball-stage">
         <div className="disco-string" />
         <div className="disco-ball">
@@ -1277,21 +1277,57 @@ const DiscoAtmosphere = memo(() => {
         </div>
       </div>
 
-      {/* 2. Sweeping Spotlight Beams */}
+      {/* 2. Left & Right Satellite Disco Balls */}
+      <div className="disco-ball-stage left-ball">
+        <div className="disco-string" />
+        <div className="disco-ball">
+          <div className="disco-facet-grid" />
+        </div>
+      </div>
+      <div className="disco-ball-stage right-ball">
+        <div className="disco-string" />
+        <div className="disco-ball">
+          <div className="disco-facet-grid" />
+        </div>
+      </div>
+
+      {/* 3. 6 Sweeping Spotlight Beams */}
       <div className="disco-beam beam-cyan" />
       <div className="disco-beam beam-magenta" />
       <div className="disco-beam beam-gold" />
+      <div className="disco-beam beam-green" />
+      <div className="disco-beam beam-violet" />
+      <div className="disco-beam beam-orange" />
 
-      {/* 3. Floating Sparkling Lights */}
-      {Array.from({ length: 30 }).map((_, i) => (
+      {/* 4. 3D Perspective Illuminated Dancefloor */}
+      <div className="disco-dancefloor-stage">
+        <div className="disco-dancefloor-grid" />
+      </div>
+
+      {/* 5. Equalizer Spectrum Bars */}
+      <div className="disco-equalizer">
+        {Array.from({ length: 28 }).map((_, i) => (
+          <div
+            key={i}
+            className="eq-bar"
+            style={{
+              animationDelay: `${(i % 8) * 0.12}s`,
+              animationDuration: `${0.4 + (i % 5) * 0.1}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* 6. Falling Disco Metallic Confetti & Star Sparkles */}
+      {Array.from({ length: 36 }).map((_, i) => (
         <span
-          key={i}
+          key={`sparkle-${i}`}
           className="disco-sparkle"
           style={{
             left: `${(i * 19 + 7) % 96}%`,
-            top: `${(i * 29 + 15) % 92}%`,
-            animationDelay: `${(i % 7) * 0.4}s`,
-            animationDuration: `${2 + (i % 3) * 0.8}s`,
+            top: `${(i * 29 + 15) % 90}%`,
+            animationDelay: `${(i % 7) * 0.3}s`,
+            animationDuration: `${1.8 + (i % 3) * 0.6}s`,
             color: [
               "#ff007f",
               "#00ffff",
@@ -1300,6 +1336,32 @@ const DiscoAtmosphere = memo(() => {
               "#00ff66",
               "#ff4500",
             ][i % 6],
+          }}
+        />
+      ))}
+
+      {Array.from({ length: 20 }).map((_, i) => (
+        <span
+          key={`confetti-${i}`}
+          className="disco-confetti"
+          style={{
+            left: `${(i * 23 + 4) % 96}%`,
+            animationDelay: `${(i % 6) * 0.9}s`,
+            animationDuration: `${4 + (i % 4)}s`,
+            background: [
+              "#ff007f",
+              "#00ffff",
+              "#ffe600",
+              "#e600ff",
+              "#00ff66",
+            ][i % 5],
+            color: [
+              "#ff007f",
+              "#00ffff",
+              "#ffe600",
+              "#e600ff",
+              "#00ff66",
+            ][i % 5],
           }}
         />
       ))}
