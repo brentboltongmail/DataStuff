@@ -5595,10 +5595,10 @@ export default function App() {
                         }}
                       >
                         <div className="kitt-exec-outline" />
-                        <span className="kitt-exec-line top-scanner" />
-                        <span className="kitt-exec-line bottom-scanner" />
-                        <span className="kitt-exec-line left-scanner" />
-                        <span className="kitt-exec-line right-scanner" />
+                        <span className="kitt-circuit-bar kb1" />
+                        <span className="kitt-circuit-bar kb2" />
+                        <span className="kitt-circuit-bar kb3" />
+                        <span className="kitt-circuit-bar kb4" />
                       </div>
                     );
                   })}
