@@ -3210,7 +3210,7 @@ export default function App() {
       editorChangeTimerRef.current = window.setTimeout(() => {
         editorChangeTimerRef.current = null;
         setActiveSql(nextValue);
-      }, 150);
+      }, 300);
     },
     [setActiveSql],
   );
@@ -4092,11 +4092,18 @@ export default function App() {
       contentTimer = window.setTimeout(() => {
         contentTimer = null;
         refreshGutter();
-      }, 150);
+      }, 250);
     });
 
+    let layoutTimer: number | null = null;
     ed.onDidLayoutChange(() => {
-      refreshGutter();
+      if (layoutTimer != null) {
+        window.clearTimeout(layoutTimer);
+      }
+      layoutTimer = window.setTimeout(() => {
+        layoutTimer = null;
+        refreshGutter();
+      }, 250);
     });
 
     ed.onDidChangeModel(() => {
@@ -5523,7 +5530,7 @@ export default function App() {
                       automaticLayout: true,
                       tabSize: 2,
                       padding: { top: 12 },
-                      lineDecorationsWidth: 44,
+                      lineDecorationsWidth: 12,
                       lineNumbersMinChars: 3,
                       scrollbar: {
                         vertical: "visible",
@@ -5546,6 +5553,14 @@ export default function App() {
                       snippetSuggestions: "none",
                       hover: { enabled: "off" },
                       inlayHints: { enabled: "off" },
+                      links: false,
+                      colorDecorators: false,
+                      foldingHighlight: false,
+                      renderLineHighlight: "none",
+                      matchBrackets: "never",
+                      selectionHighlight: false,
+                      occurrencesHighlight: "off",
+                      renderValidationDecorations: "off",
                     }}
                   />
                 </div>

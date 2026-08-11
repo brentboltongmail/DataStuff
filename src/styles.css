@@ -1032,6 +1032,15 @@ body.is-col-resizing .query-tabs-split {
   width: calc(100% - 22px) !important;
 }
 
+.editor-wrapper .monaco-editor .cda {
+  width: 12px !important;
+}
+
+.editor-wrapper .monaco-editor .codicon-folding-expanded,
+.editor-wrapper .monaco-editor .codicon-folding-collapsed {
+  font-size: 10px !important;
+}
+
 .query-copy-bar {
   position: absolute;
   left: 0;
