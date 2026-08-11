@@ -1022,29 +1022,29 @@ body.is-col-resizing .query-tabs-split {
   left: 0;
   top: 0;
   bottom: 0;
-  width: 21px;
+  width: 23px;
   z-index: 100;
   pointer-events: none;
 }
 
 .editor-wrapper .monaco-editor {
-  margin-left: 22px;
-  width: calc(100% - 22px) !important;
+  margin-left: 24px;
+  width: calc(100% - 24px) !important;
 }
 
 .editor-wrapper .monaco-editor .cda {
-  width: 12px !important;
+  width: 6px !important;
 }
 
 .editor-wrapper .monaco-editor .codicon-folding-expanded,
 .editor-wrapper .monaco-editor .codicon-folding-collapsed {
-  font-size: 10px !important;
+  font-size: 9px !important;
 }
 
 .query-copy-bar {
   position: absolute;
   left: 0;
-  width: 10px !important;
+  width: 11px !important;
   opacity: 0.5;
   pointer-events: auto;
   background: color-mix(in srgb, var(--accent) 35%, rgba(0, 0, 0, 0.5));
@@ -1059,7 +1059,7 @@ body.is-col-resizing .query-tabs-split {
 }
 
 .query-copy-bar:hover {
-  width: 10px !important;
+  width: 11px !important;
   opacity: 1;
   background: color-mix(in srgb, var(--accent) 75%, var(--bg-panel));
   border-color: var(--accent);
@@ -1067,7 +1067,7 @@ body.is-col-resizing .query-tabs-split {
 }
 
 .query-copy-bar.copied {
-  width: 10px !important;
+  width: 11px !important;
   opacity: 1;
   background: #10b981 !important;
   border-color: #34d399 !important;
@@ -1076,8 +1076,8 @@ body.is-col-resizing .query-tabs-split {
 
 .query-run-bar {
   position: absolute;
-  left: 11px;
-  width: 10px !important;
+  left: 12px;
+  width: 11px !important;
   opacity: 0.5;
   pointer-events: auto;
   background: color-mix(in srgb, #10b981 50%, rgba(0, 0, 0, 0.65));
@@ -1092,7 +1092,7 @@ body.is-col-resizing .query-tabs-split {
 }
 
 .query-run-bar:hover:not(:disabled) {
-  width: 10px !important;
+  width: 11px !important;
   opacity: 1;
   background: #059669;
   border-color: #6ee7b7;
@@ -1100,7 +1100,7 @@ body.is-col-resizing .query-tabs-split {
 }
 
 .query-run-bar.running {
-  width: 10px !important;
+  width: 11px !important;
   opacity: 1;
   background: #dc2626 !important;
   border-color: #f87171 !important;
@@ -1132,7 +1132,7 @@ body.is-col-resizing .query-tabs-split {
   user-select: none;
   pointer-events: none;
   font-family: var(--font-mono, monospace);
-  font-size: 7.5px;
+  font-size: 8px;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -1140,7 +1140,7 @@ body.is-col-resizing .query-tabs-split {
   opacity: 0.95;
   text-align: center;
   margin: 0 auto;
-  line-height: 10px;
+  line-height: 11px;
 }
 
 .query-copy-label {
@@ -1153,7 +1153,7 @@ body.is-col-resizing .query-tabs-split {
   user-select: none;
   pointer-events: none;
   font-family: var(--font-mono, monospace);
-  font-size: 7.5px;
+  font-size: 8px;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -1161,7 +1161,7 @@ body.is-col-resizing .query-tabs-split {
   opacity: 0.95;
   text-align: center;
   margin: 0 auto;
-  line-height: 10px;
+  line-height: 11px;
   transition: color 0.15s ease, opacity 0.15s ease;
 }
 

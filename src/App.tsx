@@ -5530,7 +5530,7 @@ export default function App() {
                       automaticLayout: true,
                       tabSize: 2,
                       padding: { top: 12 },
-                      lineDecorationsWidth: 12,
+                      lineDecorationsWidth: 6,
                       lineNumbersMinChars: 3,
                       scrollbar: {
                         vertical: "visible",
