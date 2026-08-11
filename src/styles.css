@@ -1347,7 +1347,13 @@ input#maxRows::-webkit-inner-spin-button {
   position: relative;
 }
 
-html body .grid-header-wrap {
+html body .grid-header-wrap,
+html body .grid-header-wrap table,
+html body .grid-header-wrap thead,
+html body .grid-header-wrap tr,
+html body .grid-header-wrap th,
+html body .grid-header-cell,
+html body .results-header {
   overflow: hidden !important;
   overflow-x: hidden !important;
   overflow-y: hidden !important;
@@ -1356,10 +1362,19 @@ html body .grid-header-wrap {
   position: relative;
   z-index: 10;
   flex-shrink: 0;
+}
+
+html body .grid-header-wrap {
   background: transparent !important;
 }
 
-html body .grid-header-wrap::-webkit-scrollbar {
+html body .grid-header-wrap::-webkit-scrollbar,
+html body .grid-header-wrap table::-webkit-scrollbar,
+html body .grid-header-wrap thead::-webkit-scrollbar,
+html body .grid-header-wrap tr::-webkit-scrollbar,
+html body .grid-header-wrap th::-webkit-scrollbar,
+html body .grid-header-cell::-webkit-scrollbar,
+html body .results-header::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
   height: 0 !important;

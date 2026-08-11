@@ -651,7 +651,11 @@ export default function ResultsGrid({
 
   return (
     <div className="grid-split-viewport">
-      <div ref={headerWrapRef} className="grid-header-wrap">
+      <div
+        ref={headerWrapRef}
+        className="grid-header-wrap"
+        style={{ overflow: "hidden", overflowX: "hidden", overflowY: "hidden" }}
+      >
         <table className={tableClasses} style={tableStyle}>
           {colGroupMarkup}
           <thead>
