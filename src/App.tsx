@@ -1085,12 +1085,6 @@ const SpaceshipAtmosphere = memo<SpaceshipAtmosphereProps>(({ galaxyStars, space
             }}
           />
 
-          {/* SURFACE TEXTURE & ATMOSPHERIC EFFECTS */}
-          {planet.textureClass && <span className={`planet-surface-texture ${planet.textureClass}`} />}
-          {planet.cloudStyle && <span className="planet-cloud-bands" style={planet.cloudStyle} />}
-          {planet.auroraStyle && <span className="planet-aurora-boreal" style={planet.auroraStyle} />}
-          {planet.spotStyle && <span className="planet-great-spot" style={planet.spotStyle} />}
-
           {/* RINGS FRONT */}
           {planet.rings?.map((ring: PlanetRing, rIdx: number) => (
             <span
