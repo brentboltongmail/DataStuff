@@ -988,6 +988,8 @@ const SpaceshipAtmosphere = memo<SpaceshipAtmosphereProps>(({ galaxyStars, space
       {/* Full-screen sparkling deep space starfield layers behind planets */}
       <div className="space-starfield" />
       <div className="space-starfield space-starfield-2" />
+      <div className="space-starfield space-starfield-3" />
+      <div className="space-starfield space-starfield-4" />
 
       {/* Large Deep-Space 3D Spiral Galaxy (300+ Individual Star Particles) */}
       <div className="spiral-galaxy-container">
@@ -1634,16 +1636,16 @@ interface SpiralStar {
 
 function generateSpiralGalaxyStars(): SpiralStar[] {
   const stars: SpiralStar[] = [];
-  const arms = 2;
-  const starsPerArm = 25;
+  const arms = 4;
+  const starsPerArm = 50;
   const colors = [
     "#ffffff", "#fef08a", "#bae6fd", "#7dd3fc", 
     "#f472b6", "#c084fc", "#a855f7", "#38bdf8", "#fbbf24"
   ];
   const animations = ["star-twinkle-1", "star-twinkle-2", ""];
 
-  // 1. Core Cluster (20 stars)
-  for (let i = 0; i < 20; i++) {
+  // 1. Core Cluster (50 stars)
+  for (let i = 0; i < 50; i++) {
     const angle = Math.random() * Math.PI * 2;
     const dist = Math.pow(Math.random(), 1.8) * 85;
     const x = 400 + Math.cos(angle) * dist;

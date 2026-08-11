@@ -1493,6 +1493,53 @@
   animation-delay: -2.5s;
 }
 
+.spaceship-atmosphere .space-starfield-3 {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    radial-gradient(0.8px 0.8px at 3vw 75vh, #ffffff 100%, transparent),
+    radial-gradient(1.2px 1.2px at 18vw 15vh, #f472b6 100%, transparent),
+    radial-gradient(0.6px 0.6px at 31vw 60vh, #ffffff 100%, transparent),
+    radial-gradient(0.9px 0.9px at 43vw 22vh, #38bdf8 100%, transparent),
+    radial-gradient(0.7px 0.7px at 59vw 78vh, #fef08a 100%, transparent),
+    radial-gradient(1.1px 1.1px at 72vw 45vh, #ffffff 100%, transparent),
+    radial-gradient(0.8px 0.8px at 86vw 12vh, #c084fc 100%, transparent),
+    radial-gradient(0.5px 0.5px at 96vw 82vh, #ffffff 100%, transparent),
+    radial-gradient(1px 1px at 27vw 42vh, #67e8f9 100%, transparent),
+    radial-gradient(0.7px 0.7px at 51vw 85vh, #ffffff 100%, transparent),
+    radial-gradient(0.9px 0.9px at 67vw 16vh, #e0e7ff 100%, transparent),
+    radial-gradient(0.6px 0.6px at 81vw 68vh, #ffffff 100%, transparent);
+  background-size: 100% 100%;
+  opacity: 0.9;
+  animation: starfield-twinkle 6s ease-in-out infinite alternate;
+  animation-delay: -1.2s;
+}
+
+.spaceship-atmosphere .space-starfield-4 {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    radial-gradient(0.7px 0.7px at 11vw 38vh, #ffffff 100%, transparent),
+    radial-gradient(1px 1px at 24vw 82vh, #38bdf8 100%, transparent),
+    radial-gradient(0.5px 0.5px at 40vw 30vh, #c084fc 100%, transparent),
+    radial-gradient(0.8px 0.8px at 54vw 12vh, #ffffff 100%, transparent),
+    radial-gradient(0.6px 0.6px at 69vw 92vh, #fef08a 100%, transparent),
+    radial-gradient(1.2px 1.2px at 83vw 28vh, #ffffff 100%, transparent),
+    radial-gradient(0.7px 0.7px at 94vw 52vh, #f472b6 100%, transparent),
+    radial-gradient(0.9px 0.9px at 7vw 92vh, #67e8f9 100%, transparent),
+    radial-gradient(0.6px 0.6px at 33vw 18vh, #ffffff 100%, transparent),
+    radial-gradient(0.8px 0.8px at 62vw 50vh, #38bdf8 100%, transparent),
+    radial-gradient(0.5px 0.5px at 77vw 80vh, #ffffff 100%, transparent);
+  background-size: 100% 100%;
+  opacity: 0.9;
+  animation: starfield-twinkle 4.5s ease-in-out infinite alternate;
+  animation-delay: -3.8s;
+}
+
 @keyframes starfield-twinkle {
   0% { opacity: 0.75; }
   100% { opacity: 1; }
