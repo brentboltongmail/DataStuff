@@ -1017,27 +1017,27 @@ body.is-col-resizing .query-tabs-split {
   height: 100%;
   min-width: 0;
 }
-.query-copy-gutter {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 23px;
-  z-index: 100;
-  pointer-events: none;
+html body .query-copy-gutter {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: 23px !important;
+  z-index: 100 !important;
+  pointer-events: none !important;
 }
 
-.editor-wrapper .monaco-editor {
-  margin-left: 24px;
+html body .editor-wrapper .monaco-editor {
+  margin-left: 24px !important;
   width: calc(100% - 24px) !important;
 }
 
-.editor-wrapper .monaco-editor .cda {
+html body .editor-wrapper .monaco-editor .cda {
   width: 6px !important;
 }
 
-.editor-wrapper .monaco-editor .codicon-folding-expanded,
-.editor-wrapper .monaco-editor .codicon-folding-collapsed {
+html body .editor-wrapper .monaco-editor .codicon-folding-expanded,
+html body .editor-wrapper .monaco-editor .codicon-folding-collapsed {
   font-size: 9px !important;
 }
 

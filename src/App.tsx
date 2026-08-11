@@ -2541,6 +2541,7 @@ export default function App() {
     applyThemeToDocument(themeId);
     monacoApiRef.current?.editor.setTheme(themeOption(themeId).monacoTheme);
     window.oracle?.saveSettings?.({ theme: themeId });
+    setEditorTick((t) => t + 1);
   }, [themeId]);
 
   useEffect(() => {
