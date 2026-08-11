@@ -1369,6 +1369,236 @@ const DiscoAtmosphere = memo(() => {
   );
 });
 
+const DiscoAudioPlayer: React.FC = () => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isRepeat, setIsRepeat] = useState(true);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const isPlayingRef = useRef(false);
+  const isRepeatRef = useRef(true);
+  const stepRef = useRef(0);
+  const timerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
+
+  useEffect(() => {
+    isRepeatRef.current = isRepeat;
+  }, [isRepeat]);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current !== null) {
+        window.clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      if (audioCtxRef.current && audioCtxRef.current.state !== "closed") {
+        void audioCtxRef.current.close();
+        audioCtxRef.current = null;
+      }
+    };
+  }, []);
+
+  const playStep = (ctx: AudioContext, step: number) => {
+    const now = ctx.currentTime;
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(0.22, now);
+    masterGain.connect(ctx.destination);
+
+    // 1. KICK DRUM (Four-on-the-floor: steps 0, 4, 8, 12)
+    if (step % 4 === 0) {
+      const kickOsc = ctx.createOscillator();
+      const kickGain = ctx.createGain();
+      kickOsc.type = "sine";
+      kickOsc.frequency.setValueAtTime(140, now);
+      kickOsc.frequency.exponentialRampToValueAtTime(32, now + 0.09);
+      kickGain.gain.setValueAtTime(1.0, now);
+      kickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      kickOsc.connect(kickGain);
+      kickGain.connect(masterGain);
+      kickOsc.start(now);
+      kickOsc.stop(now + 0.13);
+    }
+
+    // 2. SNARE / CLAP (Steps 4, 12)
+    if (step === 4 || step === 12) {
+      const bufferSize = Math.floor(ctx.sampleRate * 0.09);
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = "highpass";
+      filter.frequency.value = 1100;
+
+      const snareGain = ctx.createGain();
+      snareGain.gain.setValueAtTime(0.65, now);
+      snareGain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+
+      noise.connect(filter);
+      filter.connect(snareGain);
+      snareGain.connect(masterGain);
+      noise.start(now);
+    }
+
+    // 3. DISCO OPEN HI-HAT (Offbeats: 2, 6, 10, 14)
+    if (step % 4 === 2) {
+      const bufferSize = Math.floor(ctx.sampleRate * 0.14);
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+      const hat = ctx.createBufferSource();
+      hat.buffer = buffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = "highpass";
+      filter.frequency.value = 6500;
+
+      const hatGain = ctx.createGain();
+      hatGain.gain.setValueAtTime(0.35, now);
+      hatGain.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
+
+      hat.connect(filter);
+      filter.connect(hatGain);
+      hatGain.connect(masterGain);
+      hat.start(now);
+    }
+
+    // 4. OCTAVE DISCO BASSLINE (E1, E2, G1, G2, A1, A2, B1, B2...)
+    const bassNotes = [
+      41.2, 82.4, 41.2, 82.4,
+      49.0, 98.0, 55.0, 110.0,
+      61.7, 123.5, 73.4, 146.8,
+      65.4, 130.8, 61.7, 123.5
+    ];
+    const bassFreq = bassNotes[step % 16];
+    const bassOsc = ctx.createOscillator();
+    const bassFilter = ctx.createBiquadFilter();
+    const bassGain = ctx.createGain();
+
+    bassOsc.type = "sawtooth";
+    bassOsc.frequency.setValueAtTime(bassFreq, now);
+
+    bassFilter.type = "lowpass";
+    bassFilter.frequency.setValueAtTime(1100, now);
+    bassFilter.frequency.exponentialRampToValueAtTime(280, now + 0.09);
+
+    bassGain.gain.setValueAtTime(0.55, now);
+    bassGain.gain.exponentialRampToValueAtTime(0.01, now + 0.11);
+
+    bassOsc.connect(bassFilter);
+    bassFilter.connect(bassGain);
+    bassGain.connect(masterGain);
+    bassOsc.start(now);
+    bassOsc.stop(now + 0.12);
+
+    // 5. DISCO CHORD STABS (Em7 / Am7)
+    if (step === 0 || step === 6 || step === 8 || step === 14) {
+      const chordFreqs = step < 8
+        ? [329.63, 392.00, 493.88, 587.33]
+        : [440.00, 523.25, 659.25, 783.99];
+
+      chordFreqs.forEach((freq) => {
+        const chordOsc = ctx.createOscillator();
+        const chordFilter = ctx.createBiquadFilter();
+        const chordGain = ctx.createGain();
+
+        chordOsc.type = "triangle";
+        chordOsc.frequency.setValueAtTime(freq, now);
+
+        chordFilter.type = "bandpass";
+        chordFilter.frequency.setValueAtTime(1800, now);
+
+        chordGain.gain.setValueAtTime(0.15, now);
+        chordGain.gain.exponentialRampToValueAtTime(0.001, now + 0.17);
+
+        chordOsc.connect(chordFilter);
+        chordFilter.connect(chordGain);
+        chordGain.connect(masterGain);
+        chordOsc.start(now);
+        chordOsc.stop(now + 0.18);
+      });
+    }
+  };
+
+  const togglePlay = async () => {
+    if (isPlaying) {
+      setIsPlaying(false);
+      if (timerRef.current !== null) {
+        window.clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      if (audioCtxRef.current && audioCtxRef.current.state === "running") {
+        await audioCtxRef.current.suspend();
+      }
+    } else {
+      if (!audioCtxRef.current) {
+        const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        audioCtxRef.current = new AudioCtx();
+      }
+      if (audioCtxRef.current.state === "suspended") {
+        await audioCtxRef.current.resume();
+      }
+      setIsPlaying(true);
+      stepRef.current = 0;
+      
+      // 120 BPM = 125ms step time
+      timerRef.current = window.setInterval(() => {
+        if (!isPlayingRef.current || !audioCtxRef.current) return;
+        
+        playStep(audioCtxRef.current, stepRef.current);
+        stepRef.current = (stepRef.current + 1) % 16;
+
+        if (stepRef.current === 0 && !isRepeatRef.current) {
+          setIsPlaying(false);
+          if (timerRef.current !== null) {
+            window.clearInterval(timerRef.current);
+            timerRef.current = null;
+          }
+        }
+      }, 125);
+    }
+  };
+
+  return (
+    <div className="disco-player-bar">
+      <button
+        type="button"
+        className={`disco-play-btn ${isPlaying ? "playing" : ""}`}
+        onClick={() => { void togglePlay(); }}
+        title={isPlaying ? "Pause ElevenLabs Disco Theme Song" : "Play ElevenLabs Disco Theme Song (Loop on repeat)"}
+      >
+        <span className="disco-play-icon">{isPlaying ? "⏸" : "▶"}</span>
+        <span className="disco-play-text">
+          {isPlaying ? "DISCO SONG PLAYING" : "PLAY DISCO SONG"}
+        </span>
+        {isPlaying && (
+          <span className="disco-eq-mini">
+            <span className="b1" />
+            <span className="b2" />
+            <span className="b3" />
+          </span>
+        )}
+      </button>
+
+      <button
+        type="button"
+        className={`disco-repeat-btn ${isRepeat ? "repeat-on" : ""}`}
+        onClick={() => setIsRepeat(!isRepeat)}
+        title={isRepeat ? "Repeat ON (Looping continuously)" : "Repeat OFF"}
+      >
+        🔁 {isRepeat ? "REPEAT ON" : "REPEAT OFF"}
+      </button>
+    </div>
+  );
+};
+
 const CIRCUIT_PRESETS = [
   // Preset 1: Silverstone Sweeping Loop
   "M 220,250 C 450,110 750,110 1020,180 C 1280,250 1440,200 1480,350 C 1520,500 1380,590 1220,540 C 1060,490 920,620 810,740 C 700,860 440,860 280,780 C 130,700 80,540 120,380 C 150,250 120,280 220,250 Z",
@@ -5002,6 +5232,7 @@ export default function App() {
             ))}
           </select>
         </div>
+        {themeId === "disco" ? <DiscoAudioPlayer /> : null}
         <div className="font-controls" title="App font size">
           <button
             type="button"
