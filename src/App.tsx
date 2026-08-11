@@ -2061,6 +2061,7 @@ export default function App() {
   );
 
   const [busy, setBusy] = useState(false);
+  const [runningTabId, setRunningTabId] = useState<string | null>(null);
   const [objectsRefresh, setObjectsRefresh] = useState(0);
   const [maxRows, setMaxRows] = useState(loadMaxRows);
   const [density, setDensity] = useState<GridDensity>(loadDensity);
@@ -2930,6 +2931,7 @@ export default function App() {
     } finally {
       setBusy(false);
       setRunningBlockId(null);
+      setRunningTabId(null);
       setError("Query execution cancelled by user");
       setMessage("Query cancelled");
     }
@@ -2958,6 +2960,7 @@ export default function App() {
       startLine = 1,
     ) => {
       setBusy(true);
+      setRunningTabId(activeTabId);
       setQueryStartTime(Date.now());
       setError(null);
       setBottomTab("results");
@@ -3106,9 +3109,11 @@ export default function App() {
         setQueryStartTime(null);
         setBusy(false);
         setRunningBlockId(null);
+        setRunningTabId(null);
       }
     },
     [
+      activeTabId,
       pushHistory,
       maxRows,
       isNotConnectedError,
@@ -3126,6 +3131,7 @@ export default function App() {
   const executeExplainWithBinds = useCallback(
     async (statement: string, currentBinds: Record<string, BindVarParam>) => {
       setBusy(true);
+      setRunningTabId(activeTabId);
       setError(null);
       setExplainError(null);
       setBottomTab("explain");
@@ -3156,9 +3162,11 @@ export default function App() {
         pushHistory(`EXPLAIN PLAN FOR\n${statement}`, false, text.split("\n")[0] ?? "Error");
       } finally {
         setBusy(false);
+        setRunningTabId(null);
       }
     },
     [
+      activeTabId,
       pushHistory,
       isNotConnectedError,
       forceDisconnect,
@@ -5311,6 +5319,7 @@ export default function App() {
                   tabs={tabs}
                   activeId={activeTabId}
                   isBusy={busy}
+                  runningTabId={runningTabId}
                   onSelect={setActiveTabId}
                   onClose={(id) => {
                     void closeTab(id);

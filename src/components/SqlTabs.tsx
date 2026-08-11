@@ -111,8 +111,7 @@ export default function SqlTabs({
       <div className="sql-tabs-list">
         {tabs.map((tab, index) => {
           const isActive = tab.id === activeId;
-          const isRunning =
-            !!isBusy && (runningTabId ? tab.id === runningTabId : tab.id === activeId);
+          const isRunning = !!isBusy && !!runningTabId && tab.id === runningTabId;
           const isEditing = editingId === tab.id;
           const isDragging = draggedIndex === index;
           const isDropTarget = dragOverIndex === index && draggedIndex !== index;
