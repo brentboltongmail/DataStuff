@@ -5549,6 +5549,57 @@ export default function App() {
                       </div>
                     );
                   })}
+                  {/* FUN CONTINUOUS PLASMA COMETS RACING AROUND EXECUTING QUERY BLOCK */}
+                  {sqlBlocks.map((block) => {
+                    const isThisRunning =
+                      busy &&
+                      (runningBlockId === block.id ||
+                        (runningBlockId === null && sqlBlocks.length === 1));
+                    if (!isThisRunning) return null;
+
+                    let top = (block.startLine - 1) * editorLineHeight - editorScrollTop;
+                    let height = (block.endLine - block.startLine + 1) * editorLineHeight;
+                    if (editorRef.current) {
+                      const model = editorRef.current.getModel();
+                      const maxLine = model ? model.getLineCount() : block.endLine;
+                      const startLineTop = editorRef.current.getTopForLineNumber(
+                        Math.min(block.startLine, maxLine),
+                      );
+                      let endLineBottom: number;
+                      if (block.endLine >= maxLine) {
+                        const lastLineTop = editorRef.current.getTopForLineNumber(maxLine);
+                        endLineBottom = lastLineTop + editorLineHeight;
+                      } else {
+                        endLineBottom = editorRef.current.getTopForLineNumber(block.endLine + 1);
+                      }
+                      const currentScrollTop = editorRef.current.getScrollTop();
+                      top = startLineTop - currentScrollTop;
+                      height = Math.max(editorLineHeight, endLineBottom - startLineTop);
+                    }
+
+                    return (
+                      <div
+                        key={`exec-particle-${block.id}`}
+                        className="query-executing-particle-box"
+                        style={{
+                          top: `${top}px`,
+                          height: `${height}px`,
+                        }}
+                      >
+                        <div className="exec-conduit-track" />
+                        <span className="exec-corner-beacon tl" />
+                        <span className="exec-corner-beacon tr" />
+                        <span className="exec-corner-beacon br" />
+                        <span className="exec-corner-beacon bl" />
+
+                        <span className="exec-plasma-comet c1" />
+                        <span className="exec-plasma-comet c2" />
+                        <span className="exec-plasma-comet c3" />
+                        <span className="exec-plasma-comet c4" />
+                        <span className="exec-plasma-comet c5" />
+                      </div>
+                    );
+                  })}
                   {copiedBlockId && <div className="query-copied-toast">✓ Query Copied!</div>}
                   <Editor
                     key={activeTabId}

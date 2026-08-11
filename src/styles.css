@@ -1252,6 +1252,103 @@ html body .editor-wrapper .monaco-editor .codicon-folding-collapsed {
   }
 }
 
+/* CONTINUOUS HIGH-SPEED PLASMA COMETS AROUND EXECUTING SQL QUERY */
+.query-executing-particle-box {
+  position: absolute;
+  left: 24px;
+  right: 12px;
+  pointer-events: none;
+  z-index: 160;
+  overflow: visible;
+}
+
+.exec-conduit-track {
+  position: absolute;
+  inset: 0;
+  border: 2px solid #10b981;
+  border-radius: 4px;
+  box-shadow:
+    0 0 16px rgba(16, 185, 129, 0.6),
+    0 0 32px rgba(56, 189, 248, 0.4),
+    inset 0 0 16px rgba(16, 185, 129, 0.25);
+  animation: exec-track-pulse 0.9s infinite alternate ease-in-out;
+}
+
+@keyframes exec-track-pulse {
+  0% {
+    border-color: #10b981;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.5), inset 0 0 10px rgba(16, 185, 129, 0.2);
+  }
+  100% {
+    border-color: #38bdf8;
+    box-shadow: 0 0 24px rgba(56, 189, 248, 0.8), 0 0 36px rgba(16, 185, 129, 0.6), inset 0 0 20px rgba(56, 189, 248, 0.35);
+  }
+}
+
+.exec-corner-beacon {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 12px #10b981, 0 0 20px #38bdf8;
+  animation: exec-beacon-flash 0.6s infinite alternate ease-in-out;
+}
+
+.exec-corner-beacon.tl { top: -4px; left: -4px; }
+.exec-corner-beacon.tr { top: -4px; right: -4px; }
+.exec-corner-beacon.br { bottom: -4px; right: -4px; }
+.exec-corner-beacon.bl { bottom: -4px; left: -4px; }
+
+@keyframes exec-beacon-flash {
+  0% { transform: scale(0.8); opacity: 0.7; }
+  100% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 16px #38bdf8, 0 0 28px #10b981; }
+}
+
+/* Fast Comet Heads with Glowing Plasma Tail Effects */
+.exec-plasma-comet {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: exec-comet-perimeter 0.9s linear infinite;
+}
+
+.exec-plasma-comet.c1 { animation-delay: 0s; background: #10b981; box-shadow: 0 0 14px #10b981, 0 0 24px #34d399, -6px -2px 10px #059669; }
+.exec-plasma-comet.c2 { animation-delay: 0.18s; background: #38bdf8; box-shadow: 0 0 14px #38bdf8, 0 0 24px #60a5fa, -6px -2px 10px #0284c7; }
+.exec-plasma-comet.c3 { animation-delay: 0.36s; background: #f59e0b; box-shadow: 0 0 14px #f59e0b, 0 0 24px #fbbf24, -6px -2px 10px #d97706; }
+.exec-plasma-comet.c4 { animation-delay: 0.54s; background: #a855f7; box-shadow: 0 0 14px #a855f7, 0 0 24px #c084fc, -6px -2px 10px #7e22ce; }
+.exec-plasma-comet.c5 { animation-delay: 0.72s; background: #ef4444; box-shadow: 0 0 14px #ef4444, 0 0 24px #f87171, -6px -2px 10px #b91c1c; }
+
+@keyframes exec-comet-perimeter {
+  0% {
+    top: -5px;
+    left: -5px;
+    transform: scale(1.2);
+  }
+  25% {
+    top: -5px;
+    left: calc(100% - 5px);
+    transform: scale(1.5);
+  }
+  50% {
+    top: calc(100% - 5px);
+    left: calc(100% - 5px);
+    transform: scale(1.2);
+  }
+  75% {
+    top: calc(100% - 5px);
+    left: -5px;
+    transform: scale(1.5);
+  }
+  100% {
+    top: -5px;
+    left: -5px;
+    transform: scale(1.2);
+  }
+}
+
 .query-copied-toast {
   position: absolute;
   top: 10px;
