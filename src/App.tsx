@@ -5517,7 +5517,6 @@ export default function App() {
       {themeId === "cyberpunk" ? <CyberpunkAtmosphere /> : null}
 
       {themeId === "solar" ? <SolarAtmosphere /> : null}
-      {themeId === "knightrider" ? <KnightRiderAtmosphere /> : null}
       <header className="titlebar">
         <div className="titlebar-left">
           <h1 className="titlebar-app-name">DataStuff</h1>
@@ -6457,6 +6456,8 @@ export default function App() {
           onCancel={() => setBindModalState(null)}
         />
       )}
+
+      {themeId === "knightrider" ? <KnightRiderAtmosphere /> : null}
     </div>
   );
 }

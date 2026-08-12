@@ -2381,10 +2381,10 @@ button.status-bar-cancel-btn {
 
 /* KNIGHT RIDER ATMOSPHERE OVERLAY */
 .knightrider-atmosphere {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
+  position: fixed !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  z-index: 999999 !important;
   overflow: hidden;
   background: radial-gradient(circle at 50% 10%, rgba(153, 0, 31, 0.15) 0%, transparent 70%);
 }
