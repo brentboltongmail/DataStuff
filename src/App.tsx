@@ -1823,36 +1823,10 @@ const KnightRiderAudioPlayer: React.FC = () => {
   );
 };
 
-function playKittSpeech(phrase?: string) {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-  const quotes = [
-    "Hello Michael. All database functions are operating at maximum efficiency.",
-    "My scanners detect 100 rows in the database buffer.",
-    "Allow me to optimize your database query execution, Michael.",
-    "If I may suggest, Michael, adding an index on this table would improve performance.",
-    "Database connection established. Ready for your command, Michael."
-  ];
-  const text = phrase || quotes[Math.floor(Math.random() * quotes.length)];
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.rate = 0.95;
-  utterance.pitch = 0.85; // Deep K.I.T.T. voice
-  window.speechSynthesis.speak(utterance);
-}
-
 const KnightRiderAtmosphere: React.FC = () => {
-  const [activeMode, setActiveMode] = useState<"AUTO" | "PURSUIT" | "TURBO">("AUTO");
-  const [speaking, setSpeaking] = useState(false);
-
-  const handleSpeakClick = () => {
-    setSpeaking(true);
-    playKittSpeech();
-    window.setTimeout(() => setSpeaking(false), 3800);
-  };
-
   return (
-    <div className={`knightrider-atmosphere mode-${activeMode.toLowerCase()}`}>
-      {/* 1. Iconic Front Hood Scanner Chaser (8 Red LEDs) */}
+    <div className="knightrider-atmosphere">
+      {/* Front Hood Scanner Chaser (8 Red LEDs) */}
       <div className="kitt-hood-scanner">
         <span className="kitt-led l0" />
         <span className="kitt-led l1" />
@@ -1864,60 +1838,8 @@ const KnightRiderAtmosphere: React.FC = () => {
         <span className="kitt-led l7" />
       </div>
 
-      {/* 2. 3D Cyber Red Horizon Grid */}
+      {/* 3D Cyber Red Horizon Grid */}
       <div className="kitt-cyber-grid-floor" />
-
-      {/* 3. Dashboard Console Status Unit */}
-      <div className="kitt-dashboard-console">
-        <button
-          type="button"
-          className={`kitt-console-btn ${activeMode === "AUTO" ? "on" : ""}`}
-          onClick={() => setActiveMode("AUTO")}
-        >
-          AUTO CRUISE
-        </button>
-        <button
-          type="button"
-          className={`kitt-console-btn ${activeMode === "PURSUIT" ? "on pursuit" : ""}`}
-          onClick={() => setActiveMode("PURSUIT")}
-        >
-          SUPER PURSUIT
-        </button>
-        <button
-          type="button"
-          className={`kitt-console-btn ${activeMode === "TURBO" ? "on turbo" : ""}`}
-          onClick={() => setActiveMode("TURBO")}
-        >
-          TURBO BOOST
-        </button>
-        <button
-          type="button"
-          className={`kitt-console-btn voice-btn ${speaking ? "speaking" : ""}`}
-          onClick={handleSpeakClick}
-          title="Click to hear K.I.T.T. speak!"
-        >
-          🗣️ K.I.T.T. TALK
-        </button>
-      </div>
-
-      {/* 4. Authentic 3-Column Red LED Voice Box */}
-      <div className={`kitt-voice-box-hud ${speaking ? "active" : ""}`}>
-        <div className="vbox-column col-left">
-          <span className="vbar" />
-          <span className="vbar" />
-          <span className="vbar" />
-        </div>
-        <div className="vbox-column col-center">
-          <span className="vbar" />
-          <span className="vbar" />
-          <span className="vbar" />
-        </div>
-        <div className="vbox-column col-right">
-          <span className="vbar" />
-          <span className="vbar" />
-          <span className="vbar" />
-        </div>
-      </div>
     </div>
   );
 };
