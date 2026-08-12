@@ -2424,10 +2424,10 @@ button.status-bar-cancel-btn {
 
 /* 1. Iconic Front Hood Scanner Chaser Bar (8 Red LEDs) */
 .kitt-hood-scanner {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  position: fixed !important;
+  top: 0 !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
   display: flex;
   gap: 4px;
   padding: 4px 12px;
@@ -2437,8 +2437,9 @@ button.status-bar-cancel-btn {
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
   box-shadow: 0 4px 20px rgba(255, 0, 51, 0.5);
-  z-index: 100;
-  pointer-events: auto;
+  z-index: 99999 !important;
+  pointer-events: auto !important;
+  -webkit-app-region: no-drag;
 }
 
 .kitt-led {
@@ -2468,18 +2469,19 @@ button.status-bar-cancel-btn {
 
 /* 2. K.I.T.T. Dashboard Mode Console Buttons */
 .kitt-dashboard-console {
-  position: absolute;
-  bottom: 24px;
-  right: 24px;
+  position: fixed !important;
+  bottom: 28px !important;
+  right: 28px !important;
   display: flex;
   gap: 8px;
-  z-index: 100;
-  pointer-events: auto;
-  background: rgba(10, 2, 5, 0.85);
+  z-index: 99999 !important;
+  pointer-events: auto !important;
+  -webkit-app-region: no-drag;
+  background: rgba(10, 2, 5, 0.92);
   padding: 6px 10px;
   border: 1.5px solid #ff1a40;
   border-radius: 8px;
-  box-shadow: 0 0 24px rgba(255, 0, 51, 0.5), inset 0 0 12px rgba(255, 0, 51, 0.2);
+  box-shadow: 0 0 24px rgba(255, 0, 51, 0.6), inset 0 0 12px rgba(255, 0, 51, 0.3);
   backdrop-filter: blur(8px);
 }
 
@@ -2488,12 +2490,15 @@ button.status-bar-cancel-btn {
   color: #ff6677;
   border: 1.5px solid #660c18;
   border-radius: 4px;
-  padding: 4px 10px;
+  padding: 5px 12px;
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.08em;
-  cursor: pointer;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  z-index: 99999 !important;
+  -webkit-app-region: no-drag;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
   transition: all 0.2s ease;
 }
@@ -2539,9 +2544,9 @@ button.status-bar-cancel-btn {
 
 /* 3. Authentic 3-Column Red LED Voice Box HUD */
 .kitt-voice-box-hud {
-  position: absolute;
-  bottom: 24px;
-  left: 24px;
+  position: fixed !important;
+  bottom: 28px !important;
+  left: 28px !important;
   display: flex;
   gap: 12px;
   background: #080204;
@@ -2549,7 +2554,9 @@ button.status-bar-cancel-btn {
   border: 1.5px solid #ff0033;
   border-radius: 8px;
   box-shadow: 0 0 24px rgba(255, 0, 51, 0.5);
-  z-index: 100;
+  z-index: 99999 !important;
+  pointer-events: auto !important;
+  -webkit-app-region: no-drag;
 }
 
 .vbox-column {
