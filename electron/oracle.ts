@@ -269,14 +269,10 @@ export async function connect(config: ConnectionConfig): Promise<ConnectionState
 }
 
 export async function disconnect(): Promise<ConnectionState> {
-  if (bridge) {
-    try {
-      await send({ cmd: "disconnect" });
-    } catch {
-      // ignore
-    }
-  }
   connectedState = { connected: false, mode: "jdbc" };
+  if (bridge) {
+    void request({ cmd: "disconnect" }, 1000).catch(() => {});
+  }
   return connectedState;
 }
 

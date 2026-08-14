@@ -838,14 +838,17 @@ public final class OracleBridge {
   }
 
   private static void disconnectQuietly() {
-    if (connection != null) {
-      try {
-        connection.close();
-      } catch (SQLException ignored) {
-        // ignore
-      } finally {
-        connection = null;
-      }
+    final Connection connToClose = connection;
+    connection = null;
+    if (connToClose != null) {
+      Thread closeThread = new Thread(() -> {
+        try {
+          connToClose.close();
+        } catch (Throwable ignored) {
+        }
+      }, "ds-jdbc-close");
+      closeThread.setDaemon(true);
+      closeThread.start();
     }
   }
 
