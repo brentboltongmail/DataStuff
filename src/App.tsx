@@ -2939,7 +2939,8 @@ export default function App() {
 
     if (!targetConn) return;
 
-    (async () => {
+    // Delay auto-connect by 450ms to ensure the entire app UI is fully mounted, rendered, and painted first!
+    const timer = window.setTimeout(async () => {
       try {
         setSelectedConnectionId(targetConn.id);
         setConnectionName(targetConn.name);
@@ -2962,6 +2963,10 @@ export default function App() {
         setConfig(connConfig);
 
         if (loadedPass) {
+          if (connectBtnRef.current) {
+            setConnectTargetRect(connectBtnRef.current.getBoundingClientRect());
+          }
+          setConnectPhase("connecting");
           setBusy(true);
           setIsExecutingQuery(false);
           setMessage(`Auto-connecting to ${targetConn.name}...`);
@@ -2970,6 +2975,7 @@ export default function App() {
           const timeoutTimer = window.setTimeout(() => {
             hasTimedOut = true;
             setBusy(false);
+            setConnectPhase("failed");
             setMessage("Auto-connect timeout (5s)");
           }, 5000);
 
@@ -2989,9 +2995,11 @@ export default function App() {
                 applyThemeToDocument("default");
               }
               setMessage(`Auto-connected as ${next.user}@${next.connectString}`);
+              setConnectPhase("succeeded");
             }
           } catch (err) {
             window.clearTimeout(timeoutTimer);
+            setConnectPhase("failed");
             const text = err instanceof Error ? err.message : String(err);
             setMessage(`Auto-connect notice: ${text}`);
           } finally {
@@ -3001,12 +3009,15 @@ export default function App() {
           setMessage(`Restored connection "${targetConn.name}" — enter password to connect`);
         }
       } catch (err) {
+        setConnectPhase("failed");
         const text = err instanceof Error ? err.message : String(err);
         setMessage(`Auto-connect notice: ${text}`);
       } finally {
         setBusy(false);
       }
-    })();
+    }, 450);
+
+    return () => window.clearTimeout(timer);
   }, [savedConnections, themeId]);
 
   const handleDeleteConnection = useCallback(() => {
