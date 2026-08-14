@@ -110,7 +110,7 @@ export default function ConnectionStarfieldOverlay({
       {/* Central connection status card with sparkling aura */}
       <div className={`starfield-card ${animatingOut ? "card-fade-out" : ""}`}>
         <div className="starfield-icon-wrap">
-          <svg className="starfield-main-star" viewBox="0 0 64 64" width="76" height="76">
+          <svg className="starfield-main-star" viewBox="0 0 64 64" width="92" height="92">
             <defs>
               <linearGradient id="star-grad-primary" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#e9d5ff" />
