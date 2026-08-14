@@ -2467,4 +2467,192 @@ button.status-bar-cancel-btn {
   100% { background: #3a0008; box-shadow: none; }
 }
 
+/* ── MAGIC TWINKLE STARS CONNECTION OVERLAY ── */
+.starfield-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  opacity: 1;
+  transition: opacity 0.35s ease;
+}
+
+.starfield-overlay.animating-out {
+  pointer-events: none;
+}
+
+.starfield-overlay.failed.animating-out {
+  opacity: 0;
+}
+
+.starfield-backdrop {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(24, 15, 45, 0.85) 0%,
+    rgba(10, 8, 20, 0.92) 70%,
+    rgba(5, 4, 12, 0.96) 100%
+  );
+  backdrop-filter: blur(8px);
+  animation: starfield-backdrop-pulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes starfield-backdrop-pulse {
+  0% { opacity: 0.88; }
+  100% { opacity: 0.96; }
+}
+
+.starfield-card {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 28px;
+  background: rgba(22, 16, 38, 0.75);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  border-radius: 16px;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(168, 85, 247, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(16px);
+  transform: scale(1);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+}
+
+.starfield-card.card-fade-out {
+  transform: scale(0.85);
+  opacity: 0;
+}
+
+.starfield-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+  animation: starfield-icon-pulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes starfield-icon-pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 12px rgba(168, 85, 247, 0.3); }
+  100% { transform: scale(1.1); box-shadow: 0 0 26px rgba(236, 72, 153, 0.6); }
+}
+
+.starfield-main-star {
+  animation: starfield-icon-rotate 6s linear infinite;
+}
+
+@keyframes starfield-icon-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.starfield-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.starfield-title {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #f3e8ff;
+  text-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+}
+
+.starfield-sub {
+  font-size: 12px;
+  color: #c084fc;
+  opacity: 0.85;
+}
+
+.starfield-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.magic-star {
+  position: absolute;
+  transform-origin: center center;
+  will-change: transform, opacity, left, top;
+}
+
+.magic-star.twinkle {
+  animation: magic-star-twinkle var(--duration, 2s) ease-in-out infinite alternate;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes magic-star-twinkle {
+  0% {
+    opacity: 0.15;
+    transform: scale(0.6) rotate(0deg);
+    filter: drop-shadow(0 0 2px currentColor);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.35) rotate(22deg);
+    filter: drop-shadow(0 0 10px currentColor);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8) rotate(45deg);
+    filter: drop-shadow(0 0 4px currentColor);
+  }
+}
+
+.magic-star.fly-to-button {
+  animation: magic-star-fly 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes magic-star-fly {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1.2) rotate(0deg);
+    filter: drop-shadow(0 0 12px currentColor);
+  }
+  70% {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 18px currentColor);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--delta-x, 0px), var(--delta-y, 0px), 0) scale(0.05) rotate(360deg);
+    filter: drop-shadow(0 0 0px currentColor);
+  }
+}
+
+/* Success flare effect on connection button */
+.connect-button-success-burst {
+  animation: connect-btn-burst 0.75s ease-out !important;
+}
+
+@keyframes connect-btn-burst {
+  0% {
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.9);
+  }
+  40% {
+    box-shadow: 0 0 35px 12px rgba(168, 85, 247, 0.95), 0 0 60px 24px rgba(236, 72, 153, 0.7);
+    transform: scale(1.08);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
+    transform: scale(1);
+  }
+}
+
+
 

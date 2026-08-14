@@ -9,6 +9,9 @@ import ResultsGrid, {
 } from "./components/ResultsGrid";
 import SqlTabs from "./components/SqlTabs";
 import BindVariablesModal from "./components/BindVariablesModal";
+import ConnectionStarfieldOverlay, {
+  type ConnectPhase,
+} from "./components/ConnectionStarfieldOverlay";
 import {
   parseBindVariables,
   prepareSqlWithBinds,
@@ -2271,6 +2274,10 @@ export default function App() {
   );
 
   const [busy, setBusy] = useState(false);
+  const [connectPhase, setConnectPhase] = useState<ConnectPhase>("idle");
+  const [isExecutingQuery, setIsExecutingQuery] = useState(false);
+  const connectBtnRef = useRef<HTMLButtonElement | null>(null);
+  const [connectTargetRect, setConnectTargetRect] = useState<DOMRect | null>(null);
   const [runningTabId, setRunningTabId] = useState<string | null>(null);
   const [objectsRefresh, setObjectsRefresh] = useState(0);
   const [maxRows, setMaxRows] = useState(loadMaxRows);
@@ -2922,13 +2929,19 @@ export default function App() {
         setConfig(connConfig);
 
         if (loadedPass) {
+          if (connectBtnRef.current) {
+            setConnectTargetRect(connectBtnRef.current.getBoundingClientRect());
+          }
+          setConnectPhase("connecting");
           setBusy(true);
+          setIsExecutingQuery(false);
           setMessage(`Auto-connecting to ${targetConn.name}...`);
 
           let hasTimedOut = false;
           const timeoutTimer = window.setTimeout(() => {
             hasTimedOut = true;
             setBusy(false);
+            setConnectPhase("failed");
             setMessage("Auto-connect timeout (5s)");
           }, 5000);
 
@@ -2947,11 +2960,13 @@ export default function App() {
               applyThemeToDocument("default");
             }
             setMessage(`Auto-connected as ${next.user}@${next.connectString}`);
+            setConnectPhase("succeeded");
           }
         } else {
           setMessage(`Restored connection "${targetConn.name}" — enter password to connect`);
         }
       } catch (err) {
+        setConnectPhase("failed");
         const text = err instanceof Error ? err.message : String(err);
         setMessage(`Auto-connect notice: ${text}`);
       } finally {
@@ -3062,7 +3077,12 @@ export default function App() {
   );
 
   const onConnect = async () => {
+    if (connectBtnRef.current) {
+      setConnectTargetRect(connectBtnRef.current.getBoundingClientRect());
+    }
+    setConnectPhase("connecting");
     setBusy(true);
+    setIsExecutingQuery(false);
     setError(null);
     setMessage("Connecting...");
 
@@ -3070,6 +3090,7 @@ export default function App() {
     const timeoutTimer = setTimeout(() => {
       hasTimedOut = true;
       setBusy(false);
+      setConnectPhase("failed");
       setError("Connection cancelled: Database server did not respond within 5 seconds");
       setMessage("Connection cancelled (5s timeout)");
     }, 5000);
@@ -3098,7 +3119,9 @@ export default function App() {
         `Connected as ${next.user}@${next.connectString} (${next.mode ?? "thin"})`,
       );
       await persistPassword(config.password, rememberPassword, selectedConnectionId);
+      setConnectPhase("succeeded");
     } catch (err) {
+      setConnectPhase("failed");
       if (!hasTimedOut) {
         clearTimeout(timeoutTimer);
         const errText = err instanceof Error ? err.message : String(err);
@@ -3171,6 +3194,7 @@ export default function App() {
       startLine = 1,
     ) => {
       setBusy(true);
+      setIsExecutingQuery(true);
       setRunningTabId(activeTabId);
       setQueryStartTime(Date.now());
       setError(null);
@@ -3319,6 +3343,7 @@ export default function App() {
       } finally {
         setQueryStartTime(null);
         setBusy(false);
+        setIsExecutingQuery(false);
         setRunningBlockId(null);
         setRunningTabId(null);
       }
@@ -3342,6 +3367,7 @@ export default function App() {
   const executeExplainWithBinds = useCallback(
     async (statement: string, currentBinds: Record<string, BindVarParam>) => {
       setBusy(true);
+      setIsExecutingQuery(true);
       setRunningTabId(activeTabId);
       setError(null);
       setExplainError(null);
@@ -3373,6 +3399,7 @@ export default function App() {
         pushHistory(`EXPLAIN PLAN FOR\n${statement}`, false, text.split("\n")[0] ?? "Error");
       } finally {
         setBusy(false);
+        setIsExecutingQuery(false);
         setRunningTabId(null);
       }
     },
@@ -5456,6 +5483,14 @@ export default function App() {
       {themeId === "cyberpunk" ? <CyberpunkAtmosphere /> : null}
 
       {themeId === "solar" ? <SolarAtmosphere /> : null}
+
+      <ConnectionStarfieldOverlay
+        phase={connectPhase}
+        targetRect={connectTargetRect}
+        connectionName={connectionName || selectedConnectionId}
+        onComplete={() => setConnectPhase("idle")}
+      />
+
       <header className="titlebar">
         <div className="titlebar-left">
           <h1 className="titlebar-app-name">DataStuff</h1>
@@ -5493,8 +5528,9 @@ export default function App() {
             </button>
           ) : (
             <button
+              ref={connectBtnRef}
               type="button"
-              className="primary"
+              className={`primary ${connectPhase === "succeeded" ? "connect-button-success-burst" : ""}`}
               onClick={onConnect}
               disabled={!selectedConnectionId || busy}
               title={
@@ -5594,7 +5630,7 @@ export default function App() {
                 <SqlTabs
                   tabs={tabs}
                   activeId={activeTabId}
-                  isBusy={busy}
+                  isBusy={busy && isExecutingQuery}
                   runningTabId={runningTabId}
                   onSelect={setActiveTabId}
                   onClose={(id) => {
@@ -5692,9 +5728,10 @@ export default function App() {
 
                           const isThisRunning =
                             busy &&
+                            isExecutingQuery &&
                             (runningBlockId === block.id ||
                               (runningBlockId === null && sqlBlocks.length === 1));
-                          const isOtherRunning = busy && !isThisRunning;
+                          const isOtherRunning = busy && isExecutingQuery && !isThisRunning;
 
                           return (
                             <Fragment key={block.id}>
@@ -5822,6 +5859,7 @@ export default function App() {
                   {sqlBlocks.map((block) => {
                     const isThisRunning =
                       busy &&
+                      isExecutingQuery &&
                       (runningBlockId === block.id ||
                         (runningBlockId === null && sqlBlocks.length === 1));
                     if (!isThisRunning) return null;
