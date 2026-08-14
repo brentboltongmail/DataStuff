@@ -399,7 +399,8 @@ input:focus {
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: #667;
+  background: var(--status-err, #ef4444);
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
   transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
