@@ -24,6 +24,7 @@
     "productName": "DataStuff",
     "copyright": "Copyright © 2026 DataStuff",
     "asar": false,
+    "icon": "build/icon.icns",
     "directories": {
       "output": "release"
     },
@@ -31,10 +32,13 @@
       "dist/**/*",
       "dist-electron/**/*",
       "jdbc/**/*",
+      "build/icon.png",
+      "build/icon.icns",
       "package.json"
     ],
     "mac": {
       "category": "public.app-category.developer-tools",
+      "icon": "build/icon.icns",
       "identity": null,
       "target": [
         {

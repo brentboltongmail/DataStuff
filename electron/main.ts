@@ -32,6 +32,8 @@ import {
 } from "./sqlPages";
 import type { ConnectionConfig, SavedWorkspace, SqlTab } from "../src/types";
 
+import fsSync from "node:fs";
+
 // Explicit macOS application name for Dock, Menu Bar, and Keychain
 app.name = "DataStuff";
 app.setName("DataStuff");
@@ -41,6 +43,10 @@ process.env.DIST = path.join(__dirname, "../dist");
 process.env.VITE_PUBLIC = app.isPackaged
   ? process.env.DIST
   : path.join(__dirname, "../public");
+
+const iconPath = app.isPackaged
+  ? path.join(process.resourcesPath, "build/icon.png")
+  : path.join(__dirname, "../build/icon.png");
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -118,7 +124,8 @@ function createWindow() {
     height: 900,
     minWidth: 1000,
     minHeight: 640,
-    title: "DataStuff 1.0",
+    title: "DataStuff",
+    icon: fsSync.existsSync(iconPath) ? iconPath : undefined,
     titleBarStyle: "hidden",
     trafficLightPosition: { x: 8, y: 6 },
     backgroundColor: "#16131a",
@@ -306,6 +313,20 @@ if (!gotTheLock) {
 app.whenReady().then(() => {
   setupAppMenu();
   registerIpc();
+  if (process.platform === "darwin" && app.dock && fsSync.existsSync(iconPath)) {
+    try {
+      app.dock.setIcon(iconPath);
+    } catch {
+      // ignore
+    }
+  }
+  if (app.setAboutPanelOptions) {
+    app.setAboutPanelOptions({
+      applicationName: "DataStuff",
+      applicationVersion: "0.1.0",
+      iconPath: fsSync.existsSync(iconPath) ? iconPath : undefined,
+    });
+  }
   createWindow();
 
   app.on("activate", () => {
