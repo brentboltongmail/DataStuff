@@ -110,55 +110,67 @@ export default function ConnectionStarfieldOverlay({
       {/* Central connection status card with sparkling aura */}
       <div className={`starfield-card ${animatingOut ? "card-fade-out" : ""}`}>
         <div className="starfield-icon-wrap">
-          <svg className="starfield-main-star" viewBox="0 0 48 48" width="52" height="52">
+          <svg className="starfield-main-star" viewBox="0 0 64 64" width="76" height="76">
             <defs>
-              <linearGradient id="star-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#c084fc" />
-                <stop offset="50%" stopColor="#f472b6" />
+              <linearGradient id="star-grad-primary" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#e9d5ff" />
+                <stop offset="35%" stopColor="#c084fc" />
+                <stop offset="70%" stopColor="#f472b6" />
                 <stop offset="100%" stopColor="#38bdf8" />
               </linearGradient>
-              <linearGradient id="star-grad-2" x1="100%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id="star-grad-secondary" x1="100%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#fef08a" />
-                <stop offset="50%" stopColor="#ec4899" />
-                <stop offset="100%" stopColor="#a855f7" />
+                <stop offset="40%" stopColor="#ec4899" />
+                <stop offset="100%" stopColor="#8b5cf6" />
               </linearGradient>
-              <radialGradient id="star-core-glow" cx="50%" cy="50%" r="50%">
+              <linearGradient id="star-facet-light" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+                <stop offset="100%" stopColor="#fef08a" stopOpacity="0.2" />
+              </linearGradient>
+              <radialGradient id="star-core-flare" cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-                <stop offset="40%" stopColor="#fef08a" stopOpacity="0.8" />
+                <stop offset="30%" stopColor="#fef08a" stopOpacity="0.95" />
+                <stop offset="70%" stopColor="#ec4899" stopOpacity="0.5" />
                 <stop offset="100%" stopColor="#a855f7" stopOpacity="0" />
               </radialGradient>
-              <filter id="star-shadow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#ec4899" floodOpacity="0.8" />
+              <filter id="star-drop-shadow" x="-30%" y="-30%" width="160%" height="160%">
+                <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#ec4899" floodOpacity="0.85" />
               </filter>
             </defs>
+
+            {/* Outer 12-point sparkling star halo */}
             <path
-              d="M24 0L27.5 16.5L44 20L27.5 23.5L24 40L20.5 23.5L4 20L20.5 16.5Z"
-              fill="url(#star-grad-1)"
-              opacity="0.6"
-              transform="rotate(22.5 24 24)"
+              d="M32 0L35.5 24L59.5 8L39.5 28.5L64 32L39.5 35.5L59.5 56L35.5 40L32 64L28.5 40L4.5 56L24.5 35.5L0 32L24.5 28.5L4.5 8L28.5 24Z"
+              fill="url(#star-grad-secondary)"
+              opacity="0.35"
+              transform="rotate(15 32 32)"
             />
+
+            {/* Sub-primary 8-point rotating crystal star */}
             <path
-              d="M24 0L29.5 18.5L48 24L29.5 29.5L24 48L18.5 29.5L0 24L18.5 18.5Z"
-              fill="url(#star-grad-1)"
-              filter="url(#star-shadow)"
+              d="M32 4L37 22L55 12L42 27L60 32L42 37L55 52L37 42L32 60L27 42L9 52L22 37L4 32L22 27L9 12L27 22Z"
+              fill="url(#star-grad-primary)"
+              opacity="0.65"
+              transform="rotate(22.5 32 32)"
             />
+
+            {/* Main 4-point crystal star with deep shadows */}
             <path
-              d="M24 0L29.5 18.5L24 24L18.5 18.5Z"
-              fill="url(#star-grad-2)"
-              opacity="0.85"
+              d="M32 0L39.5 24.5L64 32L39.5 39.5L32 64L24.5 39.5L0 32L24.5 24.5Z"
+              fill="url(#star-grad-primary)"
+              filter="url(#star-drop-shadow)"
             />
-            <path
-              d="M48 24L29.5 29.5L24 24L29.5 18.5Z"
-              fill="#ffffff"
-              opacity="0.4"
-            />
-            <path
-              d="M24 48L18.5 29.5L24 24L29.5 29.5Z"
-              fill="url(#star-grad-2)"
-              opacity="0.75"
-            />
-            <polygon points="24,14 34,24 24,34 14,24" fill="url(#star-core-glow)" />
-            <circle cx="24" cy="24" r="3.5" fill="#ffffff" />
+
+            {/* 3D Geometric Facet Highlights */}
+            <path d="M32 0L39.5 24.5L32 32L24.5 24.5Z" fill="url(#star-facet-light)" />
+            <path d="M64 32L39.5 39.5L32 32L39.5 24.5Z" fill="#ffffff" opacity="0.45" />
+            <path d="M32 64L24.5 39.5L32 32L39.5 39.5Z" fill="url(#star-grad-secondary)" opacity="0.8" />
+            <path d="M0 32L24.5 24.5L32 32L24.5 39.5Z" fill="#e9d5ff" opacity="0.5" />
+
+            {/* Inner Diamond Core Flare */}
+            <polygon points="32,16 48,32 32,48 16,32" fill="url(#star-core-flare)" />
+            <polygon points="32,20 44,32 32,44 20,32" fill="#ffffff" opacity="0.75" />
+            <circle cx="32" cy="32" r="5" fill="#ffffff" />
           </svg>
         </div>
         <div className="starfield-text-group">

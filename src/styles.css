@@ -2560,18 +2560,18 @@ button.status-bar-cancel-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 68px;
-  height: 68px;
-  border-radius: 16px;
-  background: rgba(168, 85, 247, 0.18);
-  border: 1.5px solid rgba(168, 85, 247, 0.45);
-  box-shadow: 0 0 28px rgba(168, 85, 247, 0.5), inset 0 0 12px rgba(236, 72, 153, 0.25);
+  width: 92px;
+  height: 92px;
+  border-radius: 20px;
+  background: radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.25) 0%, rgba(168, 85, 247, 0.18) 70%, rgba(14, 10, 24, 0.4) 100%);
+  border: 1.5px solid rgba(168, 85, 247, 0.55);
+  box-shadow: 0 0 36px rgba(168, 85, 247, 0.6), inset 0 0 16px rgba(236, 72, 153, 0.35);
   animation: starfield-icon-pulse 2s ease-in-out infinite alternate;
 }
 
 @keyframes starfield-icon-pulse {
-  0% { transform: scale(0.95); box-shadow: 0 0 12px rgba(168, 85, 247, 0.3); }
-  100% { transform: scale(1.1); box-shadow: 0 0 26px rgba(236, 72, 153, 0.6); }
+  0% { transform: scale(0.96); box-shadow: 0 0 16px rgba(168, 85, 247, 0.35); }
+  100% { transform: scale(1.08); box-shadow: 0 0 36px rgba(236, 72, 153, 0.75); }
 }
 
 .starfield-main-star {
