@@ -154,5 +154,10 @@ export interface OracleApi {
   saveSettings?: (settings: Record<string, unknown>) => Promise<{ saved: boolean }>;
   loadQueryStats?: () => Promise<Record<string, unknown>>;
   saveQueryStats?: (stats: Record<string, unknown>) => Promise<{ saved: boolean }>;
-  generateFont?: (fontName: string, pixelMap: Record<string, string[]>) => Promise<{ success: boolean; path: string }>;
+  generateFont?: (
+    fontName: string,
+    pixelMap: Record<string, string[]>,
+    gridWidth?: number,
+    gridHeight?: number,
+  ) => Promise<{ success: boolean; path: string }>;
 }

@@ -747,14 +747,17 @@ def build_pixel_font(font_name="MyCustomPixelFont", output_path="MyCustomPixelFo
         "~": "asciitilde",
         "@": "at",
         "^": "asciicircum",
-def build_pixel_font(font_name="MyCustomPixelFont", output_path="MyCustomPixelFont.ttf", pixel_map_override=None):
+def build_pixel_font(font_name="MyCustomPixelFont", output_path="MyCustomPixelFont.ttf", pixel_map_override=None, grid_cols_override=None, grid_rows_override=None):
     active_map = pixel_map_override if pixel_map_override else PIXEL_MAP
+    
+    first_grid = list(active_map.values())[0] if active_map else None
+    grid_rows = grid_rows_override or (len(first_grid) if first_grid else 8)
+    grid_cols = grid_cols_override or (len(first_grid[0]) // 2 if (first_grid and len(first_grid[0]) >= 2) else 8)
+
     units_per_em = 1000
-    grid_cols = 8
-    grid_rows = 8
-    pixel_size = units_per_em // grid_rows  # 125 units per pixel
-    advance_width = grid_cols * pixel_size   # 1000 units (monospaced)
-    baseline_offset = 125                     # Baseline shift
+    pixel_size = units_per_em // max(grid_rows, grid_cols)
+    advance_width = grid_cols * pixel_size
+    baseline_offset = pixel_size
 
     name_map = {
         " ": "space",
@@ -810,8 +813,11 @@ def build_pixel_font(font_name="MyCustomPixelFont", output_path="MyCustomPixelFo
         for row_idx, row_str in enumerate(grid):
             y_top = (grid_rows - row_idx) * pixel_size - baseline_offset
             y_bottom = y_top - pixel_size
-            for col_idx, col_char in enumerate(row_str):
-                if col_char != " ":
+            # Characters in string format may use double chars '██' or single '█'
+            step = 2 if "██" in "".join(row_str) else 1
+            col_cells = [row_str[i:i+step] for i in range(0, len(row_str), step)]
+            for col_idx, col_char in enumerate(col_cells):
+                if col_char.strip() != "":
                     x_left = col_idx * pixel_size
                     x_right = x_left + pixel_size
                     pen.moveTo((x_left, y_bottom))
@@ -850,6 +856,8 @@ if __name__ == "__main__":
     json_path = sys.argv[3] if len(sys.argv) > 3 else None
 
     pixel_override = None
+    grid_w = None
+    grid_h = None
     if json_path and os.path.exists(json_path):
         with open(json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -857,5 +865,9 @@ if __name__ == "__main__":
                 font_name = data["fontName"]
             if "pixelMap" in data:
                 pixel_override = data["pixelMap"]
+            if "gridWidth" in data and data["gridWidth"]:
+                grid_w = int(data["gridWidth"])
+            if "gridHeight" in data and data["gridHeight"]:
+                grid_h = int(data["gridHeight"])
 
-    build_pixel_font(font_name, out_file, pixel_map_override=pixel_override)
+    build_pixel_font(font_name, out_file, pixel_map_override=pixel_override, grid_cols_override=grid_w, grid_rows_override=grid_h)

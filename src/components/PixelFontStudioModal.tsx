@@ -55,13 +55,15 @@ const DEFAULT_TEMPLATES: Record<string, string[]> = {
 export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
   const [fontName, setFontName] = useState("MyPixelFont");
   const [selectedChar, setSelectedChar] = useState("A");
+  const [gridWidth, setGridWidth] = useState(8);
+  const [gridHeight, setGridHeight] = useState(8);
   const [isMouseDown, setIsMouseDown] = useState(false);
-  const [paintMode, setPaintMode] = useState<boolean | null>(null); // true = fill, false = erase
+  const [paintMode, setPaintMode] = useState<boolean | null>(null);
   const [previewText, setPreviewText] = useState("SELECT * FROM USERS;");
   const [exportMessage, setExportMessage] = useState("");
   const [isExporting, setIsExporting] = useState(false);
 
-  // Store 8x8 boolean grid for each character
+  // Store boolean grid for each character based on gridWidth x gridHeight
   const [fontMap, setFontMap] = useState<Record<string, boolean[][]>>(() => {
     const initial: Record<string, boolean[][]> = {};
     for (const char of DEFAULT_CHARS) {
@@ -71,21 +73,52 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
     return initial;
   });
 
-  const currentGrid = useMemo(() => {
-    return fontMap[selectedChar] || Array(8).fill(null).map(() => Array(8).fill(false));
-  }, [fontMap, selectedChar]);
+  // Handle dynamic grid dimension changes
+  const handleResizeGrid = useCallback((newW: number, newH: number) => {
+    const clampedW = Math.max(4, Math.min(32, newW));
+    const clampedH = Math.max(4, Math.min(32, newH));
+    setGridWidth(clampedW);
+    setGridHeight(clampedH);
 
-  const togglePixel = useCallback((row: number, col: number, forceState?: boolean) => {
     setFontMap((prev) => {
-      const charGrid = prev[selectedChar] ? prev[selectedChar].map((r) => [...r]) : Array(8).fill(null).map(() => Array(8).fill(false));
-      const nextVal = forceState !== undefined ? forceState : !charGrid[row][col];
-      charGrid[row][col] = nextVal;
-      return { ...prev, [selectedChar]: charGrid };
+      const nextMap: Record<string, boolean[][]> = {};
+      for (const char of DEFAULT_CHARS) {
+        const oldGrid = prev[char] || [];
+        const newGrid: boolean[][] = Array(clampedH)
+          .fill(null)
+          .map((_, r) =>
+            Array(clampedW)
+              .fill(null)
+              .map((_, c) => (oldGrid[r] && oldGrid[r][c] ? true : false)),
+          );
+        nextMap[char] = newGrid;
+      }
+      return nextMap;
     });
-  }, [selectedChar]);
+  }, []);
+
+  const currentGrid = useMemo(() => {
+    return fontMap[selectedChar] || Array(gridHeight).fill(null).map(() => Array(gridWidth).fill(false));
+  }, [fontMap, selectedChar, gridHeight, gridWidth]);
+
+  const togglePixel = useCallback(
+    (row: number, col: number, forceState?: boolean) => {
+      setFontMap((prev) => {
+        const charGrid = prev[selectedChar]
+          ? prev[selectedChar].map((r) => [...r])
+          : Array(gridHeight).fill(null).map(() => Array(gridWidth).fill(false));
+        const nextVal = forceState !== undefined ? forceState : !charGrid[row]?.[col];
+        if (charGrid[row]) {
+          charGrid[row][col] = nextVal;
+        }
+        return { ...prev, [selectedChar]: charGrid };
+      });
+    },
+    [selectedChar, gridHeight, gridWidth],
+  );
 
   const handleCellMouseDown = (row: number, col: number) => {
-    const nextState = !currentGrid[row][col];
+    const nextState = !currentGrid[row]?.[col];
     setPaintMode(nextState);
     setIsMouseDown(true);
     togglePixel(row, col, nextState);
@@ -109,7 +142,7 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
   const clearCurrentChar = () => {
     setFontMap((prev) => ({
       ...prev,
-      [selectedChar]: Array(8).fill(null).map(() => Array(8).fill(false)),
+      [selectedChar]: Array(gridHeight).fill(null).map(() => Array(gridWidth).fill(false)),
     }));
   };
 
@@ -137,14 +170,13 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
     setIsExporting(true);
     setExportMessage("Building TrueType Font (.ttf)...");
     try {
-      // Convert boolean grid map to string map for python script
       const stringMap: Record<string, string[]> = {};
       for (const [char, grid] of Object.entries(fontMap)) {
         stringMap[char] = grid.map((row) => row.map((cell) => (cell ? "██" : "  ")).join(""));
       }
 
       if (window.oracle?.generateFont) {
-        const res = await window.oracle.generateFont(fontName, stringMap);
+        const res = await window.oracle.generateFont(fontName, stringMap, gridWidth, gridHeight);
         setExportMessage(`✨ Successfully created ${res.path}! Double click to install on Mac.`);
       } else {
         setExportMessage("Font export ready! Connect IPC to save file.");
@@ -156,6 +188,11 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
     }
   };
 
+  // Calculate dynamic canvas cell size (px) so grid fits perfectly
+  const cellSize = useMemo(() => {
+    return Math.max(12, Math.min(36, Math.floor(280 / Math.max(gridWidth, gridHeight))));
+  }, [gridWidth, gridHeight]);
+
   if (!isOpen) return null;
 
   return (
@@ -164,9 +201,9 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
         className="modal-card"
         onClick={(e) => e.stopPropagation()}
         style={{
-          width: 900,
-          maxWidth: "94vw",
-          maxHeight: "90vh",
+          width: 960,
+          maxWidth: "96vw",
+          maxHeight: "92vh",
           display: "flex",
           flexDirection: "column",
           gap: 16,
@@ -186,7 +223,7 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
               🎨 Pixel Font Studio
             </h2>
             <p style={{ margin: "4px 0 0", fontSize: 13, color: "var(--text-muted, #b8c4d6)" }}>
-              Click or drag to draw pixels for each letter, preview live, and export your `.ttf` font file!
+              Draw your font, dynamically resize the grid, preview live, and export a real `.ttf` file!
             </p>
           </div>
           <button
@@ -199,42 +236,125 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
           </button>
         </div>
 
-        {/* Top Controls */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <label style={{ fontSize: 13, fontWeight: 600 }}>Font Name:</label>
-          <input
-            type="text"
-            value={fontName}
-            onChange={(e) => setFontName(e.target.value)}
+        {/* Top Controls: Font Name + Dynamic Grid Resizer */}
+        <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <label style={{ fontSize: 13, fontWeight: 600 }}>Font Name:</label>
+            <input
+              type="text"
+              value={fontName}
+              onChange={(e) => setFontName(e.target.value)}
+              style={{
+                padding: "6px 12px",
+                background: "var(--input-bg, #15181e)",
+                border: "1px solid var(--border, #384152)",
+                borderRadius: 6,
+                color: "#fff",
+                fontSize: 14,
+                width: 170,
+              }}
+            />
+          </div>
+
+          {/* Dynamic Grid Resizer */}
+          <div
             style={{
-              padding: "6px 12px",
-              background: "var(--input-bg, #15181e)",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              background: "var(--bg-elevated, #22262e)",
+              padding: "4px 10px",
+              borderRadius: 8,
               border: "1px solid var(--border, #384152)",
-              borderRadius: 6,
-              color: "#fff",
-              fontSize: 14,
-              width: 200,
             }}
-          />
+          >
+            <span style={{ fontSize: 12, fontWeight: 600, color: "#38bdf8" }}>
+              📐 Grid Size:
+            </span>
+            <select
+              value={`${gridWidth}x${gridHeight}`}
+              onChange={(e) => {
+                const [w, h] = e.target.value.split("x").map(Number);
+                if (w && h) handleResizeGrid(w, h);
+              }}
+              style={{
+                background: "var(--input-bg, #15181e)",
+                color: "#fff",
+                border: "1px solid var(--border)",
+                borderRadius: 4,
+                padding: "3px 6px",
+                fontSize: 12,
+              }}
+            >
+              <option value="8x8">8 × 8 (Standard)</option>
+              <option value="8x10">8 × 10 (Tall Mono)</option>
+              <option value="8x12">8 × 12 (IDE Code)</option>
+              <option value="10x10">10 × 10 (Medium Square)</option>
+              <option value="12x12">12 × 12 (HD Pixel)</option>
+              <option value="16x16">16 × 16 (Ultra HD Grid)</option>
+              <option value="6x8">6 × 8 (Compact Mini)</option>
+            </select>
+
+            <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Custom:</span>
+            <input
+              type="number"
+              min={4}
+              max={32}
+              value={gridWidth}
+              onChange={(e) => handleResizeGrid(Number(e.target.value), gridHeight)}
+              style={{
+                width: 44,
+                padding: "2px 4px",
+                background: "var(--input-bg, #15181e)",
+                border: "1px solid var(--border)",
+                borderRadius: 4,
+                color: "#fff",
+                fontSize: 12,
+                textAlign: "center",
+              }}
+            />
+            <span style={{ fontSize: 12 }}>×</span>
+            <input
+              type="number"
+              min={4}
+              max={32}
+              value={gridHeight}
+              onChange={(e) => handleResizeGrid(gridWidth, Number(e.target.value))}
+              style={{
+                width: 44,
+                padding: "2px 4px",
+                background: "var(--input-bg, #15181e)",
+                border: "1px solid var(--border)",
+                borderRadius: 4,
+                color: "#fff",
+                fontSize: 12,
+                textAlign: "center",
+              }}
+            />
+          </div>
+
           <button type="button" className="secondary" onClick={copyUpperToLower} style={{ fontSize: 12 }}>
             Copy A-Z to a-z
           </button>
         </div>
 
         {/* Main Workspace Grid & Character Selector */}
-        <div style={{ display: "flex", gap: 24, minHeight: 320 }}>
-          {/* Left Column: Interactive Pixel Canvas */}
+        <div style={{ display: "flex", gap: 24, minHeight: 330 }}>
+          {/* Left Column: Interactive Resizable Pixel Canvas */}
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-            <div style={{ fontSize: 16, fontWeight: 700, color: "#f472b6" }}>
-              Editing Glyph: <span style={{ color: "#fff", fontSize: 22 }}>'{selectedChar}'</span>
+            <div style={{ fontSize: 15, fontWeight: 700, color: "#f472b6" }}>
+              Editing Glyph: <span style={{ color: "#fff", fontSize: 22 }}>'{selectedChar}'</span>{" "}
+              <span style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 400 }}>
+                ({gridWidth} × {gridHeight} px)
+              </span>
             </div>
 
-            {/* 8x8 Interactive Grid */}
+            {/* Dynamic Interactive Grid Canvas */}
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(8, 34px)",
-                gridTemplateRows: "repeat(8, 34px)",
+                gridTemplateColumns: `repeat(${gridWidth}, ${cellSize}px)`,
+                gridTemplateRows: `repeat(${gridHeight}, ${cellSize}px)`,
                 gap: 2,
                 background: "#0d0f12",
                 padding: 6,
@@ -251,14 +371,14 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
                     onMouseDown={() => handleCellMouseDown(rIdx, cIdx)}
                     onMouseEnter={() => handleCellMouseEnter(rIdx, cIdx)}
                     style={{
-                      width: 34,
-                      height: 34,
-                      borderRadius: 4,
+                      width: cellSize,
+                      height: cellSize,
+                      borderRadius: Math.max(2, Math.floor(cellSize / 8)),
                       background: active ? "var(--accent, #3d8bfd)" : "#1a1d23",
-                      boxShadow: active ? "0 0 10px rgba(61, 139, 253, 0.8)" : "none",
-                      border: "1px solid rgba(255,255,255,0.06)",
+                      boxShadow: active ? "0 0 8px rgba(61, 139, 253, 0.8)" : "none",
+                      border: "1px solid rgba(255,255,255,0.05)",
                       cursor: "pointer",
-                      transition: "background 0.05s ease",
+                      transition: "background 0.04s ease",
                     }}
                   />
                 ))
@@ -286,7 +406,7 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
                 display: "flex",
                 flexWrap: "wrap",
                 gap: 6,
-                maxHeight: 280,
+                maxHeight: 300,
                 overflowY: "auto",
                 padding: 8,
                 background: "var(--input-bg, #15181e)",
@@ -332,7 +452,7 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: "#3dd68c" }}>
-              Live Font Sandbox Preview:
+              Live Font Sandbox Preview ({gridWidth} × {gridHeight} Grid):
             </span>
           </div>
           <input
@@ -350,7 +470,7 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
             }}
           />
 
-          {/* Render pixel font preview using SVG blocks */}
+          {/* Render pixel font preview using SVG blocks with dynamic viewBox */}
           <div
             style={{
               padding: "16px",
@@ -366,13 +486,31 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
             }}
           >
             {previewText.split("").map((ch, idx) => {
-              const grid = fontMap[ch] || fontMap[ch.toUpperCase()] || Array(8).fill(null).map(() => Array(8).fill(false));
+              const grid =
+                fontMap[ch] ||
+                fontMap[ch.toUpperCase()] ||
+                Array(gridHeight).fill(null).map(() => Array(gridWidth).fill(false));
               return (
-                <svg key={`${ch}-${idx}`} width="20" height="20" viewBox="0 0 8 8" style={{ display: "block" }}>
+                <svg
+                  key={`${ch}-${idx}`}
+                  width={gridWidth * 3}
+                  height={gridHeight * 3}
+                  viewBox={`0 0 ${gridWidth} ${gridHeight}`}
+                  style={{ display: "block" }}
+                >
                   {grid.map((r, rIdx) =>
                     r.map((active, cIdx) =>
-                      active ? <rect key={`${rIdx}-${cIdx}`} x={cIdx} y={rIdx} width="1" height="1" fill="#3dd68c" /> : null
-                    )
+                      active ? (
+                        <rect
+                          key={`${rIdx}-${cIdx}`}
+                          x={cIdx}
+                          y={rIdx}
+                          width="1"
+                          height="1"
+                          fill="#3dd68c"
+                        />
+                      ) : null,
+                    ),
                   )}
                 </svg>
               );
@@ -402,7 +540,7 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
                 borderRadius: 8,
               }}
             >
-              {isExporting ? "Generating TTF..." : "Export TrueType Font (.ttf)"}
+              {isExporting ? "Generating TTF..." : `Export ${gridWidth}×${gridHeight} TTF Font`}
             </button>
           </div>
         </div>

@@ -240,13 +240,23 @@ function registerIpc() {
   );
   ipcMain.handle(
     "font:generate",
-    async (_event, fontName: string, pixelMap: Record<string, string[]>) => {
+    async (
+      _event,
+      fontName: string,
+      pixelMap: Record<string, string[]>,
+      gridWidth?: number,
+      gridHeight?: number,
+    ) => {
       const scriptPath = path.join(app.getAppPath(), "scripts", "make_pixel_font.py");
       const jsonPath = path.join(os.tmpdir(), "datastuff_font_data.json");
       const sanitized = (fontName || "MyPixelFont").replace(/[^a-zA-Z0-9]/g, "_");
       const outputPath = path.join(os.homedir(), "Desktop", `${sanitized}.ttf`);
 
-      await fs.writeFile(jsonPath, JSON.stringify({ fontName: sanitized, pixelMap }), "utf8");
+      await fs.writeFile(
+        jsonPath,
+        JSON.stringify({ fontName: sanitized, pixelMap, gridWidth, gridHeight }),
+        "utf8",
+      );
 
       return new Promise((resolve, reject) => {
         const py = spawn("python3", [scriptPath, sanitized, outputPath, jsonPath]);
