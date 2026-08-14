@@ -46,6 +46,8 @@ const api: OracleApi = {
   loadQueryStats: () => ipcRenderer.invoke("queryStats:load"),
   saveQueryStats: (stats: Record<string, unknown>) =>
     ipcRenderer.invoke("queryStats:save", stats),
+  generateFont: (fontName: string, pixelMap: Record<string, string[]>) =>
+    ipcRenderer.invoke("font:generate", fontName, pixelMap),
 };
 
 contextBridge.exposeInMainWorld("oracle", api);

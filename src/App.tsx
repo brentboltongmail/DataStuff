@@ -12,6 +12,7 @@ import BindVariablesModal from "./components/BindVariablesModal";
 import ConnectionStarfieldOverlay, {
   type ConnectPhase,
 } from "./components/ConnectionStarfieldOverlay";
+import PixelFontStudioModal from "./components/PixelFontStudioModal";
 import {
   parseBindVariables,
   prepareSqlWithBinds,
@@ -2285,6 +2286,7 @@ export default function App() {
   const [isDisconnecting, setIsDisconnecting] = useState(false);
   const [queryStats, setQueryStats] = useState<QueryStatsMap>({});
   const [executingStatementText, setExecutingStatementText] = useState<string>("");
+  const [showPixelFontModal, setShowPixelFontModal] = useState(false);
 
   useEffect(() => {
     if (window.oracle?.loadQueryStats) {
@@ -5564,6 +5566,15 @@ export default function App() {
           >
             Connections...
           </button>
+          <button
+            type="button"
+            className="secondary font-studio-btn"
+            onClick={() => setShowPixelFontModal(true)}
+            title="Create your own custom 8-bit pixel font"
+            style={{ display: "flex", alignItems: "center", gap: 4 }}
+          >
+            🎨 Font Studio
+          </button>
           <select
             id="saved-connections"
             className="titlebar-conn-select"
@@ -6524,6 +6535,11 @@ export default function App() {
           onCancel={() => setBindModalState(null)}
         />
       )}
+
+      <PixelFontStudioModal
+        isOpen={showPixelFontModal}
+        onClose={() => setShowPixelFontModal(false)}
+      />
 
       {themeId === "knightrider" ? <KnightRiderAtmosphere /> : null}
     </div>

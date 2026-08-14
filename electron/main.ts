@@ -1,6 +1,8 @@
 import { app, BrowserWindow, dialog, ipcMain, Menu } from "electron";
 import fs from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
+import { spawn } from "node:child_process";
 import {
   cancelQuery,
   commit,
@@ -140,6 +142,13 @@ function createWindow() {
     },
   });
 
+  mainWindow.webContents.on("did-fail-load", (_event, errorCode, errorDescription, validatedURL) => {
+    console.error("FAILED TO LOAD HTML:", errorCode, errorDescription, validatedURL);
+  });
+  mainWindow.webContents.on("console-message", (_event, level, message, line, sourceId) => {
+    console.log(`[RENDERER] L${line} (${sourceId}): ${message}`);
+  });
+
   if (process.env.VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
     mainWindow.webContents.openDevTools({ mode: "detach" });
@@ -222,6 +231,28 @@ function registerIpc() {
   ipcMain.handle("queryStats:load", async () => loadQueryStatsFromDisk());
   ipcMain.handle("queryStats:save", async (_event, stats: Record<string, unknown>) =>
     saveQueryStatsToDisk(stats),
+  );
+  ipcMain.handle(
+    "font:generate",
+    async (_event, fontName: string, pixelMap: Record<string, string[]>) => {
+      const scriptPath = path.join(app.getAppPath(), "scripts", "make_pixel_font.py");
+      const jsonPath = path.join(os.tmpdir(), "datastuff_font_data.json");
+      const sanitized = (fontName || "MyPixelFont").replace(/[^a-zA-Z0-9]/g, "_");
+      const outputPath = path.join(os.homedir(), "Desktop", `${sanitized}.ttf`);
+
+      await fs.writeFile(jsonPath, JSON.stringify({ fontName: sanitized, pixelMap }), "utf8");
+
+      return new Promise((resolve, reject) => {
+        const py = spawn("python3", [scriptPath, sanitized, outputPath, jsonPath]);
+        py.on("close", (code: number | null) => {
+          if (code === 0) {
+            resolve({ success: true, path: outputPath });
+          } else {
+            reject(new Error(`Python generator exited with code ${code}`));
+          }
+        });
+      });
+    },
   );
   ipcMain.handle("secrets:isAvailable", () => isPasswordStorageAvailable());
   ipcMain.handle(
