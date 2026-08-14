@@ -4478,46 +4478,55 @@ export default function App() {
       }, 250);
 
       // Automatically expand to_date to to_date('<current_date>','mm/dd/yyyy')
-      if (!isAutoFillingRef.current && !e.isUndoing && !e.isRedoing && !e.isFlush) {
+      const isDeleting = e.changes && e.changes.some((c) => c.text === "" || c.rangeLength > c.text.length);
+
+      if (!isAutoFillingRef.current && !e.isUndoing && !e.isRedoing && !e.isFlush && !isDeleting) {
         const pos = ed.getPosition();
         const model = ed.getModel();
         if (pos && model) {
           const lineText = model.getLineContent(pos.lineNumber);
-          const textBeforeCursor = lineText.substring(0, pos.column - 1);
-          const match = textBeforeCursor.match(/(^|[^\w_])(to_date\()?$/i);
-          if (match) {
-            const matchedText = match[2];
-            const startColumn = pos.column - matchedText.length;
-            const endColumn = pos.column;
 
-            const linePrefix = lineText.substring(0, startColumn - 1);
-            const isComment = linePrefix.includes("--") || (linePrefix.includes("/*") && !linePrefix.includes("*/"));
-            const isInsideString = (linePrefix.match(/'/g) || []).length % 2 !== 0;
+          // Only replace if the next character to the right is a space or end-of-line
+          const nextCharIndex = pos.column - 1;
+          const isNextCharSpaceOrEol = nextCharIndex >= lineText.length || lineText.charAt(nextCharIndex) === " ";
 
-            if (!isComment && !isInsideString) {
-              const currentDateStr = getCurrentDateFormatted();
-              const replacement = `to_date('${currentDateStr}','mm/dd/yyyy')`;
+          if (isNextCharSpaceOrEol) {
+            const textBeforeCursor = lineText.substring(0, pos.column - 1);
+            const match = textBeforeCursor.match(/(^|[^\w_])(to_date\()?$/i);
+            if (match) {
+              const matchedText = match[2];
+              const startColumn = pos.column - matchedText.length;
+              const endColumn = pos.column;
 
-              isAutoFillingRef.current = true;
-              ed.executeEdits("to-date-autofill", [
-                {
-                  range: new monaco.Range(
-                    pos.lineNumber,
-                    startColumn,
-                    pos.lineNumber,
-                    endColumn
-                  ),
-                  text: replacement,
-                  forceMoveMarkers: true,
-                },
-              ]);
+              const linePrefix = lineText.substring(0, startColumn - 1);
+              const isComment = linePrefix.includes("--") || (linePrefix.includes("/*") && !linePrefix.includes("*/"));
+              const isInsideString = (linePrefix.match(/'/g) || []).length % 2 !== 0;
 
-              const newColumn = startColumn + replacement.length;
-              ed.setPosition({
-                lineNumber: pos.lineNumber,
-                column: newColumn,
-              });
-              isAutoFillingRef.current = false;
+              if (!isComment && !isInsideString) {
+                const currentDateStr = getCurrentDateFormatted();
+                const replacement = `to_date('${currentDateStr}','mm/dd/yyyy')`;
+
+                isAutoFillingRef.current = true;
+                ed.executeEdits("to-date-autofill", [
+                  {
+                    range: new monaco.Range(
+                      pos.lineNumber,
+                      startColumn,
+                      pos.lineNumber,
+                      endColumn
+                    ),
+                    text: replacement,
+                    forceMoveMarkers: true,
+                  },
+                ]);
+
+                const newColumn = startColumn + replacement.length;
+                ed.setPosition({
+                  lineNumber: pos.lineNumber,
+                  column: newColumn,
+                });
+                isAutoFillingRef.current = false;
+              }
             }
           }
         }
