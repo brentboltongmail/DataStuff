@@ -44,6 +44,7 @@ import {
 import { generateSeededPlanets, generateSeededShips, type RandomPlanet, type RandomShip, type PlanetRing, type PlanetMoon } from "./planetGenerator";
 import {
   calculateQueryProgressPercent,
+  DEFAULT_ESTIMATE_MS,
   getEstimatedQueryDurationMs,
   updateQueryStat,
   type QueryStatsMap,
@@ -2311,7 +2312,7 @@ export default function App() {
 
   const currentQueryEstimate = useMemo(() => {
     if (!busy || !isExecutingQuery) return null;
-    return getEstimatedQueryDurationMs(queryStats, executingStatementText, 3000);
+    return getEstimatedQueryDurationMs(queryStats, executingStatementText, DEFAULT_ESTIMATE_MS);
   }, [busy, isExecutingQuery, queryStats, executingStatementText]);
 
   const currentProgressPercent = useMemo(() => {
@@ -5666,7 +5667,6 @@ export default function App() {
 
       <header className="titlebar">
         <div className="titlebar-left">
-          <img src="/icon.png" className="titlebar-app-icon" alt="DataStuff" />
           <h1 className="titlebar-app-name">DataStuff</h1>
           <button
             type="button"

@@ -62,13 +62,15 @@ export function updateQueryStat(
   };
 }
 
+export const DEFAULT_ESTIMATE_MS = 5 * 60 * 1000; // Default 5 minutes (300,000 ms) if query has no historical record
+
 /**
- * Gets historical estimated target duration in ms for a query, defaulting to 3000ms if unsaved.
+ * Gets historical estimated target duration in ms for a query, defaulting to 5 minutes (300,000 ms) if unsaved in history.
  */
 export function getEstimatedQueryDurationMs(
   stats: QueryStatsMap,
   sql: string,
-  defaultEstimateMs = 3000,
+  defaultEstimateMs = DEFAULT_ESTIMATE_MS,
 ): { targetMs: number; isHistorical: boolean; runCount: number } {
   if (!sql.trim()) {
     return { targetMs: defaultEstimateMs, isHistorical: false, runCount: 0 };
@@ -88,7 +90,7 @@ export function getEstimatedQueryDurationMs(
  */
 export function calculateQueryProgressPercent(
   elapsedMs: number,
-  targetMs = 3000,
+  targetMs = DEFAULT_ESTIMATE_MS,
 ): number {
   if (elapsedMs <= 0) return 0;
   const safeTarget = Math.max(200, targetMs);
