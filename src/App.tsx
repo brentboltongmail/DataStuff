@@ -2976,8 +2976,8 @@ export default function App() {
             hasTimedOut = true;
             setBusy(false);
             setConnectPhase("failed");
-            setMessage("Auto-connect timeout (5s)");
-          }, 5000);
+            setMessage("Auto-connect timeout (10s)");
+          }, 10000);
 
           try {
             const next = await window.oracle.connect(connConfig);
@@ -3136,9 +3136,9 @@ export default function App() {
       hasTimedOut = true;
       setBusy(false);
       setConnectPhase("failed");
-      setError("Connection cancelled: Database server did not respond within 5 seconds");
-      setMessage("Connection cancelled (5s timeout)");
-    }, 5000);
+      setError("Connection cancelled: Database server did not respond within 10 seconds");
+      setMessage("Connection cancelled (10s timeout)");
+    }, 10000);
 
     try {
       const next = await window.oracle.connect(config);

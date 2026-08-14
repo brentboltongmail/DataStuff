@@ -235,8 +235,8 @@ export async function connect(config: ConnectionConfig): Promise<ConnectionState
 
   const timeoutPromise = new Promise<never>((_, reject) => {
     timerId = setTimeout(() => {
-      reject(new Error("Connection attempt timed out after 5 seconds"));
-    }, 5000);
+      reject(new Error("Connection attempt timed out after 10 seconds"));
+    }, 10000);
   });
 
   try {
