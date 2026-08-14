@@ -39,6 +39,8 @@ export default function ConnectionStarfieldOverlay({
   onComplete,
 }: Props) {
   const [animatingOut, setAnimatingOut] = useState(false);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   // Generate a galaxy of 90 twinkling stars distributed across viewport
   const stars: Star[] = useMemo(() => {
@@ -66,21 +68,21 @@ export default function ConnectionStarfieldOverlay({
     if (phase === "succeeded") {
       setAnimatingOut(true);
       const timer = setTimeout(() => {
-        onComplete();
+        onCompleteRef.current();
       }, 1500);
       return () => clearTimeout(timer);
     }
     if (phase === "failed") {
       setAnimatingOut(true);
       const timer = setTimeout(() => {
-        onComplete();
+        onCompleteRef.current();
       }, 700);
       return () => clearTimeout(timer);
     }
     if (phase === "connecting") {
       setAnimatingOut(false);
     }
-  }, [phase, onComplete]);
+  }, [phase]);
 
   if (phase === "idle") return null;
 
@@ -99,18 +101,55 @@ export default function ConnectionStarfieldOverlay({
       {/* Central connection status card with sparkling aura */}
       <div className={`starfield-card ${animatingOut ? "card-fade-out" : ""}`}>
         <div className="starfield-icon-wrap">
-          <svg className="starfield-main-star" viewBox="0 0 24 24" width="36" height="36">
-            <path
-              d="M12 0L14.7 9.3L24 12L14.7 14.7L12 24L9.3 14.7L0 12L9.3 9.3Z"
-              fill="url(#star-grad)"
-            />
+          <svg className="starfield-main-star" viewBox="0 0 48 48" width="52" height="52">
             <defs>
-              <linearGradient id="star-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#a855f7" />
-                <stop offset="50%" stopColor="#ec4899" />
-                <stop offset="100%" stopColor="#3b82f6" />
+              <linearGradient id="star-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#c084fc" />
+                <stop offset="50%" stopColor="#f472b6" />
+                <stop offset="100%" stopColor="#38bdf8" />
               </linearGradient>
+              <linearGradient id="star-grad-2" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#fef08a" />
+                <stop offset="50%" stopColor="#ec4899" />
+                <stop offset="100%" stopColor="#a855f7" />
+              </linearGradient>
+              <radialGradient id="star-core-glow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+                <stop offset="40%" stopColor="#fef08a" stopOpacity="0.8" />
+                <stop offset="100%" stopColor="#a855f7" stopOpacity="0" />
+              </radialGradient>
+              <filter id="star-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#ec4899" floodOpacity="0.8" />
+              </filter>
             </defs>
+            <path
+              d="M24 0L27.5 16.5L44 20L27.5 23.5L24 40L20.5 23.5L4 20L20.5 16.5Z"
+              fill="url(#star-grad-1)"
+              opacity="0.6"
+              transform="rotate(22.5 24 24)"
+            />
+            <path
+              d="M24 0L29.5 18.5L48 24L29.5 29.5L24 48L18.5 29.5L0 24L18.5 18.5Z"
+              fill="url(#star-grad-1)"
+              filter="url(#star-shadow)"
+            />
+            <path
+              d="M24 0L29.5 18.5L24 24L18.5 18.5Z"
+              fill="url(#star-grad-2)"
+              opacity="0.85"
+            />
+            <path
+              d="M48 24L29.5 29.5L24 24L29.5 18.5Z"
+              fill="#ffffff"
+              opacity="0.4"
+            />
+            <path
+              d="M24 48L18.5 29.5L24 24L29.5 29.5Z"
+              fill="url(#star-grad-2)"
+              opacity="0.75"
+            />
+            <polygon points="24,14 34,24 24,34 14,24" fill="url(#star-core-glow)" />
+            <circle cx="24" cy="24" r="3.5" fill="#ffffff" />
           </svg>
         </div>
         <div className="starfield-text-group">

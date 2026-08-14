@@ -3230,6 +3230,7 @@ export default function App() {
     ) => {
       setBusy(true);
       setIsExecutingQuery(true);
+      setConnectPhase("idle");
       setExecutingStatementText(statement);
       setRunningTabId(activeTabId);
       setQueryStartTime(Date.now());
