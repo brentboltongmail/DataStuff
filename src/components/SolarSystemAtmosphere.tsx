@@ -193,11 +193,11 @@ export default function SolarSystemAtmosphere() {
     };
     window.addEventListener("resize", handleResize);
 
-    // Initialize exactly 1,000 twinkling stars
+    // Initialize exactly 1,000 twinkling stars (reduced size by 60%)
     const stars: Star[] = Array.from({ length: 1000 }).map(() => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      size: Math.random() * 1.8 + 0.4,
+      size: (Math.random() * 1.8 + 0.4) * 0.4,
       baseAlpha: Math.random() * 0.7 + 0.25,
       twinkleSpeed: Math.random() * 0.02 + 0.005,
       twinklePhase: Math.random() * Math.PI * 2,
@@ -239,8 +239,8 @@ export default function SolarSystemAtmosphere() {
         ctx.fill();
 
         // Subtle soft glow around larger stars
-        if (star.size > 1.4) {
-          ctx.shadowBlur = 4;
+        if (star.size > 0.56) {
+          ctx.shadowBlur = 3;
           ctx.shadowColor = star.color;
           ctx.fill();
         }
