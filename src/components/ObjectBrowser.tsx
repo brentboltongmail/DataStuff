@@ -6,18 +6,36 @@ const COLLAPSED_KEY = "oracle-ide.objectGroupsCollapsed";
 
 type GroupKey = DbObjectType;
 
-function loadCollapsedGroups(): Record<GroupKey, boolean> {
+function loadCollapsedGroups(): Record<string, boolean> {
   try {
     const raw = localStorage.getItem(COLLAPSED_KEY);
-    if (!raw) return { TABLE: false, VIEW: false, SYNONYM: false };
-    const parsed = JSON.parse(raw) as Partial<Record<GroupKey, boolean>>;
+    if (!raw)
+      return {
+        TABLE: false,
+        VIEW: false,
+        SYNONYM: false,
+        INDEX: false,
+        PACKAGE_BODY: false,
+        GRANT: false,
+      };
+    const parsed = JSON.parse(raw) as Partial<Record<string, boolean>>;
     return {
       TABLE: !!parsed.TABLE,
       VIEW: !!parsed.VIEW,
       SYNONYM: !!parsed.SYNONYM,
+      INDEX: !!parsed.INDEX,
+      PACKAGE_BODY: !!parsed.PACKAGE_BODY,
+      GRANT: !!parsed.GRANT,
     };
   } catch {
-    return { TABLE: false, VIEW: false, SYNONYM: false };
+    return {
+      TABLE: false,
+      VIEW: false,
+      SYNONYM: false,
+      INDEX: false,
+      PACKAGE_BODY: false,
+      GRANT: false,
+    };
   }
 }
 
@@ -25,7 +43,7 @@ interface Props {
   connected: boolean;
   refreshKey: number;
   onInsertSql: (sql: string) => void;
-  onOpenSelect: (objectName: string) => void;
+  onOpenSelect: (objectName: string, objectType?: DbObjectType) => void;
   collapsed?: boolean;
   onToggleCollapse?: () => void;
 }
@@ -91,12 +109,17 @@ export default function ObjectBrowser({
   const grouped = useMemo(() => {
     const q = filter.trim().toUpperCase();
     const filtered = q
-      ? objects.filter((obj) => obj.name.includes(q))
+      ? objects.filter((obj) => obj.name.toUpperCase().includes(q))
       : objects;
     const tables = filtered.filter((obj) => obj.type === "TABLE");
     const views = filtered.filter((obj) => obj.type === "VIEW");
     const synonyms = filtered.filter((obj) => obj.type === "SYNONYM");
-    return { tables, views, synonyms };
+    const indexes = filtered.filter((obj) => obj.type === "INDEX");
+    const packageBodies = filtered.filter(
+      (obj) => obj.type === "PACKAGE_BODY" || obj.type === "PACKAGE BODY",
+    );
+    const grants = filtered.filter((obj) => obj.type === "GRANT");
+    return { tables, views, synonyms, indexes, packageBodies, grants };
   }, [objects, filter]);
 
   const toggleGroup = (type: GroupKey) => {
@@ -148,14 +171,14 @@ export default function ObjectBrowser({
                     type="button"
                     className="object-expand"
                     onClick={() => void toggleExpand(obj.name)}
-                    title="Show columns"
+                    title="Show details"
                   >
                     {expanded === obj.name ? "▾" : "▸"}
                   </button>
                   <button
                     type="button"
                     className="object-name"
-                    title="Click to insert name · double-click SELECT *"
+                    title="Click to insert name · double-click to view"
                     onClick={() => {
                       const key = obj.name;
                       const existing = clickTimers.current[key];
@@ -171,7 +194,7 @@ export default function ObjectBrowser({
                         window.clearTimeout(existing);
                         delete clickTimers.current[obj.name];
                       }
-                      onOpenSelect(obj.name);
+                      onOpenSelect(obj.name, obj.type);
                     }}
                   >
                     {obj.name}
@@ -266,7 +289,7 @@ export default function ObjectBrowser({
       />
       <div className="object-browser-body">
         {!connected ? (
-          <div className="object-empty">Connect to browse tables and views.</div>
+          <div className="object-empty">Connect to browse database objects.</div>
         ) : loading ? (
           <div className="object-empty">Loading…</div>
         ) : error ? (
@@ -276,10 +299,13 @@ export default function ObjectBrowser({
             {renderGroup("Tables", "TABLE", grouped.tables)}
             {renderGroup("Views", "VIEW", grouped.views)}
             {renderGroup("Synonyms", "SYNONYM", grouped.synonyms)}
+            {renderGroup("Indexes", "INDEX", grouped.indexes)}
+            {renderGroup("Package Bodies", "PACKAGE_BODY", grouped.packageBodies)}
+            {renderGroup("Grants", "GRANT", grouped.grants)}
           </>
         )}
       </div>
-      <div className="object-hint">Click name → insert · double-click → SELECT *</div>
+      <div className="object-hint">Click name → insert · double-click → view</div>
     </aside>
   );
 }

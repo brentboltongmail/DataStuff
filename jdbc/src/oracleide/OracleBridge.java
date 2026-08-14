@@ -15,10 +15,13 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * Line-delimited JSON bridge for Oracle JDBC.
@@ -579,34 +582,173 @@ public final class OracleBridge {
   }
 
   private static Map<String, Object> listObjects(Object id) throws Exception {
+    List<Map<String, Object>> objects = new ArrayList<>();
+
     String sql =
         "SELECT object_name, object_type FROM user_objects "
-            + "WHERE object_type IN ('TABLE', 'VIEW', 'SYNONYM') "
+            + "WHERE object_type IN ('TABLE', 'VIEW', 'SYNONYM', 'INDEX', 'PACKAGE BODY') "
             + "ORDER BY object_type, object_name";
     try (Statement statement = requireConnection().createStatement();
         ResultSet rs = statement.executeQuery(sql)) {
-      List<Map<String, Object>> objects = new ArrayList<>();
       while (rs.next()) {
         Map<String, Object> obj = new LinkedHashMap<>();
         obj.put("name", rs.getString(1));
-        obj.put("type", rs.getString(2));
+        String type = rs.getString(2);
+        if ("PACKAGE BODY".equals(type)) {
+          type = "PACKAGE_BODY";
+        }
+        obj.put("type", type);
         objects.add(obj);
       }
-      return response(id, true, objects, null);
     }
+
+    Set<String> grantNames = new LinkedHashSet<>();
+    try (Statement statement = requireConnection().createStatement();
+        ResultSet rs = statement.executeQuery(
+            "SELECT DISTINCT privilege, table_name, grantee FROM user_tab_privs ORDER BY table_name, privilege, grantee")) {
+      while (rs.next()) {
+        String priv = rs.getString(1);
+        String tbl = rs.getString(2);
+        String grantee = rs.getString(3);
+        if (priv != null && tbl != null && grantee != null) {
+          grantNames.add("GRANT " + priv + " ON " + tbl + " TO " + grantee);
+        }
+      }
+    } catch (Exception ignored) {
+    }
+
+    try (Statement statement = requireConnection().createStatement();
+        ResultSet rs = statement.executeQuery("SELECT DISTINCT privilege FROM user_sys_privs ORDER BY privilege")) {
+      while (rs.next()) {
+        String priv = rs.getString(1);
+        if (priv != null) {
+          grantNames.add("GRANT " + priv);
+        }
+      }
+    } catch (Exception ignored) {
+    }
+
+    try (Statement statement = requireConnection().createStatement();
+        ResultSet rs = statement.executeQuery("SELECT DISTINCT granted_role FROM user_role_privs ORDER BY granted_role")) {
+      while (rs.next()) {
+        String role = rs.getString(1);
+        if (role != null) {
+          grantNames.add("GRANT ROLE " + role);
+        }
+      }
+    } catch (Exception ignored) {
+    }
+
+    for (String grantName : grantNames) {
+      Map<String, Object> obj = new LinkedHashMap<>();
+      obj.put("name", grantName);
+      obj.put("type", "GRANT");
+      objects.add(obj);
+    }
+
+    return response(id, true, objects, null);
   }
 
   private static Map<String, Object> listColumns(Object id, String name) throws Exception {
     if (name == null || name.isEmpty()) {
       throw new IllegalArgumentException("Object name is required");
     }
-    String objectName = name.toUpperCase();
+    String rawName = name.trim();
+    String objectName = rawName.toUpperCase();
     List<Map<String, Object>> columns = fetchColumnsForTable(objectName);
     if (columns.isEmpty()) {
       // Synonyms (and some views) may not appear in USER_TAB_COLUMNS directly.
       columns = fetchColumnsViaSynonym(objectName);
     }
+    if (columns.isEmpty()) {
+      columns = fetchColumnsForIndex(objectName);
+    }
+    if (columns.isEmpty()) {
+      columns = fetchSubprogramsForPackageBody(objectName);
+    }
+    if (columns.isEmpty()) {
+      columns = fetchDetailsForGrant(rawName);
+    }
     return response(id, true, columns, null);
+  }
+
+  private static List<Map<String, Object>> fetchColumnsForIndex(String indexName) {
+    String sql =
+        "SELECT column_name, 'ON ' || table_name AS data_type, 'Y' AS nullable "
+            + "FROM user_ind_columns "
+            + "WHERE index_name = ? ORDER BY column_position";
+    try (var ps = requireConnection().prepareStatement(sql)) {
+      ps.setString(1, indexName);
+      try (ResultSet rs = ps.executeQuery()) {
+        return readColumnRows(rs);
+      }
+    } catch (Exception e) {
+      return Collections.emptyList();
+    }
+  }
+
+  private static List<Map<String, Object>> fetchSubprogramsForPackageBody(String packageName) {
+    String sql =
+        "SELECT DISTINCT procedure_name, "
+            + "NVL((SELECT 'FUNCTION' FROM user_arguments a WHERE a.package_name = p.object_name AND a.subprogram_name = p.procedure_name AND a.position = 0 AND ROWNUM = 1), 'PROCEDURE') AS data_type, "
+            + "'Y' AS nullable "
+            + "FROM user_procedures p "
+            + "WHERE p.object_name = ? AND p.procedure_name IS NOT NULL ORDER BY procedure_name";
+    try (var ps = requireConnection().prepareStatement(sql)) {
+      ps.setString(1, packageName);
+      try (ResultSet rs = ps.executeQuery()) {
+        List<Map<String, Object>> rows = readColumnRows(rs);
+        if (!rows.isEmpty()) {
+          return rows;
+        }
+      }
+    } catch (Exception ignored) {
+    }
+
+    String argSql =
+        "SELECT DISTINCT subprogram_name, 'SUBPROGRAM' AS data_type, 'Y' AS nullable "
+            + "FROM user_arguments WHERE package_name = ? AND subprogram_name IS NOT NULL ORDER BY subprogram_name";
+    try (var ps = requireConnection().prepareStatement(argSql)) {
+      ps.setString(1, packageName);
+      try (ResultSet rs = ps.executeQuery()) {
+        return readColumnRows(rs);
+      }
+    } catch (Exception ignored) {
+      return Collections.emptyList();
+    }
+  }
+
+  private static List<Map<String, Object>> fetchDetailsForGrant(String grantStr) {
+    List<Map<String, Object>> cols = new ArrayList<>();
+    if (grantStr != null && grantStr.startsWith("GRANT ")) {
+      String rest = grantStr.substring(6).trim();
+      int onIdx = rest.indexOf(" ON ");
+      int toIdx = rest.indexOf(" TO ");
+      if (onIdx > 0 && toIdx > onIdx) {
+        String priv = rest.substring(0, onIdx).trim();
+        String table = rest.substring(onIdx + 4, toIdx).trim();
+        String grantee = rest.substring(toIdx + 4).trim();
+
+        Map<String, Object> c1 = new LinkedHashMap<>();
+        c1.put("name", "PRIVILEGE");
+        c1.put("dataType", priv);
+        c1.put("nullable", true);
+        cols.add(c1);
+
+        Map<String, Object> c2 = new LinkedHashMap<>();
+        c2.put("name", "TABLE");
+        c2.put("dataType", table);
+        c2.put("nullable", true);
+        cols.add(c2);
+
+        Map<String, Object> c3 = new LinkedHashMap<>();
+        c3.put("name", "GRANTEE");
+        c3.put("dataType", grantee);
+        c3.put("nullable", true);
+        cols.add(c3);
+      }
+    }
+    return cols;
   }
 
   private static List<Map<String, Object>> fetchColumnsForTable(String tableName)

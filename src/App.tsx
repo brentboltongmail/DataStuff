@@ -4794,8 +4794,19 @@ export default function App() {
     }
   };
 
-  const openSelectForObject = (objectName: string) => {
-    const statement = `SELECT * FROM ${objectName}\n`;
+  const openSelectForObject = (objectName: string, type?: DbObjectType) => {
+    let statement = `SELECT * FROM ${objectName}\n`;
+    if (type === "INDEX") {
+      statement = `SELECT * FROM all_indexes WHERE index_name = '${objectName}'\n`;
+    } else if (type === "PACKAGE_BODY" || type === "PACKAGE BODY") {
+      statement = `SELECT text FROM user_source WHERE name = '${objectName}' AND type = 'PACKAGE BODY' ORDER BY line;\n`;
+    } else if (type === "GRANT") {
+      if (objectName.startsWith("GRANT ")) {
+        statement = `${objectName};\n`;
+      } else {
+        statement = `SELECT * FROM user_tab_privs WHERE table_name = '${objectName}' OR grantee = '${objectName}';\n`;
+      }
+    }
     void addTab(statement, objectName);
   };
 

@@ -33,7 +33,14 @@ export interface ConnectionState {
   mode?: "jdbc" | "thin" | "thick";
 }
 
-export type DbObjectType = "TABLE" | "VIEW" | "SYNONYM";
+export type DbObjectType =
+  | "TABLE"
+  | "VIEW"
+  | "SYNONYM"
+  | "INDEX"
+  | "PACKAGE_BODY"
+  | "PACKAGE BODY"
+  | "GRANT";
 
 export interface DbObject {
   name: string;
