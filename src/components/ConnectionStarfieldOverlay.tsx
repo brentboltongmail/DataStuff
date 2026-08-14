@@ -52,10 +52,10 @@ export default function ConnectionStarfieldOverlay({
         y: Math.random() * 96 + 2,
         size: Math.floor(Math.random() * 18 + 8),
         type,
-        delay: parseFloat((Math.random() * 1.5).toFixed(2)),
-        duration: parseFloat((Math.random() * 1.4 + 1.1).toFixed(2)),
+        delay: parseFloat((Math.random() * 3.0).toFixed(2)),
+        duration: parseFloat((Math.random() * 2.8 + 2.2).toFixed(2)),
         color: STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)],
-        flyDelay: Math.floor(Math.random() * 200),
+        flyDelay: Math.floor(Math.random() * 400),
         rotate: Math.floor(Math.random() * 45),
       };
     });
@@ -67,14 +67,14 @@ export default function ConnectionStarfieldOverlay({
       setAnimatingOut(true);
       const timer = setTimeout(() => {
         onComplete();
-      }, 750);
+      }, 1500);
       return () => clearTimeout(timer);
     }
     if (phase === "failed") {
       setAnimatingOut(true);
       const timer = setTimeout(() => {
         onComplete();
-      }, 350);
+      }, 700);
       return () => clearTimeout(timer);
     }
     if (phase === "connecting") {
@@ -149,7 +149,7 @@ export default function ConnectionStarfieldOverlay({
             height: `${star.size}px`,
             color: star.color,
             animationDelay: isFlying ? `${star.flyDelay}ms` : `${star.delay}s`,
-            animationDuration: isFlying ? "550ms" : `${star.duration}s`,
+            animationDuration: isFlying ? "1100ms" : `${star.duration}s`,
             transform: `rotate(${star.rotate}deg)`,
             "--delta-x": `${deltaX}px`,
             "--delta-y": `${deltaY}px`,
