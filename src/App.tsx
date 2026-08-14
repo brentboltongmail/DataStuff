@@ -98,6 +98,14 @@ const QUERY_TABS_WIDTH_KEY = "oracle-ide.queryTabsWidth";
 const REMEMBER_PASSWORD_KEY = "oracle-ide.rememberPassword";
 const SAVED_BIND_VALUES_KEY = "oracle-ide.savedBindValues";
 
+function getCurrentDateFormatted(): string {
+  const now = new Date();
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  const yyyy = now.getFullYear();
+  return `${mm}/${dd}/${yyyy}`;
+}
+
 function loadSavedBindValues(): Record<string, BindVarParam> {
   try {
     const raw = localStorage.getItem(SAVED_BIND_VALUES_KEY);
@@ -2391,6 +2399,8 @@ export default function App() {
   }, [busy, queryStartTime, setQueryElapsedTimeMs]);
   const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor | null>(null);
   const monacoApiRef = useRef<Parameters<BeforeMount>[0] | null>(null);
+  const isAutoFillingRef = useRef(false);
+  const registeredCompletionRef = useRef(false);
   const workspaceRef = useRef<HTMLElement | null>(null);
   const splitDragRef = useRef<{
     startY: number;
@@ -3715,6 +3725,35 @@ export default function App() {
 
   const onEditorBeforeMount: BeforeMount = useCallback((monaco) => {
     monacoApiRef.current = monaco;
+    if (!registeredCompletionRef.current) {
+      registeredCompletionRef.current = true;
+      monaco.languages.registerCompletionItemProvider("sql", {
+        provideCompletionItems: (model, position) => {
+          const word = model.getWordUntilPosition(position);
+          const range = {
+            startLineNumber: position.lineNumber,
+            endLineNumber: position.lineNumber,
+            startColumn: word.startColumn,
+            endColumn: word.endColumn,
+          };
+          const currentDateStr = getCurrentDateFormatted();
+          return {
+            suggestions: [
+              {
+                label: "to_date",
+                kind: monaco.languages.CompletionItemKind.Snippet,
+                insertTextRules: monaco.languages.CompletionItemInsertRule.InsertAsSnippet,
+                insertText: `to_date('\${1:${currentDateStr}}','mm/dd/yyyy')`,
+                documentation: `Inserts to_date('${currentDateStr}','mm/dd/yyyy') with current date`,
+                detail: `to_date('${currentDateStr}','mm/dd/yyyy')`,
+                range: range,
+                sortText: "0000",
+              },
+            ],
+          };
+        },
+      });
+    }
     monaco.editor.defineTheme("datastuff-default", {
       base: "vs-dark",
       inherit: true,
@@ -4413,7 +4452,7 @@ export default function App() {
     });
 
     let contentTimer: number | null = null;
-    ed.onDidChangeModelContent(() => {
+    ed.onDidChangeModelContent((e) => {
       if (contentTimer != null) {
         window.clearTimeout(contentTimer);
       }
@@ -4421,6 +4460,52 @@ export default function App() {
         contentTimer = null;
         refreshGutter();
       }, 250);
+
+      // Automatically expand to_date to to_date('<current_date>','mm/dd/yyyy')
+      if (!isAutoFillingRef.current && !e.isUndoing && !e.isRedoing && !e.isFlush) {
+        const pos = ed.getPosition();
+        const model = ed.getModel();
+        if (pos && model) {
+          const lineText = model.getLineContent(pos.lineNumber);
+          const textBeforeCursor = lineText.substring(0, pos.column - 1);
+          const match = textBeforeCursor.match(/(^|[^\w_])(to_date\()?$/i);
+          if (match) {
+            const matchedText = match[2];
+            const startColumn = pos.column - matchedText.length;
+            const endColumn = pos.column;
+
+            const linePrefix = lineText.substring(0, startColumn - 1);
+            const isComment = linePrefix.includes("--") || (linePrefix.includes("/*") && !linePrefix.includes("*/"));
+            const isInsideString = (linePrefix.match(/'/g) || []).length % 2 !== 0;
+
+            if (!isComment && !isInsideString) {
+              const currentDateStr = getCurrentDateFormatted();
+              const replacement = `to_date('${currentDateStr}','mm/dd/yyyy')`;
+
+              isAutoFillingRef.current = true;
+              ed.executeEdits("to-date-autofill", [
+                {
+                  range: new monaco.Range(
+                    pos.lineNumber,
+                    startColumn,
+                    pos.lineNumber,
+                    endColumn
+                  ),
+                  text: replacement,
+                  forceMoveMarkers: true,
+                },
+              ]);
+
+              const newColumn = startColumn + replacement.length;
+              ed.setPosition({
+                lineNumber: pos.lineNumber,
+                column: newColumn,
+              });
+              isAutoFillingRef.current = false;
+            }
+          }
+        }
+      }
     });
 
     let layoutTimer: number | null = null;
