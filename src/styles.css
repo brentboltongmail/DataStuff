@@ -179,6 +179,20 @@ input:focus {
   -webkit-app-region: no-drag;
 }
 
+.titlebar-app-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  object-fit: cover;
+  margin-left: 2px;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--brand-color, var(--accent)) 50%, transparent));
+  transition: transform 0.2s ease;
+}
+
+.titlebar-app-icon:hover {
+  transform: scale(1.2);
+}
+
 .titlebar h1.titlebar-app-name {
   margin: 0 6px 0 10px;
   font-family: var(--font-display);

@@ -5666,6 +5666,7 @@ export default function App() {
 
       <header className="titlebar">
         <div className="titlebar-left">
+          <img src="/icon.png" className="titlebar-app-icon" alt="DataStuff" />
           <h1 className="titlebar-app-name">DataStuff</h1>
           <button
             type="button"
