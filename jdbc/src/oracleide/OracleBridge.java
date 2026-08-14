@@ -155,6 +155,8 @@ public final class OracleBridge {
     props.setProperty("user", user);
     props.setProperty("password", password == null ? "" : password);
     props.setProperty("oracle.net.CONNECT_TIMEOUT", "10000");
+    props.setProperty("oracle.jdbc.defaultRowPrefetch", "500");
+    props.setProperty("oracle.jdbc.ReadTimeout", "600000");
     if (tcps) {
       // Prefer verifying the server certificate DN when the listener presents a proper cert.
       props.setProperty("oracle.net.ssl_server_dn_match", "true");
@@ -253,6 +255,9 @@ public final class OracleBridge {
     if (!bindList.isEmpty()) {
       try (var ps = conn.prepareStatement(cleaned)) {
         setActiveStatement(ps);
+        try {
+          ps.setFetchSize(500);
+        } catch (Throwable ignored) {}
         for (int i = 0; i < bindList.size(); i++) {
           Object value = bindList.get(i);
           if (value == null) {
@@ -274,6 +279,9 @@ public final class OracleBridge {
 
     try (Statement statement = conn.createStatement()) {
       setActiveStatement(statement);
+      try {
+        statement.setFetchSize(500);
+      } catch (Throwable ignored) {}
       statement.setMaxRows(selectLike ? limit + 1 : 0);
       boolean hasResultSet = statement.execute(cleaned);
       long elapsedMs = System.currentTimeMillis() - started;
@@ -510,6 +518,9 @@ public final class OracleBridge {
 
     if (hasResultSet) {
       try (ResultSet rs = statement.getResultSet()) {
+        try {
+          rs.setFetchSize(500);
+        } catch (Throwable ignored) {}
         ResultSetMetaData meta = rs.getMetaData();
         int columnCount = meta.getColumnCount();
         List<Map<String, Object>> columns = new ArrayList<>();
