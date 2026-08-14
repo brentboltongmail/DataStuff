@@ -152,4 +152,6 @@ export interface OracleApi {
   saveSavedConnections: <T = unknown>(connections: T[]) => Promise<{ saved: boolean }>;
   loadSettings?: () => Promise<Record<string, unknown>>;
   saveSettings?: (settings: Record<string, unknown>) => Promise<{ saved: boolean }>;
+  loadQueryStats?: () => Promise<Record<string, unknown>>;
+  saveQueryStats?: (stats: Record<string, unknown>) => Promise<{ saved: boolean }>;
 }

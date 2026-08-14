@@ -219,6 +219,10 @@ function registerIpc() {
   ipcMain.handle("settings:save", async (_event, settings: Record<string, unknown>) =>
     saveSettingsToDisk(settings),
   );
+  ipcMain.handle("queryStats:load", async () => loadQueryStatsFromDisk());
+  ipcMain.handle("queryStats:save", async (_event, stats: Record<string, unknown>) =>
+    saveQueryStatsToDisk(stats),
+  );
   ipcMain.handle("secrets:isAvailable", () => isPasswordStorageAvailable());
   ipcMain.handle(
     "secrets:savePassword",
@@ -294,6 +298,31 @@ async function saveConnectionsToDisk(connections: unknown[]): Promise<{ saved: b
     const file = getConnectionsFilePath();
     await fs.mkdir(path.dirname(file), { recursive: true });
     await fs.writeFile(file, JSON.stringify(connections, null, 2), "utf8");
+    return { saved: true };
+  } catch {
+    return { saved: false };
+  }
+}
+
+function getQueryStatsFilePath(): string {
+  return path.join(app.getPath("userData"), "query-stats.json");
+}
+
+async function loadQueryStatsFromDisk(): Promise<Record<string, unknown>> {
+  try {
+    const file = getQueryStatsFilePath();
+    const raw = await fs.readFile(file, "utf8");
+    return JSON.parse(raw) as Record<string, unknown>;
+  } catch {
+    return {};
+  }
+}
+
+async function saveQueryStatsToDisk(stats: Record<string, unknown>): Promise<{ saved: boolean }> {
+  try {
+    const file = getQueryStatsFilePath();
+    await fs.mkdir(path.dirname(file), { recursive: true });
+    await fs.writeFile(file, JSON.stringify(stats, null, 2), "utf8");
     return { saved: true };
   } catch {
     return { saved: false };

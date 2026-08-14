@@ -43,6 +43,9 @@ const api: OracleApi = {
   loadSettings: () => ipcRenderer.invoke("settings:load"),
   saveSettings: (settings: Record<string, unknown>) =>
     ipcRenderer.invoke("settings:save", settings),
+  loadQueryStats: () => ipcRenderer.invoke("queryStats:load"),
+  saveQueryStats: (stats: Record<string, unknown>) =>
+    ipcRenderer.invoke("queryStats:save", stats),
 };
 
 contextBridge.exposeInMainWorld("oracle", api);

@@ -2680,5 +2680,94 @@ button.status-bar-cancel-btn {
   }
 }
 
+/* ── QUERY EXECUTION HISTORICAL PROGRESS BAR ── */
+.query-progress-header-bar {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  width: min(92%, 540px);
+  height: 24px;
+  background: rgba(14, 10, 24, 0.82);
+  border: 1px solid rgba(168, 85, 247, 0.45);
+  border-radius: 12px;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(168, 85, 247, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.query-progress-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(90deg, rgba(168, 85, 247, 0.85), rgba(236, 72, 153, 0.85), rgba(59, 130, 246, 0.9));
+  box-shadow: 0 0 14px rgba(236, 72, 153, 0.7);
+  transition: width 0.15s linear;
+  border-radius: 12px;
+}
+
+.query-progress-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 12px;
+  background: #ffffff;
+  box-shadow: 0 0 10px #ffffff, 0 0 20px #ec4899;
+  border-radius: 50%;
+  opacity: 0.85;
+}
+
+.query-progress-text {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: "SF Mono", Menlo, Monaco, Consolas, monospace;
+  color: #f3e8ff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+}
+
+.live-query-progress-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 10px;
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: "SF Mono", Menlo, Monaco, Consolas, monospace;
+  color: #f3e8ff;
+  position: relative;
+  overflow: hidden;
+}
+
+.live-query-progress-mini-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(168, 85, 247, 0.28);
+  transition: width 0.15s linear;
+  pointer-events: none;
+}
+
 
 

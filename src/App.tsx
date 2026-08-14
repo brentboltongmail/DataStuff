@@ -41,6 +41,12 @@ import {
   type AppThemeId,
 } from "./themes";
 import { generateSeededPlanets, generateSeededShips, type RandomPlanet, type RandomShip, type PlanetRing, type PlanetMoon } from "./planetGenerator";
+import {
+  calculateQueryProgressPercent,
+  getEstimatedQueryDurationMs,
+  updateQueryStat,
+  type QueryStatsMap,
+} from "./queryStats";
 import type {
   ConnectionConfig,
   ConnectionState,
@@ -2277,6 +2283,32 @@ export default function App() {
   const [connectPhase, setConnectPhase] = useState<ConnectPhase>("idle");
   const [isExecutingQuery, setIsExecutingQuery] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
+  const [queryStats, setQueryStats] = useState<QueryStatsMap>({});
+  const [executingStatementText, setExecutingStatementText] = useState<string>("");
+
+  useEffect(() => {
+    if (window.oracle?.loadQueryStats) {
+      window.oracle
+        .loadQueryStats()
+        .then((data) => {
+          if (data && typeof data === "object") {
+            setQueryStats(data as QueryStatsMap);
+          }
+        })
+        .catch(() => {});
+    }
+  }, []);
+
+  const currentQueryEstimate = useMemo(() => {
+    if (!busy || !isExecutingQuery) return null;
+    return getEstimatedQueryDurationMs(queryStats, executingStatementText, 3000);
+  }, [busy, isExecutingQuery, queryStats, executingStatementText]);
+
+  const currentProgressPercent = useMemo(() => {
+    if (!busy || !isExecutingQuery || !currentQueryEstimate) return 0;
+    return calculateQueryProgressPercent(queryElapsedTimeMs, currentQueryEstimate.targetMs);
+  }, [busy, isExecutingQuery, queryElapsedTimeMs, currentQueryEstimate]);
+
   const connectBtnRef = useRef<HTMLButtonElement | null>(null);
   const [connectTargetRect, setConnectTargetRect] = useState<DOMRect | null>(null);
   const [runningTabId, setRunningTabId] = useState<string | null>(null);
@@ -3198,6 +3230,7 @@ export default function App() {
     ) => {
       setBusy(true);
       setIsExecutingQuery(true);
+      setExecutingStatementText(statement);
       setRunningTabId(activeTabId);
       setQueryStartTime(Date.now());
       setError(null);
@@ -3271,6 +3304,13 @@ export default function App() {
 
         setResult(next);
         setEditMeta(next.isSelect ? meta : null);
+        if (next.elapsedMs > 0) {
+          setQueryStats((prev) => {
+            const nextStats = updateQueryStat(prev, statement, next.elapsedMs);
+            void window.oracle?.saveQueryStats?.(nextStats);
+            return nextStats;
+          });
+        }
         let summary: string;
         if (next.isSelect) {
           const note = next.truncated ? " (truncated)" : "";
@@ -3371,6 +3411,7 @@ export default function App() {
     async (statement: string, currentBinds: Record<string, BindVarParam>) => {
       setBusy(true);
       setIsExecutingQuery(true);
+      setExecutingStatementText(statement);
       setRunningTabId(activeTabId);
       setError(null);
       setExplainError(null);
@@ -5904,6 +5945,19 @@ export default function App() {
                           height: `${height}px`,
                         }}
                       >
+                        <div className="query-progress-header-bar">
+                          <div
+                            className="query-progress-fill"
+                            style={{ width: `${currentProgressPercent}%` }}
+                          />
+                          <div className="query-progress-text">
+                            <span>⚡ Executing SQL... {currentProgressPercent}%</span>
+                            <span>
+                              ⏱ {formatLiveElapsedTime(queryElapsedTimeMs)} / {currentQueryEstimate?.isHistorical ? "~" : ""}{formatElapsed(currentQueryEstimate?.targetMs ?? 3000)}
+                              {queryElapsedTimeMs > (currentQueryEstimate?.targetMs ?? 3000) ? " (Cold Cache / Slow Scan)" : ""}
+                            </span>
+                          </div>
+                        </div>
                         <div className="kitt-exec-outline" />
                         <span className="kitt-circuit-bar kb1" />
                         <span className="kitt-circuit-bar kb2" />
@@ -6208,7 +6262,19 @@ export default function App() {
 
       <footer className="status-bar">
         <span className={error ? "error" : "ok"}>{message}</span>
-        {busy && queryStartTime ? (
+        {busy && isExecutingQuery && currentQueryEstimate ? (
+          <span
+            className="live-query-progress-pill"
+            title={`Estimated query duration: ${formatElapsed(currentQueryEstimate.targetMs)} (${currentQueryEstimate.isHistorical ? `based on ${currentQueryEstimate.runCount} previous run(s)` : "default estimate"})`}
+          >
+            <span
+              className="live-query-progress-mini-bar"
+              style={{ width: `${currentProgressPercent}%` }}
+            />
+            <span>⚡ {currentProgressPercent}%</span>
+            <span>⏱ {formatLiveElapsedTime(queryElapsedTimeMs)} / {currentQueryEstimate.isHistorical ? "~" : ""}{formatElapsed(currentQueryEstimate.targetMs)}</span>
+          </span>
+        ) : busy && queryStartTime ? (
           <span className="live-query-timer" title="Current SQL query execution length in real time">
             ⏱ {formatLiveElapsedTime(queryElapsedTimeMs)}
           </span>
