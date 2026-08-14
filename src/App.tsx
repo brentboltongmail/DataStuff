@@ -3713,9 +3713,9 @@ export default function App() {
       ],
       colors: {
         "editor.background": "#00000000",
-        "editor.foreground": "#E8EAED",
-        "editorLineNumber.foreground": "#5A6578",
-        "editorLineNumber.activeForeground": "#9AA3B2",
+        "editor.foreground": "#FFFFFF",
+        "editorLineNumber.foreground": "#8292AB",
+        "editorLineNumber.activeForeground": "#CBD5E1",
         "editorCursor.foreground": "#3D8BFD",
         "editor.selectionBackground": "#3D8BFD44",
         "editor.lineHighlightBackground": "#22262E88",

@@ -12,11 +12,11 @@
   --bg-elevated: #22262e;
   --bg-panel: #1e2229;
   --bg-panel-glow: #252a33;
-  --border: #323843;
-  --border-soft: #323843;
+  --border: #384152;
+  --border-soft: #384152;
   --border-bright: #3d8bfd;
-  --text: #e8eaed;
-  --text-muted: #9aa3b2;
+  --text: #ffffff;
+  --text-muted: #b8c4d6;
   --accent: #3d8bfd;
   --accent-hover: #5a9dff;
   --accent-deep: #2a5a9e;
@@ -28,7 +28,7 @@
   --grid-header: #252a33;
   --grid-row-alt: #1c2027;
   --grid-hover: #2a3140;
-  --null: #6b7a90;
+  --null: #8da0bc;
   --shadow-inset: none;
   --shadow-panel: none;
   --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.35);
