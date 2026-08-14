@@ -41,9 +41,6 @@ app.name = "DataStuff";
 app.setName("DataStuff");
 process.title = "DataStuff";
 
-// Optimize V8 memory heap ceiling
-app.commandLine.appendSwitch("js-flags", "--max-old-space-size=512");
-
 process.env.DIST = path.join(__dirname, "../dist");
 process.env.VITE_PUBLIC = app.isPackaged
   ? process.env.DIST
@@ -147,6 +144,12 @@ function createWindow() {
   });
   mainWindow.webContents.on("console-message", (_event, level, message, line, sourceId) => {
     console.log(`[RENDERER] L${line} (${sourceId}): ${message}`);
+  });
+  mainWindow.webContents.on("render-process-gone", (_event, details) => {
+    console.error("RENDER PROCESS GONE:", details.reason, details.exitCode);
+    if (details.reason !== "clean-exit" && mainWindow) {
+      mainWindow.reload();
+    }
   });
 
   if (process.env.VITE_DEV_SERVER_URL) {

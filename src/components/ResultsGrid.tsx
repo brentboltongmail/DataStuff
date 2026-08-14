@@ -41,10 +41,19 @@ export function cellEditKey(rowIndex: number, columnIndex: number): string {
   return `${rowIndex}:${columnIndex}`;
 }
 
+let sharedCanvasCtx: CanvasRenderingContext2D | null = null;
+
+function getSharedCanvasContext(): CanvasRenderingContext2D | null {
+  if (!sharedCanvasCtx && typeof document !== "undefined") {
+    const canvas = document.createElement("canvas");
+    sharedCanvasCtx = canvas.getContext("2d");
+  }
+  return sharedCanvasCtx;
+}
+
 function crammedHeaderHeightPx(columnNames: string[], fontScale: number): number {
   if (columnNames.length === 0) return 32;
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  const ctx = getSharedCanvasContext();
   const fontSize = 9 * fontScale;
   let maxWidth = 0;
   if (ctx) {
@@ -73,8 +82,7 @@ function gridFontSizePx(density: GridDensity, fontScale: number): number {
 /** Minimum column width ≈ 4 monospace characters. */
 function minColWidthPx(density: GridDensity, fontScale: number): number {
   const fontSize = gridFontSizePx(density, fontScale);
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  const ctx = getSharedCanvasContext();
   if (ctx) {
     ctx.font = `${fontSize}px "SF Mono", Menlo, Monaco, Consolas, monospace`;
     return Math.ceil(ctx.measureText("0000").width);
@@ -91,8 +99,7 @@ function measureTextPx(
   fontWeight: number | string = 400,
   letterSpacingEm = 0,
 ): number {
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  const ctx = getSharedCanvasContext();
   if (!ctx) {
     return Math.ceil(text.length * fontSize * 0.6);
   }
