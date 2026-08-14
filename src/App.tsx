@@ -13,6 +13,7 @@ import ConnectionStarfieldOverlay, {
   type ConnectPhase,
 } from "./components/ConnectionStarfieldOverlay";
 import PixelFontStudioModal from "./components/PixelFontStudioModal";
+import SolarSystemAtmosphere from "./components/SolarSystemAtmosphere";
 import {
   parseBindVariables,
   prepareSqlWithBinds,
@@ -4421,6 +4422,33 @@ export default function App() {
         "editorWidget.border": "#FF1A40",
       },
     });
+    monaco.editor.defineTheme("datastuff-solarsystem", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "94A3B8", fontStyle: "italic" },
+        { token: "keyword", foreground: "F59E0B", fontStyle: "bold" },
+        { token: "number", foreground: "38BDF8" },
+        { token: "string", foreground: "E0F2FE" },
+        { token: "string.sql", foreground: "E0F2FE" },
+        { token: "string.escape", foreground: "F472B6" },
+        { token: "type", foreground: "EC4899" },
+        { token: "identifier", foreground: "F8FAFC" },
+      ],
+      colors: {
+        "editor.background": "#00000000",
+        "editor.foreground": "#F8FAFC",
+        "editorLineNumber.foreground": "#475569",
+        "editorLineNumber.activeForeground": "#F59E0B",
+        "editorCursor.foreground": "#F59E0B",
+        "editor.selectionBackground": "#F59E0B33",
+        "editor.lineHighlightBackground": "#11182788",
+        "editorIndentGuide.background": "#1E293B",
+        "editorIndentGuide.activeBackground": "#F59E0B",
+        "editorWidget.background": "#090E18",
+        "editorWidget.border": "#38BDF8",
+      },
+    });
   }, []);
 
   const onEditorMount: OnMount = useCallback((ed, monaco) => {
@@ -5657,6 +5685,8 @@ export default function App() {
       {themeId === "cyberpunk" ? <CyberpunkAtmosphere /> : null}
 
       {themeId === "solar" ? <SolarAtmosphere /> : null}
+
+      {themeId === "solarsystem" ? <SolarSystemAtmosphere /> : null}
 
       <ConnectionStarfieldOverlay
         phase={connectPhase}
