@@ -396,15 +396,40 @@ input:focus {
 }
 
 .status-dot {
-  width: 8px;
-  height: 8px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
   background: #667;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .status-dot.on {
   background: var(--success);
   box-shadow: 0 0 0 3px var(--status-ok-glow);
+}
+
+.status-dot.disconnecting {
+  background: #eab308;
+  box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.35);
+  animation: status-dot-pulse-yellow 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes status-dot-pulse-yellow {
+  0% {
+    background: #eab308;
+    box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.25);
+    transform: scale(0.92);
+  }
+  50% {
+    background: #fef08a;
+    box-shadow: 0 0 14px 6px rgba(234, 179, 8, 0.75);
+    transform: scale(1.22);
+  }
+  100% {
+    background: #ca8a04;
+    box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.3);
+    transform: scale(0.95);
+  }
 }
 
 .body {

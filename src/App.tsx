@@ -2276,6 +2276,7 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [connectPhase, setConnectPhase] = useState<ConnectPhase>("idle");
   const [isExecutingQuery, setIsExecutingQuery] = useState(false);
+  const [isDisconnecting, setIsDisconnecting] = useState(false);
   const connectBtnRef = useRef<HTMLButtonElement | null>(null);
   const [connectTargetRect, setConnectTargetRect] = useState<DOMRect | null>(null);
   const [runningTabId, setRunningTabId] = useState<string | null>(null);
@@ -3136,6 +3137,7 @@ export default function App() {
 
   const onDisconnect = async () => {
     setBusy(true);
+    setIsDisconnecting(true);
     setError(null);
     try {
       const next = await window.oracle.disconnect();
@@ -3152,6 +3154,7 @@ export default function App() {
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
+      setIsDisconnecting(false);
       setBusy(false);
     }
   };
@@ -5543,11 +5546,19 @@ export default function App() {
             </button>
           )}
           <span
-            className={`status-dot ${status.connected ? "on" : ""}`}
+            className={`status-dot ${
+              isDisconnecting
+                ? "disconnecting"
+                : status.connected
+                  ? "on"
+                  : ""
+            }`}
             title={
-              status.connected
-                ? `Connected as ${status.user}@${status.connectString} (${status.mode ?? "jdbc"}${config.tcps ? " · tcps" : ""})`
-                : "Not connected"
+              isDisconnecting
+                ? "Disconnecting from database..."
+                : status.connected
+                  ? `Connected as ${status.user}@${status.connectString} (${status.mode ?? "jdbc"}${config.tcps ? " · tcps" : ""})`
+                  : "Not connected"
             }
           />
         </div>
