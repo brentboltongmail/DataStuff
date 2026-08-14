@@ -5951,8 +5951,8 @@ export default function App() {
                             style={{ width: `${currentProgressPercent}%` }}
                           />
                           <div className="query-progress-text">
-                            <span>⚡ {currentProgressPercent}%</span>
-                            <span>{formatElapsed(currentQueryEstimate?.targetMs ?? 3000)}</span>
+                            <span>Estimated Completion... {Math.round(currentProgressPercent)}%</span>
+                            <span>{((currentQueryEstimate?.targetMs ?? 3000) / 1000).toFixed(2)}s total time</span>
                           </div>
                         </div>
                         <div className="kitt-exec-outline" />
@@ -6262,13 +6262,14 @@ export default function App() {
         {busy && isExecutingQuery && currentQueryEstimate ? (
           <span
             className="live-query-progress-pill"
-            title={`Estimated total duration: ${formatElapsed(currentQueryEstimate.targetMs)}`}
+            title={`Estimated completion: ${Math.round(currentProgressPercent)}% · Total: ${(currentQueryEstimate.targetMs / 1000).toFixed(2)}s`}
           >
             <span
               className="live-query-progress-mini-bar"
               style={{ width: `${currentProgressPercent}%` }}
             />
-            <span>⚡ {currentProgressPercent}% · {formatElapsed(currentQueryEstimate.targetMs)}</span>
+            <span>Estimated Completion... {Math.round(currentProgressPercent)}%</span>
+            <span style={{ marginLeft: "10px", opacity: 0.85 }}>{(currentQueryEstimate.targetMs / 1000).toFixed(2)}s total time</span>
           </span>
         ) : busy && queryStartTime ? (
           <span className="live-query-timer" title="Current SQL query execution length in real time">
