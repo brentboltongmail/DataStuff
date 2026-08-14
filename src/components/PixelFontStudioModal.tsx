@@ -119,8 +119,8 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
 
   // Handle dynamic grid dimension changes
   const handleResizeGrid = useCallback((newW: number, newH: number) => {
-    const clampedW = Math.max(4, Math.min(32, newW));
-    const clampedH = Math.max(4, Math.min(32, newH));
+    const clampedW = Math.max(3, Math.min(32, newW));
+    const clampedH = Math.max(3, Math.min(32, newH));
     setGridWidth(clampedW);
     setGridHeight(clampedH);
 
