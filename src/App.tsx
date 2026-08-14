@@ -2962,10 +2962,6 @@ export default function App() {
         setConfig(connConfig);
 
         if (loadedPass) {
-          if (connectBtnRef.current) {
-            setConnectTargetRect(connectBtnRef.current.getBoundingClientRect());
-          }
-          setConnectPhase("connecting");
           setBusy(true);
           setIsExecutingQuery(false);
           setMessage(`Auto-connecting to ${targetConn.name}...`);
@@ -2974,32 +2970,37 @@ export default function App() {
           const timeoutTimer = window.setTimeout(() => {
             hasTimedOut = true;
             setBusy(false);
-            setConnectPhase("failed");
             setMessage("Auto-connect timeout (5s)");
           }, 5000);
 
-          const next = await window.oracle.connect(connConfig);
-          window.clearTimeout(timeoutTimer);
+          try {
+            const next = await window.oracle.connect(connConfig);
+            window.clearTimeout(timeoutTimer);
 
-          if (!hasTimedOut) {
-            setStatus(next);
-            setObjectsRefresh((n) => n + 1);
-            if (targetConn.isProd) {
-              setPreProdThemeId(themeId);
-              setThemeId("nuclear");
-            } else if (themeId === "nuclear") {
-              setThemeId("default");
-              localStorage.setItem(THEME_KEY, "default");
-              applyThemeToDocument("default");
+            if (!hasTimedOut) {
+              setStatus(next);
+              setObjectsRefresh((n) => n + 1);
+              if (targetConn.isProd) {
+                setPreProdThemeId(themeId);
+                setThemeId("nuclear");
+              } else if (themeId === "nuclear") {
+                setThemeId("default");
+                localStorage.setItem(THEME_KEY, "default");
+                applyThemeToDocument("default");
+              }
+              setMessage(`Auto-connected as ${next.user}@${next.connectString}`);
             }
-            setMessage(`Auto-connected as ${next.user}@${next.connectString}`);
-            setConnectPhase("succeeded");
+          } catch (err) {
+            window.clearTimeout(timeoutTimer);
+            const text = err instanceof Error ? err.message : String(err);
+            setMessage(`Auto-connect notice: ${text}`);
+          } finally {
+            setBusy(false);
           }
         } else {
           setMessage(`Restored connection "${targetConn.name}" — enter password to connect`);
         }
       } catch (err) {
-        setConnectPhase("failed");
         const text = err instanceof Error ? err.message : String(err);
         setMessage(`Auto-connect notice: ${text}`);
       } finally {

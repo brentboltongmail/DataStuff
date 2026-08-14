@@ -84,6 +84,15 @@ export default function ConnectionStarfieldOverlay({
     }
   }, [phase]);
 
+  // Hard safety fallback timer — guarantees phase returns to "idle" under all circumstances within 3.5s
+  useEffect(() => {
+    if (phase === "idle") return;
+    const fallbackTimer = setTimeout(() => {
+      onCompleteRef.current();
+    }, 3500);
+    return () => clearTimeout(fallbackTimer);
+  }, [phase]);
+
   if (phase === "idle") return null;
 
   // Calculate destination X & Y (center of connection button or default fallback)
