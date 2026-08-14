@@ -165,7 +165,13 @@ async function ensureBridge(): Promise<void> {
       const { jar, classes } = jdbcPaths();
       const child = spawn(
         java,
-        ["-cp", `${classes}${path.delimiter}${jar}`, "oracleide.OracleBridge"],
+        [
+          "-Xms32m",
+          "-Xmx256m",
+          "-cp",
+          `${classes}${path.delimiter}${jar}`,
+          "oracleide.OracleBridge",
+        ],
         {
           cwd: projectRoot(),
           stdio: ["pipe", "pipe", "pipe"],

@@ -4768,6 +4768,12 @@ export default function App() {
       activeTabIdRef.current = nextActive;
       setTabs(next);
       setActiveTabId(nextActive);
+      setTabStates((prev) => {
+        if (!(id in prev)) return prev;
+        const nextStates = { ...prev };
+        delete nextStates[id];
+        return nextStates;
+      });
       await persistWorkspace(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
