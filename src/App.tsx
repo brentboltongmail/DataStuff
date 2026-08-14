@@ -5951,11 +5951,8 @@ export default function App() {
                             style={{ width: `${currentProgressPercent}%` }}
                           />
                           <div className="query-progress-text">
-                            <span>⚡ Executing SQL... {currentProgressPercent}%</span>
-                            <span>
-                              ⏱ {formatLiveElapsedTime(queryElapsedTimeMs)} / {currentQueryEstimate?.isHistorical ? "~" : ""}{formatElapsed(currentQueryEstimate?.targetMs ?? 3000)}
-                              {queryElapsedTimeMs > (currentQueryEstimate?.targetMs ?? 3000) ? " (Cold Cache / Slow Scan)" : ""}
-                            </span>
+                            <span>⚡ {currentProgressPercent}%</span>
+                            <span>{formatElapsed(currentQueryEstimate?.targetMs ?? 3000)}</span>
                           </div>
                         </div>
                         <div className="kitt-exec-outline" />
@@ -6265,14 +6262,13 @@ export default function App() {
         {busy && isExecutingQuery && currentQueryEstimate ? (
           <span
             className="live-query-progress-pill"
-            title={`Estimated query duration: ${formatElapsed(currentQueryEstimate.targetMs)} (${currentQueryEstimate.isHistorical ? `based on ${currentQueryEstimate.runCount} previous run(s)` : "default estimate"})`}
+            title={`Estimated total duration: ${formatElapsed(currentQueryEstimate.targetMs)}`}
           >
             <span
               className="live-query-progress-mini-bar"
               style={{ width: `${currentProgressPercent}%` }}
             />
-            <span>⚡ {currentProgressPercent}%</span>
-            <span>⏱ {formatLiveElapsedTime(queryElapsedTimeMs)} / {currentQueryEstimate.isHistorical ? "~" : ""}{formatElapsed(currentQueryEstimate.targetMs)}</span>
+            <span>⚡ {currentProgressPercent}% · {formatElapsed(currentQueryEstimate.targetMs)}</span>
           </span>
         ) : busy && queryStartTime ? (
           <span className="live-query-timer" title="Current SQL query execution length in real time">
