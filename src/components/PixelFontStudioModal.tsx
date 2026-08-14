@@ -52,6 +52,51 @@ const DEFAULT_TEMPLATES: Record<string, string[]> = {
   "9": ["  ████  ", " ██  ██ ", " ██  ██ ", "  █████ ", "     ██ ", " ██  ██ ", "  ████  ", "        "],
 };
 
+/** Procedural rasterizer scaling any character glyph to target grid width (W) and height (H) */
+function rasterizeGlyphForGrid(char: string, W: number, H: number): boolean[][] {
+  const isLower = "abcdefghijklmnopqrstuvwxyz".includes(char);
+  const isDescender = "gjpqy".includes(char);
+  const isAscender = "bdfhklt".includes(char);
+  const isUpperOrNum = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".includes(char);
+
+  const tpl = DEFAULT_TEMPLATES[char] || DEFAULT_TEMPLATES[char.toUpperCase()] || Array(8).fill("        ");
+  const srcH = tpl.length;
+  const srcW = tpl[0]?.length || 8;
+
+  const srcBool = tpl.map((row) => row.split("").map((c) => c !== " "));
+  const grid: boolean[][] = Array(H).fill(null).map(() => Array(W).fill(false));
+
+  let startRow = 0;
+  let endRow = H;
+
+  if (isLower && !isDescender && !isAscender) {
+    startRow = Math.max(1, Math.floor(H * 0.25));
+    endRow = H - 1;
+  } else if (isDescender) {
+    startRow = Math.max(1, Math.floor(H * 0.25));
+    endRow = H;
+  } else if (isUpperOrNum || isAscender) {
+    startRow = 0;
+    endRow = H - 1;
+  }
+
+  const rangeH = Math.max(1, endRow - startRow);
+
+  for (let r = startRow; r < endRow; r++) {
+    const normY = (r - startRow) / rangeH;
+    const srcY = Math.min(srcH - 1, Math.floor(normY * srcH));
+
+    for (let c = 0; c < W; c++) {
+      const normX = c / W;
+      const srcX = Math.min(srcW - 1, Math.floor(normX * srcW));
+
+      grid[r][c] = srcBool[srcY]?.[srcX] || false;
+    }
+  }
+
+  return grid;
+}
+
 export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
   const [fontName, setFontName] = useState("MyPixelFont");
   const [selectedChar, setSelectedChar] = useState("A");
@@ -67,8 +112,7 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
   const [fontMap, setFontMap] = useState<Record<string, boolean[][]>>(() => {
     const initial: Record<string, boolean[][]> = {};
     for (const char of DEFAULT_CHARS) {
-      const tpl = DEFAULT_TEMPLATES[char] || DEFAULT_TEMPLATES[char.toUpperCase()] || Array(8).fill("        ");
-      initial[char] = tpl.map((row) => row.split("").map((c) => c !== " "));
+      initial[char] = rasterizeGlyphForGrid(char, 8, 8);
     }
     return initial;
   });
@@ -96,6 +140,18 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
       return nextMap;
     });
   }, []);
+
+  // Auto-generate pixel glyphs for all characters tuned to current gridWidth & gridHeight
+  const handleAutoGenerateAll = useCallback(() => {
+    setFontMap(() => {
+      const nextMap: Record<string, boolean[][]> = {};
+      for (const char of DEFAULT_CHARS) {
+        nextMap[char] = rasterizeGlyphForGrid(char, gridWidth, gridHeight);
+      }
+      return nextMap;
+    });
+    setExportMessage(`⚡ Auto-generated all ${DEFAULT_CHARS.length} characters for ${gridWidth}×${gridHeight} grid!`);
+  }, [gridWidth, gridHeight]);
 
   const currentGrid = useMemo(() => {
     return fontMap[selectedChar] || Array(gridHeight).fill(null).map(() => Array(gridWidth).fill(false));
@@ -201,7 +257,7 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
         className="modal-card"
         onClick={(e) => e.stopPropagation()}
         style={{
-          width: 960,
+          width: 980,
           maxWidth: "96vw",
           maxHeight: "92vh",
           display: "flex",
@@ -223,7 +279,7 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
               🎨 Pixel Font Studio
             </h2>
             <p style={{ margin: "4px 0 0", fontSize: 13, color: "var(--text-muted, #b8c4d6)" }}>
-              Draw your font, dynamically resize the grid, preview live, and export a real `.ttf` file!
+              Draw your font, dynamically resize grid, auto-generate glyphs, preview live, and export a real `.ttf` file!
             </p>
           </div>
           <button
@@ -236,8 +292,8 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
           </button>
         </div>
 
-        {/* Top Controls: Font Name + Dynamic Grid Resizer */}
-        <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+        {/* Top Controls: Font Name + Dynamic Grid Resizer + Auto Generate All */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <label style={{ fontSize: 13, fontWeight: 600 }}>Font Name:</label>
             <input
@@ -251,7 +307,7 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
                 borderRadius: 6,
                 color: "#fff",
                 fontSize: 14,
-                width: 170,
+                width: 160,
               }}
             />
           </div>
@@ -286,24 +342,26 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
                 fontSize: 12,
               }}
             >
-              <option value="8x8">8 × 8 (Standard)</option>
+              <option value="3x5">3 × 5 (Micro Minimal)</option>
+              <option value="4x6">4 × 6 (Compact Best)</option>
+              <option value="5x7">5 × 7 (Terminal Standard)</option>
+              <option value="8x8">8 × 8 (Classic Arcade)</option>
               <option value="8x10">8 × 10 (Tall Mono)</option>
               <option value="8x12">8 × 12 (IDE Code)</option>
               <option value="10x10">10 × 10 (Medium Square)</option>
               <option value="12x12">12 × 12 (HD Pixel)</option>
               <option value="16x16">16 × 16 (Ultra HD Grid)</option>
-              <option value="6x8">6 × 8 (Compact Mini)</option>
             </select>
 
             <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Custom:</span>
             <input
               type="number"
-              min={4}
+              min={3}
               max={32}
               value={gridWidth}
               onChange={(e) => handleResizeGrid(Number(e.target.value), gridHeight)}
               style={{
-                width: 44,
+                width: 42,
                 padding: "2px 4px",
                 background: "var(--input-bg, #15181e)",
                 border: "1px solid var(--border)",
@@ -316,12 +374,12 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
             <span style={{ fontSize: 12 }}>×</span>
             <input
               type="number"
-              min={4}
+              min={3}
               max={32}
               value={gridHeight}
               onChange={(e) => handleResizeGrid(gridWidth, Number(e.target.value))}
               style={{
-                width: 44,
+                width: 42,
                 padding: "2px 4px",
                 background: "var(--input-bg, #15181e)",
                 border: "1px solid var(--border)",
@@ -332,6 +390,27 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
               }}
             />
           </div>
+
+          {/* AUTO GENERATE ALL BUTTON */}
+          <button
+            type="button"
+            className="primary"
+            onClick={handleAutoGenerateAll}
+            title="Automatically rasterize and generate pixel drawings for all letters scaled to current grid size"
+            style={{
+              padding: "6px 14px",
+              fontSize: 12,
+              fontWeight: 600,
+              borderRadius: 8,
+              background: "linear-gradient(135deg, #a855f7 0%, #ec4899 100%)",
+              color: "#ffffff",
+              border: "none",
+              cursor: "pointer",
+              boxShadow: "0 4px 12px rgba(168, 85, 247, 0.35)",
+            }}
+          >
+            ⚡ Auto-Generate All Characters
+          </button>
 
           <button type="button" className="secondary" onClick={copyUpperToLower} style={{ fontSize: 12 }}>
             Copy A-Z to a-z
@@ -520,7 +599,7 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
 
         {/* Footer Export Button */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
-          <span style={{ fontSize: 13, color: exportMessage.startsWith("✨") ? "#3dd68c" : "#e35d6a" }}>
+          <span style={{ fontSize: 13, color: exportMessage.startsWith("✨") || exportMessage.startsWith("⚡") ? "#3dd68c" : "#e35d6a" }}>
             {exportMessage}
           </span>
           <div style={{ display: "flex", gap: 12 }}>
