@@ -9,6 +9,7 @@ import type {
   DbObject,
   QueryResult,
 } from "../src/types";
+import { logMessage } from "./logger";
 
 type BridgeResponse = {
   id: number;
@@ -98,6 +99,11 @@ function handleLine(line: string) {
   const waiter = pending.get(payload.id);
   if (!waiter) return;
   pending.delete(payload.id);
+  if (!payload.ok) {
+    logMessage("WARN", `[JDBC OUT ERROR] id=${payload.id}: ${payload.error}`);
+  } else {
+    logMessage("INFO", `[JDBC OUT] id=${payload.id} ok=true`);
+  }
   waiter.resolve(payload);
 }
 
@@ -150,6 +156,7 @@ function request(
       },
     });
 
+    logMessage("INFO", `[JDBC IN] cmd=${body.cmd} id=${id}`);
     bridge!.stdin.write(`${JSON.stringify({ ...body, id })}\n`);
   });
 }
@@ -184,7 +191,9 @@ async function ensureBridge(): Promise<void> {
 
       let stderr = "";
       child.stderr.on("data", (chunk) => {
-        stderr += String(chunk);
+        const text = String(chunk);
+        stderr += text;
+        logMessage("WARN", `[JDBC STDERR] ${text.trim()}`);
       });
 
       child.on("error", (err) => {

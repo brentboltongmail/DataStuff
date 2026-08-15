@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
+import { getLogFilePath, logMessage } from "./logger";
 import {
   cancelQuery,
   commit,
@@ -143,13 +144,13 @@ function createWindow() {
   });
 
   mainWindow.webContents.on("did-fail-load", (_event, errorCode, errorDescription, validatedURL) => {
-    console.error("FAILED TO LOAD HTML:", errorCode, errorDescription, validatedURL);
+    logMessage("ERROR", `FAILED TO LOAD HTML: ${errorCode} ${errorDescription} ${validatedURL}`);
   });
   mainWindow.webContents.on("console-message", (_event, level, message, line, sourceId) => {
-    console.log(`[RENDERER] L${line} (${sourceId}): ${message}`);
+    logMessage(level >= 2 ? "WARN" : "INFO", `[RENDERER] L${line} (${sourceId}): ${message}`);
   });
   mainWindow.webContents.on("render-process-gone", (_event, details) => {
-    console.error("RENDER PROCESS GONE:", details.reason, details.exitCode);
+    logMessage("ERROR", `RENDER PROCESS GONE: ${details.reason} exitCode=${details.exitCode}`);
     if (details.reason !== "clean-exit" && mainWindow) {
       mainWindow.reload();
     }

@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Line-delimited JSON bridge for Oracle JDBC.
@@ -31,6 +33,14 @@ public final class OracleBridge {
   private static final int DEFAULT_MAX_ROWS = 1000;
   private static final int HARD_MAX_ROWS = 100_000;
   private static Connection connection;
+
+  private static final ExecutorService executor =
+      Executors.newSingleThreadExecutor(
+          r -> {
+            Thread t = new Thread(r, "OracleBridge-Worker");
+            t.setDaemon(true);
+            return t;
+          });
 
   public static void main(String[] args) throws Exception {
     Class.forName("oracle.jdbc.OracleDriver");
@@ -49,31 +59,38 @@ public final class OracleBridge {
         write(response(null, false, null, "Invalid JSON: " + ex.getMessage()));
         continue;
       }
-      Object id = request.get("id");
-      String cmd = stringVal(request.get("cmd"));
-      try {
-        write(handle(id, cmd, request));
-      } catch (Exception ex) {
-        int offset = getErrorOffset(ex);
-        String msg = ex.getMessage() == null ? ex.toString() : ex.getMessage();
-        String sql = stringVal(request.get("sql"));
-        if (offset >= 0 && sql != null && !sql.isEmpty()) {
-          int errLine = 1;
-          int errCol = 1;
-          int len = Math.min(offset, sql.length());
-          for (int i = 0; i < len; i++) {
-            if (sql.charAt(i) == '\n') {
-              errLine++;
-              errCol = 1;
-            } else {
-              errCol++;
+      final Object id = request.get("id");
+      final String cmd = stringVal(request.get("cmd"));
+
+      if ("cancel".equals(cmd)) {
+        write(response(id, true, cancelQuery(), null));
+      } else {
+        executor.submit(() -> {
+          try {
+            write(handle(id, cmd, request));
+          } catch (Exception ex) {
+            int offset = getErrorOffset(ex);
+            String msg = ex.getMessage() == null ? ex.toString() : ex.getMessage();
+            String sql = stringVal(request.get("sql"));
+            if (offset >= 0 && sql != null && !sql.isEmpty()) {
+              int errLine = 1;
+              int errCol = 1;
+              int len = Math.min(offset, sql.length());
+              for (int i = 0; i < len; i++) {
+                if (sql.charAt(i) == '\n') {
+                  errLine++;
+                  errCol = 1;
+                } else {
+                  errCol++;
+                }
+              }
+              if (!msg.contains("at line ")) {
+                msg = msg + " at line " + errLine + ", column " + errCol;
+              }
             }
+            write(response(id, false, null, msg));
           }
-          if (!msg.contains("at line ")) {
-            msg = msg + " at line " + errLine + ", column " + errCol;
-          }
-        }
-        write(response(id, false, null, msg));
+        });
       }
     }
   }
@@ -930,7 +947,7 @@ public final class OracleBridge {
     }
   }
 
-  private static void write(Map<String, Object> payload) {
+  private static synchronized void write(Map<String, Object> payload) {
     System.out.println(Json.stringify(payload));
     System.out.flush();
   }
