@@ -231,20 +231,19 @@ export default function SolarSystemAtmosphere() {
           Math.min(1.0, star.baseAlpha + Math.sin(star.twinklePhase) * 0.35),
         );
 
-        ctx.save();
         ctx.globalAlpha = currentAlpha;
         ctx.fillStyle = star.color;
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
         ctx.fill();
 
-        // Subtle soft glow around larger stars
+        // Subtle soft outer halo for larger stars without expensive canvas shadowBlur
         if (star.size > 0.56) {
-          ctx.shadowBlur = 3;
-          ctx.shadowColor = star.color;
+          ctx.globalAlpha = currentAlpha * 0.25;
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.size * 2.2, 0, Math.PI * 2);
           ctx.fill();
         }
-        ctx.restore();
       }
 
       animId = requestAnimationFrame(render);
@@ -260,6 +259,12 @@ export default function SolarSystemAtmosphere() {
 
   return (
     <div className="solar-system-atmosphere" aria-hidden="true">
+      <style>{`
+        @keyframes solar-orbit-rotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
       {/* 1,000 Twinkling Starfield Canvas */}
       <canvas ref={canvasRef} className="solar-system-canvas" />
 
@@ -298,19 +303,11 @@ export default function SolarSystemAtmosphere() {
                 marginLeft: `-${planet.orbitRadius}px`,
                 marginTop: `-${planet.orbitRadius}px`,
                 borderRadius: "50%",
-                animation: `orbit-spin-${planet.name} ${planet.periodSec}s linear infinite`,
+                animation: `solar-orbit-rotate ${planet.periodSec}s linear infinite`,
                 pointerEvents: "none",
                 zIndex: 2,
               }}
             >
-              {/* Keyframe animation for planet revolution */}
-              <style>{`
-                @keyframes orbit-spin-${planet.name} {
-                  from { transform: rotate(0deg); }
-                  to { transform: rotate(360deg); }
-                }
-              `}</style>
-
               {/* Planet Container (positioned at 12 o'clock top of orbit) */}
               <div
                 style={{
@@ -379,18 +376,12 @@ export default function SolarSystemAtmosphere() {
                             marginLeft: `-${moon.radius}px`,
                             marginTop: `-${moon.radius}px`,
                             borderRadius: "50%",
-                            animation: `moon-spin-${planet.name}-${moon.name} ${moon.periodSec}s linear infinite ${
+                            animation: `solar-orbit-rotate ${moon.periodSec}s linear infinite ${
                               isRetro ? "reverse" : "normal"
                             }`,
                             pointerEvents: "none",
                           }}
                         >
-                          <style>{`
-                            @keyframes moon-spin-${planet.name}-${moon.name} {
-                              from { transform: rotate(0deg); }
-                              to { transform: rotate(360deg); }
-                            }
-                          `}</style>
                           {/* Moon Sphere */}
                           <div
                             style={{

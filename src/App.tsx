@@ -2392,11 +2392,20 @@ export default function App() {
   // Poll JS Heap memory usage for titlebar indicator
   useEffect(() => {
     const updateMemory = () => {
-      const perfMem = (performance as unknown as { memory?: { usedJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
+      const perfMem = (
+        performance as unknown as {
+          memory?: { usedJSHeapSize: number; jsHeapSizeLimit: number };
+        }
+      ).memory;
       if (perfMem) {
         const usedMb = Math.round(perfMem.usedJSHeapSize / (1024 * 1024));
-        const limitMb = Math.round(perfMem.jsHeapSizeLimit / (1024 * 1024)) || 768;
-        setMemoryUsage({ usedMb, limitMb });
+        const limitMb =
+          Math.round(perfMem.jsHeapSizeLimit / (1024 * 1024)) || 768;
+        setMemoryUsage((prev) => {
+          if (prev && prev.usedMb === usedMb && prev.limitMb === limitMb)
+            return prev;
+          return { usedMb, limitMb };
+        });
       }
     };
     updateMemory();
