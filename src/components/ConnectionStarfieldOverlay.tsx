@@ -22,6 +22,11 @@ interface Star {
   rotate: number; // Rotation deg
 }
 
+interface Point {
+  x: number;
+  y: number;
+}
+
 const STAR_COLORS = [
   "#ffffff",
   "#c084fc",
@@ -32,6 +37,62 @@ const STAR_COLORS = [
   "#e0e7ff",
 ];
 
+function generateSadFacePositions(count: number): Point[] {
+  const points: Point[] = [];
+
+  // 1. Left Eye (12 stars in a circle at 35%, 33%)
+  for (let i = 0; i < 12; i++) {
+    const angle = (i / 12) * Math.PI * 2;
+    points.push({
+      x: 35 + Math.cos(angle) * 4,
+      y: 33 + Math.sin(angle) * 4,
+    });
+  }
+
+  // 2. Right Eye (12 stars in a circle at 65%, 33%)
+  for (let i = 0; i < 12; i++) {
+    const angle = (i / 12) * Math.PI * 2;
+    points.push({
+      x: 65 + Math.cos(angle) * 4,
+      y: 33 + Math.sin(angle) * 4,
+    });
+  }
+
+  // 3. Tear drops (10 stars)
+  points.push({ x: 35, y: 39 });
+  points.push({ x: 34.5, y: 43 });
+  points.push({ x: 35, y: 47 });
+  points.push({ x: 34.2, y: 51 });
+  points.push({ x: 35, y: 55 });
+
+  points.push({ x: 65, y: 39 });
+  points.push({ x: 65.5, y: 43 });
+  points.push({ x: 65, y: 47 });
+  points.push({ x: 65.8, y: 51 });
+  points.push({ x: 65, y: 55 });
+
+  // 4. Sad Mouth (24 stars)
+  for (let i = 0; i < 24; i++) {
+    const t = i / 23;
+    const x = 28 + t * 44;
+    const norm = (x - 50) / 22;
+    const y = 56 + 13 * (norm * norm);
+    points.push({ x, y });
+  }
+
+  // 5. Outer Face Circle (remaining stars)
+  const remaining = count - points.length;
+  for (let i = 0; i < remaining; i++) {
+    const angle = (i / remaining) * Math.PI * 2;
+    points.push({
+      x: 50 + Math.cos(angle) * 33,
+      y: 50 + Math.sin(angle) * 33,
+    });
+  }
+
+  return points;
+}
+
 export default function ConnectionStarfieldOverlay({
   phase,
   targetRect,
@@ -39,10 +100,11 @@ export default function ConnectionStarfieldOverlay({
   onComplete,
 }: Props) {
   const [animatingOut, setAnimatingOut] = useState(false);
+  const [failedStage, setFailedStage] = useState<"none" | "face" | "melting">("none");
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
 
-  // Generate a galaxy of 90 twinkling stars distributed across viewport
+  // Generate a galaxy of 95 twinkling stars distributed across viewport
   const stars: Star[] = useMemo(() => {
     return Array.from({ length: 95 }, (_, i) => {
       const typeRand = Math.random();
@@ -63,10 +125,13 @@ export default function ConnectionStarfieldOverlay({
     });
   }, []);
 
+  const sadFacePositions = useMemo(() => generateSadFacePositions(95), []);
+
   // Handle phase transitions
   useEffect(() => {
     if (phase === "succeeded") {
       setAnimatingOut(true);
+      setFailedStage("none");
       const timer = setTimeout(() => {
         onCompleteRef.current();
       }, 1500);
@@ -74,17 +139,28 @@ export default function ConnectionStarfieldOverlay({
     }
     if (phase === "failed") {
       setAnimatingOut(true);
-      const timer = setTimeout(() => {
+      setFailedStage("face");
+
+      // Hold sad face for 1.6s (0.6s snap + 1.0s hold), then melt down off screen
+      const meltTimer = setTimeout(() => {
+        setFailedStage("melting");
+      }, 1600);
+
+      // Complete total animation after 2.8s
+      const endTimer = setTimeout(() => {
         onCompleteRef.current();
-      }, 700);
-      return () => clearTimeout(timer);
+      }, 2800);
+
+      return () => {
+        clearTimeout(meltTimer);
+        clearTimeout(endTimer);
+      };
     }
     if (phase === "connecting") {
       setAnimatingOut(false);
+      setFailedStage("none");
     }
   }, [phase]);
-
-
 
   if (phase === "idle") return null;
 
@@ -94,7 +170,7 @@ export default function ConnectionStarfieldOverlay({
 
   return (
     <div
-      className={`starfield-overlay ${phase} ${animatingOut ? "animating-out" : ""}`}
+      className={`starfield-overlay ${phase} ${animatingOut ? "animating-out" : ""} failed-stage-${failedStage}`}
       aria-hidden="true"
     >
       {/* Soft dark translucent galaxy aura backdrop */}
@@ -182,9 +258,9 @@ export default function ConnectionStarfieldOverlay({
         </div>
       </div>
 
-      {/* Twinkling & flying stars */}
+      {/* Twinkling, flying, or sad face melting stars */}
       <div className="starfield-container">
-        {stars.map((star) => {
+        {stars.map((star, index) => {
           // Convert star percentage to screen pixels
           const starPxX = (star.x / 100) * window.innerWidth;
           const starPxY = (star.y / 100) * window.innerHeight;
@@ -193,25 +269,52 @@ export default function ConnectionStarfieldOverlay({
           const deltaX = targetX - starPxX;
           const deltaY = targetY - starPxY;
 
+          // Sad face offsets
+          const sadPoint = sadFacePositions[index] || { x: 50, y: 50 };
+          const deltaSadX = sadPoint.x - star.x;
+          const deltaSadY = sadPoint.y - star.y;
+
           const isFlying = phase === "succeeded";
+          const isSadFace = phase === "failed" && failedStage === "face";
+          const isMelting = phase === "failed" && failedStage === "melting";
+
+          let animClass = "twinkle";
+          if (isFlying) animClass = "fly-to-button";
+          else if (isSadFace) animClass = "fly-to-sad-face";
+          else if (isMelting) animClass = "melt-down";
 
           const style: React.CSSProperties & Record<string, string | number> = {
             left: `${star.x}%`,
             top: `${star.y}%`,
             width: `${star.size}px`,
             height: `${star.size}px`,
-            color: star.color,
-            animationDelay: isFlying ? `${star.flyDelay}ms` : `${star.delay}s`,
-            animationDuration: isFlying ? "1100ms" : `${star.duration}s`,
+            color: isSadFace || isMelting ? "#f472b6" : star.color,
+            animationDelay: isMelting
+              ? `${(index % 12) * 25}ms`
+              : isSadFace
+              ? `${(star.flyDelay / 2).toFixed(0)}ms`
+              : isFlying
+              ? `${star.flyDelay}ms`
+              : `${star.delay}s`,
+            animationDuration: isMelting
+              ? "1100ms"
+              : isSadFace
+              ? "600ms"
+              : isFlying
+              ? "1100ms"
+              : `${star.duration}s`,
             transform: `rotate(${star.rotate}deg)`,
             "--delta-x": `${deltaX}px`,
             "--delta-y": `${deltaY}px`,
+            "--delta-sad-x": `${deltaSadX}vw`,
+            "--delta-sad-y": `${deltaSadY}vh`,
+            "--star-y-vh": `${star.y}vh`,
           };
 
           return (
             <div
               key={star.id}
-              className={`magic-star ${star.type} ${isFlying ? "fly-to-button" : "twinkle"}`}
+              className={`magic-star ${star.type} ${animClass}`}
               style={style}
             >
               {star.type === "star4" && (
