@@ -4,6 +4,8 @@ import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { getLogFilePath, logMessage } from "./logger";
+
+logMessage("INFO", "=== DataStuff Started ===");
 import {
   cancelQuery,
   commit,
