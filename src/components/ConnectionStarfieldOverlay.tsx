@@ -40,47 +40,34 @@ const STAR_COLORS = [
 function generateSadFacePositions(count: number): Point[] {
   const points: Point[] = [];
 
-  // 1. Left Eye (12 stars in a circle at 35%, 33%)
-  for (let i = 0; i < 12; i++) {
-    const angle = (i / 12) * Math.PI * 2;
+  // 1. Left Eye (14 stars in a circle at 35%, 33%)
+  for (let i = 0; i < 14; i++) {
+    const angle = (i / 14) * Math.PI * 2;
     points.push({
-      x: 35 + Math.cos(angle) * 4,
-      y: 33 + Math.sin(angle) * 4,
+      x: 35 + Math.cos(angle) * 4.2,
+      y: 33 + Math.sin(angle) * 4.2,
     });
   }
 
-  // 2. Right Eye (12 stars in a circle at 65%, 33%)
-  for (let i = 0; i < 12; i++) {
-    const angle = (i / 12) * Math.PI * 2;
+  // 2. Right Eye (14 stars in a circle at 65%, 33%)
+  for (let i = 0; i < 14; i++) {
+    const angle = (i / 14) * Math.PI * 2;
     points.push({
-      x: 65 + Math.cos(angle) * 4,
-      y: 33 + Math.sin(angle) * 4,
+      x: 65 + Math.cos(angle) * 4.2,
+      y: 33 + Math.sin(angle) * 4.2,
     });
   }
 
-  // 3. Tear drops (10 stars)
-  points.push({ x: 35, y: 39 });
-  points.push({ x: 34.5, y: 43 });
-  points.push({ x: 35, y: 47 });
-  points.push({ x: 34.2, y: 51 });
-  points.push({ x: 35, y: 55 });
-
-  points.push({ x: 65, y: 39 });
-  points.push({ x: 65.5, y: 43 });
-  points.push({ x: 65, y: 47 });
-  points.push({ x: 65.8, y: 51 });
-  points.push({ x: 65, y: 55 });
-
-  // 4. Sad Mouth (24 stars)
-  for (let i = 0; i < 24; i++) {
-    const t = i / 23;
-    const x = 28 + t * 44;
-    const norm = (x - 50) / 22;
-    const y = 56 + 13 * (norm * norm);
+  // 3. Sad Mouth / Frown Arc (28 stars)
+  for (let i = 0; i < 28; i++) {
+    const t = i / 27;
+    const x = 27 + t * 46;
+    const norm = (x - 50) / 23;
+    const y = 56 + 14 * (norm * norm);
     points.push({ x, y });
   }
 
-  // 5. Outer Face Circle (remaining stars)
+  // 4. Outer Face Circle (remaining stars)
   const remaining = count - points.length;
   for (let i = 0; i < remaining; i++) {
     const angle = (i / remaining) * Math.PI * 2;
@@ -141,15 +128,15 @@ export default function ConnectionStarfieldOverlay({
       setAnimatingOut(true);
       setFailedStage("face");
 
-      // Hold sad face for 1.6s (0.6s snap + 1.0s hold), then melt down off screen
+      // Hold sad face for 2.1s (0.6s snap + 1.5s hold), then melt down off screen
       const meltTimer = setTimeout(() => {
         setFailedStage("melting");
-      }, 1600);
+      }, 2100);
 
-      // Complete total animation after 2.8s
+      // Complete total animation after 3.3s
       const endTimer = setTimeout(() => {
         onCompleteRef.current();
-      }, 2800);
+      }, 3300);
 
       return () => {
         clearTimeout(meltTimer);
