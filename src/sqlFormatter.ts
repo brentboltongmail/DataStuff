@@ -528,6 +528,8 @@ function formatSingleQuery(cleanSql: string): string {
         if (currentLine.trim()) {
           pushLine(currentLine + ",", isUnderClause ? 1 : 0);
           currentLine = "";
+        } else if (resultLines.length > 0) {
+          resultLines[resultLines.length - 1] += ",";
         }
       }
       continue;
