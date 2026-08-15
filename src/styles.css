@@ -2773,105 +2773,137 @@ button.status-bar-cancel-btn {
   }
 }
 
-/* Head Bobbing */
-.magic-star.dancing.dance-part-head {
-  animation: dance-head-bob 0.45s ease-in-out infinite alternate;
+/* ── DANCER 0 (LEFT): DISCO POINT & KNEE HOP ── */
+.magic-star.dancing.dance-fig-0.dance-part-head {
+  animation: d0-head 0.35s ease-in-out infinite alternate;
 }
-@keyframes dance-head-bob {
-  0% {
-    transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0) scale(1.2);
-  }
-  100% {
-    transform: translate3d(var(--delta-dancer-x), calc(var(--delta-dancer-y) - 2.5vh), 0) scale(1.35);
-  }
+@keyframes d0-head {
+  0% { transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0) scale(1.2); }
+  100% { transform: translate3d(var(--delta-dancer-x), calc(var(--delta-dancer-y) - 3vh), 0) scale(1.4); }
 }
 
-/* Torso Grooving */
-.magic-star.dancing.dance-part-torso {
-  animation: dance-torso-groove 0.5s ease-in-out infinite alternate;
+.magic-star.dancing.dance-fig-0.dance-part-torso {
+  animation: d0-torso 0.35s ease-in-out infinite alternate;
 }
-@keyframes dance-torso-groove {
-  0% {
-    transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0);
-  }
-  100% {
-    transform: translate3d(calc(var(--delta-dancer-x) + 0.8vw), calc(var(--delta-dancer-y) - 1vh), 0);
-  }
+@keyframes d0-torso {
+  0% { transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0); }
+  100% { transform: translate3d(calc(var(--delta-dancer-x) - 0.8vw), calc(var(--delta-dancer-y) - 1.5vh), 0); }
 }
 
-/* Left Arms */
 .magic-star.dancing.dance-fig-0.dance-part-left-arm {
-  animation: dance-arm-wave-left 0.55s ease-in-out infinite alternate;
+  animation: d0-larm 0.4s ease-in-out infinite alternate;
 }
-.magic-star.dancing.dance-fig-1.dance-part-left-arm {
-  animation: dance-arm-disco-left 0.45s ease-in-out infinite alternate;
-}
-.magic-star.dancing.dance-fig-2.dance-part-left-arm {
-  animation: dance-arm-roof-left 0.5s ease-in-out infinite alternate;
+@keyframes d0-larm {
+  0% { transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0) rotate(0deg); }
+  100% { transform: translate3d(calc(var(--delta-dancer-x) - 3vw), calc(var(--delta-dancer-y) - 8vh), 0) scale(1.4) rotate(-35deg); }
 }
 
-@keyframes dance-arm-wave-left {
-  0% {
-    transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0) rotate(0deg);
-  }
-  100% {
-    transform: translate3d(calc(var(--delta-dancer-x) - 1vw), calc(var(--delta-dancer-y) - 5vh), 0) rotate(-25deg);
-  }
-}
-
-@keyframes dance-arm-disco-left {
-  0% {
-    transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0);
-  }
-  100% {
-    transform: translate3d(calc(var(--delta-dancer-x) + 2vw), calc(var(--delta-dancer-y) - 6vh), 0) scale(1.3);
-  }
-}
-
-@keyframes dance-arm-roof-left {
-  0% {
-    transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0);
-  }
-  100% {
-    transform: translate3d(var(--delta-dancer-x), calc(var(--delta-dancer-y) - 4vh), 0) scale(1.2);
-  }
-}
-
-/* Right Arms */
 .magic-star.dancing.dance-fig-0.dance-part-right-arm {
-  animation: dance-arm-disco-left 0.45s ease-in-out infinite alternate-reverse;
+  animation: d0-rarm 0.4s ease-in-out infinite alternate;
 }
+@keyframes d0-rarm {
+  0% { transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0); }
+  100% { transform: translate3d(calc(var(--delta-dancer-x) + 2vw), calc(var(--delta-dancer-y) + 3vh), 0) scale(1.1); }
+}
+
+.magic-star.dancing.dance-fig-0.dance-part-left-leg {
+  animation: d0-lleg 0.4s ease-in-out infinite alternate;
+}
+@keyframes d0-lleg {
+  0% { transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0); }
+  100% { transform: translate3d(calc(var(--delta-dancer-x) - 4vw), calc(var(--delta-dancer-y) - 2vh), 0); }
+}
+
+.magic-star.dancing.dance-fig-0.dance-part-right-leg {
+  animation: d0-rleg 0.4s ease-in-out infinite alternate;
+}
+@keyframes d0-rleg {
+  0% { transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0); }
+  100% { transform: translate3d(calc(var(--delta-dancer-x) + 1vw), calc(var(--delta-dancer-y) - 0.5vh), 0); }
+}
+
+/* ── DANCER 1 (CENTER): FLOSS & HIP SWAY ── */
+.magic-star.dancing.dance-fig-1.dance-part-head {
+  animation: d1-head 0.5s ease-in-out infinite alternate;
+}
+@keyframes d1-head {
+  0% { transform: translate3d(calc(var(--delta-dancer-x) - 2vw), var(--delta-dancer-y), 0) scale(1.2); }
+  100% { transform: translate3d(calc(var(--delta-dancer-x) + 2vw), var(--delta-dancer-y), 0) scale(1.2); }
+}
+
+.magic-star.dancing.dance-fig-1.dance-part-torso {
+  animation: d1-torso 0.5s ease-in-out infinite alternate;
+}
+@keyframes d1-torso {
+  0% { transform: translate3d(calc(var(--delta-dancer-x) + 1.8vw), var(--delta-dancer-y), 0); }
+  100% { transform: translate3d(calc(var(--delta-dancer-x) - 1.8vw), var(--delta-dancer-y), 0); }
+}
+
+.magic-star.dancing.dance-fig-1.dance-part-left-arm,
 .magic-star.dancing.dance-fig-1.dance-part-right-arm {
-  animation: dance-arm-wave-left 0.55s ease-in-out infinite alternate;
+  animation: d1-arms 0.5s ease-in-out infinite alternate;
 }
+@keyframes d1-arms {
+  0% { transform: translate3d(calc(var(--delta-dancer-x) - 4vw), calc(var(--delta-dancer-y) + 2vh), 0) scale(1.2); }
+  100% { transform: translate3d(calc(var(--delta-dancer-x) + 4vw), calc(var(--delta-dancer-y) + 2vh), 0) scale(1.2); }
+}
+
+.magic-star.dancing.dance-fig-1.dance-part-left-leg {
+  animation: d1-lleg 0.5s ease-in-out infinite alternate;
+}
+@keyframes d1-lleg {
+  0% { transform: translate3d(calc(var(--delta-dancer-x) - 1.5vw), var(--delta-dancer-y), 0); }
+  100% { transform: translate3d(calc(var(--delta-dancer-x) + 1.5vw), calc(var(--delta-dancer-y) - 1vh), 0); }
+}
+
+.magic-star.dancing.dance-fig-1.dance-part-right-leg {
+  animation: d1-rleg 0.5s ease-in-out infinite alternate;
+}
+@keyframes d1-rleg {
+  0% { transform: translate3d(calc(var(--delta-dancer-x) + 1.5vw), calc(var(--delta-dancer-y) - 1vh), 0); }
+  100% { transform: translate3d(calc(var(--delta-dancer-x) - 1.5vw), var(--delta-dancer-y), 0); }
+}
+
+/* ── DANCER 2 (RIGHT): ROBOT & RAISE THE ROOF ── */
+.magic-star.dancing.dance-fig-2.dance-part-head {
+  animation: d2-head 0.3s steps(2, end) infinite alternate;
+}
+@keyframes d2-head {
+  0% { transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0) rotate(0deg); }
+  100% { transform: translate3d(var(--delta-dancer-x), calc(var(--delta-dancer-y) - 2vh), 0) rotate(15deg); }
+}
+
+.magic-star.dancing.dance-fig-2.dance-part-torso {
+  animation: d2-torso 0.3s steps(2, end) infinite alternate;
+}
+@keyframes d2-torso {
+  0% { transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0) scale(1); }
+  100% { transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0) scale(1.15); }
+}
+
+.magic-star.dancing.dance-fig-2.dance-part-left-arm,
 .magic-star.dancing.dance-fig-2.dance-part-right-arm {
-  animation: dance-arm-roof-left 0.5s ease-in-out infinite alternate-reverse;
+  animation: d2-arms 0.35s ease-in-out infinite alternate;
+}
+@keyframes d2-arms {
+  0% { transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0) scale(1); }
+  100% { transform: translate3d(var(--delta-dancer-x), calc(var(--delta-dancer-y) - 7vh), 0) scale(1.35); }
 }
 
-/* Left Legs */
-.magic-star.dancing.dance-part-left-leg {
-  animation: dance-leg-kick-left 0.45s ease-in-out infinite alternate;
+.magic-star.dancing.dance-fig-2.dance-part-left-leg {
+  animation: d2-lleg 0.35s steps(2, end) infinite alternate;
 }
-@keyframes dance-leg-kick-left {
-  0% {
-    transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0);
-  }
-  100% {
-    transform: translate3d(calc(var(--delta-dancer-x) - 2.5vw), calc(var(--delta-dancer-y) - 1.5vh), 0);
-  }
+@keyframes d2-lleg {
+  0% { transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0); }
+  100% { transform: translate3d(var(--delta-dancer-x), calc(var(--delta-dancer-y) - 3vh), 0); }
 }
 
-/* Right Legs */
-.magic-star.dancing.dance-part-right-leg {
-  animation: dance-leg-kick-right 0.45s ease-in-out infinite alternate-reverse;
+.magic-star.dancing.dance-fig-2.dance-part-right-leg {
+  animation: d2-rleg 0.35s steps(2, end) infinite alternate-reverse;
 }
-@keyframes dance-leg-kick-right {
-  0% {
-    transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0);
-  }
-  100% {
-    transform: translate3d(calc(var(--delta-dancer-x) + 2.5vw), calc(var(--delta-dancer-y) - 1.5vh), 0);
-  }
+@keyframes d2-rleg {
+  0% { transform: translate3d(var(--delta-dancer-x), var(--delta-dancer-y), 0); }
+  100% { transform: translate3d(var(--delta-dancer-x), calc(var(--delta-dancer-y) - 3vh), 0); }
 }
 
 /* Stage floor lights pulse */

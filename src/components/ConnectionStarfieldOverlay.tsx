@@ -216,20 +216,20 @@ export default function ConnectionStarfieldOverlay({
       setAnimatingOut(true);
       setFailedStage("none");
 
-      // 50% chance to trigger stick figure dancers
-      const showDancers = Math.random() < 0.5;
+      // 99.9% chance to trigger stick figure dancers
+      const showDancers = Math.random() < 0.999;
       if (showDancers) {
         setSucceededStage("dancing");
 
-        // Dance for 5s (0.5s assembly + 5.0s dance = 5.5s total), then transition to suck-in
+        // Dance for 2.5s (0.5s assembly + 2.5s dance = 3.0s total), then transition to suck-in
         const suckInTimer = setTimeout(() => {
           setSucceededStage("suck-in");
-        }, 5500);
+        }, 3000);
 
-        // Complete overall sequence after suck-in finishes (5.5s + 1.1s = 6.6s)
+        // Complete overall sequence after suck-in finishes (3.0s + 1.1s = 4.1s)
         const endTimer = setTimeout(() => {
           onCompleteRef.current();
-        }, 6600);
+        }, 4100);
 
         return () => {
           clearTimeout(suckInTimer);
