@@ -2969,28 +2969,28 @@ export default function App() {
 
   // Synchronize saved connections from disk JSON file on mount & auto-connect to last connection
   useEffect(() => {
-    window.oracle?.loadSavedConnections?.<SavedConnection>()
-      .then((diskConns) => {
+    if (autoConnectAttemptedRef.current) return;
+    autoConnectAttemptedRef.current = true;
+
+    const performAutoConnect = async () => {
+      let conns = loadSavedConnections();
+      try {
+        const diskConns = await window.oracle?.loadSavedConnections?.<SavedConnection>();
         if (diskConns && Array.isArray(diskConns) && diskConns.length > 0) {
+          conns = diskConns;
           setSavedConnections(diskConns);
           localStorage.setItem(SAVED_CONNECTIONS_KEY, JSON.stringify(diskConns));
         }
-      })
-      .catch(() => {});
-  }, []);
+      } catch {
+        // Fallback to local state / localStorage
+      }
 
-  useEffect(() => {
-    if (autoConnectAttemptedRef.current) return;
-    if (!savedConnections || savedConnections.length === 0) return;
-    autoConnectAttemptedRef.current = true;
+      if (!conns || conns.length === 0) return;
 
-    const lastId = localStorage.getItem(LAST_CONNECTION_ID_KEY) || savedConnections[0]?.id;
-    const targetConn = savedConnections.find((c) => c.id === lastId) || savedConnections[0];
+      const lastId = localStorage.getItem(LAST_CONNECTION_ID_KEY) || conns[0]?.id;
+      const targetConn = conns.find((c) => c.id === lastId) || conns[0];
+      if (!targetConn) return;
 
-    if (!targetConn) return;
-
-    // Delay auto-connect by 450ms to ensure the entire app UI is fully mounted, rendered, and painted first!
-    const timer = window.setTimeout(async () => {
       try {
         setSelectedConnectionId(targetConn.id);
         setConnectionName(targetConn.name);
@@ -3013,6 +3013,7 @@ export default function App() {
         setConfig(connConfig);
 
         if (loadedPass) {
+          setRememberPassword(true);
           if (connectBtnRef.current) {
             setConnectTargetRect(connectBtnRef.current.getBoundingClientRect());
           }
@@ -3065,10 +3066,11 @@ export default function App() {
       } finally {
         setBusy(false);
       }
-    }, 450);
+    };
 
+    const timer = window.setTimeout(performAutoConnect, 300);
     return () => window.clearTimeout(timer);
-  }, [savedConnections, themeId]);
+  }, []);
 
   const handleDeleteConnection = useCallback(() => {
     if (!selectedConnectionId) return;
