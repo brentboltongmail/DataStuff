@@ -616,52 +616,64 @@ public final class OracleBridge {
         "SELECT object_name, object_type FROM user_objects "
             + "WHERE object_type IN ('TABLE', 'VIEW', 'SYNONYM', 'INDEX', 'PACKAGE BODY') "
             + "ORDER BY object_type, object_name";
-    try (Statement statement = requireConnection().createStatement();
-        ResultSet rs = statement.executeQuery(sql)) {
-      while (rs.next()) {
-        Map<String, Object> obj = new LinkedHashMap<>();
-        obj.put("name", rs.getString(1));
-        String type = rs.getString(2);
-        if ("PACKAGE BODY".equals(type)) {
-          type = "PACKAGE_BODY";
+    try (Statement statement = requireConnection().createStatement()) {
+      statement.setQueryTimeout(5);
+      try (ResultSet rs = statement.executeQuery(sql)) {
+        while (rs.next()) {
+          Map<String, Object> obj = new LinkedHashMap<>();
+          obj.put("name", rs.getString(1));
+          String type = rs.getString(2);
+          if ("PACKAGE BODY".equals(type)) {
+            type = "PACKAGE_BODY";
+          }
+          obj.put("type", type);
+          objects.add(obj);
         }
-        obj.put("type", type);
-        objects.add(obj);
       }
+    } catch (Exception e) {
+      System.err.println("WARN: user_objects query error/timeout: " + e.getMessage());
     }
 
     Set<String> grantNames = new LinkedHashSet<>();
-    try (Statement statement = requireConnection().createStatement();
-        ResultSet rs = statement.executeQuery(
-            "SELECT DISTINCT privilege, table_name, grantee FROM user_tab_privs ORDER BY table_name, privilege, grantee")) {
-      while (rs.next()) {
-        String priv = rs.getString(1);
-        String tbl = rs.getString(2);
-        String grantee = rs.getString(3);
-        if (priv != null && tbl != null && grantee != null) {
-          grantNames.add("GRANT " + priv + " ON " + tbl + " TO " + grantee);
+    try (Statement statement = requireConnection().createStatement()) {
+      statement.setQueryTimeout(3);
+      try (ResultSet rs = statement.executeQuery(
+          "SELECT privilege, table_name, grantee FROM ("
+              + "  SELECT privilege, table_name, grantee FROM user_tab_privs ORDER BY table_name, privilege"
+              + ") WHERE ROWNUM <= 150")) {
+        while (rs.next()) {
+          String priv = rs.getString(1);
+          String tbl = rs.getString(2);
+          String grantee = rs.getString(3);
+          if (priv != null && tbl != null && grantee != null) {
+            grantNames.add("GRANT " + priv + " ON " + tbl + " TO " + grantee);
+          }
         }
       }
     } catch (Exception ignored) {
     }
 
-    try (Statement statement = requireConnection().createStatement();
-        ResultSet rs = statement.executeQuery("SELECT DISTINCT privilege FROM user_sys_privs ORDER BY privilege")) {
-      while (rs.next()) {
-        String priv = rs.getString(1);
-        if (priv != null) {
-          grantNames.add("GRANT " + priv);
+    try (Statement statement = requireConnection().createStatement()) {
+      statement.setQueryTimeout(3);
+      try (ResultSet rs = statement.executeQuery("SELECT privilege FROM user_sys_privs WHERE ROWNUM <= 100")) {
+        while (rs.next()) {
+          String priv = rs.getString(1);
+          if (priv != null) {
+            grantNames.add("GRANT " + priv);
+          }
         }
       }
     } catch (Exception ignored) {
     }
 
-    try (Statement statement = requireConnection().createStatement();
-        ResultSet rs = statement.executeQuery("SELECT DISTINCT granted_role FROM user_role_privs ORDER BY granted_role")) {
-      while (rs.next()) {
-        String role = rs.getString(1);
-        if (role != null) {
-          grantNames.add("GRANT ROLE " + role);
+    try (Statement statement = requireConnection().createStatement()) {
+      statement.setQueryTimeout(3);
+      try (ResultSet rs = statement.executeQuery("SELECT granted_role FROM user_role_privs WHERE ROWNUM <= 100")) {
+        while (rs.next()) {
+          String role = rs.getString(1);
+          if (role != null) {
+            grantNames.add("GRANT ROLE " + role);
+          }
         }
       }
     } catch (Exception ignored) {
