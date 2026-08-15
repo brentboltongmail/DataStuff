@@ -2854,8 +2854,11 @@ export default function App() {
     window.oracle?.saveSettings?.({ sidebarWidth });
   }, [sidebarWidth]);
 
+  const selectRequestIdRef = useRef(0);
+
   const handleSelectConnection = useCallback(
     (connId: string) => {
+      const requestId = ++selectRequestIdRef.current;
       setSelectedConnectionId(connId);
       if (!connId) {
         setConnectionName("");
@@ -2869,15 +2872,6 @@ export default function App() {
       if (match) {
         setConnectionName(match.name);
         setIsProd(!!match.isProd);
-        setConfig((prev) => ({
-          ...prev,
-          user: match.user,
-          host: match.host,
-          port: match.port,
-          service: match.service,
-          tcps: !!match.tcps,
-          password: "",
-        }));
         localStorage.setItem(LAST_CONNECTION_ID_KEY, match.id);
         localStorage.setItem(
           "oracle-ide.connection",
@@ -2891,15 +2885,43 @@ export default function App() {
         );
 
         if (window.oracle?.loadPassword) {
-          window.oracle.loadPassword(match.id).then((pass) => {
-            if (pass) {
-              setConfig((prev) => ({ ...prev, password: pass }));
-              setRememberPassword(true);
-            } else {
-              setConfig((prev) => ({ ...prev, password: "" }));
+          window.oracle
+            .loadPassword(match.id)
+            .then((pass) => {
+              if (selectRequestIdRef.current !== requestId) return;
+              const loadedPass = pass || "";
+              setConfig({
+                user: match.user,
+                host: match.host,
+                port: match.port,
+                service: match.service,
+                tcps: !!match.tcps,
+                password: loadedPass,
+              });
+              setRememberPassword(!!loadedPass);
+            })
+            .catch(() => {
+              if (selectRequestIdRef.current !== requestId) return;
+              setConfig({
+                user: match.user,
+                host: match.host,
+                port: match.port,
+                service: match.service,
+                tcps: !!match.tcps,
+                password: "",
+              });
               setRememberPassword(false);
-            }
+            });
+        } else {
+          setConfig({
+            user: match.user,
+            host: match.host,
+            port: match.port,
+            service: match.service,
+            tcps: !!match.tcps,
+            password: "",
           });
+          setRememberPassword(false);
         }
       }
     },
@@ -3181,7 +3203,21 @@ export default function App() {
     setBusy(true);
     setIsExecutingQuery(false);
     setError(null);
-    setMessage("Connecting...");
+    let finalConfig = { ...config };
+
+    // Ensure we have loaded the correct saved password for selectedConnectionId before connecting
+    if (!finalConfig.password && selectedConnectionId && window.oracle?.loadPassword) {
+      try {
+        const savedPass = await window.oracle.loadPassword(selectedConnectionId);
+        if (savedPass) {
+          finalConfig.password = savedPass;
+          setConfig((prev) => ({ ...prev, password: savedPass }));
+          setRememberPassword(true);
+        }
+      } catch {
+        // ignore
+      }
+    }
 
     let hasTimedOut = false;
     const timeoutTimer = setTimeout(() => {
@@ -3193,7 +3229,7 @@ export default function App() {
     }, 10000);
 
     try {
-      const next = await window.oracle.connect(config);
+      const next = await window.oracle.connect(finalConfig);
       if (hasTimedOut) {
         await window.oracle.disconnect().catch(() => {});
         return;
@@ -3215,7 +3251,7 @@ export default function App() {
       setMessage(
         `Connected as ${next.user}@${next.connectString} (${next.mode ?? "thin"})`,
       );
-      await persistPassword(config.password, rememberPassword, selectedConnectionId);
+      await persistPassword(finalConfig.password, rememberPassword, selectedConnectionId);
       setConnectPhase("succeeded");
     } catch (err) {
       setConnectPhase("failed");
