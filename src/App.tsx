@@ -3614,13 +3614,64 @@ export default function App() {
     [setActiveSql],
   );
 
+  const triggerAutoFormat = useCallback(() => {
+    if (!autoFormat) return;
+
+    if (editorRef.current) {
+      const editor = editorRef.current;
+      const model = editor.getModel();
+      if (!model) return;
+
+      const currentFullSql = editor.getValue();
+      if (!currentFullSql || !currentFullSql.trim()) return;
+
+      const formatted = formatSql(currentFullSql);
+      if (formatted === currentFullSql) return;
+
+      const currentPos = editor.getPosition();
+      const selection = editor.getSelection();
+      const fullRange = model.getFullModelRange();
+
+      editor.executeEdits("auto-format", [
+        {
+          range: fullRange,
+          text: formatted,
+          forceMoveMarkers: true,
+        },
+      ]);
+      if (currentPos) editor.setPosition(currentPos);
+      if (selection) editor.setSelection(selection);
+      setActiveSql(formatted);
+    } else if (sql) {
+      const formatted = formatSql(sql);
+      if (formatted !== sql) {
+        setActiveSql(formatted);
+      }
+    }
+  }, [autoFormat, sql, setActiveSql]);
+
   const handleRunQueryBlock = useCallback(
     async (block: SqlStatementBlock) => {
       flushPendingSqlUpdate();
       if (!status.connected || busy) return;
-      setRunningBlockId(block.id);
-      const statement = block.text;
-      const startLine = block.startLine;
+
+      if (autoFormat) {
+        triggerAutoFormat();
+      }
+
+      let statement = block.text;
+      let startLine = block.startLine;
+
+      if (autoFormat && editorRef.current) {
+        const { statement: freshStmt, startLine: freshLine } = resolveExecutableSqlBlock();
+        if (freshStmt) {
+          statement = freshStmt;
+          startLine = freshLine;
+        }
+      }
+
+      const matchingBlock = sqlBlocks.find((b) => b.startLine === startLine) ?? block;
+      setRunningBlockId(matchingBlock.id);
 
       const detectedBinds = parseBindVariables(statement);
       if (detectedBinds.length > 0) {
@@ -3643,6 +3694,10 @@ export default function App() {
       flushPendingSqlUpdate,
       status.connected,
       busy,
+      autoFormat,
+      triggerAutoFormat,
+      resolveExecutableSqlBlock,
+      sqlBlocks,
       bindValues,
       executeQueryWithBinds,
     ],
@@ -3656,7 +3711,7 @@ export default function App() {
     }
 
     if (autoFormat) {
-      onFormatSqlRef.current();
+      triggerAutoFormat();
     }
 
     const { statement, startLine } = resolveExecutableSqlBlock();
@@ -3692,6 +3747,7 @@ export default function App() {
     status.connected,
     busy,
     autoFormat,
+    triggerAutoFormat,
     resolveExecutableSqlBlock,
     sqlBlocks,
     bindValues,
@@ -3706,6 +3762,10 @@ export default function App() {
     if (!status.connected) {
       setError("Connect to Oracle database first");
       return;
+    }
+
+    if (autoFormat) {
+      triggerAutoFormat();
     }
 
     const { statement } = resolveExecutableSqlBlock();
