@@ -44,8 +44,8 @@ app.name = "DataStuff";
 app.setName("DataStuff");
 process.title = "DataStuff";
 
-// Cap V8 JavaScript memory heap ceiling at 768 MB
-app.commandLine.appendSwitch("js-flags", "--max-old-space-size=768");
+// Set V8 JavaScript memory heap ceiling at 4096 MB (4 GB)
+app.commandLine.appendSwitch("js-flags", "--max-old-space-size=4096");
 
 process.env.DIST = path.join(__dirname, "../dist");
 process.env.VITE_PUBLIC = app.isPackaged
