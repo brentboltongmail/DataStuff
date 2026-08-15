@@ -22,6 +22,7 @@ import {
 import { formatCell, isNullCell, resultToCsv } from "./csv";
 import {
   buildUpdate,
+  canInjectRowId,
   detectSingleSourceTable,
   hasRowIdColumn,
   injectRowId,
@@ -3241,6 +3242,7 @@ export default function App() {
       // ignore
     } finally {
       setBusy(false);
+      setIsExecutingQuery(false);
       setRunningBlockId(null);
       setRunningTabId(null);
       setError("Query execution cancelled by user");
@@ -3298,7 +3300,7 @@ export default function App() {
         let next: QueryResult;
         let meta: EditMeta | null = null;
 
-        if (table) {
+        if (table && canInjectRowId(statement)) {
           try {
             const injected = injectRowId(statement);
             const {
@@ -6136,8 +6138,8 @@ export default function App() {
                             style={{ width: `${currentProgressPercent}%` }}
                           />
                           <div className="query-progress-text">
-                            <span>Estimated Completion... {Math.round(currentProgressPercent)}%</span>
-                            <span>{(queryElapsedTimeMs / 1000).toFixed(2)}s total time</span>
+                            <span>Executing query... ({Math.round(currentProgressPercent)}% est.)</span>
+                            <span>{(queryElapsedTimeMs / 1000).toFixed(2)}s elapsed</span>
                           </div>
                         </div>
                         <div className="kitt-exec-outline" />
@@ -6447,14 +6449,14 @@ export default function App() {
         {busy && isExecutingQuery && currentQueryEstimate ? (
           <span
             className="live-query-progress-pill"
-            title={`Estimated completion: ${Math.round(currentProgressPercent)}% · Realtime elapsed: ${(queryElapsedTimeMs / 1000).toFixed(2)}s`}
+            title={`Executing query · Estimated completion: ${Math.round(currentProgressPercent)}% · Realtime elapsed: ${(queryElapsedTimeMs / 1000).toFixed(2)}s`}
           >
             <span
               className="live-query-progress-mini-bar"
               style={{ width: `${currentProgressPercent}%` }}
             />
-            <span>Estimated Completion... {Math.round(currentProgressPercent)}%</span>
-            <span style={{ marginLeft: "10px", opacity: 0.85 }}>{(queryElapsedTimeMs / 1000).toFixed(2)}s total time</span>
+            <span>Executing query... ({Math.round(currentProgressPercent)}% est.)</span>
+            <span style={{ marginLeft: "10px", opacity: 0.85 }}>{(queryElapsedTimeMs / 1000).toFixed(2)}s elapsed</span>
           </span>
         ) : busy && queryStartTime ? (
           <span className="live-query-timer" title="Current SQL query execution length in real time">

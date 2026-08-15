@@ -32,10 +32,30 @@ export function isRowIdColumn(name: string): boolean {
   return n === "ROWID" || n === "ORA$ROWID";
 }
 
+/** Check if a query can safely have ROWID injected via subquery wrapper. */
+export function canInjectRowId(sql: string): boolean {
+  const cleaned = sql
+    .replace(/^\s*\/\*[\s\S]*?\*\//, "")
+    .replace(/^\s*--[^\n]*/gm, "")
+    .trim();
+
+  // Subquery ROWID wrapper (SELECT ROWID, q.* FROM (...) q) fails in Oracle (ORA-01445)
+  // if the query contains ORDER BY, GROUP BY, HAVING, DISTINCT, UNION, INTERSECT, MINUS, WITH, etc.
+  if (
+    /\b(order\s+by|group\s+by|having|distinct|union|intersect|minus|with)\b/i.test(
+      cleaned,
+    )
+  ) {
+    return false;
+  }
+  return true;
+}
+
 /** Wrap a SELECT so Oracle ROWID is available for later UPDATEs. */
 export function injectRowId(sql: string): string {
   const cleaned = sql.replace(/;+\s*$/, "").trim();
   if (/\browid\b/i.test(cleaned)) return cleaned;
+  if (!canInjectRowId(sql)) return cleaned;
   return `SELECT ROWID AS "ORA$ROWID", q.* FROM (${cleaned}) q`;
 }
 
