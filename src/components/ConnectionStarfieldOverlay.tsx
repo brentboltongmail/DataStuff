@@ -27,6 +27,13 @@ interface Point {
   y: number;
 }
 
+interface DancerPoint {
+  x: number;
+  y: number;
+  part: "head" | "torso" | "left-arm" | "right-arm" | "left-leg" | "right-leg" | "stage";
+  dancerIndex: 0 | 1 | 2;
+}
+
 const STAR_COLORS = [
   "#ffffff",
   "#c084fc",
@@ -80,6 +87,93 @@ function generateSadFacePositions(count: number): Point[] {
   return points;
 }
 
+function generateDancerPositions(count: number): DancerPoint[] {
+  const points: DancerPoint[] = [];
+  const centers = [22, 50, 78];
+
+  centers.forEach((cx, dIndex) => {
+    const dancerIndex = dIndex as 0 | 1 | 2;
+
+    // 1. Head (8 stars in circle at cx, 30%)
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2;
+      points.push({
+        x: cx + Math.cos(angle) * 3.8,
+        y: 30 + Math.sin(angle) * 3.8,
+        part: "head",
+        dancerIndex,
+      });
+    }
+
+    // 2. Torso (5 stars in line Y = 36% to 52%)
+    for (let i = 0; i < 5; i++) {
+      points.push({
+        x: cx,
+        y: 36 + (i / 4) * 16,
+        part: "torso",
+        dancerIndex,
+      });
+    }
+
+    // 3. Left Arm (4 stars)
+    for (let i = 0; i < 4; i++) {
+      const t = (i + 1) / 4;
+      points.push({
+        x: cx - t * 7.5,
+        y: 39 - t * 5,
+        part: "left-arm",
+        dancerIndex,
+      });
+    }
+
+    // 4. Right Arm (4 stars)
+    for (let i = 0; i < 4; i++) {
+      const t = (i + 1) / 4;
+      points.push({
+        x: cx + t * 7.5,
+        y: 39 - t * 5,
+        part: "right-arm",
+        dancerIndex,
+      });
+    }
+
+    // 5. Left Leg (5 stars)
+    for (let i = 0; i < 5; i++) {
+      const t = (i + 1) / 5;
+      points.push({
+        x: cx - t * 5.5,
+        y: 52 + t * 16,
+        part: "left-leg",
+        dancerIndex,
+      });
+    }
+
+    // 6. Right Leg (5 stars)
+    for (let i = 0; i < 5; i++) {
+      const t = (i + 1) / 5;
+      points.push({
+        x: cx + t * 5.5,
+        y: 52 + t * 16,
+        part: "right-leg",
+        dancerIndex,
+      });
+    }
+  });
+
+  // Remaining floor lights (2 stars)
+  const remaining = count - points.length;
+  for (let i = 0; i < remaining; i++) {
+    points.push({
+      x: 36 + i * 28,
+      y: 72,
+      part: "stage",
+      dancerIndex: (i % 3) as 0 | 1 | 2,
+    });
+  }
+
+  return points;
+}
+
 export default function ConnectionStarfieldOverlay({
   phase,
   targetRect,
@@ -88,6 +182,7 @@ export default function ConnectionStarfieldOverlay({
 }: Props) {
   const [animatingOut, setAnimatingOut] = useState(false);
   const [failedStage, setFailedStage] = useState<"none" | "face" | "melting">("none");
+  const [succeededStage, setSucceededStage] = useState<"none" | "dancing" | "suck-in">("none");
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
 
@@ -113,19 +208,44 @@ export default function ConnectionStarfieldOverlay({
   }, []);
 
   const sadFacePositions = useMemo(() => generateSadFacePositions(95), []);
+  const dancerPositions = useMemo(() => generateDancerPositions(95), []);
 
   // Handle phase transitions
   useEffect(() => {
     if (phase === "succeeded") {
       setAnimatingOut(true);
       setFailedStage("none");
-      const timer = setTimeout(() => {
-        onCompleteRef.current();
-      }, 1500);
-      return () => clearTimeout(timer);
+
+      // 50% chance to trigger stick figure dancers
+      const showDancers = Math.random() < 0.5;
+      if (showDancers) {
+        setSucceededStage("dancing");
+
+        // Dance for 5s (0.5s assembly + 5.0s dance = 5.5s total), then transition to suck-in
+        const suckInTimer = setTimeout(() => {
+          setSucceededStage("suck-in");
+        }, 5500);
+
+        // Complete overall sequence after suck-in finishes (5.5s + 1.1s = 6.6s)
+        const endTimer = setTimeout(() => {
+          onCompleteRef.current();
+        }, 6600);
+
+        return () => {
+          clearTimeout(suckInTimer);
+          clearTimeout(endTimer);
+        };
+      } else {
+        setSucceededStage("suck-in");
+        const timer = setTimeout(() => {
+          onCompleteRef.current();
+        }, 1500);
+        return () => clearTimeout(timer);
+      }
     }
     if (phase === "failed") {
       setAnimatingOut(true);
+      setSucceededStage("none");
       setFailedStage("face");
 
       // Hold sad face for 2.1s (0.6s snap + 1.5s hold), then melt down off screen
@@ -146,6 +266,7 @@ export default function ConnectionStarfieldOverlay({
     if (phase === "connecting") {
       setAnimatingOut(false);
       setFailedStage("none");
+      setSucceededStage("none");
     }
   }, [phase]);
 
@@ -157,7 +278,7 @@ export default function ConnectionStarfieldOverlay({
 
   return (
     <div
-      className={`starfield-overlay ${phase} ${animatingOut ? "animating-out" : ""} failed-stage-${failedStage}`}
+      className={`starfield-overlay ${phase} ${animatingOut ? "animating-out" : ""} failed-stage-${failedStage} succeeded-stage-${succeededStage}`}
       aria-hidden="true"
     >
       {/* Soft dark translucent galaxy aura backdrop */}
@@ -245,7 +366,7 @@ export default function ConnectionStarfieldOverlay({
         </div>
       </div>
 
-      {/* Twinkling, flying, or sad face melting stars */}
+      {/* Twinkling, flying, sad face, or dancing stars */}
       <div className="starfield-container">
         {stars.map((star, index) => {
           // Convert star percentage to screen pixels
@@ -261,33 +382,51 @@ export default function ConnectionStarfieldOverlay({
           const deltaSadX = sadPoint.x - star.x;
           const deltaSadY = sadPoint.y - star.y;
 
-          const isFlying = phase === "succeeded";
+          // Dancer offsets
+          const dancerPoint = dancerPositions[index] || { x: 50, y: 50, part: "stage", dancerIndex: 1 };
+          const deltaDancerX = dancerPoint.x - star.x;
+          const deltaDancerY = dancerPoint.y - star.y;
+
+          const isDancing = phase === "succeeded" && succeededStage === "dancing";
+          const isSuckingIn = phase === "succeeded" && succeededStage === "suck-in";
           const isSadFace = phase === "failed" && failedStage === "face";
           const isMelting = phase === "failed" && failedStage === "melting";
 
           let animClass = "twinkle";
-          if (isFlying) animClass = "fly-to-button";
+          if (isSuckingIn) animClass = "fly-to-button";
+          else if (isDancing) animClass = `dancing fly-to-dancer dance-fig-${dancerPoint.dancerIndex} dance-part-${dancerPoint.part}`;
           else if (isSadFace) animClass = "fly-to-sad-face";
           else if (isMelting) animClass = "melt-down";
+
+          const dancerColors = [
+            ["#38bdf8", "#67e8f9", "#7dd3fc"], // Dancer 0: Electric Cyan
+            ["#f472b6", "#ec4899", "#f43f5e"], // Dancer 1: Hot Pink
+            ["#c084fc", "#fef08a", "#a855f7"], // Dancer 2: Neon Purple & Gold
+          ];
+          const dancerColor = dancerColors[dancerPoint.dancerIndex][index % 3];
 
           const style: React.CSSProperties & Record<string, string | number> = {
             left: `${star.x}%`,
             top: `${star.y}%`,
             width: `${star.size}px`,
             height: `${star.size}px`,
-            color: isSadFace || isMelting ? "#f472b6" : star.color,
+            color: isDancing ? dancerColor : isSadFace || isMelting ? "#f472b6" : star.color,
             animationDelay: isMelting
               ? `${(index % 12) * 25}ms`
               : isSadFace
               ? `${(star.flyDelay / 2).toFixed(0)}ms`
-              : isFlying
+              : isDancing
+              ? `${(star.flyDelay / 3).toFixed(0)}ms`
+              : isSuckingIn
               ? `${star.flyDelay}ms`
               : `${star.delay}s`,
             animationDuration: isMelting
               ? "1100ms"
               : isSadFace
               ? "600ms"
-              : isFlying
+              : isDancing
+              ? "500ms"
+              : isSuckingIn
               ? "1100ms"
               : `${star.duration}s`,
             transform: `rotate(${star.rotate}deg)`,
@@ -295,6 +434,8 @@ export default function ConnectionStarfieldOverlay({
             "--delta-y": `${deltaY}px`,
             "--delta-sad-x": `${deltaSadX}vw`,
             "--delta-sad-y": `${deltaSadY}vh`,
+            "--delta-dancer-x": `${deltaDancerX}vw`,
+            "--delta-dancer-y": `${deltaDancerY}vh`,
             "--star-y-vh": `${star.y}vh`,
           };
 
