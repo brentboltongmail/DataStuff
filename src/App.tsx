@@ -5795,16 +5795,20 @@ export default function App() {
             className={`status-dot ${
               isDisconnecting
                 ? "disconnecting"
-                : status.connected
-                  ? "on"
-                  : ""
+                : connectPhase === "connecting"
+                  ? "connecting"
+                  : status.connected
+                    ? "on"
+                    : ""
             }`}
             title={
               isDisconnecting
                 ? "Disconnecting from database..."
-                : status.connected
-                  ? `Connected as ${status.user}@${status.connectString} (${status.mode ?? "jdbc"}${config.tcps ? " · tcps" : ""})`
-                  : "Not connected"
+                : connectPhase === "connecting"
+                  ? "Connecting to database..."
+                  : status.connected
+                    ? `Connected as ${status.user}@${status.connectString} (${status.mode ?? "jdbc"}${config.tcps ? " · tcps" : ""})`
+                    : "Not connected"
             }
           />
           {memoryUsage && (

@@ -439,6 +439,30 @@ input:focus {
   box-shadow: 0 0 0 3px var(--status-ok-glow);
 }
 
+.status-dot.connecting {
+  background: #a855f7;
+  box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.35);
+  animation: status-dot-pulse-purple 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes status-dot-pulse-purple {
+  0% {
+    background: #a855f7;
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.25);
+    transform: scale(0.92);
+  }
+  50% {
+    background: #f0abfc;
+    box-shadow: 0 0 12px rgba(240, 171, 252, 0.75);
+    transform: scale(1.15);
+  }
+  100% {
+    background: #a855f7;
+    box-shadow: 0 0 0 5px rgba(168, 85, 247, 0.45);
+    transform: scale(1.02);
+  }
+}
+
 .status-dot.disconnecting {
   background: #eab308;
   box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.35);
