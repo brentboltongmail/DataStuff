@@ -2132,19 +2132,29 @@ export default function App() {
     return tabStates[activeTabId] ?? defaultTabState;
   }, [activeTabId, tabStates, defaultTabState]);
 
-  const updateActiveTabState = useCallback(
-    (updater: Partial<TabState> | ((prev: TabState) => Partial<TabState>)) => {
-      if (!activeTabId) return;
+  const updateTabStateById = useCallback(
+    (
+      tabId: string | null,
+      updater: Partial<TabState> | ((prev: TabState) => Partial<TabState>),
+    ) => {
+      if (!tabId) return;
       setTabStates((prevMap) => {
-        const current = prevMap[activeTabId] ?? defaultTabState;
+        const current = prevMap[tabId] ?? defaultTabState;
         const patch = typeof updater === "function" ? updater(current) : updater;
         return {
           ...prevMap,
-          [activeTabId]: { ...current, ...patch },
+          [tabId]: { ...current, ...patch },
         };
       });
     },
-    [activeTabId, defaultTabState],
+    [defaultTabState],
+  );
+
+  const updateActiveTabState = useCallback(
+    (updater: Partial<TabState> | ((prev: TabState) => Partial<TabState>)) => {
+      updateTabStateById(activeTabId, updater);
+    },
+    [activeTabId, updateTabStateById],
   );
 
   const result = activeTabState.result;
@@ -3281,16 +3291,21 @@ export default function App() {
       currentBinds: Record<string, BindVarParam>,
       startLine = 1,
     ) => {
+      const targetTabId = activeTabId;
       setBusy(true);
       setIsExecutingQuery(true);
       setConnectPhase("idle");
       setExecutingStatementText(statement);
-      setRunningTabId(activeTabId);
+      setRunningTabId(targetTabId);
       setQueryStartTime(Date.now());
-      setError(null);
-      setBottomTab("results");
-      setPendingEdits({});
-      setEditMeta(null);
+      if (targetTabId) {
+        updateTabStateById(targetTabId, {
+          error: null,
+          bottomTab: "results",
+          pendingEdits: {},
+          editMeta: null,
+        });
+      }
 
       if (editorRef.current && monacoApiRef.current) {
         const model = editorRef.current.getModel();
@@ -3356,8 +3371,6 @@ export default function App() {
           );
         }
 
-        setResult(next);
-        setEditMeta(next.isSelect ? meta : null);
         if (next.elapsedMs > 0) {
           setQueryStats((prev) => {
             const nextStats = updateQueryStat(prev, statement, next.elapsedMs);
@@ -3378,11 +3391,19 @@ export default function App() {
         } else {
           summary = `${next.rowsAffected} row${next.rowsAffected === 1 ? "" : "s"} affected in ${formatElapsed(next.elapsedMs)}`;
         }
-        setMessage(
-          next.isSelect
-            ? summary
-            : `${summary} — commit or rollback to finish`,
-        );
+
+        const summaryMsg = next.isSelect
+          ? summary
+          : `${summary} — commit or rollback to finish`;
+
+        if (targetTabId) {
+          updateTabStateById(targetTabId, {
+            result: next,
+            editMeta: next.isSelect ? meta : null,
+            message: summaryMsg,
+            error: null,
+          });
+        }
         pushHistory(statement, true, summary);
       } catch (err) {
         let text = err instanceof Error ? err.message : String(err);
@@ -3433,8 +3454,12 @@ export default function App() {
               }
             }
           }
-          setError(text);
-          setMessage("Execute failed");
+          if (targetTabId) {
+            updateTabStateById(targetTabId, {
+              error: text,
+              message: "Execute failed",
+            });
+          }
         }
         pushHistory(statement, false, text.split("\n")[0] ?? "Error");
       } finally {
