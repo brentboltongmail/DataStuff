@@ -5983,7 +5983,7 @@ export default function App() {
 
                           const isCopied = copiedBlockId === block.id;
 
-                          const MIN_BAR_HEIGHT = 56;
+                          const MIN_BAR_HEIGHT = 3 * editorLineHeight;
                           const barHeight = Math.max(MIN_BAR_HEIGHT, height);
 
                           if (top + barHeight < -50 || top > viewportHeight + 100)

@@ -155,8 +155,18 @@ export function formatSql(sql: string): string {
     return chunk.hasSemicolon && !formatted.endsWith(";") ? formatted + ";" : formatted;
   });
 
-  // Keep separate queries separated by 2 blank lines (\n\n\n)
-  return formattedQueries.join("\n\n\n");
+  // Join queries with dynamic blank lines ensuring at least 1 empty line gap between copy/run buttons (which are min 3 lines tall)
+  let result = "";
+  for (let i = 0; i < formattedQueries.length; i++) {
+    const queryStr = formattedQueries[i];
+    result += queryStr;
+    if (i < formattedQueries.length - 1) {
+      const lineCount = queryStr.split("\n").length;
+      const blankLinesNeeded = Math.max(1, 4 - lineCount);
+      result += "\n".repeat(blankLinesNeeded + 1);
+    }
+  }
+  return result;
 }
 
 function formatSingleQuery(cleanSql: string): string {
