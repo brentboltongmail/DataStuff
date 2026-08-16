@@ -6689,7 +6689,7 @@ export default function App() {
                           if (msg.startsWith("Inserted")) return "Insert Executed";
                           if (msg.startsWith("Updated")) return "Update Executed";
                           if (msg.startsWith("Merged")) return "Merge Executed";
-                          const upper = (activeSql || "").trim().toUpperCase();
+                          const upper = (sql || "").trim().toUpperCase();
                           if (upper.startsWith("DELETE")) return "Delete Executed";
                           if (upper.startsWith("INSERT")) return "Insert Executed";
                           if (upper.startsWith("UPDATE")) return "Update Executed";
