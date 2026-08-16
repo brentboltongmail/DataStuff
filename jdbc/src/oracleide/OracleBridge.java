@@ -589,9 +589,13 @@ public final class OracleBridge {
         result.put("truncated", truncated);
       }
     } else {
+      int updateCount = statement.getUpdateCount();
+      if (updateCount < 0) {
+        updateCount = 0;
+      }
       result.put("columns", new ArrayList<>());
       result.put("rows", new ArrayList<>());
-      result.put("rowsAffected", statement.getUpdateCount() < 0 ? 0 : statement.getUpdateCount());
+      result.put("rowsAffected", updateCount);
       result.put("isSelect", false);
       result.put("truncated", false);
     }
