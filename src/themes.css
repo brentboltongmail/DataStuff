@@ -188,9 +188,9 @@
 .rainbow-splatter-blob {
   position: absolute;
   border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
-  filter: blur(55px);
-  opacity: 0.5;
-  animation: rainbow-blob-morph 10s infinite alternate ease-in-out;
+  filter: blur(65px);
+  opacity: 0.28;
+  animation: rainbow-blob-morph 16s infinite alternate ease-in-out;
 }
 
 .rainbow-blob-1 {
@@ -289,20 +289,20 @@
   background: conic-gradient(
     from 180deg,
     transparent 0deg,
-    rgba(255, 0, 127, 0.22) 15deg,
+    rgba(255, 0, 127, 0.04) 15deg,
     transparent 30deg,
-    rgba(0, 255, 204, 0.22) 60deg,
+    rgba(0, 255, 204, 0.04) 60deg,
     transparent 75deg,
-    rgba(255, 230, 0, 0.22) 105deg,
+    rgba(255, 230, 0, 0.04) 105deg,
     transparent 120deg,
-    rgba(153, 0, 255, 0.22) 150deg,
+    rgba(153, 0, 255, 0.04) 150deg,
     transparent 165deg,
-    rgba(0, 255, 102, 0.22) 210deg,
+    rgba(0, 255, 102, 0.04) 210deg,
     transparent 225deg,
-    rgba(255, 85, 0, 0.22) 270deg,
+    rgba(255, 85, 0, 0.04) 270deg,
     transparent 285deg
   );
-  animation: rainbow-prism-spin 22s linear infinite reverse;
+  animation: rainbow-prism-spin 35s linear infinite reverse;
 }
 
 @keyframes rainbow-prism-spin {
@@ -312,15 +312,15 @@
 
 .rainbow-splatter-starburst {
   position: absolute;
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-  animation: rainbow-starburst-pulse 2.2s infinite ease-in-out alternate;
+  animation: rainbow-starburst-pulse 4.5s infinite ease-in-out alternate;
 }
 
 @keyframes rainbow-starburst-pulse {
-  0% { transform: scale(0.4) rotate(0deg); opacity: 0.3; }
-  100% { transform: scale(1.5) rotate(180deg); opacity: 1; filter: drop-shadow(0 0 12px currentColor); }
+  0% { transform: scale(0.8) rotate(0deg); opacity: 0.45; }
+  100% { transform: scale(1.05) rotate(60deg); opacity: 0.6; filter: drop-shadow(0 0 4px currentColor); }
 }
 
 [data-theme="rainbow"] .grid-header-cell {
@@ -339,12 +339,12 @@
     border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
   }
   50% {
-    transform: translate(45px, -35px) scale(1.18) rotate(120deg);
-    border-radius: 60% 40% 30% 70% / 50% 30% 70% 40%;
+    transform: translate(25px, -20px) scale(1.04) rotate(40deg);
+    border-radius: 50% 50% 40% 60% / 45% 40% 60% 55%;
   }
   100% {
-    transform: translate(-35px, 45px) scale(0.88) rotate(240deg);
-    border-radius: 30% 70% 50% 50% / 60% 40% 40% 60%;
+    transform: translate(-20px, 25px) scale(0.96) rotate(80deg);
+    border-radius: 45% 55% 60% 40% / 55% 45% 45% 55%;
   }
 }
 
@@ -353,15 +353,15 @@
   inset: -50%;
   background: conic-gradient(
     from 0deg,
-    rgba(255, 0, 85, 0.16),
-    rgba(255, 85, 0, 0.16),
-    rgba(255, 204, 0, 0.16),
-    rgba(0, 255, 102, 0.16),
-    rgba(0, 204, 255, 0.16),
-    rgba(153, 0, 255, 0.16),
-    rgba(255, 0, 85, 0.16)
+    rgba(255, 0, 85, 0.03),
+    rgba(255, 85, 0, 0.03),
+    rgba(255, 204, 0, 0.03),
+    rgba(0, 255, 102, 0.03),
+    rgba(0, 204, 255, 0.03),
+    rgba(153, 0, 255, 0.03),
+    rgba(255, 0, 85, 0.03)
   );
-  animation: rainbow-spin 18s linear infinite;
+  animation: rainbow-spin 30s linear infinite;
 }
 
 @keyframes rainbow-spin {
@@ -371,22 +371,22 @@
 
 .rainbow-paint-drop {
   position: absolute;
-  width: 14px;
-  height: 14px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  box-shadow: 0 0 16px currentColor;
-  opacity: 0.75;
-  animation: rainbow-float-drop 4.5s infinite ease-in-out alternate;
+  box-shadow: 0 0 8px currentColor;
+  opacity: 0.5;
+  animation: rainbow-float-drop 6s infinite ease-in-out alternate;
 }
 
 @keyframes rainbow-float-drop {
   0% {
-    transform: translateY(0) scale(0.8);
-    opacity: 0.45;
+    transform: translateY(0) scale(0.9);
+    opacity: 0.4;
   }
   100% {
-    transform: translateY(-30px) scale(1.35);
-    opacity: 0.95;
+    transform: translateY(-15px) scale(1.05);
+    opacity: 0.55;
   }
 }
 
