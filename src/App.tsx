@@ -1455,7 +1455,7 @@ const DiscoAudioPlayer: React.FC = () => {
     masterGain.gain.setValueAtTime(0.22, now);
     masterGain.connect(ctx.destination);
 
-    // 1. KICK DRUM (Four-on-the-floor: steps 0, 4, 8, 12)
+    // --- 1. KICK DRUM (Four-on-the-floor across all 4 bars) ---
     if (step % 4 === 0) {
       const kickOsc = ctx.createOscillator();
       const kickGain = ctx.createGain();
@@ -1470,8 +1470,11 @@ const DiscoAudioPlayer: React.FC = () => {
       kickOsc.stop(now + 0.13);
     }
 
-    // 2. SNARE / CLAP (Steps 4, 12)
-    if (step === 4 || step === 12) {
+    // --- 2. SNARE / CLAP (Backbeats: 4, 12, 20, 28, 36, 44, 52 + Breakdown Fill 56-63) ---
+    const isSnareBackbeat = step % 8 === 4;
+    const isSnareFill = step >= 56 && (step % 2 === 0 || step >= 60);
+
+    if (isSnareBackbeat || isSnareFill) {
       const bufferSize = Math.floor(ctx.sampleRate * 0.09);
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const output = buffer.getChannelData(0);
@@ -1483,10 +1486,10 @@ const DiscoAudioPlayer: React.FC = () => {
 
       const filter = ctx.createBiquadFilter();
       filter.type = "highpass";
-      filter.frequency.value = 1100;
+      filter.frequency.value = isSnareFill ? 1400 : 1100;
 
       const snareGain = ctx.createGain();
-      snareGain.gain.setValueAtTime(0.65, now);
+      snareGain.gain.setValueAtTime(isSnareFill ? 0.45 : 0.65, now);
       snareGain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
 
       noise.connect(filter);
@@ -1495,8 +1498,9 @@ const DiscoAudioPlayer: React.FC = () => {
       noise.start(now);
     }
 
-    // 3. DISCO OPEN HI-HAT (Offbeats: 2, 6, 10, 14)
+    // --- 3. DISCO OPEN HI-HAT & CLOSED HI-HAT ---
     if (step % 4 === 2) {
+      // Open Hat on offbeats
       const bufferSize = Math.floor(ctx.sampleRate * 0.14);
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const output = buffer.getChannelData(0);
@@ -1518,16 +1522,73 @@ const DiscoAudioPlayer: React.FC = () => {
       filter.connect(hatGain);
       hatGain.connect(masterGain);
       hat.start(now);
+    } else if (step % 2 === 1) {
+      // Ticking 16th Closed Hat
+      const bufferSize = Math.floor(ctx.sampleRate * 0.03);
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+      const tick = ctx.createBufferSource();
+      tick.buffer = buffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = "highpass";
+      filter.frequency.value = 8500;
+
+      const tickGain = ctx.createGain();
+      tickGain.gain.setValueAtTime(0.18, now);
+      tickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+
+      tick.connect(filter);
+      filter.connect(tickGain);
+      tickGain.connect(masterGain);
+      tick.start(now);
     }
 
-    // 4. OCTAVE DISCO BASSLINE (E1, E2, G1, G2, A1, A2, B1, B2...)
-    const bassNotes = [
-      41.2, 82.4, 41.2, 82.4,
-      49.0, 98.0, 55.0, 110.0,
-      61.7, 123.5, 73.4, 146.8,
-      65.4, 130.8, 61.7, 123.5
+    // --- 4. CRASH CYMBAL (On bar 1 start and bar 3 transition) ---
+    if (step === 0 || step === 32) {
+      const bufferSize = Math.floor(ctx.sampleRate * 0.45);
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+      const crash = ctx.createBufferSource();
+      crash.buffer = buffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = "highpass";
+      filter.frequency.value = 5000;
+
+      const crashGain = ctx.createGain();
+      crashGain.gain.setValueAtTime(0.4, now);
+      crashGain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+
+      crash.connect(filter);
+      filter.connect(crashGain);
+      crashGain.connect(masterGain);
+      crash.start(now);
+    }
+
+    // --- 5. DYNAMIC 64-NOTE BASSLINE (4-Bar Disco Progression) ---
+    const bassline64 = [
+      // Bar 1: Em7 Octave Jump
+      41.2, 82.4, 41.2, 82.4, 49.0, 98.0, 55.0, 110.0,
+      61.7, 123.5, 73.4, 146.8, 41.2, 82.4, 49.0, 98.0,
+      // Bar 2: Am7 Funky Walking Bass
+      55.0, 110.0, 65.4, 130.8, 73.4, 146.8, 82.4, 164.8,
+      98.0, 196.0, 82.4, 164.8, 73.4, 146.8, 65.4, 130.8,
+      // Bar 3: D9 / Bm7 Slap Groove
+      36.7, 73.4, 46.2, 92.5, 55.0, 110.0, 65.4, 130.8,
+      61.7, 123.5, 73.4, 146.8, 92.5, 185.0, 110.0, 220.0,
+      // Bar 4: Cmaj7 -> B7 Chromatic Turnaround & Breakdown Run
+      65.4, 130.8, 69.3, 138.6, 73.4, 146.8, 77.8, 155.6,
+      82.4, 164.8, 92.5, 98.0, 103.8, 110.0, 116.5, 123.5,
     ];
-    const bassFreq = bassNotes[step % 16];
+
+    const bassFreq = bassline64[step % 64];
     const bassOsc = ctx.createOscillator();
     const bassFilter = ctx.createBiquadFilter();
     const bassGain = ctx.createGain();
@@ -1536,10 +1597,10 @@ const DiscoAudioPlayer: React.FC = () => {
     bassOsc.frequency.setValueAtTime(bassFreq, now);
 
     bassFilter.type = "lowpass";
-    bassFilter.frequency.setValueAtTime(1100, now);
-    bassFilter.frequency.exponentialRampToValueAtTime(280, now + 0.09);
+    bassFilter.frequency.setValueAtTime(1200, now);
+    bassFilter.frequency.exponentialRampToValueAtTime(300, now + 0.09);
 
-    bassGain.gain.setValueAtTime(0.55, now);
+    bassGain.gain.setValueAtTime(0.5, now);
     bassGain.gain.exponentialRampToValueAtTime(0.01, now + 0.11);
 
     bassOsc.connect(bassFilter);
@@ -1548,11 +1609,25 @@ const DiscoAudioPlayer: React.FC = () => {
     bassOsc.start(now);
     bassOsc.stop(now + 0.12);
 
-    // 5. DISCO CHORD STABS (Em7 / Am7)
-    if (step === 0 || step === 6 || step === 8 || step === 14) {
-      const chordFreqs = step < 8
-        ? [329.63, 392.00, 493.88, 587.33]
-        : [440.00, 523.25, 659.25, 783.99];
+    // --- 6. 4-BAR DISCO CHORD STABS (Em7 -> Am7 -> D9 -> Cmaj7/B7) ---
+    const chordStabSteps = new Set([0, 6, 8, 14, 16, 22, 24, 30, 32, 38, 40, 46, 48, 52, 56, 60]);
+    if (chordStabSteps.has(step)) {
+      let chordFreqs: number[] = [];
+      if (step < 16) {
+        // Bar 1: Em7
+        chordFreqs = [329.63, 392.00, 493.88, 587.33];
+      } else if (step < 32) {
+        // Bar 2: Am7
+        chordFreqs = [440.00, 523.25, 659.25, 783.99];
+      } else if (step < 48) {
+        // Bar 3: D9
+        chordFreqs = [293.66, 369.99, 440.00, 523.25, 659.25];
+      } else {
+        // Bar 4: Cmaj7 -> B7alt
+        chordFreqs = step < 56
+          ? [261.63, 329.63, 392.00, 493.88]
+          : [246.94, 311.13, 369.99, 440.00];
+      }
 
       chordFreqs.forEach((freq) => {
         const chordOsc = ctx.createOscillator();
@@ -1563,9 +1638,9 @@ const DiscoAudioPlayer: React.FC = () => {
         chordOsc.frequency.setValueAtTime(freq, now);
 
         chordFilter.type = "bandpass";
-        chordFilter.frequency.setValueAtTime(1800, now);
+        chordFilter.frequency.setValueAtTime(1900, now);
 
-        chordGain.gain.setValueAtTime(0.15, now);
+        chordGain.gain.setValueAtTime(0.14, now);
         chordGain.gain.exponentialRampToValueAtTime(0.001, now + 0.17);
 
         chordOsc.connect(chordFilter);
@@ -1574,6 +1649,46 @@ const DiscoAudioPlayer: React.FC = () => {
         chordOsc.start(now);
         chordOsc.stop(now + 0.18);
       });
+    }
+
+    // --- 7. SYNTH BRASS / LEAD MELODY (Bars 2 & 4 Riffs) ---
+    const leadRiffMap: Record<number, number> = {
+      // Bar 2 Riff (steps 18, 20, 26, 28)
+      18: 659.25, // E5
+      20: 783.99, // G5
+      26: 880.00, // A5
+      28: 987.77, // B5
+      // Bar 4 Arpeggiated climbing lead (steps 50, 52, 54, 56, 58, 60, 62)
+      50: 659.25, // E5
+      52: 783.99, // G5
+      54: 987.77, // B5
+      56: 1318.51,// E6
+      58: 1174.66,// D6
+      60: 987.77, // B5
+      62: 783.99, // G5
+    };
+
+    if (step in leadRiffMap) {
+      const leadFreq = leadRiffMap[step];
+      const leadOsc = ctx.createOscillator();
+      const leadFilter = ctx.createBiquadFilter();
+      const leadGain = ctx.createGain();
+
+      leadOsc.type = "sawtooth";
+      leadOsc.frequency.setValueAtTime(leadFreq, now);
+
+      leadFilter.type = "lowpass";
+      leadFilter.frequency.setValueAtTime(2400, now);
+      leadFilter.frequency.exponentialRampToValueAtTime(800, now + 0.14);
+
+      leadGain.gain.setValueAtTime(0.16, now);
+      leadGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+      leadOsc.connect(leadFilter);
+      leadFilter.connect(leadGain);
+      leadGain.connect(masterGain);
+      leadOsc.start(now);
+      leadOsc.stop(now + 0.16);
     }
   };
 
@@ -1598,12 +1713,12 @@ const DiscoAudioPlayer: React.FC = () => {
       setIsPlaying(true);
       stepRef.current = 0;
       
-      // 120 BPM = 125ms step time
+      // 120 BPM = 125ms step time across 64 steps (8.0 seconds total song loop)
       timerRef.current = window.setInterval(() => {
         if (!isPlayingRef.current || !audioCtxRef.current) return;
         
         playStep(audioCtxRef.current, stepRef.current);
-        stepRef.current = (stepRef.current + 1) % 16;
+        stepRef.current = (stepRef.current + 1) % 64;
 
         if (stepRef.current === 0 && !isRepeatRef.current) {
           setIsPlaying(false);
