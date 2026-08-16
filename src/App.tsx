@@ -5106,10 +5106,23 @@ export default function App() {
   const renameTab = async (id: string, title: string) => {
     const tab = tabs.find((entry) => entry.id === id);
     if (!tab) return;
+    const oldId = tab.id;
+    const oldFileName = tab.fileName;
     try {
       await persistWorkspace(true);
       const renamed = await window.oracle.renameSqlPage(tab.fileName, title);
       skipNextSaveRef.current = true;
+
+      setTabStates((prev) => {
+        const stateToMigrate = prev[oldId] ?? prev[oldFileName];
+        if (!stateToMigrate) return prev;
+        const next = { ...prev };
+        delete next[oldId];
+        delete next[oldFileName];
+        next[renamed.id] = stateToMigrate;
+        return next;
+      });
+
       setTabs((prev) =>
         prev.map((entry) => (entry.id === id || entry.fileName === tab.fileName ? renamed : entry)),
       );
