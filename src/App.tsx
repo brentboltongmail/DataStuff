@@ -6266,7 +6266,7 @@ export default function App() {
                         scrollBeyondLastLine: false,
                         wordWrap: "on",
                         wrappingStrategy: "advanced",
-                        wrappingIndent: "same",
+                        wrappingIndent: "indent",
                         automaticLayout: true,
                         tabSize: 2,
                         padding: { top: 12, bottom: 12, right: 16 },
