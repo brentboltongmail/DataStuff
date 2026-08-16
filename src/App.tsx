@@ -1422,9 +1422,14 @@ const DiscoAtmosphere = memo(() => {
 const DiscoAudioPlayer: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRepeat, setIsRepeat] = useState(true);
+  const [volume, setVolume] = useState<number>(() => {
+    const saved = localStorage.getItem("datastuff_theme_volume");
+    return saved != null ? Math.max(0, Math.min(1, parseFloat(saved))) : 0.7;
+  });
   const audioCtxRef = useRef<AudioContext | null>(null);
   const isPlayingRef = useRef(false);
   const isRepeatRef = useRef(true);
+  const volumeRef = useRef(volume);
   const stepRef = useRef(0);
   const timerRef = useRef<number | null>(null);
 
@@ -1435,6 +1440,10 @@ const DiscoAudioPlayer: React.FC = () => {
   useEffect(() => {
     isRepeatRef.current = isRepeat;
   }, [isRepeat]);
+
+  useEffect(() => {
+    volumeRef.current = volume;
+  }, [volume]);
 
   useEffect(() => {
     return () => {
@@ -1452,7 +1461,7 @@ const DiscoAudioPlayer: React.FC = () => {
   const playStep = (ctx: AudioContext, step: number) => {
     const now = ctx.currentTime;
     const masterGain = ctx.createGain();
-    masterGain.gain.setValueAtTime(0.22, now);
+    masterGain.gain.setValueAtTime(0.3 * volumeRef.current, now);
     masterGain.connect(ctx.destination);
 
     // --- 1. KICK DRUM (Four-on-the-floor across all 4 bars) ---
@@ -1760,6 +1769,27 @@ const DiscoAudioPlayer: React.FC = () => {
       >
         🔁 {isRepeat ? "REPEAT ON" : "REPEAT OFF"}
       </button>
+
+      <div className="audio-volume-control" title={`Master Volume: ${Math.round(volume * 100)}%`}>
+        <span className="audio-volume-icon">
+          {volume === 0 ? "🔇" : volume < 0.5 ? "🔉" : "🔊"}
+        </span>
+        <input
+          type="range"
+          className="audio-volume-slider"
+          min="0"
+          max="1"
+          step="0.05"
+          value={volume}
+          onChange={(e) => {
+            const val = parseFloat(e.target.value);
+            setVolume(val);
+            volumeRef.current = val;
+            localStorage.setItem("datastuff_theme_volume", String(val));
+          }}
+        />
+        <span className="audio-volume-text">{Math.round(volume * 100)}%</span>
+      </div>
     </div>
   );
 };
@@ -1767,9 +1797,14 @@ const DiscoAudioPlayer: React.FC = () => {
 const KnightRiderAudioPlayer: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRepeat, setIsRepeat] = useState(true);
+  const [volume, setVolume] = useState<number>(() => {
+    const saved = localStorage.getItem("datastuff_theme_volume");
+    return saved != null ? Math.max(0, Math.min(1, parseFloat(saved))) : 0.7;
+  });
   const audioCtxRef = useRef<AudioContext | null>(null);
   const isPlayingRef = useRef(false);
   const isRepeatRef = useRef(true);
+  const volumeRef = useRef(volume);
   const stepRef = useRef(0);
   const timerRef = useRef<number | null>(null);
 
@@ -1780,6 +1815,10 @@ const KnightRiderAudioPlayer: React.FC = () => {
   useEffect(() => {
     isRepeatRef.current = isRepeat;
   }, [isRepeat]);
+
+  useEffect(() => {
+    volumeRef.current = volume;
+  }, [volume]);
 
   useEffect(() => {
     return () => {
@@ -1797,7 +1836,7 @@ const KnightRiderAudioPlayer: React.FC = () => {
   const playStep = (ctx: AudioContext, step: number) => {
     const now = ctx.currentTime;
     const masterGain = ctx.createGain();
-    masterGain.gain.setValueAtTime(0.24, now);
+    masterGain.gain.setValueAtTime(0.3 * volumeRef.current, now);
     masterGain.connect(ctx.destination);
 
     // 1. K.I.T.T. STACCATO BASSLINE (F#2, F#2, A2, B2, C#3)
@@ -1899,6 +1938,9 @@ const KnightRiderAudioPlayer: React.FC = () => {
         window.clearInterval(timerRef.current);
         timerRef.current = null;
       }
+      if (audioCtxRef.current && audioCtxRef.current.state === "running") {
+        await audioCtxRef.current.suspend();
+      }
     } else {
       if (!audioCtxRef.current) {
         const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
@@ -1955,6 +1997,27 @@ const KnightRiderAudioPlayer: React.FC = () => {
       >
         🔁
       </button>
+
+      <div className="audio-volume-control" title={`Master Volume: ${Math.round(volume * 100)}%`}>
+        <span className="audio-volume-icon">
+          {volume === 0 ? "🔇" : volume < 0.5 ? "🔉" : "🔊"}
+        </span>
+        <input
+          type="range"
+          className="audio-volume-slider"
+          min="0"
+          max="1"
+          step="0.05"
+          value={volume}
+          onChange={(e) => {
+            const val = parseFloat(e.target.value);
+            setVolume(val);
+            volumeRef.current = val;
+            localStorage.setItem("datastuff_theme_volume", String(val));
+          }}
+        />
+        <span className="audio-volume-text">{Math.round(volume * 100)}%</span>
+      </div>
     </div>
   );
 };
