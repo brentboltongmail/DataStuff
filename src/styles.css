@@ -106,6 +106,16 @@ button.danger:hover:not(:disabled) {
   border-color: var(--danger);
 }
 
+button.danger:disabled,
+button.success:disabled {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: var(--text-muted) !important;
+  box-shadow: none !important;
+  opacity: 0.35 !important;
+  cursor: not-allowed !important;
+}
+
 button.success {
   background: transparent;
   border-color: #2f5f48;

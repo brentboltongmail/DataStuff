@@ -2311,6 +2311,7 @@ export default function App() {
 
   const [config, setConfig] = useState<ConnectionConfig>(initialConnState.config);
   const [status, setStatus] = useState<ConnectionState>({ connected: false });
+  const [hasOpenTransaction, setHasOpenTransaction] = useState<boolean>(false);
   const [tabs, setTabs] = useState<SqlTab[]>([]);
   const [activeTabId, setActiveTabId] = useState("");
   const [sqlDir, setSqlDir] = useState("~/sql");
@@ -2662,6 +2663,7 @@ export default function App() {
         // ignore — already gone
       }
       setStatus({ connected: false, mode: "jdbc" });
+      setHasOpenTransaction(false);
       setPendingEdits({});
       setEditMeta(null);
       if (isProd || themeId === "nuclear") {
@@ -3466,6 +3468,7 @@ export default function App() {
     try {
       const next = await window.oracle.disconnect();
       setStatus(next);
+      setHasOpenTransaction(false);
       setPendingEdits({});
       setEditMeta(null);
       if (isProd || themeId === "nuclear") {
@@ -3620,6 +3623,9 @@ export default function App() {
           summary = `${next.rows.length} row${next.rows.length === 1 ? "" : "s"}${note} in ${formatElapsed(next.elapsedMs)}${editNote}`;
         } else {
           const upper = statement.trim().toUpperCase();
+          if (upper.startsWith("INSERT") || upper.startsWith("UPDATE") || upper.startsWith("DELETE") || upper.startsWith("MERGE")) {
+            setHasOpenTransaction(true);
+          }
           const rowWord = next.rowsAffected === 1 ? "row" : "rows";
           const timeStr = formatElapsed(next.elapsedMs);
           if (upper.startsWith("INSERT")) {
@@ -5152,6 +5158,7 @@ export default function App() {
     try {
       const editCount = await applyPendingUpdates();
       await window.oracle.commit();
+      setHasOpenTransaction(false);
       if (editCount > 0 && result) {
         setResult((prev) => {
           if (!prev) return prev;
@@ -5197,6 +5204,7 @@ export default function App() {
       const discarded = Object.keys(pendingEdits).length;
       setPendingEdits({});
       await window.oracle.rollback();
+      setHasOpenTransaction(false);
       setMessage(
         discarded > 0
           ? `Rolled back · discarded ${discarded} unsaved cell edit${discarded === 1 ? "" : "s"}`
@@ -5401,6 +5409,7 @@ export default function App() {
   }, [onExecute, addTab, openTabs]);
 
   const pendingEditCount = Object.keys(pendingEdits).length;
+  const hasUncommittedChanges = pendingEditCount > 0 || hasOpenTransaction;
 
   const resultSummary = useMemo(() => {
     if (!result) return "No results yet";
@@ -6519,11 +6528,15 @@ export default function App() {
                   type="button"
                   className="success"
                   onClick={onCommit}
-                  disabled={!status.connected || busy}
+                  disabled={!status.connected || busy || !hasUncommittedChanges}
                   title={
-                    pendingEditCount > 0
-                      ? `Apply ${pendingEditCount} cell update(s) then commit the transaction`
-                      : "Commit the current transaction"
+                    !status.connected
+                      ? "Not connected"
+                      : !hasUncommittedChanges
+                        ? "No uncommitted transaction or changes"
+                        : pendingEditCount > 0
+                          ? `Apply ${pendingEditCount} cell update(s) then commit the transaction`
+                          : "Commit the current transaction"
                   }
                 >
                   Commit{pendingEditCount > 0 ? ` (${pendingEditCount})` : ""}
@@ -6532,11 +6545,15 @@ export default function App() {
                   type="button"
                   className="danger"
                   onClick={onRollback}
-                  disabled={!status.connected || busy}
+                  disabled={!status.connected || busy || !hasUncommittedChanges}
                   title={
-                    pendingEditCount > 0
-                      ? "Discard cell edits and roll back the transaction"
-                      : "Roll back the current transaction"
+                    !status.connected
+                      ? "Not connected"
+                      : !hasUncommittedChanges
+                        ? "No uncommitted transaction or changes"
+                        : pendingEditCount > 0
+                          ? "Discard cell edits and roll back the transaction"
+                          : "Roll back the current transaction"
                   }
                 >
                   Rollback
