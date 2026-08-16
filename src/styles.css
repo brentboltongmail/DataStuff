@@ -2409,6 +2409,80 @@ button.status-bar-cancel-btn {
   margin-left: 6px;
 }
 
+/* DML EXECUTION AFFECTED ROWS CARD */
+.dml-result-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+}
+
+.dml-result-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 28px 36px;
+  background: var(--bg-elevated, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  max-width: 480px;
+}
+
+.dml-result-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid #3b82f6;
+  border-radius: 20px;
+  padding: 3px 12px;
+  color: #60a5fa;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.dml-rows-impact {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 6px 0;
+}
+
+.dml-impact-number {
+  font-size: 40px;
+  font-weight: 800;
+  font-family: var(--font-mono, monospace);
+  color: var(--text-main, #ffffff);
+  line-height: 1;
+}
+
+.dml-impact-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-muted, #94a3b8);
+}
+
+.dml-meta-info {
+  font-size: 12px;
+  color: var(--text-muted, #94a3b8);
+}
+
+.dml-transaction-notice {
+  font-size: 11px;
+  color: var(--text-subtle, #94a3b8);
+  background: rgba(0, 0, 0, 0.2);
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
 /* ENHANCED KNIGHT RIDER K.I.T.T. AUDIO PLAYER & ATMOSPHERE */
 .kitt-player-bar {
   display: inline-flex;

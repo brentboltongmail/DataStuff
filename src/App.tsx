@@ -3619,7 +3619,20 @@ export default function App() {
                 : "";
           summary = `${next.rows.length} row${next.rows.length === 1 ? "" : "s"}${note} in ${formatElapsed(next.elapsedMs)}${editNote}`;
         } else {
-          summary = `${next.rowsAffected} row${next.rowsAffected === 1 ? "" : "s"} affected in ${formatElapsed(next.elapsedMs)}`;
+          const upper = statement.trim().toUpperCase();
+          const countStr = `${next.rowsAffected} row${next.rowsAffected === 1 ? "" : "s"} affected`;
+          const timeStr = formatElapsed(next.elapsedMs);
+          if (upper.startsWith("INSERT")) {
+            summary = `Inserted ${next.rowsAffected} row${next.rowsAffected === 1 ? "" : "s"} (${countStr} in ${timeStr})`;
+          } else if (upper.startsWith("UPDATE")) {
+            summary = `Updated ${next.rowsAffected} row${next.rowsAffected === 1 ? "" : "s"} (${countStr} in ${timeStr})`;
+          } else if (upper.startsWith("DELETE")) {
+            summary = `Deleted ${next.rowsAffected} row${next.rowsAffected === 1 ? "" : "s"} (${countStr} in ${timeStr})`;
+          } else if (upper.startsWith("MERGE")) {
+            summary = `Merged ${next.rowsAffected} row${next.rowsAffected === 1 ? "" : "s"} (${countStr} in ${timeStr})`;
+          } else {
+            summary = `${countStr} in ${timeStr}`;
+          }
         }
 
         const summaryMsg = next.isSelect
@@ -6648,11 +6661,25 @@ export default function App() {
                   fontScale={fontScale}
                 />
               ) : (
-                <div className="empty-state">
-                  Statement completed. {result.rowsAffected} row
-                  {result.rowsAffected === 1 ? "" : "s"} affected.
-                  <br />
-                  Use Commit or Rollback to finish the transaction.
+                <div className="dml-result-container">
+                  <div className="dml-result-card">
+                    <div className="dml-result-badge">
+                      <span className="dml-badge-icon">⚡</span>
+                      <span className="dml-badge-title">Statement Executed</span>
+                    </div>
+                    <div className="dml-rows-impact">
+                      <span className="dml-impact-number">{result.rowsAffected}</span>
+                      <span className="dml-impact-label">
+                        row{result.rowsAffected === 1 ? "" : "s"} affected
+                      </span>
+                    </div>
+                    <div className="dml-meta-info">
+                      Executed in {formatElapsed(result.elapsedMs)}.
+                    </div>
+                    <div className="dml-transaction-notice">
+                      💡 Use <strong>Commit</strong> or <strong>Rollback</strong> to complete the transaction.
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
