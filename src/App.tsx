@@ -5412,7 +5412,7 @@ export default function App() {
           : "";
       return `${result.rows.length} rows · ${cols} columns · ${formatElapsed(result.elapsedMs)}${dirty}`;
     }
-    return `${result.rowsAffected} rows affected · ${formatElapsed(result.elapsedMs)}`;
+    return `${result.rowsAffected} row${result.rowsAffected === 1 ? "" : "s"} · ${formatElapsed(result.elapsedMs)}`;
   }, [result, pendingEditCount]);
 
   const explainSummary = useMemo(() => {
@@ -6665,12 +6665,26 @@ export default function App() {
                   <div className="dml-result-card">
                     <div className="dml-result-badge">
                       <span className="dml-badge-icon">⚡</span>
-                      <span className="dml-badge-title">Statement Executed</span>
+                      <span className="dml-badge-title">
+                        {(() => {
+                          const msg = activeTabState.message || "";
+                          if (msg.startsWith("Deleted")) return "Delete Executed";
+                          if (msg.startsWith("Inserted")) return "Insert Executed";
+                          if (msg.startsWith("Updated")) return "Update Executed";
+                          if (msg.startsWith("Merged")) return "Merge Executed";
+                          const upper = (activeSql || "").trim().toUpperCase();
+                          if (upper.startsWith("DELETE")) return "Delete Executed";
+                          if (upper.startsWith("INSERT")) return "Insert Executed";
+                          if (upper.startsWith("UPDATE")) return "Update Executed";
+                          if (upper.startsWith("MERGE")) return "Merge Executed";
+                          return "Statement Executed";
+                        })()}
+                      </span>
                     </div>
                     <div className="dml-rows-impact">
                       <span className="dml-impact-number">{result.rowsAffected}</span>
                       <span className="dml-impact-label">
-                        row{result.rowsAffected === 1 ? "" : "s"} affected
+                        row{result.rowsAffected === 1 ? "" : "s"}
                       </span>
                     </div>
                     <div className="dml-meta-info">
