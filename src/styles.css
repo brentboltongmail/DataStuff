@@ -1109,9 +1109,38 @@ html body .query-copy-gutter {
   pointer-events: none !important;
 }
 
-html body .editor-wrapper .monaco-editor {
-  margin-left: 24px !important;
-  width: calc(100% - 24px) !important;
+.editor-inner-container {
+  position: absolute;
+  left: 24px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+/* Ensure Monaco vertical scrollbar is prominent, high-contrast, and right-aligned */
+html body .monaco-editor .monaco-scrollable-element .scrollbar.vertical {
+  right: 0 !important;
+  width: 14px !important;
+  background: rgba(0, 0, 0, 0.25) !important;
+  border-left: 1px solid var(--border-soft) !important;
+}
+
+html body .monaco-editor .monaco-scrollable-element .scrollbar.vertical .slider {
+  width: 12px !important;
+  left: 1px !important;
+  background: color-mix(in srgb, var(--accent) 55%, rgba(255, 255, 255, 0.3)) !important;
+  border-radius: 4px !important;
+  border: 1px solid color-mix(in srgb, var(--accent) 75%, transparent) !important;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4) !important;
+  transition: background-color 0.15s ease, border-color 0.15s ease !important;
+}
+
+html body .monaco-editor .monaco-scrollable-element .scrollbar.vertical .slider:hover,
+html body .monaco-editor .monaco-scrollable-element .scrollbar.vertical .slider.active {
+  background: var(--accent) !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 0 10px var(--accent) !important;
 }
 
 html body .editor-wrapper .monaco-editor .cda {
