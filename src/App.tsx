@@ -88,6 +88,7 @@ const EMPTY_CONNECTION: ConnectionConfig = {
   port: "1521",
   service: "ORCLPDB1",
   tcps: false,
+  role: "NORMAL",
 };
 
 const HISTORY_KEY = "oracle-ide.history";
@@ -2218,6 +2219,7 @@ export interface SavedConnection {
   port: string;
   service: string;
   tcps?: boolean;
+  role?: "NORMAL" | "SYSDBA" | "SYSOPER";
   isProd?: boolean;
 }
 
@@ -2267,6 +2269,7 @@ function loadInitialConnectionState(savedConns: SavedConnection[]) {
         port: matched.port,
         service: matched.service,
         tcps: !!matched.tcps,
+        role: matched.role || "NORMAL",
       },
     };
   }
@@ -3063,6 +3066,7 @@ export default function App() {
             port: match.port,
             service: match.service,
             tcps: !!match.tcps,
+            role: match.role || "NORMAL",
           }),
         );
 
@@ -3078,6 +3082,7 @@ export default function App() {
                 port: match.port,
                 service: match.service,
                 tcps: !!match.tcps,
+                role: match.role || "NORMAL",
                 password: loadedPass,
               });
               setRememberPassword(!!loadedPass);
@@ -3090,6 +3095,7 @@ export default function App() {
                 port: match.port,
                 service: match.service,
                 tcps: !!match.tcps,
+                role: match.role || "NORMAL",
                 password: "",
               });
               setRememberPassword(false);
@@ -3101,6 +3107,7 @@ export default function App() {
             port: match.port,
             service: match.service,
             tcps: !!match.tcps,
+            role: match.role || "NORMAL",
             password: "",
           });
           setRememberPassword(false);
@@ -3135,6 +3142,7 @@ export default function App() {
                 port: config.port,
                 service: config.service,
                 tcps: config.tcps,
+                role: config.role || "NORMAL",
                 isProd,
               }
             : item,
@@ -3148,6 +3156,7 @@ export default function App() {
           port: config.port,
           service: config.service,
           tcps: config.tcps,
+          role: config.role || "NORMAL",
           isProd,
         };
         updated = [newConn, ...prev];
@@ -3315,6 +3324,7 @@ export default function App() {
               port: next.port,
               service: next.service,
               tcps: !!next.tcps,
+              role: next.role || "NORMAL",
             }),
           );
         } else {
@@ -6058,7 +6068,7 @@ export default function App() {
                 : connectPhase === "connecting"
                   ? "Connecting to database..."
                   : status.connected
-                    ? `Connected as ${status.user}@${status.connectString} (${status.mode ?? "jdbc"}${config.tcps ? " · tcps" : ""})`
+                    ? `Connected as ${status.user}${status.role && status.role !== "NORMAL" ? ` (${status.role})` : ""}@${status.connectString} (${status.mode ?? "jdbc"}${config.tcps ? " · tcps" : ""})`
                     : "Not connected"
             }
           />
@@ -6787,6 +6797,20 @@ export default function App() {
                     onChange={(e) => updateField("service", e.target.value)}
                     placeholder="ORCLPDB1"
                   />
+                </div>
+                <div className="field role">
+                  <label htmlFor="modal-role">Role</label>
+                  <select
+                    id="modal-role"
+                    className="modal-role-select"
+                    value={config.role || "NORMAL"}
+                    onChange={(e) => updateField("role", e.target.value)}
+                    title="Database Connection Role (Normal, SYSDBA, or SYSOPER)"
+                  >
+                    <option value="NORMAL">Normal</option>
+                    <option value="SYSDBA">SYSDBA</option>
+                    <option value="SYSOPER">SYSOPER</option>
+                  </select>
                 </div>
                 <div className="field tcps">
                   <label htmlFor="modal-tcps">TLS</label>

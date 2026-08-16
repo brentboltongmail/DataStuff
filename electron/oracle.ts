@@ -240,6 +240,7 @@ export async function connect(config: ConnectionConfig): Promise<ConnectionState
     port: config.port || (config.tcps ? "2484" : "1521"),
     service: config.service,
     tcps: !!config.tcps,
+    role: config.role || "NORMAL",
   }) as Promise<ConnectionState>;
 
   const timeoutPromise = new Promise<never>((_, reject) => {
@@ -258,6 +259,7 @@ export async function connect(config: ConnectionConfig): Promise<ConnectionState
         result.connectString ??
         `${config.tcps ? "tcps://" : ""}${config.host}:${config.port || (config.tcps ? "2484" : "1521")}/${config.service}`,
       mode: "jdbc",
+      role: result.role ?? config.role ?? "NORMAL",
     };
     return connectedState;
   } catch (err) {
@@ -279,8 +281,10 @@ export async function connect(config: ConnectionConfig): Promise<ConnectionState
 
 export async function disconnect(): Promise<ConnectionState> {
   connectedState = { connected: false, mode: "jdbc" };
-  if (bridge) {
+  try {
     void request({ cmd: "disconnect" }, 1000).catch(() => {});
+  } catch {
+    // ignore
   }
   return connectedState;
 }
@@ -297,6 +301,7 @@ export async function getStatus(): Promise<ConnectionState> {
       user: result.user,
       connectString: result.connectString,
       mode: "jdbc",
+      role: result.role,
     };
     return connectedState;
   } catch {

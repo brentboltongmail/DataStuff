@@ -6,6 +6,8 @@ export interface ConnectionConfig {
   service: string;
   /** Use Oracle TCPS (TLS) instead of plain TCP. */
   tcps?: boolean;
+  /** Oracle privileged connection role: NORMAL (default), SYSDBA, or SYSOPER. */
+  role?: "NORMAL" | "SYSDBA" | "SYSOPER";
 }
 
 export interface QueryColumn {
@@ -31,6 +33,7 @@ export interface ConnectionState {
   user?: string;
   connectString?: string;
   mode?: "jdbc" | "thin" | "thick";
+  role?: string;
 }
 
 export type DbObjectType =

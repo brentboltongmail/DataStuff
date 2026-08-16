@@ -33,6 +33,7 @@ public final class OracleBridge {
   private static final int DEFAULT_MAX_ROWS = 1000;
   private static final int HARD_MAX_ROWS = 100_000;
   private static Connection connection;
+  private static String activeRole = "NORMAL";
 
   private static final ExecutorService executor =
       Executors.newSingleThreadExecutor(
@@ -154,6 +155,13 @@ public final class OracleBridge {
     String user = stringVal(request.get("user"));
     String password = stringVal(request.get("password"));
     boolean tcps = boolVal(request.get("tcps"), false);
+    String role = stringVal(request.get("role"));
+    if (role == null || role.trim().isEmpty()) {
+      role = "NORMAL";
+    }
+    role = role.trim().toUpperCase();
+    activeRole = role;
+
     String url = stringVal(request.get("url"));
     if (url == null || url.isEmpty()) {
       String host = stringVal(request.get("host"));
@@ -178,6 +186,14 @@ public final class OracleBridge {
       // Prefer verifying the server certificate DN when the listener presents a proper cert.
       props.setProperty("oracle.net.ssl_server_dn_match", "true");
     }
+    if ("SYSDBA".equals(role)) {
+      props.setProperty("internal_logon", "sysdba");
+      props.setProperty("oracle.jdbc.internal.logon", "sysdba");
+    } else if ("SYSOPER".equals(role)) {
+      props.setProperty("internal_logon", "sysoper");
+      props.setProperty("oracle.jdbc.internal.logon", "sysoper");
+    }
+
     connection = DriverManager.getConnection(url, props);
     connection.setAutoCommit(false);
     Map<String, Object> result = new LinkedHashMap<>();
@@ -189,6 +205,7 @@ public final class OracleBridge {
             .replace("jdbc:oracle:thin:@//", ""));
     result.put("mode", "jdbc");
     result.put("tcps", tcps);
+    result.put("role", activeRole);
     return response(id, true, result, null);
   }
 
@@ -217,6 +234,7 @@ public final class OracleBridge {
       DatabaseMetaData meta = connection.getMetaData();
       result.put("user", meta.getUserName());
       result.put("connectString", meta.getURL().replace("jdbc:oracle:thin:@//", ""));
+      result.put("role", activeRole);
     }
     return response(id, true, result, null);
   }
@@ -878,6 +896,7 @@ public final class OracleBridge {
   }
 
   private static void disconnectQuietly() {
+    activeRole = "NORMAL";
     final Connection connToClose = connection;
     connection = null;
     if (connToClose != null) {
