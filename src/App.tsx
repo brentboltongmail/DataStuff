@@ -6203,62 +6203,6 @@ export default function App() {
                       </div>
                     );
                   })}
-                  {/* ULTRA-EFFICIENT KITT LASER SCANNER LIGHT BARS FOR EXECUTING QUERY BLOCK */}
-                  {sqlBlocks.map((block) => {
-                    const isThisRunning =
-                      busy &&
-                      isExecutingQuery &&
-                      (runningBlockId === block.id ||
-                        (runningBlockId === null && sqlBlocks.length === 1));
-                    if (!isThisRunning) return null;
-
-                    let top = (block.startLine - 1) * editorLineHeight - editorScrollTop;
-                    let height = (block.endLine - block.startLine + 1) * editorLineHeight;
-                    if (editorRef.current) {
-                      const model = editorRef.current.getModel();
-                      const maxLine = model ? model.getLineCount() : block.endLine;
-                      const startLineTop = editorRef.current.getTopForLineNumber(
-                        Math.min(block.startLine, maxLine),
-                      );
-                      let endLineBottom: number;
-                      if (block.endLine >= maxLine) {
-                        const lastLineTop = editorRef.current.getTopForLineNumber(maxLine);
-                        endLineBottom = lastLineTop + editorLineHeight;
-                      } else {
-                        endLineBottom = editorRef.current.getTopForLineNumber(block.endLine + 1);
-                      }
-                      const currentScrollTop = editorRef.current.getScrollTop();
-                      top = startLineTop - currentScrollTop;
-                      height = Math.max(editorLineHeight, endLineBottom - startLineTop);
-                    }
-
-                    return (
-                      <div
-                        key={`exec-kitt-${block.id}`}
-                        className="query-executing-kitt-box"
-                        style={{
-                          top: `${top}px`,
-                          height: `${height}px`,
-                        }}
-                      >
-                        <div className="query-progress-header-bar">
-                          <div
-                            className="query-progress-fill"
-                            style={{ width: `${currentProgressPercent}%` }}
-                          />
-                          <div className="query-progress-text">
-                            <span>Executing query... ({Math.round(currentProgressPercent)}% est.)</span>
-                            <span>{(queryElapsedTimeMs / 1000).toFixed(2)}s elapsed</span>
-                          </div>
-                        </div>
-                        <div className="kitt-exec-outline" />
-                        <span className="kitt-circuit-bar kb1" />
-                        <span className="kitt-circuit-bar kb2" />
-                        <span className="kitt-circuit-bar kb3" />
-                        <span className="kitt-circuit-bar kb4" />
-                      </div>
-                    );
-                  })}
                   {copiedBlockId && <div className="query-copied-toast">✓ Query Copied!</div>}
                   <div className="editor-inner-container">
                     <Editor
