@@ -1419,6 +1419,61 @@ const DiscoAtmosphere = memo(() => {
   );
 });
 
+interface AudioVolumeDropdownProps {
+  volume: number;
+  onVolumeChange: (newVol: number) => void;
+}
+
+const AudioVolumeDropdown: React.FC<AudioVolumeDropdownProps> = ({ volume, onVolumeChange }) => {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
+
+  return (
+    <div className="audio-volume-dropdown-wrapper" ref={containerRef}>
+      <button
+        type="button"
+        className={`audio-volume-btn ${open ? "open" : ""}`}
+        onClick={() => setOpen((prev) => !prev)}
+        title={`Volume: ${Math.round(volume * 100)}% (Click to adjust)`}
+      >
+        <span className="audio-volume-icon">
+          {volume === 0 ? "🔇" : volume < 0.5 ? "🔉" : "🔊"}
+        </span>
+        <span className="audio-volume-badge">{Math.round(volume * 100)}%</span>
+      </button>
+
+      {open && (
+        <div className="audio-volume-popover">
+          <div className="audio-volume-popover-header">
+            <span>Volume</span>
+            <span>{Math.round(volume * 100)}%</span>
+          </div>
+          <input
+            type="range"
+            className="audio-volume-slider"
+            min="0"
+            max="1"
+            step="0.05"
+            value={volume}
+            onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
 const DiscoAudioPlayer: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRepeat, setIsRepeat] = useState(true);
@@ -1740,6 +1795,12 @@ const DiscoAudioPlayer: React.FC = () => {
     }
   };
 
+  const handleVolumeChange = (newVol: number) => {
+    setVolume(newVol);
+    volumeRef.current = newVol;
+    localStorage.setItem("datastuff_theme_volume", String(newVol));
+  };
+
   return (
     <div className="disco-player-bar">
       <button
@@ -1769,27 +1830,7 @@ const DiscoAudioPlayer: React.FC = () => {
       >
         🔁 {isRepeat ? "REPEAT ON" : "REPEAT OFF"}
       </button>
-
-      <div className="audio-volume-control" title={`Master Volume: ${Math.round(volume * 100)}%`}>
-        <span className="audio-volume-icon">
-          {volume === 0 ? "🔇" : volume < 0.5 ? "🔉" : "🔊"}
-        </span>
-        <input
-          type="range"
-          className="audio-volume-slider"
-          min="0"
-          max="1"
-          step="0.05"
-          value={volume}
-          onChange={(e) => {
-            const val = parseFloat(e.target.value);
-            setVolume(val);
-            volumeRef.current = val;
-            localStorage.setItem("datastuff_theme_volume", String(val));
-          }}
-        />
-        <span className="audio-volume-text">{Math.round(volume * 100)}%</span>
-      </div>
+      <AudioVolumeDropdown volume={volume} onVolumeChange={handleVolumeChange} />
     </div>
   );
 };
@@ -1970,6 +2011,12 @@ const KnightRiderAudioPlayer: React.FC = () => {
     }
   };
 
+  const handleVolumeChange = (newVol: number) => {
+    setVolume(newVol);
+    volumeRef.current = newVol;
+    localStorage.setItem("datastuff_theme_volume", String(newVol));
+  };
+
   return (
     <div className="kitt-player-bar">
       <button
@@ -1998,26 +2045,7 @@ const KnightRiderAudioPlayer: React.FC = () => {
         🔁
       </button>
 
-      <div className="audio-volume-control" title={`Master Volume: ${Math.round(volume * 100)}%`}>
-        <span className="audio-volume-icon">
-          {volume === 0 ? "🔇" : volume < 0.5 ? "🔉" : "🔊"}
-        </span>
-        <input
-          type="range"
-          className="audio-volume-slider"
-          min="0"
-          max="1"
-          step="0.05"
-          value={volume}
-          onChange={(e) => {
-            const val = parseFloat(e.target.value);
-            setVolume(val);
-            volumeRef.current = val;
-            localStorage.setItem("datastuff_theme_volume", String(val));
-          }}
-        />
-        <span className="audio-volume-text">{Math.round(volume * 100)}%</span>
-      </div>
+      <AudioVolumeDropdown volume={volume} onVolumeChange={handleVolumeChange} />
     </div>
   );
 };
