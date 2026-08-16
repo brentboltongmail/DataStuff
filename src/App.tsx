@@ -6083,6 +6083,8 @@ export default function App() {
           />
           Auto
         </label>
+        {themeId === "disco" ? <DiscoAudioPlayer /> : null}
+        {themeId === "knightrider" ? <KnightRiderAudioPlayer /> : null}
         <div className="theme-picker">
           <select
             id="app-theme"
@@ -6098,8 +6100,6 @@ export default function App() {
             ))}
           </select>
         </div>
-        {themeId === "disco" ? <DiscoAudioPlayer /> : null}
-        {themeId === "knightrider" ? <KnightRiderAudioPlayer /> : null}
         <div className="font-controls" title="App font size">
           <button
             type="button"
