@@ -2514,32 +2514,6 @@ export default function App() {
   const [showManageModal, setShowManageModal] = useState<boolean>(false);
   const [showProdCommitConfirm, setShowProdCommitConfirm] = useState<boolean>(false);
   const [autoFormat, setAutoFormat] = useState<boolean>(() => localStorage.getItem(AUTO_FORMAT_KEY) === "true");
-  const [memoryUsage, setMemoryUsage] = useState<{ usedMb: number; limitMb: number } | null>(null);
-
-  // Poll JS Heap memory usage for titlebar indicator
-  useEffect(() => {
-    const updateMemory = () => {
-      const perfMem = (
-        performance as unknown as {
-          memory?: { usedJSHeapSize: number; jsHeapSizeLimit: number };
-        }
-      ).memory;
-      if (perfMem) {
-        const usedMb = Math.round(perfMem.usedJSHeapSize / (1024 * 1024));
-        const limitMb =
-          Math.round(perfMem.jsHeapSizeLimit / (1024 * 1024)) || 768;
-        setMemoryUsage((prev) => {
-          if (prev && prev.usedMb === usedMb && prev.limitMb === limitMb)
-            return prev;
-          return { usedMb, limitMb };
-        });
-      }
-    };
-    updateMemory();
-    const interval = setInterval(updateMemory, 2000);
-    return () => clearInterval(interval);
-  }, []);
-
   // Real-time query execution length timer loop
   useEffect(() => {
     if (!busy || !queryStartTime) {
@@ -5997,22 +5971,6 @@ export default function App() {
                     : "Not connected"
             }
           />
-          {memoryUsage && (
-            <span
-              className={`titlebar-memory-badge ${
-                memoryUsage.usedMb / memoryUsage.limitMb > 0.85
-                  ? "memory-danger"
-                  : memoryUsage.usedMb / memoryUsage.limitMb > 0.65
-                    ? "memory-warn"
-                    : ""
-              }`}
-              title={`Renderer JS Heap Memory: ${memoryUsage.usedMb} MB / ${memoryUsage.limitMb} MB (${Math.round(
-                (memoryUsage.usedMb / memoryUsage.limitMb) * 100
-              )}% of maximum ${memoryUsage.limitMb} MB V8 ceiling)`}
-            >
-              <span>RAM:</span> {memoryUsage.usedMb} / {memoryUsage.limitMb} MB
-            </span>
-          )}
         </div>
         <div className="titlebar-spacer" />
         <button
