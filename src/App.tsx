@@ -3620,24 +3620,24 @@ export default function App() {
           summary = `${next.rows.length} row${next.rows.length === 1 ? "" : "s"}${note} in ${formatElapsed(next.elapsedMs)}${editNote}`;
         } else {
           const upper = statement.trim().toUpperCase();
-          const countStr = `${next.rowsAffected} row${next.rowsAffected === 1 ? "" : "s"} affected`;
+          const rowWord = next.rowsAffected === 1 ? "row" : "rows";
           const timeStr = formatElapsed(next.elapsedMs);
           if (upper.startsWith("INSERT")) {
-            summary = `Inserted ${next.rowsAffected} row${next.rowsAffected === 1 ? "" : "s"} (${countStr} in ${timeStr})`;
+            summary = `Inserted ${next.rowsAffected} ${rowWord} in ${timeStr}`;
           } else if (upper.startsWith("UPDATE")) {
-            summary = `Updated ${next.rowsAffected} row${next.rowsAffected === 1 ? "" : "s"} (${countStr} in ${timeStr})`;
+            summary = `Updated ${next.rowsAffected} ${rowWord} in ${timeStr}`;
           } else if (upper.startsWith("DELETE")) {
-            summary = `Deleted ${next.rowsAffected} row${next.rowsAffected === 1 ? "" : "s"} (${countStr} in ${timeStr})`;
+            summary = `Deleted ${next.rowsAffected} ${rowWord} in ${timeStr}`;
           } else if (upper.startsWith("MERGE")) {
-            summary = `Merged ${next.rowsAffected} row${next.rowsAffected === 1 ? "" : "s"} (${countStr} in ${timeStr})`;
+            summary = `Merged ${next.rowsAffected} ${rowWord} in ${timeStr}`;
           } else {
-            summary = `${countStr} in ${timeStr}`;
+            summary = `${next.rowsAffected} ${rowWord} affected in ${timeStr}`;
           }
         }
 
         const summaryMsg = next.isSelect
           ? summary
-          : `${summary} — commit or rollback to finish`;
+          : `${summary} — Commit or Rollback Needed`;
 
         if (targetTabId) {
           updateTabStateById(targetTabId, {
