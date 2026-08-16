@@ -3665,14 +3665,21 @@ export default function App() {
       let startLine = block.startLine;
 
       if (autoFormat && editorRef.current) {
-        const { statement: freshStmt, startLine: freshLine } = resolveExecutableSqlBlock();
-        if (freshStmt) {
-          statement = freshStmt;
-          startLine = freshLine;
-        }
+        const freshContent = editorRef.current.getValue();
+        const freshBlocks = parseSqlStatements(freshContent);
+        const blockIndex = sqlBlocks.findIndex(
+          (b) => b.id === block.id || b.startLine === block.startLine,
+        );
+        const matchingFreshBlock =
+          (blockIndex >= 0 ? freshBlocks[blockIndex] : null) ??
+          freshBlocks.find((b) => b.text.trim() === block.text.trim()) ??
+          block;
+        statement = matchingFreshBlock.text;
+        startLine = matchingFreshBlock.startLine;
       }
 
-      const matchingBlock = sqlBlocks.find((b) => b.startLine === startLine) ?? block;
+      const matchingBlock =
+        sqlBlocks.find((b) => b.startLine === startLine) ?? block;
       setRunningBlockId(matchingBlock.id);
 
       const detectedBinds = parseBindVariables(statement);
