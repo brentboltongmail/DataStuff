@@ -186,10 +186,29 @@ export default function SolarSystemAtmosphere() {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
+    let cachedBgGrad: CanvasGradient | null = null;
+
+    const buildBgGrad = () => {
+      cachedBgGrad = ctx.createRadialGradient(
+        width / 2,
+        height / 2,
+        20,
+        width / 2,
+        height / 2,
+        Math.max(width, height) * 0.7,
+      );
+      cachedBgGrad.addColorStop(0, "rgba(13, 19, 34, 0.4)");
+      cachedBgGrad.addColorStop(0.6, "rgba(7, 10, 18, 0.8)");
+      cachedBgGrad.addColorStop(1, "rgba(5, 7, 14, 0.98)");
+    };
+
+    buildBgGrad();
+
     const handleResize = () => {
       if (!canvas) return;
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
+      buildBgGrad();
     };
     window.addEventListener("resize", handleResize);
 
@@ -207,20 +226,10 @@ export default function SolarSystemAtmosphere() {
     const render = () => {
       ctx.clearRect(0, 0, width, height);
 
-      // Deep space radial glow gradient
-      const bgGrad = ctx.createRadialGradient(
-        width / 2,
-        height / 2,
-        20,
-        width / 2,
-        height / 2,
-        Math.max(width, height) * 0.7,
-      );
-      bgGrad.addColorStop(0, "rgba(13, 19, 34, 0.4)");
-      bgGrad.addColorStop(0.6, "rgba(7, 10, 18, 0.8)");
-      bgGrad.addColorStop(1, "rgba(5, 7, 14, 0.98)");
-      ctx.fillStyle = bgGrad;
-      ctx.fillRect(0, 0, width, height);
+      if (cachedBgGrad) {
+        ctx.fillStyle = cachedBgGrad;
+        ctx.fillRect(0, 0, width, height);
+      }
 
       // Draw all 1,000 stars
       for (let i = 0; i < stars.length; i++) {

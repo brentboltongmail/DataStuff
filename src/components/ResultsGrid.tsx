@@ -93,6 +93,8 @@ function minColWidthPx(density: GridDensity, fontScale: number): number {
 /** Cap data-driven width at this many characters in normal density. */
 const NORMAL_MAX_DATA_CHARS = 50;
 
+let currentCachedFont = "";
+
 function measureTextPx(
   text: string,
   fontSize: number,
@@ -103,7 +105,11 @@ function measureTextPx(
   if (!ctx) {
     return Math.ceil(text.length * fontSize * 0.6);
   }
-  ctx.font = `${fontWeight} ${fontSize}px "SF Mono", Menlo, Monaco, Consolas, monospace`;
+  const fontStr = `${fontWeight} ${fontSize}px "SF Mono", Menlo, Monaco, Consolas, monospace`;
+  if (currentCachedFont !== fontStr) {
+    currentCachedFont = fontStr;
+    ctx.font = fontStr;
+  }
   let width = ctx.measureText(text).width;
   if (letterSpacingEm > 0 && text.length > 1) {
     width += letterSpacingEm * fontSize * (text.length - 1);
