@@ -2603,7 +2603,7 @@ export default function App() {
   };
   const [rememberPassword, setRememberPassword] = useState(loadRememberPassword);
   const [passwordStorageAvailable, setPasswordStorageAvailable] = useState(false);
-  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "unsaved" | "error">("saved");
   const [selectedConnectionId, setSelectedConnectionId] = useState<string>(initialConnState.selectedConnectionId);
   const [connectionName, setConnectionName] = useState<string>(initialConnState.connectionName);
   const [isProd, setIsProd] = useState<boolean>(initialConnState.isProd);
@@ -3360,6 +3360,7 @@ export default function App() {
 
   const setActiveSql = useCallback(
     (nextSql: string, syncEditor = false) => {
+      setSaveState("unsaved");
       setTabs((prev) =>
         prev.map((tab) =>
           tab.id === activeTabId ? { ...tab, sql: nextSql } : tab,
@@ -3806,6 +3807,7 @@ export default function App() {
   const handleEditorChange = useCallback(
     (value: string | undefined) => {
       const nextValue = value ?? "";
+      setSaveState("unsaved");
       if (monacoApiRef.current && editorRef.current) {
         const model = editorRef.current.getModel();
         if (model) {
@@ -5397,6 +5399,10 @@ export default function App() {
         event.preventDefault();
         void onExecute();
       }
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") {
+        event.preventDefault();
+        void persistWorkspace(true);
+      }
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "t") {
         event.preventDefault();
         void addTab();
@@ -5408,7 +5414,7 @@ export default function App() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [onExecute, addTab, openTabs]);
+  }, [onExecute, addTab, openTabs, persistWorkspace]);
 
   const pendingEditCount = Object.keys(pendingEdits).length;
   const hasUncommittedChanges = pendingEditCount > 0 || hasOpenTransaction;
@@ -6789,14 +6795,16 @@ export default function App() {
             </button>
           </div>
         ) : null}
-        <span className="save-status">
+        <span className={`save-status ${saveState}`}>
           {saveState === "saving"
             ? "Saving…"
-            : saveState === "saved"
-              ? `Saved · ${activeTab?.fileName ?? ""} · ${sqlDir}`
-              : saveState === "error"
-                ? "Save failed"
-                : null}
+            : saveState === "unsaved"
+              ? `Unsaved changes · ${activeTab?.fileName ?? ""} · ${sqlDir}`
+              : saveState === "saved"
+                ? `Saved · ${activeTab?.fileName ?? ""} · ${sqlDir}`
+                : saveState === "error"
+                  ? "Save failed"
+                  : null}
         </span>
       </footer>
 

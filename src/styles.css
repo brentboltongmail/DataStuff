@@ -2369,6 +2369,13 @@ body.is-col-resizing .monaco-editor {
 .status-bar .save-status {
   margin-left: auto;
   font-style: italic;
+  transition: color 0.15s ease;
+}
+
+.status-bar .save-status.unsaved {
+  color: #f59e0b;
+  font-weight: 500;
+  font-style: normal;
 }
 
 /* Cancel Query Button Styling */
