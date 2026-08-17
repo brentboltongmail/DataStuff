@@ -6742,21 +6742,41 @@ export default function App() {
       <footer className="status-bar">
         <span className={error ? "error" : "ok"}>{message}</span>
         {busy && isExecutingQuery && currentQueryEstimate ? (
-          <span
-            className="live-query-progress-pill"
-            title={`Executing query · Estimated completion: ${Math.round(currentProgressPercent)}% · Realtime elapsed: ${(queryElapsedTimeMs / 1000).toFixed(2)}s`}
-          >
+          <div className="status-bar-progress-container">
             <span
-              className="live-query-progress-mini-bar"
-              style={{ width: `${currentProgressPercent}%` }}
-            />
-            <span>Executing query... ({Math.round(currentProgressPercent)}% est.)</span>
-            <span style={{ marginLeft: "10px", opacity: 0.85 }}>{(queryElapsedTimeMs / 1000).toFixed(2)}s elapsed</span>
-          </span>
+              className="live-query-progress-pill"
+              title={`Executing query · Estimated completion: ${Math.round(currentProgressPercent)}% · Realtime elapsed: ${(queryElapsedTimeMs / 1000).toFixed(2)}s`}
+            >
+              <span
+                className="live-query-progress-mini-bar"
+                style={{ width: `${currentProgressPercent}%` }}
+              />
+              <span className="live-query-text">Executing query... ({Math.round(currentProgressPercent)}% est.)</span>
+              <span className="live-query-elapsed">{(queryElapsedTimeMs / 1000).toFixed(2)}s elapsed</span>
+            </span>
+            <button
+              type="button"
+              className="status-bar-cancel-btn danger"
+              onClick={onCancelQuery}
+              title="Cancel running query execution"
+            >
+              ✕ Cancel
+            </button>
+          </div>
         ) : busy && queryStartTime ? (
-          <span className="live-query-timer" title="Current SQL query execution length in real time">
-            ⏱ {formatLiveElapsedTime(queryElapsedTimeMs)}
-          </span>
+          <div className="status-bar-progress-container">
+            <span className="live-query-timer" title="Current SQL query execution length in real time">
+              ⏱ {formatLiveElapsedTime(queryElapsedTimeMs)}
+            </span>
+            <button
+              type="button"
+              className="status-bar-cancel-btn danger"
+              onClick={onCancelQuery}
+              title="Cancel running query execution"
+            >
+              ✕ Cancel
+            </button>
+          </div>
         ) : null}
         <span className="save-status">
           {saveState === "saving"
