@@ -1,10 +1,12 @@
 export interface QueryStat {
   avgMs: number;
+  medianMs?: number;
   maxMs?: number;
   coldCacheMs?: number;
   count: number;
   lastRunMs: number;
   lastRunTimestamp?: number;
+  recentWarmRuns?: number[];
   sql?: string;
 }
 
@@ -15,6 +17,19 @@ export const COLD_CACHE_IDLE_MS = 10 * 60 * 1000;
 
 /** Default fallback duration estimate if query has no historical records (2 minutes). */
 export const DEFAULT_ESTIMATE_MS = 2 * 60 * 1000;
+
+/**
+ * Calculates median value from an array of numbers.
+ */
+export function calculateMedian(numbers: number[]): number {
+  if (!numbers || numbers.length === 0) return 0;
+  const sorted = [...numbers].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  if (sorted.length % 2 !== 0) {
+    return sorted[mid];
+  }
+  return Math.round((sorted[mid - 1] + sorted[mid]) / 2);
+}
 
 /**
  * Normalizes SQL string by stripping comments, collapsing whitespace, and converting to uppercase.
@@ -123,6 +138,7 @@ export function sqlSimilarity(sql1: string, sql2: string): number {
 /**
  * Updates query statistics for a given SQL string and execution duration.
  * Distinguishes between cold cache runs (first run in a while) and warm cache runs.
+ * Computes median duration across recent warm runs.
  */
 export function updateQueryStat(
   stats: QueryStatsMap,
@@ -139,11 +155,13 @@ export function updateQueryStat(
   if (!existing) {
     nextStat = {
       avgMs: elapsedMs,
+      medianMs: elapsedMs,
       maxMs: elapsedMs,
       coldCacheMs: elapsedMs,
       count: 1,
       lastRunMs: elapsedMs,
       lastRunTimestamp: now,
+      recentWarmRuns: [elapsedMs],
       sql: norm,
     };
   } else {
@@ -158,15 +176,22 @@ export function updateQueryStat(
       ? existing.avgMs
       : Math.round(existing.avgMs * 0.65 + elapsedMs * 0.35);
 
+    const updatedWarmRuns = isColdRun
+      ? existing.recentWarmRuns || [elapsedMs]
+      : [...(existing.recentWarmRuns || []), elapsedMs].slice(-20);
+
+    const nextMedian = calculateMedian(updatedWarmRuns);
     const nextMax = Math.max(existing.maxMs || elapsedMs, elapsedMs);
 
     nextStat = {
       avgMs: nextAvg,
+      medianMs: nextMedian || nextAvg,
       maxMs: nextMax,
       coldCacheMs: nextCold,
       count: existing.count + 1,
       lastRunMs: elapsedMs,
       lastRunTimestamp: now,
+      recentWarmRuns: updatedWarmRuns,
       sql: existing.sql || norm,
     };
   }
@@ -190,6 +215,7 @@ export interface EstimatedDurationResult {
  * 1. Checks exact fingerprint match.
  * 2. If no exact match, checks for >= 90% fuzzy match in stats or history.
  * 3. Uses cold cache value (coldCacheMs / maxMs) if it hasn't been run in a while (> 10 mins).
+ * 4. Uses MEDIAN duration (medianMs) for warm cache runs.
  */
 export function getEstimatedQueryDurationMs(
   stats: QueryStatsMap,
@@ -212,7 +238,7 @@ export function getEstimatedQueryDurationMs(
     let bestSim = 0;
     for (const key of Object.keys(stats)) {
       const entry = stats[key];
-      if (!entry || entry.avgMs <= 0) continue;
+      if (!entry || (entry.avgMs <= 0 && !entry.medianMs)) continue;
       const entrySql = entry.sql || "";
       if (!entrySql) continue;
 
@@ -245,13 +271,16 @@ export function getEstimatedQueryDurationMs(
     }
   }
 
-  if (matchedStat && (matchedStat.avgMs > 0 || matchedStat.maxMs || matchedStat.lastRunMs > 0)) {
+  if (
+    matchedStat &&
+    (matchedStat.medianMs || matchedStat.avgMs > 0 || matchedStat.maxMs || matchedStat.lastRunMs > 0)
+  ) {
     const lastRunTs = matchedStat.lastRunTimestamp || 0;
     const isColdCache = !lastRunTs || now - lastRunTs > COLD_CACHE_IDLE_MS;
 
     const targetMs = isColdCache
-      ? matchedStat.coldCacheMs || matchedStat.maxMs || Math.round(matchedStat.avgMs * 1.8)
-      : matchedStat.avgMs || matchedStat.lastRunMs;
+      ? matchedStat.coldCacheMs || matchedStat.maxMs || Math.round((matchedStat.medianMs || matchedStat.avgMs) * 1.8)
+      : matchedStat.medianMs || matchedStat.avgMs || matchedStat.lastRunMs;
 
     return {
       targetMs: Math.max(200, targetMs),
