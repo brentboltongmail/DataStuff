@@ -62,10 +62,10 @@ export function updateQueryStat(
   };
 }
 
-export const DEFAULT_ESTIMATE_MS = 5 * 60 * 1000; // Default 5 minutes (300,000 ms) if query has no historical record
+export const DEFAULT_ESTIMATE_MS = 2 * 60 * 1000; // Default 2 minutes (120,000 ms) if query has no historical record
 
 /**
- * Gets historical estimated target duration in ms for a query, defaulting to 5 minutes (300,000 ms) if unsaved in history.
+ * Gets historical estimated target duration in ms for a query, defaulting to 2 minutes (120,000 ms) if unsaved in history.
  */
 export function getEstimatedQueryDurationMs(
   stats: QueryStatsMap,
