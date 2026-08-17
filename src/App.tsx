@@ -2536,8 +2536,8 @@ export default function App() {
 
   const currentQueryEstimate = useMemo(() => {
     if (!busy || !isExecutingQuery) return null;
-    return getEstimatedQueryDurationMs(queryStats, executingStatementText, DEFAULT_ESTIMATE_MS);
-  }, [busy, isExecutingQuery, queryStats, executingStatementText]);
+    return getEstimatedQueryDurationMs(queryStats, executingStatementText, history, DEFAULT_ESTIMATE_MS);
+  }, [busy, isExecutingQuery, queryStats, executingStatementText, history]);
 
   const currentProgressPercent = useMemo(() => {
     if (!busy || !isExecutingQuery || !currentQueryEstimate) return 0;
