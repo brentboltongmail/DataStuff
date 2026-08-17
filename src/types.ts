@@ -97,7 +97,7 @@ export interface TabState {
   editMeta: EditMeta | null;
   pendingEdits: Record<string, CellEdit>;
   bottomTab: "results" | "history" | "explain";
-  history: HistoryEntry[];
+  history?: HistoryEntry[];
   bindValues: Record<string, BindVarParam>;
   message: string;
   error: string | null;

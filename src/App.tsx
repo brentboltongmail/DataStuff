@@ -2317,7 +2317,7 @@ export default function App() {
   const [activeTabId, setActiveTabId] = useState("");
   const [sqlDir, setSqlDir] = useState("~/sql");
   const [workspaceHydrated, setWorkspaceHydrated] = useState(false);
-  const [globalHistory] = useState<HistoryEntry[]>(() => loadHistory());
+  const [history, setHistory] = useState<HistoryEntry[]>(() => loadHistory());
   const [tabStates, setTabStates] = useState<Record<string, TabState>>({});
 
   const defaultTabState = useMemo<TabState>(
@@ -2328,14 +2328,13 @@ export default function App() {
       editMeta: null,
       pendingEdits: {},
       bottomTab: "results",
-      history: globalHistory,
       bindValues: loadSavedBindValues(),
       message: "Ready",
       error: null,
       queryStartTime: null,
       queryElapsedTimeMs: 0,
     }),
-    [globalHistory],
+    [],
   );
 
   const activeTabState = useMemo<TabState>(() => {
@@ -2428,15 +2427,6 @@ export default function App() {
     [updateActiveTabState],
   );
 
-  const history = activeTabState.history;
-  const setHistory = useCallback(
-    (val: HistoryEntry[] | ((prev: HistoryEntry[]) => HistoryEntry[])) => {
-      updateActiveTabState((prev: TabState) => ({
-        history: typeof val === "function" ? val(prev.history) : val,
-      }));
-    },
-    [updateActiveTabState],
-  );
 
   const bindValues = activeTabState.bindValues;
   const setBindValues = useCallback(
