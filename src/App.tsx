@@ -3527,6 +3527,7 @@ export default function App() {
       if (targetTabId) {
         updateTabStateById(targetTabId, {
           error: null,
+          message: "",
           bottomTab: "results",
           pendingEdits: {},
           editMeta: null,
@@ -3735,6 +3736,7 @@ export default function App() {
       setExecutingStatementText(statement);
       setRunningTabId(activeTabId);
       setError(null);
+      setMessage("");
       setExplainError(null);
       setBottomTab("explain");
       try {
