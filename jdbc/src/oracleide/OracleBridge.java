@@ -17,6 +17,10 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +36,14 @@ import java.util.concurrent.Executors;
 public final class OracleBridge {
   private static final int DEFAULT_MAX_ROWS = 1000;
   private static final int HARD_MAX_ROWS = 100_000;
+  private static final DateTimeFormatter DATE_FORMATTER =
+      DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+  private static final DateTimeFormatter DATE_MS_FORMATTER =
+      DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+  private static final DateTimeFormatter DATE_MICRO_FORMATTER =
+      DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+  private static final DateTimeFormatter OFFSET_FORMATTER =
+      DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS XXX");
   private static Connection connection;
   private static String activeRole = "NORMAL";
 
@@ -196,6 +208,11 @@ public final class OracleBridge {
 
     connection = DriverManager.getConnection(url, props);
     connection.setAutoCommit(false);
+    try (Statement stmt = connection.createStatement()) {
+      stmt.execute("ALTER SESSION SET TIME_ZONE = LOCAL");
+    } catch (Throwable ignored) {
+      // Ignore if session timezone altering fails on database
+    }
     Map<String, Object> result = new LinkedHashMap<>();
     result.put("connected", true);
     result.put("user", user);
@@ -861,11 +878,25 @@ public final class OracleBridge {
     if (value == null || rs.wasNull()) {
       return null;
     }
-    if (value instanceof Timestamp) {
-      return ((Timestamp) value).toInstant().toString();
+    if (value instanceof Timestamp ts) {
+      LocalDateTime ldt = ts.toLocalDateTime();
+      int nanos = ts.getNanos();
+      if (nanos == 0) {
+        return ldt.format(DATE_FORMATTER);
+      } else if (nanos % 1_000_000 == 0) {
+        return ldt.format(DATE_MS_FORMATTER);
+      } else {
+        return ldt.format(DATE_MICRO_FORMATTER);
+      }
     }
     if (value instanceof java.sql.Date) {
       return value.toString();
+    }
+    if (value instanceof OffsetDateTime odt) {
+      return odt.format(OFFSET_FORMATTER);
+    }
+    if (value instanceof ZonedDateTime zdt) {
+      return zdt.format(OFFSET_FORMATTER);
     }
     if (value instanceof BigDecimal) {
       return ((BigDecimal) value).toPlainString();
