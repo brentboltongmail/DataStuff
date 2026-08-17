@@ -3184,10 +3184,16 @@ button.status-bar-cancel-btn:hover {
 }
 
 .live-query-progress-pill .live-query-text,
+.live-query-progress-pill .live-query-percent,
 .live-query-progress-pill .live-query-elapsed {
   position: relative;
   z-index: 2;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+}
+
+.live-query-progress-pill .live-query-percent {
+  font-weight: 700;
+  color: #f3e8ff;
 }
 
 .live-query-progress-pill .live-query-elapsed {

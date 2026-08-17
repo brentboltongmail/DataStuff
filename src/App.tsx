@@ -6758,7 +6758,8 @@ export default function App() {
                 className="live-query-progress-mini-bar"
                 style={{ width: `${currentProgressPercent}%` }}
               />
-              <span className="live-query-text">Executing query... ({Math.round(currentProgressPercent)}% est.)</span>
+              <span className="live-query-text">Executing...</span>
+              <span className="live-query-percent">{Math.round(currentProgressPercent)}%</span>
               <span className="live-query-elapsed">{(queryElapsedTimeMs / 1000).toFixed(2)}s elapsed</span>
             </span>
             <button
