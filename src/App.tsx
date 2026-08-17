@@ -14,6 +14,7 @@ import ConnectionStarfieldOverlay, {
 } from "./components/ConnectionStarfieldOverlay";
 import PixelFontStudioModal from "./components/PixelFontStudioModal";
 import SolarSystemAtmosphere from "./components/SolarSystemAtmosphere";
+import ThreeDChartModal from "./components/ThreeDChartModal";
 import {
   parseBindVariables,
   prepareSqlWithBinds,
@@ -2518,6 +2519,7 @@ export default function App() {
   const [queryStats, setQueryStats] = useState<QueryStatsMap>({});
   const [executingStatementText, setExecutingStatementText] = useState<string>("");
   const [showPixelFontModal, setShowPixelFontModal] = useState(false);
+  const [showChartModal, setShowChartModal] = useState(false);
 
   useEffect(() => {
     if (window.oracle?.loadQueryStats) {
@@ -6597,6 +6599,15 @@ export default function App() {
                 ) : null}
                 <button
                   type="button"
+                  onClick={() => setShowChartModal(true)}
+                  disabled={!result || !result.isSelect || result.rows.length === 0 || busy}
+                  title="Visualize grid data in an interactive 3D chart"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 4, marginRight: 4 }}
+                >
+                  📊 3D Chart...
+                </button>
+                <button
+                  type="button"
                   onClick={onExportCsv}
                   disabled={!canExport || busy}
                   title="Export current result grid to CSV"
@@ -7028,6 +7039,13 @@ export default function App() {
         isOpen={showPixelFontModal}
         onClose={() => setShowPixelFontModal(false)}
       />
+
+      {showChartModal && result && (
+        <ThreeDChartModal
+          result={result}
+          onClose={() => setShowChartModal(false)}
+        />
+      )}
 
       {themeId === "knightrider" ? <KnightRiderAtmosphere /> : null}
     </div>
