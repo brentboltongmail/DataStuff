@@ -200,13 +200,13 @@ function densityLabel(density: GridDensity): string {
 }
 
 function formatLiveElapsedTime(ms: number): string {
-  const totalSecs = ms / 1000;
+  const totalSecs = Math.max(0, ms) / 1000;
   if (totalSecs < 60) {
     return `${totalSecs.toFixed(1)}s`;
   }
   const mins = Math.floor(totalSecs / 60);
   const secs = (totalSecs % 60).toFixed(1);
-  return `${mins}m ${secs.padStart(4, "0")}s`;
+  return `${mins}m ${secs}s`;
 }
 
 interface SolarFlareState {
@@ -6754,7 +6754,7 @@ export default function App() {
           <div className="status-bar-progress-container">
             <span
               className="live-query-progress-pill"
-              title={`Executing query · Estimated completion: ${Math.round(currentProgressPercent)}% · Realtime elapsed: ${(queryElapsedTimeMs / 1000).toFixed(2)}s`}
+              title={`Executing query · Estimated completion: ${Math.round(currentProgressPercent)}% · Realtime elapsed: ${formatLiveElapsedTime(queryElapsedTimeMs)}`}
             >
               <span
                 className="live-query-progress-mini-bar"
@@ -6762,7 +6762,7 @@ export default function App() {
               />
               <span className="live-query-text">Executing...</span>
               <span className="live-query-percent">{Math.round(currentProgressPercent)}%</span>
-              <span className="live-query-elapsed">{(queryElapsedTimeMs / 1000).toFixed(2)}s elapsed</span>
+              <span className="live-query-elapsed">{formatLiveElapsedTime(queryElapsedTimeMs)} elapsed</span>
             </span>
             <button
               type="button"
