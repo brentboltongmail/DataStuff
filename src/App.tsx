@@ -2749,34 +2749,16 @@ export default function App() {
     [persistPassword],
   );
 
-  const flushActiveEditorSql = useCallback(() => {
-    if (editorRef.current && activeTabIdRef.current) {
-      const liveVal = editorRef.current.getValue();
-      if (editorChangeTimerRef.current != null) {
-        window.clearTimeout(editorChangeTimerRef.current);
-        editorChangeTimerRef.current = null;
-      }
-      const targetId = activeTabIdRef.current;
-      tabsRef.current = tabsRef.current.map((t) =>
-        t.id === targetId ? { ...t, sql: liveVal } : t,
-      );
-      setTabs(tabsRef.current);
-    }
-  }, []);
-
   const handleSelectTab = useCallback(
     (nextTabId: string) => {
       if (nextTabId === activeTabIdRef.current) return;
-      flushActiveEditorSql();
       setActiveTabId(nextTabId);
     },
-    [flushActiveEditorSql],
+    [],
   );
 
   const persistWorkspace = useCallback(async (immediate = false) => {
     if (!hydratedRef.current) return;
-
-    flushActiveEditorSql();
 
     const payload = {
       tabs: tabsRef.current,
@@ -3855,6 +3837,20 @@ export default function App() {
     (value: string | undefined) => {
       const nextValue = value ?? "";
       const targetTabId = activeTabIdRef.current;
+      if (!targetTabId) return;
+
+      // Protection against Monaco emitting unmount artifacts during model change
+      const currentTab = tabsRef.current.find((t) => t.id === targetTabId);
+      if (
+        nextValue === "" &&
+        currentTab &&
+        currentTab.sql.trim().length > 0 &&
+        editorRef.current &&
+        editorRef.current.getValue().trim().length > 0
+      ) {
+        return;
+      }
+
       setSaveState("unsaved");
       if (monacoApiRef.current && editorRef.current) {
         const model = editorRef.current.getModel();
@@ -3871,13 +3867,12 @@ export default function App() {
       }
       editorChangeTimerRef.current = window.setTimeout(() => {
         editorChangeTimerRef.current = null;
-        if (!targetTabId) return;
         setTabs((prev) =>
           prev.map((tab) =>
             tab.id === targetTabId ? { ...tab, sql: nextValue } : tab,
           ),
         );
-      }, 300);
+      }, 150);
     },
     [],
   );
