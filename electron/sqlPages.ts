@@ -146,6 +146,23 @@ export async function loadWorkspace(): Promise<SavedWorkspace> {
   };
 }
 
+async function backupSqlFile(filePath: string): Promise<void> {
+  try {
+    if (!(await exists(filePath))) return;
+    const stat = await fs.stat(filePath);
+    if (stat.size === 0) return;
+
+    const backupsDir = path.join(sqlDir(), ".backups");
+    await fs.mkdir(backupsDir, { recursive: true });
+
+    const baseName = path.basename(filePath);
+    const backupPath = path.join(backupsDir, `${baseName}.bak`);
+    await fs.copyFile(filePath, backupPath);
+  } catch (err) {
+    console.error("Failed to create backup for SQL file:", filePath, err);
+  }
+}
+
 export async function saveWorkspace(
   workspace: SavedWorkspace,
 ): Promise<{ saved: boolean; path: string; tabs: SqlTab[] }> {
@@ -170,16 +187,34 @@ export async function saveWorkspace(
       const from = path.join(dir, previousName);
       const to = path.join(dir, fileName);
       if ((await exists(from)) && !(await exists(to))) {
+        await backupSqlFile(from);
         await fs.rename(from, to);
       }
     }
 
-    await fs.writeFile(path.join(dir, fileName), tab.sql ?? "", "utf8");
+    const targetPath = path.join(dir, fileName);
+    let sqlToSave = tab.sql ?? "";
+
+    // Safety Guard: If disk file exists with non-empty content (> 0 bytes) and incoming sqlToSave is empty/whitespace,
+    // do NOT wipe the disk file! Preserve existing disk content to protect against race conditions or unmount glitches.
+    if (await exists(targetPath)) {
+      const diskContent = await fs.readFile(targetPath, "utf8");
+      if (diskContent.trim().length > 0 && sqlToSave.trim().length === 0) {
+        console.warn(
+          `[SAFETY GUARD] Prevented overwriting non-empty SQL file "${fileName}" (${diskContent.length} bytes) with empty content. Preserving disk content.`,
+        );
+        sqlToSave = diskContent;
+      } else if (diskContent.length > 0 && diskContent !== sqlToSave) {
+        await backupSqlFile(targetPath);
+      }
+    }
+
+    await fs.writeFile(targetPath, sqlToSave, "utf8");
     savedTabs.push({
       id: fileName,
       fileName,
       title: titleFromFileName(fileName),
-      sql: tab.sql ?? "",
+      sql: sqlToSave,
     });
   }
 
@@ -219,13 +254,13 @@ export async function renameSqlPage(
   const toPath = path.join(dir, to);
 
   if (from !== to) {
-    if (!(await exists(fromPath))) {
-      await fs.writeFile(fromPath, "", "utf8");
+    if (await exists(fromPath)) {
+      if ((await exists(toPath)) && from.toLowerCase() !== to.toLowerCase()) {
+        throw new Error(`File already exists: ${to}`);
+      }
+      await backupSqlFile(fromPath);
+      await fs.rename(fromPath, toPath);
     }
-    if ((await exists(toPath)) && from.toLowerCase() !== to.toLowerCase()) {
-      throw new Error(`File already exists: ${to}`);
-    }
-    await fs.rename(fromPath, toPath);
   }
 
   const session = (await readSession()) ?? {

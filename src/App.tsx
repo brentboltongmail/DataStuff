@@ -2749,8 +2749,34 @@ export default function App() {
     [persistPassword],
   );
 
+  const flushActiveEditorSql = useCallback(() => {
+    if (editorRef.current && activeTabIdRef.current) {
+      const liveVal = editorRef.current.getValue();
+      if (editorChangeTimerRef.current != null) {
+        window.clearTimeout(editorChangeTimerRef.current);
+        editorChangeTimerRef.current = null;
+      }
+      const targetId = activeTabIdRef.current;
+      tabsRef.current = tabsRef.current.map((t) =>
+        t.id === targetId ? { ...t, sql: liveVal } : t,
+      );
+      setTabs(tabsRef.current);
+    }
+  }, []);
+
+  const handleSelectTab = useCallback(
+    (nextTabId: string) => {
+      if (nextTabId === activeTabIdRef.current) return;
+      flushActiveEditorSql();
+      setActiveTabId(nextTabId);
+    },
+    [flushActiveEditorSql],
+  );
+
   const persistWorkspace = useCallback(async (immediate = false) => {
     if (!hydratedRef.current) return;
+
+    flushActiveEditorSql();
 
     const payload = {
       tabs: tabsRef.current,
@@ -3828,6 +3854,7 @@ export default function App() {
   const handleEditorChange = useCallback(
     (value: string | undefined) => {
       const nextValue = value ?? "";
+      const targetTabId = activeTabIdRef.current;
       setSaveState("unsaved");
       if (monacoApiRef.current && editorRef.current) {
         const model = editorRef.current.getModel();
@@ -3844,10 +3871,15 @@ export default function App() {
       }
       editorChangeTimerRef.current = window.setTimeout(() => {
         editorChangeTimerRef.current = null;
-        setActiveSql(nextValue);
+        if (!targetTabId) return;
+        setTabs((prev) =>
+          prev.map((tab) =>
+            tab.id === targetTabId ? { ...tab, sql: nextValue } : tab,
+          ),
+        );
       }, 300);
     },
-    [setActiveSql],
+    [],
   );
 
   const triggerAutoFormat = useCallback(() => {
@@ -6274,7 +6306,7 @@ export default function App() {
                   activeId={activeTabId}
                   isBusy={busy && isExecutingQuery}
                   runningTabId={runningTabId}
-                  onSelect={setActiveTabId}
+                  onSelect={handleSelectTab}
                   onClose={(id) => {
                     void closeTab(id);
                   }}
