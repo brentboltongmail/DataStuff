@@ -1819,11 +1819,11 @@ const DiscoAudioPlayer: React.FC = () => {
         type="button"
         className={`disco-play-btn ${isPlaying ? "playing" : ""}`}
         onClick={() => { void togglePlay(); }}
-        title={isPlaying ? "Pause ElevenLabs Disco Theme Song" : "Play ElevenLabs Disco Theme Song (Loop on repeat)"}
+        title={isPlaying ? "Pause Audio" : "Play Audio"}
       >
-        <span className="disco-play-icon">{isPlaying ? "⏸" : "▶"}</span>
+        <span className="disco-play-icon">{isPlaying ? "⏸" : "🪩 ▶"}</span>
         <span className="disco-play-text">
-          {isPlaying ? "DISCO SONG PLAYING" : "PLAY DISCO SONG"}
+          {isPlaying ? "PLAYING" : "PLAY"}
         </span>
         {isPlaying && (
           <span className="disco-eq-mini">
@@ -2035,11 +2035,11 @@ const KnightRiderAudioPlayer: React.FC = () => {
         type="button"
         className={`kitt-play-btn ${isPlaying ? "playing" : ""}`}
         onClick={() => { void togglePlay(); }}
-        title={isPlaying ? "Pause Knight Rider K.I.T.T. Audio" : "Play Knight Rider K.I.T.T. Theme Track (Loop on repeat)"}
+        title={isPlaying ? "Pause Audio" : "Play Audio"}
       >
         <span className="kitt-play-icon">{isPlaying ? "⏸" : "🏎️ ▶"}</span>
         <span className="kitt-play-text">
-          {isPlaying ? "K.I.T.T. AUDIO PLAYING" : "PLAY K.I.T.T. THEME"}
+          {isPlaying ? "PLAYING" : "PLAY"}
         </span>
         {/* K.I.T.T. Voice Analyzer LED Bars */}
         <div className="kitt-voice-analyzer">
