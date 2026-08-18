@@ -62,7 +62,7 @@ export const APP_THEMES: AppThemeOption[] = [
   { id: "cyberpunk", label: "Cyberpunk City 2077", monacoTheme: "datastuff-cyberpunk" },
   { id: "solar", label: "Solar Flare", monacoTheme: "datastuff-solar" },
   { id: "knightrider", label: "🏎️ Knight Rider K.I.T.T.", monacoTheme: "datastuff-knightrider" },
-  { id: "solarsystem", label: "🪐 Solar System (9 Planets & Moons)", monacoTheme: "datastuff-solarsystem" },
+  { id: "solarsystem", label: "🪐 Solar System", monacoTheme: "datastuff-solarsystem" },
 ];
 
 const THEME_IDS = new Set<AppThemeId>(APP_THEMES.map((theme) => theme.id));
