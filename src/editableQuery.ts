@@ -40,9 +40,10 @@ export function canInjectRowId(sql: string): boolean {
     .trim();
 
   // Subquery ROWID wrapper (SELECT ROWID, q.* FROM (...) q) fails in Oracle (ORA-01445)
-  // if the query contains ORDER BY, GROUP BY, HAVING, DISTINCT, UNION, INTERSECT, MINUS, WITH, etc.
+  // ONLY if the query transforms/aggregates rows (GROUP BY, HAVING, DISTINCT, UNION, INTERSECT, MINUS, WITH).
+  // ORDER BY preserves 1-to-1 table rows and works seamlessly with ROWID in Oracle.
   if (
-    /\b(order\s+by|group\s+by|having|distinct|union|intersect|minus|with)\b/i.test(
+    /\b(group\s+by|having|distinct|union|intersect|minus|with)\b/i.test(
       cleaned,
     )
   ) {
