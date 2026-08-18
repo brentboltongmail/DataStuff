@@ -100,11 +100,16 @@ function SqlTabs({
           type="button"
           className="sql-tab-add"
           title="Open SQL file (Cmd+O)"
-          onClick={onOpen}
+          onClick={() => onOpen()}
         >
           Open
         </button>
-        <button type="button" className="sql-tab-add" title="New tab (Cmd+T)" onClick={onAdd}>
+        <button
+          type="button"
+          className="sql-tab-add"
+          title="New tab (Cmd+T)"
+          onClick={() => onAdd()}
+        >
           +
         </button>
       </div>

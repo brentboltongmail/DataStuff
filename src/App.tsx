@@ -5769,9 +5769,11 @@ export default function App() {
     return list;
   }, [tabs, tabStates]);
 
-  const addTab = useCallback(async (sqlText = "", title = "query") => {
+  const addTab = useCallback(async (sqlText?: string | unknown, title?: string | unknown) => {
+    const safeSql = typeof sqlText === "string" ? sqlText : "";
+    const safeTitle = typeof title === "string" ? title : "query";
     try {
-      const tab = await window.oracle.createSqlPage(title, sqlText);
+      const tab = await window.oracle.createSqlPage(safeTitle, safeSql);
       skipNextSaveRef.current = true;
       setTabs((prev) => [...prev, tab]);
       setActiveTabId(tab.id);
