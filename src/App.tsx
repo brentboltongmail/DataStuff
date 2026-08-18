@@ -2221,7 +2221,6 @@ function loadRememberPassword(): boolean {
 const SAVED_CONNECTIONS_KEY = "oracle-ide.saved-connections";
 const LAST_CONNECTION_ID_KEY = "oracle-ide.last-connection-id";
 const AUTO_FORMAT_KEY = "oracle-ide.auto-format";
-const AUTO_COMMIT_EDITS_KEY = "oracle-ide.auto-commit-edits";
 
 export interface SavedConnection {
   id: string;
@@ -2373,9 +2372,9 @@ export default function App() {
 
   const updateActiveTabState = useCallback(
     (updater: Partial<TabState> | ((prev: TabState) => Partial<TabState>)) => {
-      updateTabStateById(activeTabId, updater);
+      updateTabStateById(activeTabIdRef.current, updater);
     },
-    [activeTabId, updateTabStateById],
+    [updateTabStateById],
   );
 
   const result = activeTabState.result;
@@ -2614,9 +2613,6 @@ export default function App() {
   const [showManageModal, setShowManageModal] = useState<boolean>(false);
   const [showProdCommitConfirm, setShowProdCommitConfirm] = useState<boolean>(false);
   const [autoFormat, setAutoFormat] = useState<boolean>(() => localStorage.getItem(AUTO_FORMAT_KEY) === "true");
-  const [autoCommitEdits, setAutoCommitEdits] = useState<boolean>(() => localStorage.getItem(AUTO_COMMIT_EDITS_KEY) !== "false");
-  const autoCommitEditsRef = useRef(autoCommitEdits);
-  autoCommitEditsRef.current = autoCommitEdits;
   // Real-time query execution length timer loop
   useEffect(() => {
     if (!busy || !queryStartTime) {
@@ -3013,10 +3009,6 @@ export default function App() {
       })
       .catch(() => {});
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem(AUTO_COMMIT_EDITS_KEY, String(autoCommitEdits));
-  }, [autoCommitEdits]);
 
   useEffect(() => {
     localStorage.setItem(AUTO_FORMAT_KEY, String(autoFormat));
@@ -5158,8 +5150,6 @@ export default function App() {
     [endSplitDrag],
   );
 
-  const executeCommitRef = useRef<() => Promise<void>>(() => Promise.resolve());
-
   const onCellEdit = useCallback((edit: CellEdit) => {
     const key = cellEditKey(edit.rowIndex, edit.columnIndex);
     setPendingEdits((prev) => {
@@ -5171,11 +5161,6 @@ export default function App() {
       }
       return next;
     });
-    if (autoCommitEditsRef.current) {
-      window.setTimeout(() => {
-        void executeCommitRef.current();
-      }, 60);
-    }
   }, []);
 
   const applyPendingUpdates = async () => {
@@ -5264,7 +5249,6 @@ export default function App() {
       setBusy(false);
     }
   };
-  executeCommitRef.current = executeCommit;
 
   const onCommit = async () => {
     if (isProd) {
@@ -6717,14 +6701,6 @@ export default function App() {
                 >
                   Rollback
                 </button>
-                <label className="toolbar-checkbox" title="Automatically save and commit cell edits to the database immediately upon editing">
-                  <input
-                    type="checkbox"
-                    checked={autoCommitEdits}
-                    onChange={(e) => setAutoCommitEdits(e.target.checked)}
-                  />
-                  Auto-Commit Edits
-                </label>
                 <button
                   type="button"
                   className={density !== "normal" ? "active-toggle" : ""}

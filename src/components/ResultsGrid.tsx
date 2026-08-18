@@ -263,7 +263,7 @@ function computeAutoColWidths(
   return computeNormalColWidths(columns, rows, pendingEdits, fontScale);
 }
 
-function ResultsGrid({
+export default function ResultsGrid({
   result,
   density,
   editable,
@@ -516,9 +516,10 @@ function ResultsGrid({
     const { rowIndex, columnIndex } = editing;
     const column = result.columns[columnIndex];
     const original = result.rows[rowIndex]?.[columnIndex];
+    const textToCommit = inputRef.current ? inputRef.current.value : draft;
     setEditing(null);
 
-    const newValue = parseEditValue(draft, original);
+    const newValue = parseEditValue(textToCommit, original);
     onEdit({
       rowIndex,
       columnIndex,
@@ -842,5 +843,3 @@ function ResultsGrid({
     </div>
   );
 }
-
-export default memo(ResultsGrid);
