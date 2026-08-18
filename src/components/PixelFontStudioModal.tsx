@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { memo, useState, useEffect, useCallback, useMemo } from "react";
 
 interface Props {
   isOpen: boolean;
@@ -97,7 +97,7 @@ function rasterizeGlyphForGrid(char: string, W: number, H: number): boolean[][] 
   return grid;
 }
 
-export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
+function PixelFontStudioModal({ isOpen, onClose }: Props) {
   const [fontName, setFontName] = useState("MyPixelFont");
   const [selectedChar, setSelectedChar] = useState("A");
   const [gridWidth, setGridWidth] = useState(8);
@@ -627,3 +627,5 @@ export default function PixelFontStudioModal({ isOpen, onClose }: Props) {
     </div>
   );
 }
+
+export default memo(PixelFontStudioModal);

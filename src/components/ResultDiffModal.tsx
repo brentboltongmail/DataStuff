@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { memo, useMemo, useState } from "react";
 import type { QueryResult } from "../types";
 import { formatCell } from "../csv";
 
@@ -28,7 +28,7 @@ interface DiffRowResult {
   changedColumns: Set<string>;
 }
 
-export default function ResultDiffModal({
+function ResultDiffModal({
   isOpen,
   onClose,
   sources,
@@ -468,3 +468,5 @@ export default function ResultDiffModal({
     </div>
   );
 }
+
+export default memo(ResultDiffModal);

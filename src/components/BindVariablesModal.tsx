@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { memo, useState, useEffect } from "react";
 import type { BindType, BindVarParam } from "../bindVariables";
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
   onCancel: () => void;
 }
 
-export default function BindVariablesModal({
+function BindVariablesModal({
   varNames,
   initialValues,
   onConfirm,
@@ -141,3 +141,5 @@ export default function BindVariablesModal({
     </div>
   );
 }
+
+export default memo(BindVariablesModal);

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { memo, useEffect, useRef, useState, useMemo } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { QueryResult } from "../types";
@@ -838,4 +838,4 @@ export const ThreeDChartModal: React.FC<Props> = ({ result, onClose }) => {
   );
 };
 
-export default ThreeDChartModal;
+export default memo(ThreeDChartModal);

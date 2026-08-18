@@ -13,6 +13,7 @@ import ConnectionStarfieldOverlay, {
   type ConnectPhase,
 } from "./components/ConnectionStarfieldOverlay";
 import PixelFontStudioModal from "./components/PixelFontStudioModal";
+import QueryGutterOverlay from "./components/QueryGutterOverlay";
 import SolarSystemAtmosphere from "./components/SolarSystemAtmosphere";
 import ThreeDChartModal from "./components/ThreeDChartModal";
 import ResultDiffModal, { type DiffSource } from "./components/ResultDiffModal";
@@ -227,9 +228,7 @@ interface SolarFlareState {
   duration: number;
   delay: number;
   maxScale: number;
-}
-
-const SolarAtmosphere: React.FC = () => {
+}const SolarAtmosphere = memo(() => {
   const [flares, setFlares] = useState<SolarFlareState[]>(() =>
     Array.from({ length: 5 }).map((_, i) => ({
       id: i,
@@ -278,9 +277,9 @@ const SolarAtmosphere: React.FC = () => {
       ))}
     </div>
   );
-};
+});
 
-const CrystalAtmosphere: React.FC = () => {
+const CrystalAtmosphere = memo(() => {
   return (
     <div className="crystal-atmosphere">
       <div className="cavern-ambient-glow" />
@@ -328,9 +327,9 @@ const CrystalAtmosphere: React.FC = () => {
       <div className="crystal-dust dust-6" />
     </div>
   );
-};
+});
 
-const DuneAtmosphere: React.FC = () => {
+const DuneAtmosphere = memo(() => {
   return (
     <div className="dune-atmosphere">
       <div className="dune-sun-halo sun-primary" />
@@ -355,9 +354,9 @@ const DuneAtmosphere: React.FC = () => {
       <div className="spice-mote mote-12" />
     </div>
   );
-};
+});
 
-const CodexAtmosphere: React.FC = () => {
+const CodexAtmosphere = memo(() => {
   return (
     <div className="codex-atmosphere">
       <div className="parchment-grain" />
@@ -378,9 +377,9 @@ const CodexAtmosphere: React.FC = () => {
       <div className="candle-glow glow-right" />
     </div>
   );
-};
+});
 
-const DriftAtmosphere: React.FC = () => {
+const DriftAtmosphere = memo(() => {
   return (
     <div className="drift-atmosphere">
       <div className="tokyo-skyline" />
@@ -402,9 +401,9 @@ const DriftAtmosphere: React.FC = () => {
       <div className="drift-smoke smoke-2" />
     </div>
   );
-};
+});
 
-const LightningAtmosphere: React.FC = () => {
+const LightningAtmosphere = memo(() => {
   return (
     <div className="lightning-atmosphere">
       <div className="storm-flash" />
@@ -466,9 +465,9 @@ const LightningAtmosphere: React.FC = () => {
       <div className="tesla-arc arc-2" />
     </div>
   );
-};
+});
 
-const SakuraAtmosphere: React.FC = () => {
+const SakuraAtmosphere = memo(() => {
   return (
     <div className="sakura-atmosphere">
       <div className="sakura-moon" />
@@ -491,9 +490,9 @@ const SakuraAtmosphere: React.FC = () => {
       <div className="sakura-petal petal-12" />
     </div>
   );
-};
+});
 
-const NebulaAtmosphere: React.FC = () => {
+const NebulaAtmosphere = memo(() => {
   return (
     <div className="nebula-atmosphere">
       <div className="quasar-core" />
@@ -514,9 +513,9 @@ const NebulaAtmosphere: React.FC = () => {
       <div className="starfire star-8" />
     </div>
   );
-};
+});
 
-const DragonAtmosphere: React.FC = () => {
+const DragonAtmosphere = memo(() => {
   return (
     <div className="dragon-atmosphere">
       <div className="dragon-scale-texture" />
@@ -559,9 +558,9 @@ const DragonAtmosphere: React.FC = () => {
       <div className="dragon-ember spark-5" />
     </div>
   );
-};
+});
 
-const StealthAtmosphere: React.FC = () => {
+const StealthAtmosphere = memo(() => {
   return (
     <div className="hud-atmosphere">
       <div className="hud-radar-scope">
@@ -615,9 +614,9 @@ const StealthAtmosphere: React.FC = () => {
       <div className="sonic-boom-ring boom-2" />
     </div>
   );
-};
+});
 
-const ForestAtmosphere: React.FC = () => {
+const ForestAtmosphere = memo(() => {
   return (
     <div className="enchanted-atmosphere">
       <div className="forest-mist" />
@@ -687,9 +686,9 @@ const ForestAtmosphere: React.FC = () => {
       <div className="firefly fly-8" />
     </div>
   );
-};
+});
 
-const CyberpunkAtmosphere: React.FC = () => {
+const CyberpunkAtmosphere = memo(() => {
   return (
     <div className="cyberpunk-atmosphere">
       <div className="cyber-skyline" />
@@ -730,9 +729,9 @@ const CyberpunkAtmosphere: React.FC = () => {
       <div className="rain-streak drop-10" />
     </div>
   );
-};
+});
 
-const DeepSeaAtmosphere: React.FC = () => {
+const DeepSeaAtmosphere = memo(() => {
   return (
     <div className="deepsea-atmosphere">
       <div className="abyssal-glow" />
@@ -835,9 +834,9 @@ const DeepSeaAtmosphere: React.FC = () => {
       <div className="sea-bubble bubble-4" />
     </div>
   );
-};
+});
 
-const AetheriumAtmosphere: React.FC = () => {
+const AetheriumAtmosphere = memo(() => {
   return (
     <div className="theme-atmosphere aetherium-atmosphere" aria-hidden="true">
       <div className="aetherium-aurora-ribbon ribbon-1" />
@@ -891,9 +890,9 @@ const AetheriumAtmosphere: React.FC = () => {
       <div className="aether-mote mote-6" />
     </div>
   );
-};
+});
 
-const BrassAtmosphere: React.FC = () => {
+const BrassAtmosphere = memo(() => {
   return (
     <div className="theme-atmosphere brass-atmosphere" aria-hidden="true">
       <div className="steam-cloud cloud-1" />
@@ -939,9 +938,9 @@ const BrassAtmosphere: React.FC = () => {
       <div className="steam-vent vent-2" />
     </div>
   );
-};
+});
 
-const MatrixAtmosphere: React.FC = () => {
+const MatrixAtmosphere = memo(() => {
   return (
     <div className="matrix-atmosphere">
       <div className="matrix-crt-scanlines" />
@@ -960,7 +959,7 @@ const MatrixAtmosphere: React.FC = () => {
       <div className="matrix-code-stream stream-12"><span className="stream-head">10</span></div>
     </div>
   );
-};
+});
 
 const SynthwaveAtmosphere = memo(() => {
   return (
@@ -1248,9 +1247,9 @@ const SpaceshipAtmosphere = memo<SpaceshipAtmosphereProps>(({ galaxyStars, space
   );
 });
 
-const DefaultAtmosphere: React.FC = () => {
+const DefaultAtmosphere = memo(() => {
   return null;
-};
+});
 
 const RainbowAtmosphere = memo(() => {
   return (
@@ -2062,7 +2061,7 @@ const KnightRiderAudioPlayer: React.FC = () => {
   );
 };
 
-const KnightRiderAtmosphere: React.FC = () => {
+const KnightRiderAtmosphere = memo(() => {
   return (
     <div className="knightrider-atmosphere">
       {/* Front Hood Scanner Chaser (8 Red LEDs) */}
@@ -2081,7 +2080,7 @@ const KnightRiderAtmosphere: React.FC = () => {
       <div className="kitt-cyber-grid-floor" />
     </div>
   );
-};
+});
 
 const CIRCUIT_PRESETS = [
   // Preset 1: Silverstone Sweeping Loop
@@ -2179,6 +2178,455 @@ function generateSpiralGalaxyStars(): SpiralStar[] {
 
   return stars;
 }
+
+const RacecarAtmosphere = memo(({ raceTrackPath }: { raceTrackPath: string }) => {
+  return (
+    <div
+      className="racecar-atmosphere"
+      style={{ "--circuit-path": `path("${raceTrackPath}")` } as React.CSSProperties}
+    >
+      <div className="track-3d-stage">
+        <div className="track-loop-container">
+          <svg className="gp-circuit-svg" viewBox="0 0 1600 900" preserveAspectRatio="none">
+            <path className="gp-track-runoff" d={raceTrackPath} />
+            <path className="gp-track-curbs-red" d={raceTrackPath} />
+            <path className="gp-track-curbs-white" d={raceTrackPath} />
+            <path className="gp-track-asphalt" d={raceTrackPath} />
+            <path className="gp-track-racingline" d={raceTrackPath} />
+            <path className="gp-track-boundary" d={raceTrackPath} />
+            <path className="gp-track-centerline" d={raceTrackPath} />
+          </svg>
+
+          <div className="race-car race-car-1 car-f1-red">
+            <span className="rc-underglow" />
+            <span className="rc-headlight-beam" />
+            <span className="rc-chassis" />
+            <span className="rc-racing-stripe" />
+            <span className="rc-livery-number">01</span>
+            <span className="rc-nose" />
+            <span className="rc-wing-front" />
+            <span className="rc-wing-rear" />
+            <span className="rc-cockpit" />
+            <span className="rc-halo-bar" />
+            <span className="rc-driver-helmet" />
+            <span className="rc-pod-left" />
+            <span className="rc-pod-right" />
+            <span className="rc-wheel wheel-fl" />
+            <span className="rc-wheel wheel-fr" />
+            <span className="rc-wheel wheel-rl" />
+            <span className="rc-wheel wheel-rr" />
+            <span className="rc-taillights" />
+            <span className="rc-exhaust-glow" />
+          </div>
+
+          <div className="race-car race-car-2 car-gt-cyan">
+            <span className="rc-underglow" />
+            <span className="rc-headlight-beam" />
+            <span className="rc-chassis" />
+            <span className="rc-racing-stripe" />
+            <span className="rc-livery-number">24</span>
+            <span className="rc-roof" />
+            <span className="rc-windshield" />
+            <span className="rc-spoiler" />
+            <span className="rc-diffuser" />
+            <span className="rc-wheel wheel-fl" />
+            <span className="rc-wheel wheel-fr" />
+            <span className="rc-wheel wheel-rl" />
+            <span className="rc-wheel wheel-rr" />
+            <span className="rc-headlights" />
+            <span className="rc-taillights" />
+          </div>
+
+          <div className="race-car race-car-3 car-hyper-gold">
+            <span className="rc-underglow" />
+            <span className="rc-headlight-beam" />
+            <span className="rc-chassis" />
+            <span className="rc-racing-stripe" />
+            <span className="rc-livery-number">77</span>
+            <span className="rc-fin" />
+            <span className="rc-canopy" />
+            <span className="rc-side-air-intake-left" />
+            <span className="rc-side-air-intake-right" />
+            <span className="rc-wing-rear" />
+            <span className="rc-wheel wheel-fl" />
+            <span className="rc-wheel wheel-fr" />
+            <span className="rc-wheel wheel-rl" />
+            <span className="rc-wheel wheel-rr" />
+            <span className="rc-exhaust-glow" />
+          </div>
+
+          <div className="race-car race-car-4 car-proto-green">
+            <span className="rc-underglow" />
+            <span className="rc-headlight-beam" />
+            <span className="rc-chassis" />
+            <span className="rc-racing-stripe" />
+            <span className="rc-livery-number">09</span>
+            <span className="rc-fender-left" />
+            <span className="rc-fender-right" />
+            <span className="rc-cockpit" />
+            <span className="rc-wheel wheel-fl" />
+            <span className="rc-wheel wheel-fr" />
+            <span className="rc-wheel wheel-rl" />
+            <span className="rc-wheel wheel-rr" />
+            <span className="rc-headlights" />
+            <span className="rc-taillights" />
+          </div>
+
+          <div className="race-car race-car-5 car-drift-purple">
+            <span className="rc-underglow" />
+            <span className="rc-headlight-beam" />
+            <span className="rc-chassis" />
+            <span className="rc-racing-stripe" />
+            <span className="rc-livery-number">88</span>
+            <span className="rc-widebody" />
+            <span className="rc-ducktail" />
+            <span className="rc-windshield" />
+            <span className="rc-wheel wheel-fl" />
+            <span className="rc-wheel wheel-fr" />
+            <span className="rc-wheel wheel-rl" />
+            <span className="rc-wheel wheel-rr" />
+            <span className="rc-exhaust-glow" />
+            <span className="rc-taillights" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+const LavaAtmosphere = memo(() => {
+  return (
+    <div className="lava-atmosphere">
+      <div className="lava-bottom-glow" />
+      <div className="lava-magma-pool pool-1" />
+      <div className="lava-magma-pool pool-2" />
+      <div className="lava-river river-left" />
+      <div className="lava-river river-right" />
+      <div className="lava-crust-cracks" />
+
+      <div className="lava-magma-surge surge-1">
+        <span className="magma-core" />
+        <span className="magma-crest crest-1" />
+        <span className="magma-crest crest-2" />
+      </div>
+      <div className="lava-magma-surge surge-2">
+        <span className="magma-core" />
+        <span className="magma-crest crest-2" />
+        <span className="magma-crest crest-3" />
+      </div>
+      <div className="lava-magma-surge surge-3">
+        <span className="magma-core" />
+        <span className="magma-crest crest-1" />
+        <span className="magma-crest crest-3" />
+      </div>
+      <div className="lava-magma-surge surge-4">
+        <span className="magma-core" />
+        <span className="magma-crest crest-2" />
+      </div>
+
+      <div className="lava-spatter-plume plume-1" />
+      <div className="lava-spatter-plume plume-2" />
+      <div className="lava-spatter-plume plume-3" />
+
+      <div className="lava-bubble bubble-1" />
+      <div className="lava-bubble bubble-2" />
+      <div className="lava-bubble bubble-3" />
+      <div className="lava-bubble bubble-4" />
+
+      <div className="lava-ember ember-1" />
+      <div className="lava-ember ember-2" />
+      <div className="lava-ember ember-3" />
+      <div className="lava-ember ember-4" />
+      <div className="lava-ember ember-5" />
+      <div className="lava-ember ember-6" />
+      <div className="lava-ember ember-7" />
+      <div className="lava-ember ember-8" />
+    </div>
+  );
+});
+
+const NuclearAtmosphere = memo(() => {
+  return (
+    <div className="nuclear-atmosphere">
+      <div className="silo-blast-hatch left-hatch" />
+      <div className="silo-blast-hatch right-hatch" />
+      <div className="silo-hazard-stripe top-stripe" />
+      <div className="silo-hazard-stripe bottom-stripe" />
+
+      <div className="radiation-trefoil">
+        <span className="trefoil-center" />
+        <span className="trefoil-blade blade-1" />
+        <span className="trefoil-blade blade-2" />
+        <span className="trefoil-blade blade-3" />
+      </div>
+
+      <div className="warning-beacon beacon-left" />
+      <div className="warning-beacon beacon-right" />
+      <div className="nuclear-status-banner">DEFCON 1 · PRODUCTION LIVE DATABASE SILO</div>
+
+      <div className="steam-vent vent-left" />
+      <div className="steam-vent vent-right" />
+      <div className="radiation-particle spark-1" />
+      <div className="radiation-particle spark-2" />
+      <div className="radiation-particle spark-3" />
+      <div className="radiation-particle spark-4" />
+    </div>
+  );
+});
+
+const IceAtmosphere = memo(() => {
+  return (
+    <div className="ice-atmosphere">
+      <div className="ice-backlight-horizon" />
+      <div className="ice-sun-halo" />
+
+      <svg className="ice-cave-svg" viewBox="0 0 1920 700" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="ice-far-body" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#bae6fd" stopOpacity="0.7" />
+            <stop offset="50%" stopColor="#0284c7" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#0369a1" stopOpacity="0.1" />
+          </linearGradient>
+
+          <linearGradient id="ice-mid-body" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+            <stop offset="20%" stopColor="#e0f2fe" stopOpacity="0.75" />
+            <stop offset="60%" stopColor="#38bdf8" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#0284c7" stopOpacity="0.2" />
+          </linearGradient>
+
+          <linearGradient id="ice-fore-body" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.98" />
+            <stop offset="15%" stopColor="#f0f9ff" stopOpacity="0.9" />
+            <stop offset="45%" stopColor="#7dd3fc" stopOpacity="0.75" />
+            <stop offset="80%" stopColor="#0284c7" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#0369a1" stopOpacity="0.2" />
+          </linearGradient>
+
+          <linearGradient id="sunlit-ice-rim" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#fef08a" stopOpacity="0.9" />
+            <stop offset="20%" stopColor="#ffffff" stopOpacity="0.98" />
+            <stop offset="50%" stopColor="#e0f2fe" stopOpacity="0.95" />
+            <stop offset="80%" stopColor="#fef08a" stopOpacity="0.85" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.98" />
+          </linearGradient>
+
+          <linearGradient id="specular-spine-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+            <stop offset="40%" stopColor="#ffffff" stopOpacity="0.9" />
+            <stop offset="75%" stopColor="#bae6fd" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.0" />
+          </linearGradient>
+
+          <filter id="bg-depth-blur" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" />
+          </filter>
+
+          <filter id="ice-glow-heavy" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="7" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+
+          <filter id="heavy-3d-drop-shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="4" dy="12" stdDeviation="12" floodColor="#0284c7" floodOpacity="0.7" />
+            <feDropShadow dx="-2" dy="6" stdDeviation="6" floodColor="#0369a1" floodOpacity="0.4" />
+          </filter>
+        </defs>
+
+        <path
+          className="ice-layer-far-back"
+          fill="url(#ice-far-body)"
+          filter="url(#bg-depth-blur)"
+          opacity="0.35"
+          d="M 0,0 L 1920,0 L 1920,40 
+             Q 1910,90 1900,160 Q 1890,90 1880,45
+             Q 1860,110 1850,190 Q 1840,110 1820,40
+             Q 1800,130 1790,210 Q 1780,130 1760,45
+             Q 1740,100 1730,170 Q 1720,100 1700,40
+             Q 1680,120 1670,200 Q 1660,120 1640,45
+             Q 1620,90 1610,150 Q 1600,90 1580,40
+             Q 1560,140 1550,220 Q 1540,140 1520,45
+             Q 1500,100 1490,180 Q 1480,100 1460,40
+             Q 1440,130 1430,210 Q 1420,130 1400,45
+             Q 1380,90 1370,160 Q 1360,90 1340,40
+             Q 1320,120 1310,195 Q 1300,120 1280,45
+             Q 1260,100 1250,170 Q 1240,100 1220,40
+             Q 1200,140 1190,230 Q 1180,140 1160,45
+             Q 1140,90 1130,160 Q 1120,90 1100,40
+             Q 1080,120 1070,200 Q 1060,120 1040,45
+             Q 1020,100 1010,170 Q 1000,100 980,40
+             Q 960,130 950,220 Q 940,130 920,45
+             Q 900,90 890,160 Q 880,90 860,40
+             Q 840,120 830,200 Q 820,120 800,45
+             Q 780,100 770,170 Q 760,100 740,40
+             Q 720,130 710,210 Q 700,130 680,45
+             Q 660,90 650,160 Q 640,90 620,40
+             Q 600,120 590,195 Q 580,120 560,45
+             Q 540,100 530,170 Q 520,100 500,40
+             Q 480,140 470,230 Q 460,140 440,45
+             Q 420,90 410,160 Q 400,90 380,40
+             Q 360,120 350,200 Q 340,120 320,45
+             Q 300,100 290,170 Q 280,100 260,40
+             Q 240,130 230,210 Q 220,130 200,45
+             Q 180,90 170,160 Q 160,90 140,40
+             Q 120,120 110,190 Q 100,120 80,45
+             Q 60,90 50,150 Q 40,90 0,40 Z"
+        />
+
+        <path
+          className="ice-layer-back"
+          fill="url(#ice-mid-body)"
+          opacity="0.6"
+          d="M 0,0 L 1920,0 L 1920,60 
+             Q 1900,120 1890,210 Q 1880,120 1860,70 
+             Q 1840,160 1830,270 Q 1820,160 1800,65
+             Q 1780,190 1770,310 Q 1760,190 1740,75
+             Q 1720,140 1710,210 Q 1700,140 1680,60
+             Q 1660,170 1650,290 Q 1640,170 1620,70
+             Q 1600,150 1590,240 Q 1580,150 1560,65
+             Q 1540,200 1530,340 Q 1520,200 1500,80
+             Q 1480,140 1470,220 Q 1460,140 1440,60
+             Q 1420,180 1410,300 Q 1400,180 1380,75
+             Q 1360,130 1350,200 Q 1340,130 1320,65
+             Q 1300,190 1290,320 Q 1280,190 1260,70
+             Q 1240,150 1230,230 Q 1220,150 1200,60
+             Q 1180,200 1170,350 Q 1160,200 1140,80
+             Q 1120,140 1110,210 Q 1100,140 1080,65
+             Q 1060,170 1050,290 Q 1040,170 1020,70
+             Q 1000,160 990,250 Q 980,160 960,60
+             Q 940,210 930,360 Q 920,210 900,75
+             Q 880,140 870,210 Q 860,140 840,65
+             Q 820,180 810,310 Q 800,180 780,70
+             Q 760,150 750,240 Q 740,150 720,60
+             Q 700,200 690,330 Q 680,200 660,75
+             Q 640,140 630,210 Q 620,140 600,65
+             Q 580,170 570,280 Q 560,170 540,70
+             Q 520,150 510,230 Q 500,150 480,60
+             Q 460,210 450,350 Q 440,210 420,80
+             Q 400,140 390,210 Q 380,140 360,65
+             Q 340,180 330,300 Q 320,180 300,70
+             Q 280,150 270,240 Q 260,150 240,60
+             Q 220,200 210,340 Q 200,200 180,75
+             Q 160,140 150,210 Q 140,140 120,65
+             Q 100,170 90,280 Q 80,170 60,70
+             Q 40,130 30,200 Q 20,130 0,60 Z"
+        />
+
+        <path
+          className="ice-layer-fore"
+          fill="url(#ice-fore-body)"
+          filter="url(#heavy-3d-drop-shadow)"
+          d="M 0,0 L 1920,0 L 1920,80
+             C 1900,95 1880,160 1870,280 C 1865,340 1860,400 1855,400 C 1850,400 1845,340 1840,280 C 1830,160 1810,95 1790,80
+             C 1775,90 1760,140 1750,220 C 1745,260 1740,310 1736,310 C 1732,310 1728,260 1722,220 C 1712,140 1695,90 1680,80
+             C 1660,100 1640,180 1630,340 C 1622,420 1615,500 1610,500 C 1605,500 1598,420 1590,340 C 1580,180 1560,100 1540,80
+             C 1525,92 1510,140 1500,230 C 1495,275 1490,320 1486,320 C 1482,320 1478,275 1472,230 C 1462,140 1445,92 1430,80
+             C 1410,105 1390,190 1380,380 C 1373,450 1366,520 1360,520 C 1354,520 1347,450 1340,380 C 1330,190 1310,105 1290,80
+             C 1275,90 1260,135 1250,210 C 1245,250 1240,290 1236,290 C 1232,290 1228,250 1222,210 C 1212,135 1195,90 1180,80
+             C 1160,100 1140,170 1130,330 C 1123,400 1116,480 1110,480 C 1104,480 1097,400 1090,330 C 1080,170 1060,100 1040,80
+             C 1025,92 1010,145 1000,240 C 995,290 990,340 986,340 C 982,340 978,290 972,240 C 962,145 945,92 930,80
+             C 910,110 890,200 880,410 C 872,490 865,560 860,560 C 855,560 848,490 840,410 C 830,200 810,110 790,80
+             C 775,90 760,140 750,220 C 745,260 740,300 736,300 C 732,300 728,260 722,220 C 712,140 695,90 680,80
+             C 660,100 640,175 630,350 C 622,430 615,510 610,510 C 605,510 598,430 590,350 C 580,175 560,100 540,80
+             C 525,92 510,140 500,230 C 495,275 490,320 486,320 C 482,320 478,275 472,230 C 462,140 445,92 430,80
+             C 410,105 390,190 380,390 C 373,460 366,540 360,540 C 354,540 347,460 340,390 C 330,190 310,105 290,80
+             C 275,90 260,140 250,220 C 245,260 240,300 236,300 C 232,300 228,260 222,220 C 212,140 195,90 180,80
+             C 160,100 140,175 130,350 C 122,430 115,490 110,490 C 105,490 98,430 90,350 C 80,175 60,100 40,80
+             C 25,88 12,120 0,160 L 0,0 Z"
+        />
+
+        <g className="ice-3d-facets">
+          <path fill="rgba(255, 255, 255, 0.45)" d="M 1855,100 L 1855,400 L 1845,280 L 1840,160 Z" />
+          <path fill="rgba(255, 255, 255, 0.45)" d="M 1610,100 L 1610,500 L 1598,340 L 1590,180 Z" />
+          <path fill="rgba(255, 255, 255, 0.45)" d="M 1360,100 L 1360,520 L 1347,380 L 1340,190 Z" />
+          <path fill="rgba(255, 255, 255, 0.45)" d="M 1110,100 L 1110,480 L 1097,330 L 1090,170 Z" />
+          <path fill="rgba(255, 255, 255, 0.45)" d="M 860,100 L 860,560 L 848,410 L 840,200 Z" />
+          <path fill="rgba(255, 255, 255, 0.45)" d="M 610,100 L 610,510 L 598,350 L 590,175 Z" />
+          <path fill="rgba(255, 255, 255, 0.45)" d="M 360,100 L 360,540 L 347,390 L 340,190 Z" />
+          <path fill="rgba(255, 255, 255, 0.45)" d="M 110,100 L 110,490 L 98,350 L 90,175 Z" />
+
+          <path fill="rgba(2, 132, 199, 0.35)" d="M 1855,100 L 1855,400 L 1865,340 L 1870,280 Z" />
+          <path fill="rgba(2, 132, 199, 0.35)" d="M 1610,100 L 1610,500 L 1622,420 L 1630,340 Z" />
+          <path fill="rgba(2, 132, 199, 0.35)" d="M 1360,100 L 1360,520 L 1373,450 L 1380,380 Z" />
+          <path fill="rgba(2, 132, 199, 0.35)" d="M 1110,100 L 1110,480 L 1123,400 L 1130,330 Z" />
+          <path fill="rgba(2, 132, 199, 0.35)" d="M 860,100 L 860,560 L 872,490 L 880,410 Z" />
+          <path fill="rgba(2, 132, 199, 0.35)" d="M 610,100 L 610,510 L 622,430 L 630,350 Z" />
+          <path fill="rgba(2, 132, 199, 0.35)" d="M 360,100 L 360,540 L 373,460 L 380,390 Z" />
+          <path fill="rgba(2, 132, 199, 0.35)" d="M 110,100 L 110,490 L 122,430 L 130,350 Z" />
+        </g>
+
+        <g className="ice-3d-rib-rings" stroke="rgba(255, 255, 255, 0.7)" strokeWidth="2.5" fill="none">
+          <path d="M 1845,180 Q 1855,190 1865,180" />
+          <path d="M 1848,270 Q 1855,280 1862,270" />
+          <path d="M 1600,200 Q 1610,210 1620,200" />
+          <path d="M 1603,320 Q 1610,330 1617,320" />
+          <path d="M 1350,220 Q 1360,230 1370,220" />
+          <path d="M 1353,360 Q 1360,370 1367,360" />
+          <path d="M 1100,200 Q 1110,210 1120,200" />
+          <path d="M 1103,320 Q 1110,330 1117,320" />
+          <path d="M 850,230 Q 860,240 870,230" />
+          <path d="M 853,380 Q 860,390 867,380" />
+          <path d="M 600,210 Q 610,220 620,210" />
+          <path d="M 603,340 Q 610,350 617,340" />
+          <path d="M 350,220 Q 360,230 370,220" />
+          <path d="M 353,370 Q 360,380 367,370" />
+          <path d="M 100,210 Q 110,220 120,210" />
+          <path d="M 103,330 Q 110,340 117,330" />
+        </g>
+
+        <g className="ice-specular-spines" stroke="url(#specular-spine-grad)" strokeWidth="5" strokeLinecap="round" opacity="0.95">
+          <path d="M 1855,100 L 1855,395" />
+          <path d="M 1736,95 L 1736,305" />
+          <path d="M 1610,100 L 1610,495" />
+          <path d="M 1486,95 L 1486,315" />
+          <path d="M 1360,100 L 1360,515" />
+          <path d="M 1236,95 L 1236,285" />
+          <path d="M 1110,100 L 1110,475" />
+          <path d="M 986,95 L 986,335" />
+          <path d="M 860,100 L 860,555" />
+          <path d="M 736,95 L 736,295" />
+          <path d="M 610,100 L 610,505" />
+          <path d="M 486,95 L 486,315" />
+          <path d="M 360,100 L 360,535" />
+          <path d="M 236,95 L 236,295" />
+          <path d="M 110,100 L 110,485" />
+        </g>
+
+        <path
+          className="sunlit-ice-crest"
+          fill="url(#sunlit-ice-rim)"
+          filter="url(#ice-glow-heavy)"
+          d="M 0,0 L 1920,0 L 1920,38 Q 960,58 0,38 Z"
+        />
+      </svg>
+
+      <div className="ice-svg-drip drip-tip-1" />
+      <div className="ice-svg-drip drip-tip-2" />
+      <div className="ice-svg-drip drip-tip-3" />
+      <div className="ice-svg-drip drip-tip-4" />
+      <div className="ice-svg-drip drip-tip-5" />
+      <div className="ice-svg-drip drip-tip-6" />
+
+      <div className="frost-overlay" />
+      <div className="snow-flake flake-1" />
+      <div className="snow-flake flake-2" />
+      <div className="snow-flake flake-3" />
+      <div className="snow-flake flake-4" />
+      <div className="snow-flake flake-5" />
+      <div className="snow-flake flake-6" />
+      <div className="snow-flake flake-7" />
+      <div className="snow-flake flake-8" />
+      <div className="snow-flake flake-9" />
+      <div className="snow-flake flake-10" />
+      <div className="snow-flake flake-11" />
+      <div className="snow-flake flake-12" />
+      <div className="snow-flake flake-13" />
+      <div className="snow-flake flake-14" />
+      <div className="snow-flake flake-15" />
+      <div className="snow-flake flake-16" />
+    </div>
+  );
+});
 
 function loadMaxRows(): number {
   const raw = localStorage.getItem(MAX_ROWS_KEY);
@@ -2522,6 +2970,11 @@ export default function App() {
   const [showChartModal, setShowChartModal] = useState(false);
   const [showDiffModal, setShowDiffModal] = useState(false);
 
+  const handleClosePixelFontModal = useCallback(() => setShowPixelFontModal(false), []);
+  const handleCloseChartModal = useCallback(() => setShowChartModal(false), []);
+  const handleCloseDiffModal = useCallback(() => setShowDiffModal(false), []);
+  const handleCloseBindModal = useCallback(() => setBindModalState(null), []);
+
   useEffect(() => {
     if (window.oracle?.loadQueryStats) {
       window.oracle
@@ -2594,7 +3047,7 @@ export default function App() {
   const [queryTabsWidth, setQueryTabsWidth] = useState(loadQueryTabsWidth);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(loadSidebarCollapsed);
 
-  const toggleSidebarCollapsed = () => {
+  const toggleSidebarCollapsed = useCallback(() => {
     setSidebarCollapsed((prev) => {
       const next = !prev;
       try {
@@ -2602,7 +3055,7 @@ export default function App() {
       } catch {}
       return next;
     });
-  };
+  }, []);
   const [rememberPassword, setRememberPassword] = useState(loadRememberPassword);
   const [passwordStorageAvailable, setPasswordStorageAvailable] = useState(false);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "unsaved" | "error">("saved");
@@ -2685,26 +3138,11 @@ export default function App() {
   const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0];
   const sql = activeTab?.sql ?? "";
 
-  const [editorScrollTop, setEditorScrollTop] = useState(0);
-  const [editorTick, setEditorTick] = useState(0);
   const [editorLineHeight, setEditorLineHeight] = useState(18);
   const [copiedBlockId, setCopiedBlockId] = useState<string | null>(null);
   const [runningBlockId, setRunningBlockId] = useState<string | null>(null);
   const lastCursorLineRef = useRef<number>(1);
   const lastSelectionTextRef = useRef<string>("");
-
-  useEffect(() => {
-    const handleResize = () => setEditorTick((t) => t + 1);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    if (editorRef.current) {
-      setEditorScrollTop(editorRef.current.getScrollTop());
-      setEditorTick((t) => t + 1);
-    }
-  }, [activeTabId, fontScale]);
 
   const sqlBlocks = useMemo(() => parseSqlStatements(sql), [sql]);
 
@@ -3851,7 +4289,7 @@ export default function App() {
         return;
       }
 
-      setSaveState("unsaved");
+      setSaveState((prev) => (prev === "unsaved" ? prev : "unsaved"));
       if (monacoApiRef.current && editorRef.current) {
         const model = editorRef.current.getModel();
         if (model) {
@@ -4817,24 +5255,6 @@ export default function App() {
     });
 
     setEditorLineHeight(currentLineHeight);
-    setEditorScrollTop(ed.getScrollTop());
-    setEditorTick((t) => t + 1);
-
-    const refreshGutter = () => {
-      setEditorScrollTop(ed.getScrollTop());
-      setEditorTick((t) => t + 1);
-    };
-
-    let scrollRaf: number | null = null;
-    ed.onDidScrollChange((e) => {
-      setEditorScrollTop(e.scrollTop);
-      if (scrollRaf == null) {
-        scrollRaf = requestAnimationFrame(() => {
-          scrollRaf = null;
-          setEditorTick((t) => t + 1);
-        });
-      }
-    });
 
     ed.onDidChangeCursorPosition((e) => {
       if (e.position) {
@@ -4851,16 +5271,7 @@ export default function App() {
       }
     });
 
-    let contentTimer: number | null = null;
     ed.onDidChangeModelContent((e) => {
-      if (contentTimer != null) {
-        window.clearTimeout(contentTimer);
-      }
-      contentTimer = window.setTimeout(() => {
-        contentTimer = null;
-        refreshGutter();
-      }, 250);
-
       // Automatically expand to_date to to_date('<current_date>','mm/dd/yyyy')
       const isDeleting = e.changes && e.changes.some((c) => c.text === "" || c.rangeLength > c.text.length);
 
@@ -5400,90 +5811,115 @@ export default function App() {
     }
   }, []);
 
-  const closeTab = async (id: string) => {
-    const tab = tabs.find((entry) => entry.id === id);
-    if (!tab) return;
-    const index = tabs.findIndex((entry) => entry.id === id);
-    const next = tabs.filter((entry) => entry.id !== id);
-    const nextActive =
-      activeTabId === id
-        ? (next[Math.max(0, index - 1)] ?? next[0])?.id ?? ""
-        : activeTabId;
-    try {
-      await window.oracle.closeSqlPage(tab.fileName);
-      // Keep refs in sync before any save — otherwise persistWorkspace would
-      // write the closed tab back from the stale tabsRef.
-      skipNextSaveRef.current = true;
-      tabsRef.current = next;
-      activeTabIdRef.current = nextActive;
-      setTabs(next);
-      setActiveTabId(nextActive);
-      setTabStates((prev) => {
-        if (!(id in prev)) return prev;
-        const nextStates = { ...prev };
-        delete nextStates[id];
-        return nextStates;
-      });
-      await persistWorkspace(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    }
-  };
-
-  const renameTab = async (id: string, title: string) => {
-    const tab = tabs.find((entry) => entry.id === id);
-    if (!tab) return;
-    const oldId = tab.id;
-    const oldFileName = tab.fileName;
-    try {
-      await persistWorkspace(true);
-      const renamed = await window.oracle.renameSqlPage(tab.fileName, title);
-      skipNextSaveRef.current = true;
-
-      setTabStates((prev) => {
-        const stateToMigrate = prev[oldId] ?? prev[oldFileName];
-        if (!stateToMigrate) return prev;
-        const next = { ...prev };
-        delete next[oldId];
-        delete next[oldFileName];
-        next[renamed.id] = stateToMigrate;
-        return next;
-      });
-
-      setTabs((prev) =>
-        prev.map((entry) => (entry.id === id || entry.fileName === tab.fileName ? renamed : entry)),
-      );
-      if (activeTabId === id || activeTabId === tab.fileName) {
-        setActiveTabId(renamed.id);
+  const closeTab = useCallback(
+    async (id: string) => {
+      const tab = tabsRef.current.find((entry) => entry.id === id);
+      if (!tab) return;
+      const index = tabsRef.current.findIndex((entry) => entry.id === id);
+      const next = tabsRef.current.filter((entry) => entry.id !== id);
+      const nextActive =
+        activeTabIdRef.current === id
+          ? (next[Math.max(0, index - 1)] ?? next[0])?.id ?? ""
+          : activeTabIdRef.current;
+      try {
+        await window.oracle.closeSqlPage(tab.fileName);
+        // Keep refs in sync before any save — otherwise persistWorkspace would
+        // write the closed tab back from the stale tabsRef.
+        skipNextSaveRef.current = true;
+        tabsRef.current = next;
+        activeTabIdRef.current = nextActive;
+        setTabs(next);
+        setActiveTabId(nextActive);
+        setTabStates((prev) => {
+          if (!(id in prev)) return prev;
+          const nextStates = { ...prev };
+          delete nextStates[id];
+          return nextStates;
+        });
+        await persistWorkspace(true);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : String(err));
       }
-      setSaveState("saved");
-      setMessage(`Renamed to ${renamed.fileName}`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    }
-  };
+    },
+    [persistWorkspace],
+  );
 
-  const openSelectForObject = (objectName: string, type?: DbObjectType) => {
-    let statement = `SELECT * FROM ${objectName}\n`;
-    if (type === "INDEX") {
-      statement = `SELECT * FROM all_indexes WHERE index_name = '${objectName}'\n`;
-    } else if (type === "PACKAGE_BODY" || type === "PACKAGE BODY") {
-      statement = `SELECT text FROM user_source WHERE name = '${objectName}' AND type = 'PACKAGE BODY' ORDER BY line;\n`;
-    } else if (type === "GRANT") {
-      if (objectName.startsWith("GRANT ")) {
-        statement = `${objectName};\n`;
-      } else {
-        statement = `SELECT * FROM user_tab_privs WHERE table_name = '${objectName}' OR grantee = '${objectName}';\n`;
+  const renameTab = useCallback(
+    async (id: string, title: string) => {
+      const tab = tabsRef.current.find((entry) => entry.id === id);
+      if (!tab) return;
+      const oldId = tab.id;
+      const oldFileName = tab.fileName;
+      try {
+        await persistWorkspace(true);
+        const renamed = await window.oracle.renameSqlPage(tab.fileName, title);
+        skipNextSaveRef.current = true;
+
+        setTabStates((prev) => {
+          const stateToMigrate = prev[oldId] ?? prev[oldFileName];
+          if (!stateToMigrate) return prev;
+          const next = { ...prev };
+          delete next[oldId];
+          delete next[oldFileName];
+          next[renamed.id] = stateToMigrate;
+          return next;
+        });
+
+        setTabs((prev) =>
+          prev.map((entry) => (entry.id === id || entry.fileName === tab.fileName ? renamed : entry)),
+        );
+        if (activeTabIdRef.current === id || activeTabIdRef.current === tab.fileName) {
+          setActiveTabId(renamed.id);
+        }
+        setSaveState("saved");
+        setMessage(`Renamed to ${renamed.fileName}`);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : String(err));
       }
-    }
-    void addTab(statement, objectName);
-  };
+    },
+    [persistWorkspace],
+  );
 
-  const insertObjectName = (objectName: string) => {
-    const current = editorRef.current?.getValue() ?? sql;
-    const prefix = current.endsWith("\n") || current.length === 0 ? "" : "\n";
-    setActiveSql(`${current}${prefix}${objectName}`, true);
-  };
+  const openSelectForObject = useCallback(
+    (objectName: string, type?: DbObjectType) => {
+      let statement = `SELECT * FROM ${objectName}\n`;
+      if (type === "INDEX") {
+        statement = `SELECT * FROM all_indexes WHERE index_name = '${objectName}'\n`;
+      } else if (type === "PACKAGE_BODY" || type === "PACKAGE BODY") {
+        statement = `SELECT text FROM user_source WHERE name = '${objectName}' AND type = 'PACKAGE BODY' ORDER BY line;\n`;
+      } else if (type === "GRANT") {
+        if (objectName.startsWith("GRANT ")) {
+          statement = `${objectName};\n`;
+        } else {
+          statement = `SELECT * FROM user_tab_privs WHERE table_name = '${objectName}' OR grantee = '${objectName}';\n`;
+        }
+      }
+      void addTab(statement, objectName);
+    },
+    [addTab],
+  );
+
+  const insertObjectName = useCallback(
+    (objectName: string) => {
+      const current = editorRef.current?.getValue() ?? "";
+      const prefix = current.endsWith("\n") || current.length === 0 ? "" : "\n";
+      setActiveSql(`${current}${prefix}${objectName}`, true);
+    },
+    [setActiveSql],
+  );
+
+  const handleRestoreHistory = useCallback(
+    (restored: string) => {
+      setActiveSql(restored, true);
+      setBottomTab("results");
+    },
+    [setActiveSql],
+  );
+
+  const handleClearHistory = useCallback(() => {
+    setHistory([]);
+  }, []);
+
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -5625,481 +6061,11 @@ export default function App() {
         />
       ) : null}
       {themeId === "racecar" ? (
-        <div
-          className="racecar-atmosphere"
-          style={{ "--circuit-path": `path("${raceTrackPath}")` } as React.CSSProperties}
-        >
-          <div className="track-3d-stage">
-            <div className="track-loop-container">
-              <svg className="gp-circuit-svg" viewBox="0 0 1600 900" preserveAspectRatio="none">
-                {/* 1. Gravel Safety Runoff Perimeter */}
-                <path className="gp-track-runoff" d={raceTrackPath} />
-                {/* 2. Red & White Racing Curbs (Apex Rumble Strips) */}
-                <path className="gp-track-curbs-red" d={raceTrackPath} />
-                <path className="gp-track-curbs-white" d={raceTrackPath} />
-                {/* 3. Main Dark Asphalt Surface */}
-                <path className="gp-track-asphalt" d={raceTrackPath} />
-                {/* 4. Rubbered Racing Line Overlay */}
-                <path className="gp-track-racingline" d={raceTrackPath} />
-                {/* 5. Outer Track Boundary White Lines */}
-                <path className="gp-track-boundary" d={raceTrackPath} />
-                {/* 6. Yellow Dashed Center Line */}
-                <path className="gp-track-centerline" d={raceTrackPath} />
-              </svg>
-
-              {/* Race Car 1: Red Scuderia F1 Supercar */}
-              <div className="race-car race-car-1 car-f1-red">
-                <span className="rc-underglow" />
-                <span className="rc-headlight-beam" />
-                <span className="rc-chassis" />
-                <span className="rc-racing-stripe" />
-                <span className="rc-livery-number">01</span>
-                <span className="rc-nose" />
-                <span className="rc-wing-front" />
-                <span className="rc-wing-rear" />
-                <span className="rc-cockpit" />
-                <span className="rc-halo-bar" />
-                <span className="rc-driver-helmet" />
-                <span className="rc-pod-left" />
-                <span className="rc-pod-right" />
-                <span className="rc-wheel wheel-fl" />
-                <span className="rc-wheel wheel-fr" />
-                <span className="rc-wheel wheel-rl" />
-                <span className="rc-wheel wheel-rr" />
-                <span className="rc-taillights" />
-                <span className="rc-exhaust-glow" />
-              </div>
-
-              {/* Race Car 2: Electric Cyan Endurance GT3 */}
-              <div className="race-car race-car-2 car-gt-cyan">
-                <span className="rc-underglow" />
-                <span className="rc-headlight-beam" />
-                <span className="rc-chassis" />
-                <span className="rc-racing-stripe" />
-                <span className="rc-livery-number">24</span>
-                <span className="rc-roof" />
-                <span className="rc-windshield" />
-                <span className="rc-spoiler" />
-                <span className="rc-diffuser" />
-                <span className="rc-wheel wheel-fl" />
-                <span className="rc-wheel wheel-fr" />
-                <span className="rc-wheel wheel-rl" />
-                <span className="rc-wheel wheel-rr" />
-                <span className="rc-headlights" />
-                <span className="rc-taillights" />
-              </div>
-
-              {/* Race Car 3: Solar Gold Hypercar */}
-              <div className="race-car race-car-3 car-hyper-gold">
-                <span className="rc-underglow" />
-                <span className="rc-headlight-beam" />
-                <span className="rc-chassis" />
-                <span className="rc-racing-stripe" />
-                <span className="rc-livery-number">77</span>
-                <span className="rc-fin" />
-                <span className="rc-canopy" />
-                <span className="rc-side-air-intake-left" />
-                <span className="rc-side-air-intake-right" />
-                <span className="rc-wing-rear" />
-                <span className="rc-wheel wheel-fl" />
-                <span className="rc-wheel wheel-fr" />
-                <span className="rc-wheel wheel-rl" />
-                <span className="rc-wheel wheel-rr" />
-                <span className="rc-exhaust-glow" />
-              </div>
-
-              {/* Race Car 4: Emerald Green Prototype */}
-              <div className="race-car race-car-4 car-proto-green">
-                <span className="rc-underglow" />
-                <span className="rc-headlight-beam" />
-                <span className="rc-chassis" />
-                <span className="rc-racing-stripe" />
-                <span className="rc-livery-number">09</span>
-                <span className="rc-fender-left" />
-                <span className="rc-fender-right" />
-                <span className="rc-cockpit" />
-                <span className="rc-wheel wheel-fl" />
-                <span className="rc-wheel wheel-fr" />
-                <span className="rc-wheel wheel-rl" />
-                <span className="rc-wheel wheel-rr" />
-                <span className="rc-headlights" />
-                <span className="rc-taillights" />
-              </div>
-
-              {/* Race Car 5: Midnight Purple Speedster */}
-              <div className="race-car race-car-5 car-drift-purple">
-                <span className="rc-underglow" />
-                <span className="rc-headlight-beam" />
-                <span className="rc-chassis" />
-                <span className="rc-racing-stripe" />
-                <span className="rc-livery-number">88</span>
-                <span className="rc-widebody" />
-                <span className="rc-ducktail" />
-                <span className="rc-windshield" />
-                <span className="rc-wheel wheel-fl" />
-                <span className="rc-wheel wheel-fr" />
-                <span className="rc-wheel wheel-rl" />
-                <span className="rc-wheel wheel-rr" />
-                <span className="rc-exhaust-glow" />
-                <span className="rc-taillights" />
-              </div>
-            </div>
-          </div>
-        </div>
+        <RacecarAtmosphere raceTrackPath={raceTrackPath} />
       ) : null}
-      {themeId === "lava" ? (
-        <div className="lava-atmosphere">
-          {/* Horizon Radiant Magma Glow */}
-          <div className="lava-bottom-glow" />
-
-          {/* Molten Lava Basins & Magma Flows */}
-          <div className="lava-magma-pool pool-1" />
-          <div className="lava-magma-pool pool-2" />
-          <div className="lava-river river-left" />
-          <div className="lava-river river-right" />
-          <div className="lava-crust-cracks" />
-
-          {/* Rolling Viscous Liquid Magma Surges Along Floor */}
-          <div className="lava-magma-surge surge-1">
-            <span className="magma-core" />
-            <span className="magma-crest crest-1" />
-            <span className="magma-crest crest-2" />
-          </div>
-          <div className="lava-magma-surge surge-2">
-            <span className="magma-core" />
-            <span className="magma-crest crest-2" />
-            <span className="magma-crest crest-3" />
-          </div>
-          <div className="lava-magma-surge surge-3">
-            <span className="magma-core" />
-            <span className="magma-crest crest-1" />
-            <span className="magma-crest crest-3" />
-          </div>
-          <div className="lava-magma-surge surge-4">
-            <span className="magma-core" />
-            <span className="magma-crest crest-2" />
-          </div>
-
-          {/* Magma Spatter & Erupting Liquid Splashes */}
-          <div className="lava-spatter-plume plume-1" />
-          <div className="lava-spatter-plume plume-2" />
-          <div className="lava-spatter-plume plume-3" />
-
-          {/* Magma Bubbles & Eruptions */}
-          <div className="lava-bubble bubble-1" />
-          <div className="lava-bubble bubble-2" />
-          <div className="lava-bubble bubble-3" />
-          <div className="lava-bubble bubble-4" />
-
-          <div className="lava-ember ember-1" />
-          <div className="lava-ember ember-2" />
-          <div className="lava-ember ember-3" />
-          <div className="lava-ember ember-4" />
-          <div className="lava-ember ember-5" />
-          <div className="lava-ember ember-6" />
-          <div className="lava-ember ember-7" />
-          <div className="lava-ember ember-8" />
-        </div>
-      ) : null}
-      {themeId === "nuclear" ? (
-        <div className="nuclear-atmosphere">
-          {/* Silo Reinforced Steel Hangar & Blast Doors */}
-          <div className="silo-blast-hatch left-hatch" />
-          <div className="silo-blast-hatch right-hatch" />
-          <div className="silo-hazard-stripe top-stripe" />
-          <div className="silo-hazard-stripe bottom-stripe" />
-
-          {/* Radiation Trefoil Emblem & Status Lights */}
-          <div className="radiation-trefoil">
-            <span className="trefoil-center" />
-            <span className="trefoil-blade blade-1" />
-            <span className="trefoil-blade blade-2" />
-            <span className="trefoil-blade blade-3" />
-          </div>
-
-          {/* Rotating Warning Strobe Lights & Beacon Sweeps */}
-          <div className="warning-beacon beacon-left" />
-          <div className="warning-beacon beacon-right" />
-          <div className="nuclear-status-banner">DEFCON 1 · PRODUCTION LIVE DATABASE SILO</div>
-
-          {/* Steam Vents & Geiger Spark Particles */}
-          <div className="steam-vent vent-left" />
-          <div className="steam-vent vent-right" />
-          <div className="radiation-particle spark-1" />
-          <div className="radiation-particle spark-2" />
-          <div className="radiation-particle spark-3" />
-          <div className="radiation-particle spark-4" />
-        </div>
-      ) : null}
-      {themeId === "ice" ? (
-        <div className="ice-atmosphere">
-          {/* Backlight Horizon Ambient & Sunburst Glow */}
-          <div className="ice-backlight-horizon" />
-          <div className="ice-sun-halo" />
-
-          {/* Master 3D Layered SVG Ice Cave Roof & Stalactite Curtain */}
-          <svg className="ice-cave-svg" viewBox="0 0 1920 700" preserveAspectRatio="none">
-            <defs>
-              {/* Far Background Ice Gradient */}
-              <linearGradient id="ice-far-body" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#bae6fd" stopOpacity="0.7" />
-                <stop offset="50%" stopColor="#0284c7" stopOpacity="0.4" />
-                <stop offset="100%" stopColor="#0369a1" stopOpacity="0.1" />
-              </linearGradient>
-
-              {/* Mid-Distance Ice Gradient */}
-              <linearGradient id="ice-mid-body" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
-                <stop offset="20%" stopColor="#e0f2fe" stopOpacity="0.75" />
-                <stop offset="60%" stopColor="#38bdf8" stopOpacity="0.5" />
-                <stop offset="100%" stopColor="#0284c7" stopOpacity="0.2" />
-              </linearGradient>
-
-              {/* Foreground Crystal Clear Ice Gradient */}
-              <linearGradient id="ice-fore-body" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.98" />
-                <stop offset="15%" stopColor="#f0f9ff" stopOpacity="0.9" />
-                <stop offset="45%" stopColor="#7dd3fc" stopOpacity="0.75" />
-                <stop offset="80%" stopColor="#0284c7" stopOpacity="0.5" />
-                <stop offset="100%" stopColor="#0369a1" stopOpacity="0.2" />
-              </linearGradient>
-
-              {/* Sunlit Golden Crest Rim Gradient */}
-              <linearGradient id="sunlit-ice-rim" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#fef08a" stopOpacity="0.9" />
-                <stop offset="20%" stopColor="#ffffff" stopOpacity="0.98" />
-                <stop offset="50%" stopColor="#e0f2fe" stopOpacity="0.95" />
-                <stop offset="80%" stopColor="#fef08a" stopOpacity="0.85" />
-                <stop offset="100%" stopColor="#ffffff" stopOpacity="0.98" />
-              </linearGradient>
-
-              {/* Spine Specular Highlight Gradient */}
-              <linearGradient id="specular-spine-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-                <stop offset="40%" stopColor="#ffffff" stopOpacity="0.9" />
-                <stop offset="75%" stopColor="#bae6fd" stopOpacity="0.6" />
-                <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
-              </linearGradient>
-
-              <filter id="bg-depth-blur" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="3" />
-              </filter>
-
-              <filter id="ice-glow-heavy" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="7" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-              </filter>
-
-              <filter id="heavy-3d-drop-shadow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="4" dy="12" stdDeviation="12" floodColor="#0284c7" floodOpacity="0.7" />
-                <feDropShadow dx="-2" dy="6" stdDeviation="6" floodColor="#0369a1" floodOpacity="0.4" />
-              </filter>
-            </defs>
-
-            {/* TIER 1: Far Background Miniature Ice Needle Grid */}
-            <path
-              className="ice-layer-far-back"
-              fill="url(#ice-far-body)"
-              filter="url(#bg-depth-blur)"
-              opacity="0.35"
-              d="M 0,0 L 1920,0 L 1920,40 
-                 Q 1910,90 1900,160 Q 1890,90 1880,45
-                 Q 1860,110 1850,190 Q 1840,110 1820,40
-                 Q 1800,130 1790,210 Q 1780,130 1760,45
-                 Q 1740,100 1730,170 Q 1720,100 1700,40
-                 Q 1680,120 1670,200 Q 1660,120 1640,45
-                 Q 1620,90 1610,150 Q 1600,90 1580,40
-                 Q 1560,140 1550,220 Q 1540,140 1520,45
-                 Q 1500,100 1490,180 Q 1480,100 1460,40
-                 Q 1440,130 1430,210 Q 1420,130 1400,45
-                 Q 1380,90 1370,160 Q 1360,90 1340,40
-                 Q 1320,120 1310,195 Q 1300,120 1280,45
-                 Q 1260,100 1250,170 Q 1240,100 1220,40
-                 Q 1200,140 1190,230 Q 1180,140 1160,45
-                 Q 1140,90 1130,160 Q 1120,90 1100,40
-                 Q 1080,120 1070,200 Q 1060,120 1040,45
-                 Q 1020,100 1010,170 Q 1000,100 980,40
-                 Q 960,130 950,220 Q 940,130 920,45
-                 Q 900,90 890,160 Q 880,90 860,40
-                 Q 840,120 830,200 Q 820,120 800,45
-                 Q 780,100 770,170 Q 760,100 740,40
-                 Q 720,130 710,210 Q 700,130 680,45
-                 Q 660,90 650,160 Q 640,90 620,40
-                 Q 600,120 590,195 Q 580,120 560,45
-                 Q 540,100 530,170 Q 520,100 500,40
-                 Q 480,140 470,230 Q 460,140 440,45
-                 Q 420,90 410,160 Q 400,90 380,40
-                 Q 360,120 350,200 Q 340,120 320,45
-                 Q 300,100 290,170 Q 280,100 260,40
-                 Q 240,130 230,210 Q 220,130 200,45
-                 Q 180,90 170,160 Q 160,90 140,40
-                 Q 120,120 110,190 Q 100,120 80,45
-                 Q 60,90 50,150 Q 40,90 0,40 Z"
-            />
-
-            {/* TIER 2: Mid-Distance Secondary Stalactite Fringe */}
-            <path
-              className="ice-layer-back"
-              fill="url(#ice-mid-body)"
-              opacity="0.6"
-              d="M 0,0 L 1920,0 L 1920,60 
-                 Q 1900,120 1890,210 Q 1880,120 1860,70 
-                 Q 1840,160 1830,270 Q 1820,160 1800,65
-                 Q 1780,190 1770,310 Q 1760,190 1740,75
-                 Q 1720,140 1710,210 Q 1700,140 1680,60
-                 Q 1660,170 1650,290 Q 1640,170 1620,70
-                 Q 1600,150 1590,240 Q 1580,150 1560,65
-                 Q 1540,200 1530,340 Q 1520,200 1500,80
-                 Q 1480,140 1470,220 Q 1460,140 1440,60
-                 Q 1420,180 1410,300 Q 1400,180 1380,75
-                 Q 1360,130 1350,200 Q 1340,130 1320,65
-                 Q 1300,190 1290,320 Q 1280,190 1260,70
-                 Q 1240,150 1230,230 Q 1220,150 1200,60
-                 Q 1180,200 1170,350 Q 1160,200 1140,80
-                 Q 1120,140 1110,210 Q 1100,140 1080,65
-                 Q 1060,170 1050,290 Q 1040,170 1020,70
-                 Q 1000,160 990,250 Q 980,160 960,60
-                 Q 940,210 930,360 Q 920,210 900,75
-                 Q 880,140 870,210 Q 860,140 840,65
-                 Q 820,180 810,310 Q 800,180 780,70
-                 Q 760,150 750,240 Q 740,150 720,60
-                 Q 700,200 690,330 Q 680,200 660,75
-                 Q 640,140 630,210 Q 620,140 600,65
-                 Q 580,170 570,280 Q 560,170 540,70
-                 Q 520,150 510,230 Q 500,150 480,60
-                 Q 460,210 450,350 Q 440,210 420,80
-                 Q 400,140 390,210 Q 380,140 360,65
-                 Q 340,180 330,300 Q 320,180 300,70
-                 Q 280,150 270,240 Q 260,150 240,60
-                 Q 220,200 210,340 Q 200,200 180,75
-                 Q 160,140 150,210 Q 140,140 120,65
-                 Q 100,170 90,280 Q 80,170 60,70
-                 Q 40,130 30,200 Q 20,130 0,60 Z"
-            />
-
-            {/* TIER 3: Primary Foreground Mammoth Stalactites with Heavy 3D Drop Shadow */}
-            <path
-              className="ice-layer-fore"
-              fill="url(#ice-fore-body)"
-              filter="url(#heavy-3d-drop-shadow)"
-              d="M 0,0 L 1920,0 L 1920,80
-                 C 1900,95 1880,160 1870,280 C 1865,340 1860,400 1855,400 C 1850,400 1845,340 1840,280 C 1830,160 1810,95 1790,80
-                 C 1775,90 1760,140 1750,220 C 1745,260 1740,310 1736,310 C 1732,310 1728,260 1722,220 C 1712,140 1695,90 1680,80
-                 C 1660,100 1640,180 1630,340 C 1622,420 1615,500 1610,500 C 1605,500 1598,420 1590,340 C 1580,180 1560,100 1540,80
-                 C 1525,92 1510,140 1500,230 C 1495,275 1490,320 1486,320 C 1482,320 1478,275 1472,230 C 1462,140 1445,92 1430,80
-                 C 1410,105 1390,190 1380,380 C 1373,450 1366,520 1360,520 C 1354,520 1347,450 1340,380 C 1330,190 1310,105 1290,80
-                 C 1275,90 1260,135 1250,210 C 1245,250 1240,290 1236,290 C 1232,290 1228,250 1222,210 C 1212,135 1195,90 1180,80
-                 C 1160,100 1140,170 1130,330 C 1123,400 1116,480 1110,480 C 1104,480 1097,400 1090,330 C 1080,170 1060,100 1040,80
-                 C 1025,92 1010,145 1000,240 C 995,290 990,340 986,340 C 982,340 978,290 972,240 C 962,145 945,92 930,80
-                 C 910,110 890,200 880,410 C 872,490 865,560 860,560 C 855,560 848,490 840,410 C 830,200 810,110 790,80
-                 C 775,90 760,140 750,220 C 745,260 740,300 736,300 C 732,300 728,260 722,220 C 712,140 695,90 680,80
-                 C 660,100 640,175 630,350 C 622,430 615,510 610,510 C 605,510 598,430 590,350 C 580,175 560,100 540,80
-                 C 525,92 510,140 500,230 C 495,275 490,320 486,320 C 482,320 478,275 472,230 C 462,140 445,92 430,80
-                 C 410,105 390,190 380,390 C 373,460 366,540 360,540 C 354,540 347,460 340,390 C 330,190 310,105 290,80
-                 C 275,90 260,140 250,220 C 245,260 240,300 236,300 C 232,300 228,260 222,220 C 212,140 195,90 180,80
-                 C 160,100 140,175 130,350 C 122,430 115,490 110,490 C 105,490 98,430 90,350 C 80,175 60,100 40,80
-                 C 25,88 12,120 0,160 L 0,0 Z"
-            />
-
-            {/* TIER 4: 3D Refraction Facet Highlights & Shadow Overlays */}
-            <g className="ice-3d-facets">
-              {/* Highlight facets on left flank of stalactite shafts */}
-              <path fill="rgba(255, 255, 255, 0.45)" d="M 1855,100 L 1855,400 L 1845,280 L 1840,160 Z" />
-              <path fill="rgba(255, 255, 255, 0.45)" d="M 1610,100 L 1610,500 L 1598,340 L 1590,180 Z" />
-              <path fill="rgba(255, 255, 255, 0.45)" d="M 1360,100 L 1360,520 L 1347,380 L 1340,190 Z" />
-              <path fill="rgba(255, 255, 255, 0.45)" d="M 1110,100 L 1110,480 L 1097,330 L 1090,170 Z" />
-              <path fill="rgba(255, 255, 255, 0.45)" d="M 860,100 L 860,560 L 848,410 L 840,200 Z" />
-              <path fill="rgba(255, 255, 255, 0.45)" d="M 610,100 L 610,510 L 598,350 L 590,175 Z" />
-              <path fill="rgba(255, 255, 255, 0.45)" d="M 360,100 L 360,540 L 347,390 L 340,190 Z" />
-              <path fill="rgba(255, 255, 255, 0.45)" d="M 110,100 L 110,490 L 98,350 L 90,175 Z" />
-
-              {/* Shadow refraction facets on right flank of stalactite shafts */}
-              <path fill="rgba(2, 132, 199, 0.35)" d="M 1855,100 L 1855,400 L 1865,340 L 1870,280 Z" />
-              <path fill="rgba(2, 132, 199, 0.35)" d="M 1610,100 L 1610,500 L 1622,420 L 1630,340 Z" />
-              <path fill="rgba(2, 132, 199, 0.35)" d="M 1360,100 L 1360,520 L 1373,450 L 1380,380 Z" />
-              <path fill="rgba(2, 132, 199, 0.35)" d="M 1110,100 L 1110,480 L 1123,400 L 1130,330 Z" />
-              <path fill="rgba(2, 132, 199, 0.35)" d="M 860,100 L 860,560 L 872,490 L 880,410 Z" />
-              <path fill="rgba(2, 132, 199, 0.35)" d="M 610,100 L 610,510 L 622,430 L 630,350 Z" />
-              <path fill="rgba(2, 132, 199, 0.35)" d="M 360,100 L 360,540 L 373,460 L 380,390 Z" />
-              <path fill="rgba(2, 132, 199, 0.35)" d="M 110,100 L 110,490 L 122,430 L 130,350 Z" />
-            </g>
-
-            {/* TIER 5: 3D Horizontal Freeze-Thaw Rib Rings & Specular Central Spines */}
-            <g className="ice-3d-rib-rings" stroke="rgba(255, 255, 255, 0.7)" strokeWidth="2.5" fill="none">
-              <path d="M 1845,180 Q 1855,190 1865,180" />
-              <path d="M 1848,270 Q 1855,280 1862,270" />
-              <path d="M 1600,200 Q 1610,210 1620,200" />
-              <path d="M 1603,320 Q 1610,330 1617,320" />
-              <path d="M 1350,220 Q 1360,230 1370,220" />
-              <path d="M 1353,360 Q 1360,370 1367,360" />
-              <path d="M 1100,200 Q 1110,210 1120,200" />
-              <path d="M 1103,320 Q 1110,330 1117,320" />
-              <path d="M 850,230 Q 860,240 870,230" />
-              <path d="M 853,380 Q 860,390 867,380" />
-              <path d="M 600,210 Q 610,220 620,210" />
-              <path d="M 603,340 Q 610,350 617,340" />
-              <path d="M 350,220 Q 360,230 370,220" />
-              <path d="M 353,370 Q 360,380 367,370" />
-              <path d="M 100,210 Q 110,220 120,210" />
-              <path d="M 103,330 Q 110,340 117,330" />
-            </g>
-
-            {/* Specular Central Ridge Spine Paths */}
-            <g className="ice-specular-spines" stroke="url(#specular-spine-grad)" strokeWidth="5" strokeLinecap="round" opacity="0.95">
-              <path d="M 1855,100 L 1855,395" />
-              <path d="M 1736,95 L 1736,305" />
-              <path d="M 1610,100 L 1610,495" />
-              <path d="M 1486,95 L 1486,315" />
-              <path d="M 1360,100 L 1360,515" />
-              <path d="M 1236,95 L 1236,285" />
-              <path d="M 1110,100 L 1110,475" />
-              <path d="M 986,95 L 986,335" />
-              <path d="M 860,100 L 860,555" />
-              <path d="M 736,95 L 736,295" />
-              <path d="M 610,100 L 610,505" />
-              <path d="M 486,95 L 486,315" />
-              <path d="M 360,100 L 360,535" />
-              <path d="M 236,95 L 236,295" />
-              <path d="M 110,100 L 110,485" />
-            </g>
-
-            {/* TIER 6: Golden Sunlight Top Edge Crest (Front Rim) */}
-            <path
-              className="sunlit-ice-crest"
-              fill="url(#sunlit-ice-rim)"
-              filter="url(#ice-glow-heavy)"
-              d="M 0,0 L 1920,0 L 1920,38 Q 960,58 0,38 Z"
-            />
-          </svg>
-
-          {/* Animated Water Drips Falling From Stalactite Tips */}
-          <div className="ice-svg-drip drip-tip-1" />
-          <div className="ice-svg-drip drip-tip-2" />
-          <div className="ice-svg-drip drip-tip-3" />
-          <div className="ice-svg-drip drip-tip-4" />
-          <div className="ice-svg-drip drip-tip-5" />
-          <div className="ice-svg-drip drip-tip-6" />
-
-          {/* Falling Snowflakes & Ambient Frost Overlay */}
-          <div className="frost-overlay" />
-          <div className="snow-flake flake-1" />
-          <div className="snow-flake flake-2" />
-          <div className="snow-flake flake-3" />
-          <div className="snow-flake flake-4" />
-          <div className="snow-flake flake-5" />
-          <div className="snow-flake flake-6" />
-          <div className="snow-flake flake-7" />
-          <div className="snow-flake flake-8" />
-          <div className="snow-flake flake-9" />
-          <div className="snow-flake flake-10" />
-          <div className="snow-flake flake-11" />
-          <div className="snow-flake flake-12" />
-          <div className="snow-flake flake-13" />
-          <div className="snow-flake flake-14" />
-          <div className="snow-flake flake-15" />
-          <div className="snow-flake flake-16" />
-        </div>
-      ) : null}
+      {themeId === "lava" ? <LavaAtmosphere /> : null}
+      {themeId === "nuclear" ? <NuclearAtmosphere /> : null}
+      {themeId === "ice" ? <IceAtmosphere /> : null}
 
       {themeId === "matrix" ? <MatrixAtmosphere /> : null}
 
@@ -6317,18 +6283,10 @@ export default function App() {
                   isBusy={busy && isExecutingQuery}
                   runningTabId={runningTabId}
                   onSelect={handleSelectTab}
-                  onClose={(id) => {
-                    void closeTab(id);
-                  }}
-                  onAdd={() => {
-                    void addTab();
-                  }}
-                  onOpen={() => {
-                    void openTabs();
-                  }}
-                  onRename={(id, title) => {
-                    void renameTab(id, title);
-                  }}
+                  onClose={closeTab}
+                  onAdd={addTab}
+                  onOpen={openTabs}
+                  onRename={renameTab}
                   onReorder={reorderTabs}
                   width={queryTabsWidth}
                 />
@@ -6347,198 +6305,19 @@ export default function App() {
                 />
 
                 <div className="editor-wrapper">
-                  {(() => {
-                    void editorTick;
-                    const layoutInfo = editorRef.current?.getLayoutInfo();
-                    const viewportHeight = layoutInfo?.height ?? 600;
-
-                    return (
-                      <div
-                        className="query-copy-gutter"
-                        style={{ left: "0px" }}
-                      >
-                        {sqlBlocks.map((block, idx) => {
-                          let top =
-                            12 +
-                            (block.startLine - 1) * editorLineHeight -
-                            editorScrollTop;
-                          let height =
-                            (block.endLine - block.startLine + 1) *
-                            editorLineHeight;
-
-                          if (editorRef.current) {
-                            const model = editorRef.current.getModel();
-                            const maxLine = model ? model.getLineCount() : block.endLine;
-                            const startLineTop = editorRef.current.getTopForLineNumber(
-                              Math.min(block.startLine, maxLine),
-                            );
-                            let endLineBottom: number;
-                            if (block.endLine >= maxLine) {
-                              const lastLineTop = editorRef.current.getTopForLineNumber(maxLine);
-                              endLineBottom = lastLineTop + editorLineHeight;
-                            } else {
-                              endLineBottom = editorRef.current.getTopForLineNumber(
-                                block.endLine + 1,
-                              );
-                            }
-                            const currentScrollTop = editorRef.current.getScrollTop();
-                            top = startLineTop - currentScrollTop;
-                            height = Math.max(editorLineHeight, endLineBottom - startLineTop);
-                          }
-
-                          const isCopied = copiedBlockId === block.id;
-
-                          const MIN_BAR_HEIGHT = 3 * editorLineHeight;
-                          const barHeight = Math.max(MIN_BAR_HEIGHT, height);
-
-                          if (top + barHeight < -50 || top > viewportHeight + 100)
-                            return null;
-
-                          const labelHeight = 56;
-                          const visibleStart = Math.max(top, 0);
-                          const visibleEnd = Math.min(
-                            top + barHeight,
-                            viewportHeight,
-                          );
-                          const visibleCenter = (visibleStart + visibleEnd) / 2;
-                          const idealTop = visibleCenter - top - labelHeight / 2;
-                          const labelTop = Math.max(
-                            2,
-                            Math.min(
-                              Math.max(2, barHeight - labelHeight - 2),
-                              idealTop,
-                            ),
-                          );
-
-                          const isThisRunning =
-                            busy &&
-                            isExecutingQuery &&
-                            (runningBlockId === block.id ||
-                              (runningBlockId === null && sqlBlocks.length === 1));
-                          const isOtherRunning = busy && isExecutingQuery && !isThisRunning;
-
-                          return (
-                            <Fragment key={block.id}>
-                              {/* 1. QUERY COPY BAR */}
-                              <button
-                                type="button"
-                                className={`query-copy-bar ${isCopied ? "copied" : ""}`}
-                                style={{
-                                  top: `${top}px`,
-                                  height: `${barHeight}px`,
-                                }}
-                                title={`Click to copy Query ${idx + 1} (Lines ${block.startLine}–${block.endLine})`}
-                                onClick={() => handleCopyQueryBlock(block)}
-                              >
-                                <span
-                                  className="query-copy-label"
-                                  style={{
-                                    top: `${labelTop}px`,
-                                  }}
-                                >
-                                  {isCopied ? "✓ COPIED" : "COPY"}
-                                </span>
-                              </button>
-
-                              {/* 2. QUERY RUN / CANCEL BAR (GREEN WHEN IDLE, RED WHEN RUNNING, GRAY WHEN OTHER RUNNING) */}
-                              <button
-                                type="button"
-                                className={`query-run-bar ${
-                                  isThisRunning
-                                    ? "running"
-                                    : isOtherRunning
-                                      ? "disabled-running"
-                                      : ""
-                                }`}
-                                style={{
-                                  top: `${top}px`,
-                                  height: `${barHeight}px`,
-                                }}
-                                disabled={isOtherRunning || !status.connected}
-                                title={
-                                  isThisRunning
-                                    ? "Click to CANCEL running SQL query execution"
-                                    : isOtherRunning
-                                      ? "Another query is currently executing"
-                                      : !status.connected
-                                        ? "Connect to Oracle database first"
-                                        : `Click to RUN Query ${idx + 1} (Lines ${block.startLine}–${block.endLine})`
-                                }
-                                onClick={() => {
-                                  if (isThisRunning) {
-                                    void onCancelQuery();
-                                  } else if (!isOtherRunning && status.connected) {
-                                    void handleRunQueryBlock(block);
-                                  }
-                                }}
-                              >
-                                <span
-                                  className="query-run-label"
-                                  style={{
-                                    top: `${labelTop}px`,
-                                  }}
-                                >
-                                  {isThisRunning ? "CANCEL" : "RUN"}
-                                </span>
-                              </button>
-                            </Fragment>
-                          );
-                        })}
-                      </div>
-                    );
-                  })()}
-                  {/* SPARKLES ALL OVER COPIED QUERY BLOCK WITH SLOW FADE AWAY */}
-                  {sqlBlocks.map((block) => {
-                    if (copiedBlockId !== block.id) return null;
-                    let top = (block.startLine - 1) * editorLineHeight - editorScrollTop;
-                    let height = (block.endLine - block.startLine + 1) * editorLineHeight;
-                    if (editorRef.current) {
-                      const model = editorRef.current.getModel();
-                      const maxLine = model ? model.getLineCount() : block.endLine;
-                      const startLineTop = editorRef.current.getTopForLineNumber(
-                        Math.min(block.startLine, maxLine),
-                      );
-                      let endLineBottom: number;
-                      if (block.endLine >= maxLine) {
-                        const lastLineTop = editorRef.current.getTopForLineNumber(maxLine);
-                        endLineBottom = lastLineTop + editorLineHeight;
-                      } else {
-                        endLineBottom = editorRef.current.getTopForLineNumber(block.endLine + 1);
-                      }
-                      const currentScrollTop = editorRef.current.getScrollTop();
-                      top = startLineTop - currentScrollTop;
-                      height = Math.max(editorLineHeight, endLineBottom - startLineTop);
-                    }
-
-                    return (
-                      <div
-                        key={`copy-sparkles-${block.id}`}
-                        className="query-copied-sparkle-field"
-                        style={{
-                          top: `${top}px`,
-                          height: `${height}px`,
-                        }}
-                      >
-                        <div className="copy-glow-backdrop" />
-                        <span className="query-sparkle sp1" style={{ top: "15%", left: "10%" }} />
-                        <span className="query-sparkle sp2" style={{ top: "25%", left: "35%" }} />
-                        <span className="query-sparkle sp3" style={{ top: "10%", left: "65%" }} />
-                        <span className="query-sparkle sp4" style={{ top: "30%", left: "85%" }} />
-                        <span className="query-sparkle sp5" style={{ top: "50%", left: "20%" }} />
-                        <span className="query-sparkle sp6" style={{ top: "45%", left: "50%" }} />
-                        <span className="query-sparkle sp7" style={{ top: "60%", left: "78%" }} />
-                        <span className="query-sparkle sp8" style={{ top: "75%", left: "15%" }} />
-                        <span className="query-sparkle sp9" style={{ top: "80%", left: "42%" }} />
-                        <span className="query-sparkle sp10" style={{ top: "70%", left: "90%" }} />
-                        <span className="query-sparkle sp11" style={{ top: "35%", left: "5%" }} />
-                        <span className="query-sparkle sp12" style={{ top: "85%", left: "68%" }} />
-                        <span className="query-sparkle sp13" style={{ top: "20%", left: "48%" }} />
-                        <span className="query-sparkle sp14" style={{ top: "65%", left: "30%" }} />
-                        <span className="query-sparkle sp15" style={{ top: "90%", left: "25%" }} />
-                        <span className="query-sparkle sp16" style={{ top: "40%", left: "92%" }} />
-                      </div>
-                    );
-                  })}
+                  <QueryGutterOverlay
+                    editorRef={editorRef}
+                    sqlBlocks={sqlBlocks}
+                    editorLineHeight={editorLineHeight}
+                    copiedBlockId={copiedBlockId}
+                    runningBlockId={runningBlockId}
+                    busy={busy}
+                    isExecutingQuery={isExecutingQuery}
+                    connected={status.connected}
+                    onCopyQueryBlock={handleCopyQueryBlock}
+                    onRunQueryBlock={handleRunQueryBlock}
+                    onCancelQuery={onCancelQuery}
+                  />
                   {copiedBlockId && <div className="query-copied-toast">✓ Query Copied!</div>}
                   <div className="editor-inner-container">
                     <Editor
@@ -6780,11 +6559,8 @@ export default function App() {
               {bottomTab === "history" ? (
                 <HistoryPanel
                   entries={history}
-                  onRestore={(restored) => {
-                    setActiveSql(restored, true);
-                    setBottomTab("results");
-                  }}
-                  onClear={() => setHistory([])}
+                  onRestore={handleRestoreHistory}
+                  onClear={handleClearHistory}
                 />
               ) : bottomTab === "explain" ? (
                 explainError ? (
@@ -7193,26 +6969,28 @@ export default function App() {
           varNames={bindModalState.varNames}
           initialValues={bindValues}
           onConfirm={onConfirmBindModal}
-          onCancel={() => setBindModalState(null)}
+          onCancel={handleCloseBindModal}
         />
       )}
 
-      <PixelFontStudioModal
-        isOpen={showPixelFontModal}
-        onClose={() => setShowPixelFontModal(false)}
-      />
+      {showPixelFontModal && (
+        <PixelFontStudioModal
+          isOpen={showPixelFontModal}
+          onClose={handleClosePixelFontModal}
+        />
+      )}
 
       {showChartModal && result && (
         <ThreeDChartModal
           result={result}
-          onClose={() => setShowChartModal(false)}
+          onClose={handleCloseChartModal}
         />
       )}
 
       {showDiffModal && diffSources.length > 0 && (
         <ResultDiffModal
           isOpen={showDiffModal}
-          onClose={() => setShowDiffModal(false)}
+          onClose={handleCloseDiffModal}
           sources={diffSources}
         />
       )}
