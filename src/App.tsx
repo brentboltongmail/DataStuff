@@ -2221,6 +2221,7 @@ function loadRememberPassword(): boolean {
 const SAVED_CONNECTIONS_KEY = "oracle-ide.saved-connections";
 const LAST_CONNECTION_ID_KEY = "oracle-ide.last-connection-id";
 const AUTO_FORMAT_KEY = "oracle-ide.auto-format";
+const AUTO_COMMIT_EDITS_KEY = "oracle-ide.auto-commit-edits";
 
 export interface SavedConnection {
   id: string;
@@ -2613,6 +2614,9 @@ export default function App() {
   const [showManageModal, setShowManageModal] = useState<boolean>(false);
   const [showProdCommitConfirm, setShowProdCommitConfirm] = useState<boolean>(false);
   const [autoFormat, setAutoFormat] = useState<boolean>(() => localStorage.getItem(AUTO_FORMAT_KEY) === "true");
+  const [autoCommitEdits, setAutoCommitEdits] = useState<boolean>(() => localStorage.getItem(AUTO_COMMIT_EDITS_KEY) !== "false");
+  const autoCommitEditsRef = useRef(autoCommitEdits);
+  autoCommitEditsRef.current = autoCommitEdits;
   // Real-time query execution length timer loop
   useEffect(() => {
     if (!busy || !queryStartTime) {
@@ -3009,6 +3013,10 @@ export default function App() {
       })
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem(AUTO_COMMIT_EDITS_KEY, String(autoCommitEdits));
+  }, [autoCommitEdits]);
 
   useEffect(() => {
     localStorage.setItem(AUTO_FORMAT_KEY, String(autoFormat));
@@ -4870,17 +4878,26 @@ export default function App() {
         if (pos && model) {
           const lineText = model.getLineContent(pos.lineNumber);
 
-          // Only replace if the next character to the right is a space or end-of-line
+          // Only replace if the next character to the right is allowed (space, EOL, closing paren, comma, semicolon)
           const nextCharIndex = pos.column - 1;
-          const isNextCharSpaceOrEol = nextCharIndex >= lineText.length || lineText.charAt(nextCharIndex) === " ";
+          const nextChar = lineText.charAt(nextCharIndex);
+          const isNextCharAllowed =
+            nextCharIndex >= lineText.length ||
+            nextChar === " " ||
+            nextChar === ")" ||
+            nextChar === "," ||
+            nextChar === ";";
 
-          if (isNextCharSpaceOrEol) {
+          if (isNextCharAllowed) {
             const textBeforeCursor = lineText.substring(0, pos.column - 1);
             const match = textBeforeCursor.match(/(^|[^\w_])(to_date\()?$/i);
             if (match) {
               const matchedText = match[2];
               const startColumn = pos.column - matchedText.length;
-              const endColumn = pos.column;
+              let endColumn = pos.column;
+              if (nextChar === ")") {
+                endColumn += 1;
+              }
 
               const linePrefix = lineText.substring(0, startColumn - 1);
               const isComment = linePrefix.includes("--") || (linePrefix.includes("/*") && !linePrefix.includes("*/"));
@@ -5141,6 +5158,8 @@ export default function App() {
     [endSplitDrag],
   );
 
+  const executeCommitRef = useRef<() => Promise<void>>(() => Promise.resolve());
+
   const onCellEdit = useCallback((edit: CellEdit) => {
     const key = cellEditKey(edit.rowIndex, edit.columnIndex);
     setPendingEdits((prev) => {
@@ -5152,6 +5171,11 @@ export default function App() {
       }
       return next;
     });
+    if (autoCommitEditsRef.current) {
+      window.setTimeout(() => {
+        void executeCommitRef.current();
+      }, 60);
+    }
   }, []);
 
   const applyPendingUpdates = async () => {
@@ -5240,6 +5264,7 @@ export default function App() {
       setBusy(false);
     }
   };
+  executeCommitRef.current = executeCommit;
 
   const onCommit = async () => {
     if (isProd) {
@@ -5504,7 +5529,11 @@ export default function App() {
       }
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") {
         event.preventDefault();
-        void persistWorkspace(true);
+        if (pendingEditCountRef.current > 0) {
+          void onCommit();
+        } else {
+          void persistWorkspace(true);
+        }
       }
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "t") {
         event.preventDefault();
@@ -5517,9 +5546,11 @@ export default function App() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [onExecute, addTab, openTabs, persistWorkspace]);
+  }, [onExecute, addTab, openTabs, persistWorkspace, onCommit]);
 
   const pendingEditCount = Object.keys(pendingEdits).length;
+  const pendingEditCountRef = useRef(pendingEditCount);
+  pendingEditCountRef.current = pendingEditCount;
   const hasUncommittedChanges = pendingEditCount > 0 || hasOpenTransaction;
 
   const resultSummary = useMemo(() => {
@@ -6654,7 +6685,7 @@ export default function App() {
               <div className="toolbar-actions">
                 <button
                   type="button"
-                  className="success"
+                  className={`success ${pendingEditCount > 0 ? "cell-commit-highlight" : ""}`}
                   onClick={onCommit}
                   disabled={!status.connected || busy || !hasUncommittedChanges}
                   title={
@@ -6686,6 +6717,14 @@ export default function App() {
                 >
                   Rollback
                 </button>
+                <label className="toolbar-checkbox" title="Automatically save and commit cell edits to the database immediately upon editing">
+                  <input
+                    type="checkbox"
+                    checked={autoCommitEdits}
+                    onChange={(e) => setAutoCommitEdits(e.target.checked)}
+                  />
+                  Auto-Commit Edits
+                </label>
                 <button
                   type="button"
                   className={density !== "normal" ? "active-toggle" : ""}

@@ -3786,6 +3786,39 @@ button.status-bar-cancel-btn:hover {
   text-decoration: line-through;
 }
 
+.toolbar-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-color, #e2e8f0);
+  cursor: pointer;
+  user-select: none;
+  margin: 0 4px;
+}
+
+.toolbar-checkbox input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: #10b981;
+}
+
+.cell-commit-highlight {
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.6) !important;
+  animation: pulse-commit-glow 1.5s infinite alternate !important;
+}
+
+@keyframes pulse-commit-glow {
+  from {
+    box-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
+    transform: scale(1);
+  }
+  to {
+    box-shadow: 0 0 14px rgba(16, 185, 129, 0.85);
+    transform: scale(1.03);
+  }
+}
+
 
 
 
