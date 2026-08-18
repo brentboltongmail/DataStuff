@@ -35,7 +35,7 @@ export const APP_FONTS: AppFontOption[] = [
     id: "sans",
     label: "🔤 System Sans",
     fontFamily: '"SF Pro Text", "Helvetica Neue", system-ui, -apple-system, sans-serif',
-    monoFontFamily: '"SF Mono", "Menlo", "Monaco", "Consolas", monospace',
+    monoFontFamily: '"SF Pro Text", "Helvetica Neue", system-ui, -apple-system, sans-serif',
   },
   {
     id: "mono",
@@ -47,25 +47,25 @@ export const APP_FONTS: AppFontOption[] = [
     id: "serif",
     label: "📖 Fraunces Serif",
     fontFamily: '"Fraunces", "Cormorant Garamond", "Georgia", serif',
-    monoFontFamily: '"IBM Plex Mono", "SF Mono", "Menlo", "Monaco", monospace',
+    monoFontFamily: '"Fraunces", "Cormorant Garamond", "Georgia", serif',
   },
   {
     id: "scifi",
     label: "🚀 Orbitron Sci-Fi",
     fontFamily: '"Orbitron", "Exo 2", system-ui, sans-serif',
-    monoFontFamily: '"IBM Plex Mono", "SF Mono", "Menlo", "Monaco", monospace',
+    monoFontFamily: '"Orbitron", "Exo 2", system-ui, sans-serif',
   },
   {
     id: "outfit",
     label: "✨ Outfit Modern",
     fontFamily: '"Outfit", "Source Sans 3", system-ui, sans-serif',
-    monoFontFamily: '"IBM Plex Mono", "SF Mono", "Menlo", "Monaco", monospace',
+    monoFontFamily: '"Outfit", "Source Sans 3", system-ui, sans-serif',
   },
   {
     id: "source",
     label: "📝 Source Sans",
     fontFamily: '"Source Sans 3", "Segoe UI", sans-serif',
-    monoFontFamily: '"IBM Plex Mono", "SF Mono", "Menlo", "Monaco", monospace',
+    monoFontFamily: '"Source Sans 3", "Segoe UI", sans-serif',
   },
   {
     id: "theme",

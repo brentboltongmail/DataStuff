@@ -3507,7 +3507,7 @@ button.status-bar-cancel-btn:hover {
 [data-theme][data-font="sans"] {
   --font-ui: "SF Pro Text", "Helvetica Neue", system-ui, -apple-system, sans-serif !important;
   --font-display: "SF Pro Text", "Helvetica Neue", system-ui, -apple-system, sans-serif !important;
-  --font-mono: "SF Mono", "Menlo", "Monaco", "Consolas", monospace !important;
+  --font-mono: "SF Pro Text", "Helvetica Neue", system-ui, -apple-system, sans-serif !important;
 }
 
 [data-font="mono"],
@@ -3521,28 +3521,36 @@ button.status-bar-cancel-btn:hover {
 [data-theme][data-font="serif"] {
   --font-ui: "Fraunces", "Cormorant Garamond", "Georgia", serif !important;
   --font-display: "Fraunces", "Cormorant Garamond", "Georgia", serif !important;
-  --font-mono: "IBM Plex Mono", "SF Mono", "Menlo", "Monaco", monospace !important;
+  --font-mono: "Fraunces", "Cormorant Garamond", "Georgia", serif !important;
 }
 
 [data-font="scifi"],
 [data-theme][data-font="scifi"] {
   --font-ui: "Orbitron", "Exo 2", system-ui, sans-serif !important;
   --font-display: "Orbitron", "Exo 2", system-ui, sans-serif !important;
-  --font-mono: "IBM Plex Mono", "SF Mono", "Menlo", "Monaco", monospace !important;
+  --font-mono: "Orbitron", "Exo 2", system-ui, sans-serif !important;
 }
 
 [data-font="outfit"],
 [data-theme][data-font="outfit"] {
   --font-ui: "Outfit", "Source Sans 3", system-ui, sans-serif !important;
   --font-display: "Outfit", "Source Sans 3", system-ui, sans-serif !important;
-  --font-mono: "IBM Plex Mono", "SF Mono", "Menlo", "Monaco", monospace !important;
+  --font-mono: "Outfit", "Source Sans 3", system-ui, sans-serif !important;
 }
 
 [data-font="source"],
 [data-theme][data-font="source"] {
   --font-ui: "Source Sans 3", "Segoe UI", sans-serif !important;
   --font-display: "Source Sans 3", "Segoe UI", sans-serif !important;
-  --font-mono: "IBM Plex Mono", "SF Mono", "Menlo", "Monaco", monospace !important;
+  --font-mono: "Source Sans 3", "Segoe UI", sans-serif !important;
+}
+
+/* Force Monaco Editor DOM Elements to Honor Active Font */
+[data-font] .monaco-editor,
+[data-font] .monaco-editor .view-line,
+[data-font] .monaco-editor .margin,
+[data-font] .monaco-editor .monaco-mouse-cursor-text {
+  font-family: var(--font-mono) !important;
 }
 
 .font-picker {

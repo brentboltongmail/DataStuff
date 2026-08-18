@@ -3047,6 +3047,7 @@ export default function App() {
     const fontFam = activeFont.monoFontFamily || activeFont.fontFamily;
     if (fontFam) {
       editorRef.current?.updateOptions({ fontFamily: fontFam });
+      monacoApiRef.current?.editor.remeasureFonts();
     }
     void window.oracle?.saveSettings?.({ font: fontId });
   }, [fontId]);
