@@ -61,7 +61,7 @@ export const APP_THEMES: AppThemeOption[] = [
   { id: "crystal", label: "Crystal Cavern", monacoTheme: "datastuff-crystal" },
   { id: "cyberpunk", label: "Cyberpunk City 2077", monacoTheme: "datastuff-cyberpunk" },
   { id: "solar", label: "Solar Flare", monacoTheme: "datastuff-solar" },
-  { id: "knightrider", label: "🏎️ Knight Rider K.I.T.T.", monacoTheme: "datastuff-knightrider" },
+  { id: "knightrider", label: "🏎️ Night Car", monacoTheme: "datastuff-knightrider" },
   { id: "solarsystem", label: "🪐 Solar System", monacoTheme: "datastuff-solarsystem" },
 ];
 
