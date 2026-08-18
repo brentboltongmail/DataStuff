@@ -8,6 +8,17 @@ function formatDateString(val: string): string {
   if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
     s = s.replace(/^(\d{4})-(\d{2})-(\d{2})/, "$1/$2/$3");
   }
+  // If date contains 00:00:00 hours:min:sec (with optional .000 fractional seconds / timezone), strip the time
+  if (
+    /(?:^\d{4}\/\d{2}\/\d{2}|^\d{4}-\d{2}-\d{2}|^\d{2}\/\d{2}\/\d{4}|^\d{1,2}-[A-Za-z]{3}-\d{2,4})\s+00:00:00(?:\.0+)?(?:\s*(?:UTC|GMT|[+-]\d{2}:?\d{2}|Z))?$/i.test(
+      s,
+    )
+  ) {
+    s = s.replace(
+      /\s+00:00:00(?:\.0+)?(?:\s*(?:UTC|GMT|[+-]\d{2}:?\d{2}|Z))?$/i,
+      "",
+    );
+  }
   return s;
 }
 
