@@ -3488,6 +3488,70 @@ button.status-bar-cancel-btn:hover {
   pointer-events: none;
 }
 
+/* Global Font Options Overrides */
+[data-font="chalkboard"],
+[data-theme][data-font="chalkboard"] {
+  --font-ui: "Chalkboard", "Chalkboard SE", "Comic Neue", "Comic Sans MS", cursive, sans-serif !important;
+  --font-display: "Chalkboard", "Chalkboard SE", "Comic Neue", "Comic Sans MS", cursive, sans-serif !important;
+  --font-mono: "Chalkboard", "Chalkboard SE", "Comic Neue", "Comic Sans MS", cursive, monospace !important;
+}
+
+[data-font="comic"],
+[data-theme][data-font="comic"] {
+  --font-ui: "Comic Neue", "Chalkboard", "Comic Sans MS", cursive, sans-serif !important;
+  --font-display: "Comic Neue", "Chalkboard", "Comic Sans MS", cursive, sans-serif !important;
+  --font-mono: "Comic Neue", "Chalkboard", "Comic Sans MS", cursive, monospace !important;
+}
+
+[data-font="sans"],
+[data-theme][data-font="sans"] {
+  --font-ui: "SF Pro Text", "Helvetica Neue", system-ui, -apple-system, sans-serif !important;
+  --font-display: "SF Pro Text", "Helvetica Neue", system-ui, -apple-system, sans-serif !important;
+  --font-mono: "SF Mono", "Menlo", "Monaco", "Consolas", monospace !important;
+}
+
+[data-font="mono"],
+[data-theme][data-font="mono"] {
+  --font-ui: "IBM Plex Mono", "SF Mono", "Menlo", "Monaco", "Consolas", monospace !important;
+  --font-display: "IBM Plex Mono", "SF Mono", "Menlo", "Monaco", "Consolas", monospace !important;
+  --font-mono: "IBM Plex Mono", "SF Mono", "Menlo", "Monaco", "Consolas", monospace !important;
+}
+
+[data-font="serif"],
+[data-theme][data-font="serif"] {
+  --font-ui: "Fraunces", "Cormorant Garamond", "Georgia", serif !important;
+  --font-display: "Fraunces", "Cormorant Garamond", "Georgia", serif !important;
+  --font-mono: "IBM Plex Mono", "SF Mono", "Menlo", "Monaco", monospace !important;
+}
+
+[data-font="scifi"],
+[data-theme][data-font="scifi"] {
+  --font-ui: "Orbitron", "Exo 2", system-ui, sans-serif !important;
+  --font-display: "Orbitron", "Exo 2", system-ui, sans-serif !important;
+  --font-mono: "IBM Plex Mono", "SF Mono", "Menlo", "Monaco", monospace !important;
+}
+
+[data-font="outfit"],
+[data-theme][data-font="outfit"] {
+  --font-ui: "Outfit", "Source Sans 3", system-ui, sans-serif !important;
+  --font-display: "Outfit", "Source Sans 3", system-ui, sans-serif !important;
+  --font-mono: "IBM Plex Mono", "SF Mono", "Menlo", "Monaco", monospace !important;
+}
+
+[data-font="source"],
+[data-theme][data-font="source"] {
+  --font-ui: "Source Sans 3", "Segoe UI", sans-serif !important;
+  --font-display: "Source Sans 3", "Segoe UI", sans-serif !important;
+  --font-mono: "IBM Plex Mono", "SF Mono", "Menlo", "Monaco", monospace !important;
+}
+
+.font-picker {
+  display: inline-flex;
+  align-items: center;
+  -webkit-app-region: no-drag;
+}
+
+
 
 
 

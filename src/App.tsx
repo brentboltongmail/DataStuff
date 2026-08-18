@@ -44,6 +44,14 @@ import {
   themeOption,
   type AppThemeId,
 } from "./themes";
+import {
+  APP_FONTS,
+  FONT_KEY,
+  applyFontToDocument,
+  fontOption,
+  loadFont,
+  type AppFontId,
+} from "./fonts";
 import { generateSeededPlanets, generateSeededShips, type RandomPlanet, type RandomShip, type PlanetRing, type PlanetMoon } from "./planetGenerator";
 import {
   calculateQueryProgressPercent,
@@ -2542,6 +2550,7 @@ export default function App() {
   const [density, setDensity] = useState<GridDensity>(loadDensity);
   const [fontScale, setFontScale] = useState(loadFontScale);
   const [themeId, setThemeId] = useState<AppThemeId>(loadTheme);
+  const [fontId, setFontId] = useState<AppFontId>(loadFont);
 
   const [planetSeed, setPlanetSeed] = useState(() =>
     Math.floor(Date.now() + performance.now() * 1000 + Math.random() * 1000000)
@@ -2941,6 +2950,11 @@ export default function App() {
           localStorage.setItem(THEME_KEY, diskSettings.theme);
           applyThemeToDocument(diskSettings.theme as AppThemeId);
         }
+        if (typeof diskSettings.font === "string") {
+          setFontId(diskSettings.font as AppFontId);
+          localStorage.setItem(FONT_KEY, diskSettings.font);
+          applyFontToDocument(diskSettings.font as AppFontId);
+        }
         if (typeof diskSettings.fontScale === "number" && Number.isFinite(diskSettings.fontScale)) {
           setFontScale(diskSettings.fontScale);
           localStorage.setItem(FONT_SCALE_KEY, String(diskSettings.fontScale));
@@ -3022,6 +3036,17 @@ export default function App() {
     monacoApiRef.current?.editor.setTheme(themeOption(themeId).monacoTheme);
     void window.oracle?.saveSettings?.({ theme: themeId });
   }, [themeId]);
+
+  useEffect(() => {
+    localStorage.setItem(FONT_KEY, fontId);
+    applyFontToDocument(fontId);
+    const activeFont = fontOption(fontId);
+    const fontFam = activeFont.monoFontFamily || activeFont.fontFamily;
+    if (fontFam) {
+      editorRef.current?.updateOptions({ fontFamily: fontFam });
+    }
+    void window.oracle?.saveSettings?.({ font: fontId });
+  }, [fontId]);
 
   useEffect(() => {
     localStorage.setItem(EDITOR_SPLIT_KEY, String(editorSplit));
@@ -6132,6 +6157,20 @@ export default function App() {
             ))}
           </select>
         </div>
+        <div className="font-picker">
+          <select
+            id="app-font"
+            value={fontId}
+            title="Select app font family"
+            onChange={(e) => setFontId(e.target.value as AppFontId)}
+          >
+            {APP_FONTS.map((font) => (
+              <option key={font.id} value={font.id}>
+                {font.label}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="font-controls" title="App font size">
           <button
             type="button"
@@ -6414,7 +6453,10 @@ export default function App() {
                       options={{
                         fontSize: Math.round(EDITOR_BASE_FONT_SIZE * fontScale),
                         lineHeight: Math.round(EDITOR_BASE_FONT_SIZE * fontScale) + 1,
-                        fontFamily: "IBM Plex Mono, SF Mono, Menlo, Monaco, Consolas, monospace",
+                        fontFamily:
+                          fontOption(fontId).monoFontFamily ||
+                          fontOption(fontId).fontFamily ||
+                          "IBM Plex Mono, SF Mono, Menlo, Monaco, Consolas, monospace",
                         minimap: { enabled: false },
                         scrollBeyondLastLine: false,
                         wordWrap: "on",

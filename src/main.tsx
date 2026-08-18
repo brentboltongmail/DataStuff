@@ -4,6 +4,7 @@ import App from "./App";
 import "./themes.css";
 import "./styles.css";
 import { applyThemeToDocument, loadTheme } from "./themes";
+import { applyFontToDocument, loadFont } from "./fonts";
 
 window.addEventListener("error", (e) => {
   console.error("CRITICAL RENDERER ERROR:", e.error || e.message);
@@ -90,6 +91,7 @@ class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySta
 
 try {
   applyThemeToDocument(loadTheme());
+  applyFontToDocument(loadFont());
 } catch {}
 
 createRoot(document.getElementById("root")!).render(
