@@ -171,7 +171,7 @@ const PLANETS: PlanetSpec[] = [
   },
 ];
 
-export default function SolarSystemAtmosphere() {
+function SolarSystemAtmosphere() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // 1,000 Starfield Canvas Rendering Loop
@@ -418,3 +418,5 @@ export default function SolarSystemAtmosphere() {
     </div>
   );
 }
+
+export default React.memo(SolarSystemAtmosphere);

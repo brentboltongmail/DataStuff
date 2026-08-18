@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type DragEvent } from "react";
+import { memo, useEffect, useRef, useState, type DragEvent } from "react";
 import type { SqlTab } from "../types";
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
   width?: number;
 }
 
-export default function SqlTabs({
+function SqlTabs({
   tabs,
   activeId,
   isBusy,
@@ -196,3 +196,5 @@ export default function SqlTabs({
     </div>
   );
 }
+
+export default memo(SqlTabs);

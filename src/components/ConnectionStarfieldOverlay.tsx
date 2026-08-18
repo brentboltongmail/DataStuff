@@ -174,7 +174,7 @@ function generateDancerPositions(count: number): DancerPoint[] {
   return points;
 }
 
-export default function ConnectionStarfieldOverlay({
+function ConnectionStarfieldOverlay({
   phase,
   targetRect,
   connectionName,
@@ -485,3 +485,5 @@ export default function ConnectionStarfieldOverlay({
     </div>
   );
 }
+
+export default React.memo(ConnectionStarfieldOverlay);

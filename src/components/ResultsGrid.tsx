@@ -1,4 +1,5 @@
 import {
+  memo,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -262,7 +263,7 @@ function computeAutoColWidths(
   return computeNormalColWidths(columns, rows, pendingEdits, fontScale);
 }
 
-export default function ResultsGrid({
+function ResultsGrid({
   result,
   density,
   editable,
@@ -841,3 +842,5 @@ export default function ResultsGrid({
     </div>
   );
 }
+
+export default memo(ResultsGrid);

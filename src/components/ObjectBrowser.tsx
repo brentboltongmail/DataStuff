@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import type { DbColumn, DbObject, DbObjectType } from "../types";
 
 const FILTER_KEY = "oracle-ide.objectFilter";
@@ -48,7 +48,7 @@ interface Props {
   onToggleCollapse?: () => void;
 }
 
-export default function ObjectBrowser({
+function ObjectBrowser({
   connected,
   refreshKey,
   onInsertSql,
@@ -309,3 +309,5 @@ export default function ObjectBrowser({
     </aside>
   );
 }
+
+export default memo(ObjectBrowser);

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { HistoryEntry } from "../types";
 
 interface Props {
@@ -10,7 +11,7 @@ function preview(sql: string): string {
   return sql.replace(/\s+/g, " ").trim().slice(0, 120);
 }
 
-export default function HistoryPanel({ entries, onRestore, onClear }: Props) {
+function HistoryPanel({ entries, onRestore, onClear }: Props) {
   if (entries.length === 0) {
     return (
       <div className="empty-state">
@@ -48,3 +49,5 @@ export default function HistoryPanel({ entries, onRestore, onClear }: Props) {
     </div>
   );
 }
+
+export default memo(HistoryPanel);
