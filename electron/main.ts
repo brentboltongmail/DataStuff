@@ -300,6 +300,27 @@ function registerIpc() {
       return { saved: true, filePath: result.filePath };
     },
   );
+  ipcMain.handle(
+    "app:saveFile",
+    async (
+      _event,
+      content: string,
+      defaultName: string,
+      filterName = "HTML File",
+      extension = "html",
+    ) => {
+      const result = await dialog.showSaveDialog(mainWindow!, {
+        title: `Export ${filterName}`,
+        defaultPath: defaultName,
+        filters: [{ name: filterName, extensions: [extension] }],
+      });
+      if (result.canceled || !result.filePath) {
+        return { saved: false };
+      }
+      await fs.writeFile(result.filePath, content, "utf8");
+      return { saved: true, filePath: result.filePath };
+    },
+  );
 }
 
 function getConnectionsFilePath(): string {

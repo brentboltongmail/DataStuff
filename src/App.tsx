@@ -15,6 +15,8 @@ import ConnectionStarfieldOverlay, {
 import PixelFontStudioModal from "./components/PixelFontStudioModal";
 import SolarSystemAtmosphere from "./components/SolarSystemAtmosphere";
 import ThreeDChartModal from "./components/ThreeDChartModal";
+import ResultDiffModal, { type DiffSource } from "./components/ResultDiffModal";
+import { generateHtmlDashboard } from "./htmlDashboardExporter";
 import {
   parseBindVariables,
   prepareSqlWithBinds,
@@ -2518,6 +2520,7 @@ export default function App() {
   const [executingStatementText, setExecutingStatementText] = useState<string>("");
   const [showPixelFontModal, setShowPixelFontModal] = useState(false);
   const [showChartModal, setShowChartModal] = useState(false);
+  const [showDiffModal, setShowDiffModal] = useState(false);
 
   useEffect(() => {
     if (window.oracle?.loadQueryStats) {
@@ -5263,6 +5266,61 @@ export default function App() {
     }
   };
 
+  const onExportHtml = async () => {
+    if (!result?.isSelect || result.columns.length === 0) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const htmlContent = generateHtmlDashboard(resultWithoutRowId(result), {
+        sql: activeTab?.sqlText || sql,
+        title: `${activeTab?.title || "DataStuff Query"} Dashboard`,
+      });
+
+      if (window.oracle?.saveFile) {
+        const saved = await window.oracle.saveFile(
+          htmlContent,
+          `${(activeTab?.title || "query").replace(/\.[^/.]+$/, "")}-dashboard.html`,
+          "HTML Dashboard",
+          "html",
+        );
+        if (saved.saved) {
+          setMessage(`Exported HTML Dashboard to ${saved.filePath}`);
+        } else {
+          setMessage("HTML Dashboard export cancelled");
+        }
+      } else {
+        const blob = new Blob([htmlContent], { type: "text/html" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "query-dashboard.html";
+        a.click();
+        URL.revokeObjectURL(url);
+        setMessage("Exported HTML Dashboard download");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const diffSources = useMemo<DiffSource[]>(() => {
+    const list: DiffSource[] = [];
+    tabs.forEach((t) => {
+      const tabRes = tabStates[t.id]?.result;
+      if (tabRes && tabRes.isSelect && tabRes.columns.length > 0) {
+        list.push({
+          id: `tab-${t.id}`,
+          label: `Tab: ${t.title || t.fileName}`,
+          sql: t.sqlText,
+          result: resultWithoutRowId(tabRes),
+        });
+      }
+    });
+    return list;
+  }, [tabs, tabStates]);
+
   const addTab = useCallback(async (sqlText = "", title = "query") => {
     try {
       const tab = await window.oracle.createSqlPage(title, sqlText);
@@ -6648,11 +6706,29 @@ export default function App() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => setShowDiffModal(true)}
+                  disabled={!canExport || busy || diffSources.length === 0}
+                  title="Compare query results side-by-side or unified diff"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 4, marginRight: 4 }}
+                >
+                  ⚖️ Compare / Diff...
+                </button>
+                <button
+                  type="button"
+                  onClick={onExportHtml}
+                  disabled={!canExport || busy}
+                  title="Export current result grid to an interactive offline HTML dashboard"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 4, marginRight: 4 }}
+                >
+                  🌐 Export HTML...
+                </button>
+                <button
+                  type="button"
                   onClick={onExportCsv}
                   disabled={!canExport || busy}
                   title="Export current result grid to CSV"
                 >
-                  Export...
+                  Export CSV...
                 </button>
               </div>
             </div>
@@ -7087,6 +7163,14 @@ export default function App() {
         <ThreeDChartModal
           result={result}
           onClose={() => setShowChartModal(false)}
+        />
+      )}
+
+      {showDiffModal && diffSources.length > 0 && (
+        <ResultDiffModal
+          isOpen={showDiffModal}
+          onClose={() => setShowDiffModal(false)}
+          sources={diffSources}
         />
       )}
 

@@ -20,6 +20,19 @@ const api: OracleApi = {
     ipcRenderer.invoke("oracle:listPrimaryKeys", objectName),
   saveCsv: (csv: string, defaultName: string) =>
     ipcRenderer.invoke("app:saveCsv", csv, defaultName),
+  saveFile: (
+    content: string,
+    defaultName: string,
+    filterName?: string,
+    extension?: string,
+  ) =>
+    ipcRenderer.invoke(
+      "app:saveFile",
+      content,
+      defaultName,
+      filterName,
+      extension,
+    ),
   loadWorkspace: () => ipcRenderer.invoke("workspace:load"),
   saveWorkspace: (workspace: SavedWorkspace) =>
     ipcRenderer.invoke("workspace:save", workspace),

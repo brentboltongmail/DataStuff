@@ -139,6 +139,12 @@ export interface OracleApi {
   listColumns: (objectName: string) => Promise<DbColumn[]>;
   listPrimaryKeys: (objectName: string) => Promise<string[]>;
   saveCsv: (csv: string, defaultName: string) => Promise<SaveCsvResult>;
+  saveFile?: (
+    content: string,
+    defaultName: string,
+    filterName?: string,
+    extension?: string,
+  ) => Promise<{ saved: boolean; filePath?: string }>;
   loadWorkspace: () => Promise<SavedWorkspace | null>;
   saveWorkspace: (
     workspace: SavedWorkspace,
