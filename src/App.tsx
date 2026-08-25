@@ -93,6 +93,63 @@ function resultWithoutRowId(result: QueryResult): QueryResult {
   };
 }
 
+export const tableColumnsCache = new Map<string, any[]>();
+
+export function extractTableAliasMap(sql: string): Record<string, string> {
+  const map: Record<string, string> = {};
+  
+  const fromJoinRegex = /\b(?:from|join)\s+([a-zA-Z0-9_$#]+)(?:\s+as)?\s+([a-zA-Z0-9_$#]+)\b/gi;
+  let match;
+  while ((match = fromJoinRegex.exec(sql)) !== null) {
+    const table = match[1].toUpperCase();
+    const alias = match[2].toLowerCase();
+    if (!['on', 'where', 'group', 'order', 'having', 'join', 'left', 'right', 'inner', 'outer', 'cross', 'full'].includes(alias)) {
+      map[alias] = table;
+    }
+  }
+
+  const fromClauseRegex = /\bfrom\s+([\s\S]*?)(?=\b(?:where|group|order|having|left|right|inner|outer|cross|join|;|limit)\b|$)/gi;
+  while ((match = fromClauseRegex.exec(sql)) !== null) {
+    const fromParts = match[1].split(',');
+    for (const part of fromParts) {
+      const trimmed = part.trim();
+      const parts = trimmed.split(/\s+/);
+      if (parts.length >= 2) {
+        const table = parts[0].toUpperCase();
+        let alias = parts[parts.length - 1].toLowerCase();
+        if (parts.length === 3 && parts[1].toLowerCase() === 'as') {
+          alias = parts[2].toLowerCase();
+        }
+        if (!['on', 'where', 'group', 'order', 'having', 'join', 'left', 'right', 'inner', 'outer', 'cross', 'full'].includes(alias)) {
+          map[alias] = table;
+        }
+      }
+    }
+  }
+  return map;
+}
+
+export function preloadTableColumns(sql: string) {
+  setTimeout(async () => {
+    const map = extractTableAliasMap(sql);
+    for (const table of Object.values(map)) {
+      if (!tableColumnsCache.has(table) && window.oracle?.listColumns) {
+        try {
+          tableColumnsCache.set(table, []); 
+          const cols = await window.oracle.listColumns(table);
+          if (cols && cols.length > 0) {
+            tableColumnsCache.set(table, cols);
+          } else {
+            tableColumnsCache.delete(table);
+          }
+        } catch (e) {
+          tableColumnsCache.delete(table);
+        }
+      }
+    }
+  }, 50);
+}
+
 const EMPTY_CONNECTION: ConnectionConfig = {
   user: "",
   password: "",
@@ -3138,6 +3195,12 @@ export default function App() {
   const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0];
   const sql = activeTab?.sql ?? "";
 
+  useEffect(() => {
+    if (sql) {
+      preloadTableColumns(sql);
+    }
+  }, [sql]);
+
   const [editorLineHeight, setEditorLineHeight] = useState(18);
   const [copiedBlockId, setCopiedBlockId] = useState<string | null>(null);
   const [runningBlockId, setRunningBlockId] = useState<string | null>(null);
@@ -4588,6 +4651,7 @@ export default function App() {
     if (!registeredCompletionRef.current) {
       registeredCompletionRef.current = true;
       monaco.languages.registerCompletionItemProvider("sql", {
+        triggerCharacters: ['.'],
         provideCompletionItems: (model, position) => {
           const word = model.getWordUntilPosition(position);
           const range = {
@@ -4596,6 +4660,39 @@ export default function App() {
             startColumn: word.startColumn,
             endColumn: word.endColumn,
           };
+          
+          const textBeforeWord = model.getValueInRange({
+            startLineNumber: position.lineNumber,
+            startColumn: 1,
+            endLineNumber: position.lineNumber,
+            endColumn: word.startColumn
+          });
+          
+          const match = textBeforeWord.match(/([a-zA-Z0-9_$#]+)\.$/);
+          if (match) {
+            const alias = match[1].toLowerCase();
+            const sql = model.getValue();
+            const tableMap = extractTableAliasMap(sql);
+            const tableName = tableMap[alias];
+            
+            if (tableName) {
+              const cols = tableColumnsCache.get(tableName);
+              if (cols && cols.length > 0) {
+                return {
+                  suggestions: cols.map((c) => ({
+                    label: c.name,
+                    kind: monaco.languages.CompletionItemKind.Field,
+                    insertText: c.name + ' ',
+                    documentation: c.dataType,
+                    detail: c.dataType,
+                    range: range,
+                    preselect: true,
+                  })),
+                };
+              }
+            }
+          }
+
           const currentDateStr = getCurrentDateFormatted();
           return {
             suggestions: [
