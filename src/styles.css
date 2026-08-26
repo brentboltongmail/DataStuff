@@ -1991,12 +1991,13 @@ body.is-col-resizing .monaco-editor {
   overflow: visible;
 }
 
-.results-grid.density-crammed th {
+html body .grid-header-wrap table.density-crammed th,
+html body .grid-header-wrap table.density-crammed .grid-header-cell {
   font-size: var(--base-font-size);
   text-transform: none;
   letter-spacing: 0;
   vertical-align: bottom;
-  overflow: visible;
+  overflow: visible !important;
   position: sticky;
   top: 0;
   z-index: 10;
@@ -2038,17 +2039,17 @@ body.is-col-resizing .monaco-editor {
   pointer-events: none;
 }
 
-.results-grid.density-crammed th:not(.row-num) {
+html body .grid-header-wrap table.density-crammed th:not(.row-num) {
   padding: 0 2px 2px;
   position: relative;
-  overflow: visible;
+  overflow: visible !important;
   background: transparent !important;
 }
 
 
 
-.results-grid.density-crammed.has-col-widths th:not(.row-num) {
-  overflow: visible;
+html body .grid-header-wrap table.density-crammed.has-col-widths th:not(.row-num) {
+  overflow: visible !important;
 }
 
 .results-grid.density-crammed.has-col-widths td:not(.row-num) {
