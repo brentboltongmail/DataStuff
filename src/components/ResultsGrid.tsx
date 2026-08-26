@@ -643,9 +643,9 @@ function ResultsGrid({
   const colGroupMarkup = hasColWidths ? (
     <colgroup>
       <col className="col-row-num" style={{ width: rowNumWidthRef.current }} />
-      {visibleColumns.map(({ col }) => (
+      {visibleColumns.map(({ col, index: colIndex }) => (
         <col
-          key={col.name}
+          key={colIndex}
           style={{ width: effectiveColWidths[col.name] ?? 1 }}
         />
       ))}
@@ -692,7 +692,7 @@ function ResultsGrid({
 
                 return (
                   <th
-                    key={`${col.name}`}
+                    key={colIndex}
                     className={`grid-header-cell ${isSorted ? "sorted" : ""}`}
                     title={`Click to sort by ${col.name} ${
                       isSorted
