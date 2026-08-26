@@ -279,6 +279,9 @@ function ResultsGrid({
   } | null>(null);
   const [draft, setDraft] = useState("");
   const [colWidths, setColWidths] = useState<Record<string, number>>({});
+  const [columnOrder, setColumnOrder] = useState<string[] | null>(null);
+  const [draggedColumn, setDraggedColumn] = useState<string | null>(null);
+  const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const tableRef = useRef<HTMLTableElement | null>(null);
   const headerRowRef = useRef<HTMLTableRowElement | null>(null);
@@ -293,7 +296,7 @@ function ResultsGrid({
 
   colWidthsRef.current = colWidths;
 
-  const visibleColumns = useMemo(
+  const defaultVisibleColumns = useMemo(
     () =>
       result.columns
         .map((col, index) => ({ col, index }))
@@ -301,14 +304,33 @@ function ResultsGrid({
     [result.columns],
   );
 
+  const visibleColumns = useMemo(() => {
+    if (!columnOrder) return defaultVisibleColumns;
+    const ordered: typeof defaultVisibleColumns = [];
+    const seen = new Set<string>();
+    for (const name of columnOrder) {
+      const found = defaultVisibleColumns.find((c) => c.col.name === name);
+      if (found) {
+        ordered.push(found);
+        seen.add(name);
+      }
+    }
+    for (const c of defaultVisibleColumns) {
+      if (!seen.has(c.col.name)) {
+        ordered.push(c);
+      }
+    }
+    return ordered;
+  }, [defaultVisibleColumns, columnOrder]);
+
   const headerNames = useMemo(
     () => visibleColumns.map(({ col }) => col.name),
     [visibleColumns],
   );
 
   const columnKey = useMemo(
-    () => headerNames.join("\0"),
-    [headerNames],
+    () => defaultVisibleColumns.map(({ col }) => col.name).join("\0"),
+    [defaultVisibleColumns],
   );
 
   const [sortState, setSortState] = useState<{
@@ -322,6 +344,7 @@ function ResultsGrid({
     userResizedRef.current.clear();
     setColWidths({});
     setSortState(null);
+    setColumnOrder(null);
   }, [columnKey]);
 
   // Leaving auto-sized densities: drop widths on density/fit toggle.
@@ -690,10 +713,54 @@ function ResultsGrid({
                 const isSorted = sortState?.colIndex === colIndex;
                 const sortDir = isSorted ? sortState.direction : null;
 
+                const isDragOver = dragOverColumn === col.name;
+                const isDragged = draggedColumn === col.name;
+
                 return (
                   <th
                     key={colIndex}
-                    className={`grid-header-cell ${isSorted ? "sorted" : ""}`}
+                    className={`grid-header-cell ${isSorted ? "sorted" : ""} ${isDragOver ? "drag-over" : ""} ${isDragged ? "dragged" : ""}`}
+                    draggable={true}
+                    onDragStart={(e) => {
+                      setDraggedColumn(col.name);
+                      e.dataTransfer.effectAllowed = "move";
+                      e.dataTransfer.setData("text/plain", col.name);
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.dataTransfer.dropEffect = "move";
+                      if (dragOverColumn !== col.name) {
+                        setDragOverColumn(col.name);
+                      }
+                    }}
+                    onDragLeave={() => {
+                      if (dragOverColumn === col.name) {
+                        setDragOverColumn(null);
+                      }
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      if (draggedColumn && draggedColumn !== col.name) {
+                        setColumnOrder((prev) => {
+                          const order = prev || headerNames;
+                          const newOrder = [...order];
+                          const fromIdx = newOrder.indexOf(draggedColumn);
+                          const toIdx = newOrder.indexOf(col.name);
+                          if (fromIdx !== -1 && toIdx !== -1) {
+                            newOrder.splice(fromIdx, 1);
+                            newOrder.splice(toIdx, 0, draggedColumn);
+                            return newOrder;
+                          }
+                          return prev;
+                        });
+                      }
+                      setDraggedColumn(null);
+                      setDragOverColumn(null);
+                    }}
+                    onDragEnd={() => {
+                      setDraggedColumn(null);
+                      setDragOverColumn(null);
+                    }}
                     title={`Click to sort by ${col.name} ${
                       isSorted
                         ? sortDir === "asc"
