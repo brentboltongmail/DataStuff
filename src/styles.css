@@ -2011,10 +2011,8 @@ body.is-col-resizing .monaco-editor {
   left: 100%;
   bottom: 0;
   width: 1px;
-  height: 250px;
+  height: 100%;
   background-color: var(--border-soft, var(--border));
-  transform: rotate(60deg);
-  transform-origin: bottom left;
   pointer-events: none;
   z-index: 1;
 }
@@ -2024,9 +2022,7 @@ body.is-col-resizing .monaco-editor {
   bottom: 0;
   top: auto;
   width: 22px;
-  height: 250px;
-  transform: rotate(60deg);
-  transform-origin: bottom left;
+  height: 100%;
   z-index: 100;
   cursor: col-resize;
   pointer-events: auto;
@@ -2035,12 +2031,9 @@ body.is-col-resizing .monaco-editor {
 
 .results-grid.density-crammed th .th-label {
   position: absolute;
-  left: 6px;
-  bottom: 6px;
+  left: 2px;
   white-space: nowrap;
   line-height: 1;
-  transform: rotate(-30deg);
-  transform-origin: bottom left;
   color: var(--text-muted);
   pointer-events: none;
 }

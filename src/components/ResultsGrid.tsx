@@ -199,7 +199,7 @@ function isDateColumn(rows: unknown[][], colIndex: number): boolean {
   return false;
 }
 
-/** Crammed density: Date columns use max date width; non-date columns use the average width of the first 100 rows. */
+/** Crammed density: Match data width up to 20 characters. */
 function computeCrammedColWidths(
   columns: { col: { name: string }; index: number }[],
   rows: unknown[][],
@@ -209,38 +209,29 @@ function computeCrammedColWidths(
   const bodyFont = gridFontSizePx("crammed", fontScale);
   const padX = 10;
   const minW = minColWidthPx("crammed", fontScale);
+  const maxW = measureTextPx("0".repeat(20), bodyFont) + padX;
   const widths: Record<string, number> = {};
 
   for (const { col, index } of columns) {
-    const isDate = isDateColumn(rows, index);
+    let maxDataW = 0;
+    const limit = Math.min(rows.length, 100);
 
-    if (isDate) {
-      // Date type columns are exactly 20 characters wide + cell padding
-      const widthOf20Chars = measureTextPx("0".repeat(20), bodyFont) + padX;
-      widths[col.name] = Math.max(minW, widthOf20Chars);
-    } else {
-      // Non-date columns: average width of the first 100 rows of data in each column
-      let totalWidth = 0;
-      let sampleCount = 0;
-      const limit = Math.min(rows.length, 100);
-
-      for (let r = 0; r < limit; r++) {
-        const pending = pendingEdits[cellEditKey(r, index)];
-        const cell = pending ? pending.newValue : rows[r]?.[index];
-        const text = isNullCell(cell) ? "NULL" : formatCell(cell);
-        if (text) {
-          const w = measureTextPx(text, bodyFont);
-          totalWidth += w;
-          sampleCount++;
+    for (let r = 0; r < limit; r++) {
+      const pending = pendingEdits[cellEditKey(r, index)];
+      const cell = pending ? pending.newValue : rows[r]?.[index];
+      const text = isNullCell(cell) ? "NULL" : formatCell(cell);
+      if (text) {
+        const w = measureTextPx(text, bodyFont);
+        if (w > maxDataW) {
+          maxDataW = w;
         }
       }
+    }
 
-      if (sampleCount > 0) {
-        const avgW = totalWidth / sampleCount + padX;
-        widths[col.name] = Math.max(minW, Math.round(avgW));
-      } else {
-        widths[col.name] = minW;
-      }
+    if (maxDataW > 0) {
+      widths[col.name] = Math.max(minW, Math.min(maxW, maxDataW + padX));
+    } else {
+      widths[col.name] = minW;
     }
   }
 
@@ -382,15 +373,7 @@ function ResultsGrid({
     columnKey,
   ]);
 
-  const crammedHeight = useMemo(() => {
-    if (density !== "crammed") return undefined;
-    return crammedHeaderHeightPx(headerNames, fontScale);
-  }, [density, headerNames, fontScale]);
 
-  useLayoutEffect(() => {
-    if (density !== "crammed" || !headerRowRef.current || !crammedHeight) return;
-    headerRowRef.current.style.height = `${crammedHeight}px`;
-  }, [density, crammedHeight]);
 
   useEffect(() => {
     if (editing && inputRef.current) {
@@ -644,6 +627,44 @@ function ResultsGrid({
     return merged;
   }, [computedAutoWidths, colWidths]);
 
+  const crammedLevels = useMemo(() => {
+    if (density !== "crammed") return null;
+    const levels: number[] = [];
+    const colLevels = new Map<string, number>();
+    let currentX = 0;
+    const fontSize = 9 * fontScale;
+    
+    for (const { col } of visibleColumns) {
+      const textW = measureTextPx(col.name, fontSize, 400) + 16;
+      let level = 0;
+      while (level < levels.length && levels[level] > currentX) {
+        level++;
+      }
+      if (level >= levels.length) {
+        levels.push(0);
+      }
+      levels[level] = currentX + textW;
+      colLevels.set(col.name, level);
+      currentX += effectiveColWidths[col.name] || 0;
+    }
+    return { colLevels, maxLevel: levels.length - 1 };
+  }, [density, visibleColumns, effectiveColWidths, fontScale]);
+
+  const crammedHeight = useMemo(() => {
+    if (density !== "crammed" || !crammedLevels) return undefined;
+    return (crammedLevels.maxLevel + 1) * (14 * fontScale) + 10; // 14px line height, 10px padding
+  }, [density, crammedLevels, fontScale]);
+
+  useLayoutEffect(() => {
+    if (density !== "crammed" || !headerRowRef.current || !crammedHeight) {
+      if (headerRowRef.current && density !== "crammed") {
+        headerRowRef.current.style.height = '';
+      }
+      return;
+    }
+    headerRowRef.current.style.height = `${crammedHeight}px`;
+  }, [density, crammedHeight]);
+
   const hasColWidths = Object.keys(effectiveColWidths).length > 0;
   const tableWidth = useMemo(() => {
     if (!hasColWidths) return undefined;
@@ -782,7 +803,14 @@ function ResultsGrid({
                       handleHeaderClick(colIndex, col.name);
                     }}
                   >
-                    <span className="th-label">
+                    <span
+                      className="th-label"
+                      style={
+                        density === "crammed" && crammedLevels
+                          ? { bottom: (crammedLevels.colLevels.get(col.name) ?? 0) * (14 * fontScale) + 6 }
+                          : undefined
+                      }
+                    >
                       {col.name}
                       {isSorted && (
                         <span className="sort-indicator" aria-hidden="true">
