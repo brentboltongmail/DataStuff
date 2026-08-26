@@ -221,15 +221,15 @@ function ConnectionStarfieldOverlay({
       if (showDancers) {
         setSucceededStage("dancing");
 
-        // Dance for 1.75s (0.5s assembly + 1.75s dance = 2.25s total), then transition to suck-in
+        // Dance for 1.25s (0.5s assembly + 1.25s dance = 1.75s total), then transition to suck-in
         const suckInTimer = setTimeout(() => {
           setSucceededStage("suck-in");
-        }, 2250);
+        }, 1750);
 
-        // Complete overall sequence after suck-in finishes (2.25s + 1.1s = 3.35s)
+        // Complete overall sequence after suck-in finishes (1.75s + 1.1s = 2.85s)
         const endTimer = setTimeout(() => {
           onCompleteRef.current();
-        }, 3350);
+        }, 2850);
 
         return () => {
           clearTimeout(suckInTimer);
