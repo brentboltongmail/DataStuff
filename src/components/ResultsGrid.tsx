@@ -199,7 +199,7 @@ function isDateColumn(rows: unknown[][], colIndex: number): boolean {
   return false;
 }
 
-/** Crammed density: Match data width up to 20 characters. */
+/** Crammed density: Match data width + 1 char up to 30 characters. */
 function computeCrammedColWidths(
   columns: { col: { name: string }; index: number }[],
   rows: unknown[][],
@@ -209,7 +209,8 @@ function computeCrammedColWidths(
   const bodyFont = gridFontSizePx("crammed", fontScale);
   const padX = 10;
   const minW = minColWidthPx("crammed", fontScale);
-  const maxW = measureTextPx("0".repeat(20), bodyFont) + padX;
+  const charW = measureTextPx("0", bodyFont);
+  const maxW = measureTextPx("0".repeat(30), bodyFont) + padX;
   const widths: Record<string, number> = {};
 
   for (const { col, index } of columns) {
@@ -229,7 +230,7 @@ function computeCrammedColWidths(
     }
 
     if (maxDataW > 0) {
-      widths[col.name] = Math.max(minW, Math.min(maxW, maxDataW + padX));
+      widths[col.name] = Math.max(minW, Math.min(maxW, maxDataW + padX + charW));
     } else {
       widths[col.name] = minW;
     }
