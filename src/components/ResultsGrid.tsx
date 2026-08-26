@@ -629,26 +629,17 @@ function ResultsGrid({
 
   const crammedLevels = useMemo(() => {
     if (density !== "crammed") return null;
-    const levels: number[] = [];
     const colLevels = new Map<string, number>();
-    let currentX = 0;
-    const fontSize = 9 * fontScale;
+    let maxLevel = 0;
     
-    for (const { col } of visibleColumns) {
-      const textW = measureTextPx(col.name, fontSize, 400) + 16;
-      let level = 0;
-      while (level < levels.length && levels[level] > currentX) {
-        level++;
-      }
-      if (level >= levels.length) {
-        levels.push(0);
-      }
-      levels[level] = currentX + textW;
+    visibleColumns.forEach(({ col }, index) => {
+      const level = index % 4;
       colLevels.set(col.name, level);
-      currentX += effectiveColWidths[col.name] || 0;
-    }
-    return { colLevels, maxLevel: levels.length - 1 };
-  }, [density, visibleColumns, effectiveColWidths, fontScale]);
+      if (level > maxLevel) maxLevel = level;
+    });
+    
+    return { colLevels, maxLevel };
+  }, [density, visibleColumns]);
 
   const crammedHeight = useMemo(() => {
     if (density !== "crammed" || !crammedLevels) return undefined;
