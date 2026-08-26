@@ -2019,10 +2019,10 @@ html body .grid-header-wrap table.density-crammed .grid-header-cell {
 }
 
 .results-grid.density-crammed th:not(.row-num) .col-resize {
-  left: calc(100% - 10px);
+  left: calc(100% - 5px);
   bottom: 0;
   top: auto;
-  width: 22px;
+  width: 10px;
   height: 100%;
   z-index: 100;
   cursor: col-resize;
