@@ -2033,10 +2033,13 @@ html body .grid-header-wrap table.density-crammed .grid-header-cell {
 .results-grid.density-crammed th .th-label {
   position: absolute;
   left: 2px;
+  bottom: 6px;
   white-space: nowrap;
   line-height: 1;
   color: var(--text-muted);
   pointer-events: none;
+  transform: rotate(-30deg);
+  transform-origin: left bottom;
 }
 
 html body .grid-header-wrap table.density-crammed th:not(.row-num) {

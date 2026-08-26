@@ -627,24 +627,13 @@ function ResultsGrid({
     return merged;
   }, [computedAutoWidths, colWidths]);
 
-  const crammedLevels = useMemo(() => {
-    if (density !== "crammed") return null;
-    const colLevels = new Map<string, number>();
-    let maxLevel = 0;
-    
-    visibleColumns.forEach(({ col }, index) => {
-      const level = index % 4;
-      colLevels.set(col.name, level);
-      if (level > maxLevel) maxLevel = level;
-    });
-    
-    return { colLevels, maxLevel };
-  }, [density, visibleColumns]);
-
   const crammedHeight = useMemo(() => {
-    if (density !== "crammed" || !crammedLevels) return undefined;
-    return (crammedLevels.maxLevel + 1) * (14 * fontScale) + 10; // 14px line height, 10px padding
-  }, [density, crammedLevels, fontScale]);
+    if (density !== "crammed") return undefined;
+    return crammedHeaderHeightPx(
+      visibleColumns.map((c) => c.col.name),
+      fontScale
+    );
+  }, [density, visibleColumns, fontScale]);
 
   useLayoutEffect(() => {
     if (density !== "crammed" || !headerRowRef.current || !crammedHeight) {
@@ -796,11 +785,6 @@ function ResultsGrid({
                   >
                     <span
                       className="th-label"
-                      style={
-                        density === "crammed" && crammedLevels
-                          ? { bottom: (crammedLevels.colLevels.get(col.name) ?? 0) * (14 * fontScale) + 6 }
-                          : undefined
-                      }
                     >
                       {col.name}
                       {isSorted && (
