@@ -3944,52 +3944,69 @@ export default function App() {
       }
     }
 
-    let hasTimedOut = false;
-    const timeoutTimer = setTimeout(() => {
-      hasTimedOut = true;
-      setBusy(false);
-      setConnectPhase("failed");
-      setError("Connection cancelled: Database server did not respond within 10 seconds");
-      setMessage("Connection cancelled (10s timeout)");
-    }, 10000);
+    let attempts = 0;
+    const maxAttempts = 2;
 
-    try {
-      const next = await window.oracle.connect(finalConfig);
-      if (hasTimedOut) {
-        await window.oracle.disconnect().catch(() => {});
-        return;
-      }
-      clearTimeout(timeoutTimer);
-      setStatus(next);
-      setObjectsRefresh((n) => n + 1);
-      if (selectedConnectionId) {
-        localStorage.setItem(LAST_CONNECTION_ID_KEY, selectedConnectionId);
-      }
-      if (isProd) {
-        setPreProdThemeId(themeId);
-        setThemeId("nuclear");
-      } else if (themeId === "nuclear") {
-        setThemeId("default");
-        localStorage.setItem(THEME_KEY, "default");
-        applyThemeToDocument("default");
-      }
-      setMessage(
-        `Connected as ${next.user}@${next.connectString} (${next.mode ?? "thin"})`,
-      );
-      await persistPassword(finalConfig.password, rememberPassword, selectedConnectionId);
-      setConnectPhase("succeeded");
-    } catch (err) {
-      setConnectPhase("failed");
-      if (!hasTimedOut) {
+    while (attempts < maxAttempts) {
+      attempts++;
+      let timeoutTimer: NodeJS.Timeout | number = 0;
+      
+      try {
+        const connectPromise = window.oracle.connect(finalConfig);
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          timeoutTimer = setTimeout(() => {
+            reject(new Error("Frontend timeout"));
+          }, 10000);
+        });
+
+        const next = (await Promise.race([connectPromise, timeoutPromise])) as ConnectionState;
+        
+        clearTimeout(timeoutTimer);
+        setStatus(next);
+        setObjectsRefresh((n) => n + 1);
+        if (selectedConnectionId) {
+          localStorage.setItem(LAST_CONNECTION_ID_KEY, selectedConnectionId);
+        }
+        if (isProd) {
+          setPreProdThemeId(themeId);
+          setThemeId("nuclear");
+        } else if (themeId === "nuclear") {
+          setThemeId("default");
+          localStorage.setItem(THEME_KEY, "default");
+          applyThemeToDocument("default");
+        }
+        setMessage(
+          `Connected as ${next.user}@${next.connectString} (${next.mode ?? "thin"})`,
+        );
+        await persistPassword(finalConfig.password, rememberPassword, selectedConnectionId);
+        setConnectPhase("succeeded");
+        break; // Success, exit loop
+      } catch (err) {
         clearTimeout(timeoutTimer);
         const errText = err instanceof Error ? err.message : String(err);
-        setError(errText);
-        setMessage(errText.includes("5 seconds") ? "Connection cancelled (5s timeout)" : "Connection failed");
+        
+        const isTimeout = errText.includes("5 seconds") || errText.includes("timed out") || errText.includes("timeout") || errText.includes("Frontend timeout");
+        
+        if (isTimeout && attempts < maxAttempts) {
+          setMessage("Connection timed out. Retrying...");
+          // We don't await window.oracle.disconnect() here because if it was a timeout,
+          // the backend either killed the bridge or it's hung. We just retry.
+          continue;
+        }
+
+        setConnectPhase("failed");
+        if (isTimeout) {
+          setError("Connection cancelled: Database server did not respond within the timeout");
+          setMessage("Connection cancelled (timeout)");
+        } else {
+          setError(errText);
+          setMessage("Connection failed");
+        }
+        break;
       }
-    } finally {
-      clearTimeout(timeoutTimer);
-      setBusy(false);
     }
+    
+    setBusy(false);
   };
 
   const onDisconnect = async () => {
