@@ -17,6 +17,7 @@ import QueryGutterOverlay from "./components/QueryGutterOverlay";
 import SolarSystemAtmosphere from "./components/SolarSystemAtmosphere";
 import ThreeDChartModal from "./components/ThreeDChartModal";
 import ResultDiffModal, { type DiffSource } from "./components/ResultDiffModal";
+import ExportInsertsModal from "./components/ExportInsertsModal";
 import { generateHtmlDashboard } from "./htmlDashboardExporter";
 import {
   parseBindVariables,
@@ -3026,11 +3027,13 @@ export default function App() {
   const [showPixelFontModal, setShowPixelFontModal] = useState(false);
   const [showChartModal, setShowChartModal] = useState(false);
   const [showDiffModal, setShowDiffModal] = useState(false);
+  const [showExportInsertsModal, setShowExportInsertsModal] = useState(false);
 
   const handleClosePixelFontModal = useCallback(() => setShowPixelFontModal(false), []);
   const handleCloseChartModal = useCallback(() => setShowChartModal(false), []);
   const handleCloseDiffModal = useCallback(() => setShowDiffModal(false), []);
   const handleCloseBindModal = useCallback(() => setBindModalState(null), []);
+  const handleCloseExportInsertsModal = useCallback(() => setShowExportInsertsModal(false), []);
 
   useEffect(() => {
     if (window.oracle?.loadQueryStats) {
@@ -6162,6 +6165,23 @@ export default function App() {
     !!result?.isSelect && result.columns.length > 0;
   const gridEditable = !!editMeta?.editable;
 
+  const defaultInsertTableName = useMemo(() => {
+    const currentSql = activeTab?.sqlText || sql;
+    const detected = detectSingleSourceTable(currentSql);
+    if (detected) {
+      return detected;
+    }
+    const aliasMap = extractTableAliasMap(currentSql);
+    const tables = Object.values(aliasMap);
+    if (tables.length > 0) {
+      return tables[0];
+    }
+    if (activeTab?.title && !/^untitled|^query/i.test(activeTab.title)) {
+      return activeTab.title.replace(/\.[^/.]+$/, "").replace(/[^a-zA-Z0-9_$#]/g, "_");
+    }
+    return "MY_TABLE";
+  }, [activeTab?.sqlText, activeTab?.title, sql]);
+
   return (
     <div className="app">
       {themeId === "default" ? <DefaultAtmosphere /> : null}
@@ -6662,6 +6682,15 @@ export default function App() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => setShowExportInsertsModal(true)}
+                  disabled={!canExport || busy}
+                  title="Export current result grid as SQL INSERT statements"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 4, marginRight: 4 }}
+                >
+                  📝 Export INSERTs...
+                </button>
+                <button
+                  type="button"
                   onClick={onExportCsv}
                   disabled={!canExport || busy}
                   title="Export current result grid to CSV"
@@ -7108,6 +7137,21 @@ export default function App() {
           isOpen={showDiffModal}
           onClose={handleCloseDiffModal}
           sources={diffSources}
+        />
+      )}
+
+      {showExportInsertsModal && result && result.isSelect && (
+        <ExportInsertsModal
+          result={resultWithoutRowId(result)}
+          initialTableName={defaultInsertTableName}
+          onClose={handleCloseExportInsertsModal}
+          onExportSaved={(filePath, count) => {
+            setMessage(`Exported ${count} INSERT statement${count === 1 ? "" : "s"} to ${filePath}`);
+          }}
+          onCopySuccess={(count) => {
+            setMessage(`Copied ${count} INSERT statement${count === 1 ? "" : "s"} to clipboard`);
+          }}
+          onError={(err) => setError(err)}
         />
       )}
 
