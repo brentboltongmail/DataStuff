@@ -6166,7 +6166,8 @@ export default function App() {
   const gridEditable = !!editMeta?.editable;
 
   const defaultInsertTableName = useMemo(() => {
-    const currentSql = activeTab?.sqlText || sql;
+    if (!showExportInsertsModal) return "MY_TABLE";
+    const currentSql = activeTab?.sql || sql;
     const detected = detectSingleSourceTable(currentSql);
     if (detected) {
       return detected;
@@ -6180,7 +6181,60 @@ export default function App() {
       return activeTab.title.replace(/\.[^/.]+$/, "").replace(/[^a-zA-Z0-9_$#]/g, "_");
     }
     return "MY_TABLE";
-  }, [activeTab?.sqlText, activeTab?.title, sql]);
+  }, [showExportInsertsModal, activeTab?.sql, activeTab?.title, sql]);
+
+  const monacoEditorOptions = useMemo<MonacoEditor.IStandaloneEditorConstructionOptions>(() => ({
+    fontSize: Math.round(EDITOR_BASE_FONT_SIZE * fontScale),
+    lineHeight: Math.round(EDITOR_BASE_FONT_SIZE * fontScale) + 1,
+    fontFamily:
+      fontOption(fontId).monoFontFamily ||
+      fontOption(fontId).fontFamily ||
+      "IBM Plex Mono, SF Mono, Menlo, Monaco, Consolas, monospace",
+    minimap: { enabled: false },
+    scrollBeyondLastLine: false,
+    wordWrap: "on",
+    wrappingStrategy: "advanced",
+    wrappingIndent: "indent",
+    automaticLayout: true,
+    tabSize: 2,
+    padding: { top: 12, bottom: 12, right: 16 },
+    lineDecorationsWidth: 6,
+    lineNumbersMinChars: 3,
+    scrollbar: {
+      vertical: "visible",
+      horizontal: "visible",
+      verticalScrollbarSize: 14,
+      horizontalScrollbarSize: 14,
+      verticalSliderSize: 14,
+      horizontalSliderSize: 14,
+      arrowSize: 0,
+      useShadows: false,
+      verticalHasArrows: false,
+      horizontalHasArrows: false,
+    },
+    // Required so Shift+Enter keybindings are not bypassed by
+    // Native EditContext's beforeinput newline insertion.
+    editContext: false,
+    // Keep typing snappy — no autocomplete / word completion.
+    quickSuggestions: false,
+    suggestOnTriggerCharacters: false,
+    acceptSuggestionOnCommitCharacter: false,
+    acceptSuggestionOnEnter: "off",
+    tabCompletion: "off",
+    wordBasedSuggestions: "off",
+    parameterHints: { enabled: false },
+    snippetSuggestions: "none",
+    hover: { enabled: "off" },
+    inlayHints: { enabled: "off" },
+    links: false,
+    colorDecorators: false,
+    foldingHighlight: false,
+    renderLineHighlight: "none",
+    matchBrackets: "never",
+    selectionHighlight: false,
+    occurrencesHighlight: "off",
+    renderValidationDecorations: "off",
+  }), [fontId, fontScale]);
 
   return (
     <div className="app">
@@ -6466,58 +6520,7 @@ export default function App() {
                       onChange={handleEditorChange}
                       beforeMount={onEditorBeforeMount}
                       onMount={onEditorMount}
-                      options={{
-                        fontSize: Math.round(EDITOR_BASE_FONT_SIZE * fontScale),
-                        lineHeight: Math.round(EDITOR_BASE_FONT_SIZE * fontScale) + 1,
-                        fontFamily:
-                          fontOption(fontId).monoFontFamily ||
-                          fontOption(fontId).fontFamily ||
-                          "IBM Plex Mono, SF Mono, Menlo, Monaco, Consolas, monospace",
-                        minimap: { enabled: false },
-                        scrollBeyondLastLine: false,
-                        wordWrap: "on",
-                        wrappingStrategy: "advanced",
-                        wrappingIndent: "indent",
-                        automaticLayout: true,
-                        tabSize: 2,
-                        padding: { top: 12, bottom: 12, right: 16 },
-                        lineDecorationsWidth: 6,
-                        lineNumbersMinChars: 3,
-                        scrollbar: {
-                          vertical: "visible",
-                          horizontal: "visible",
-                          verticalScrollbarSize: 14,
-                          horizontalScrollbarSize: 14,
-                          verticalSliderSize: 14,
-                          horizontalSliderSize: 14,
-                          arrowSize: 0,
-                          useShadows: false,
-                          verticalHasArrows: false,
-                          horizontalHasArrows: false,
-                        },
-                        // Required so Shift+Enter keybindings are not bypassed by
-                        // Native EditContext's beforeinput newline insertion.
-                        editContext: false,
-                        // Keep typing snappy — no autocomplete / word completion.
-                        quickSuggestions: false,
-                        suggestOnTriggerCharacters: false,
-                        acceptSuggestionOnCommitCharacter: false,
-                        acceptSuggestionOnEnter: "off",
-                        tabCompletion: "off",
-                        wordBasedSuggestions: "off",
-                        parameterHints: { enabled: false },
-                        snippetSuggestions: "none",
-                        hover: { enabled: "off" },
-                        inlayHints: { enabled: "off" },
-                        links: false,
-                        colorDecorators: false,
-                        foldingHighlight: false,
-                        renderLineHighlight: "none",
-                        matchBrackets: "never",
-                        selectionHighlight: false,
-                        occurrencesHighlight: "off",
-                        renderValidationDecorations: "off",
-                      }}
+                      options={monacoEditorOptions}
                     />
                   </div>
                 </div>

@@ -752,6 +752,17 @@ body.is-col-resizing .sidebar-split {
   background: var(--grid-hover);
 }
 
+.object-capped-notice {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 6px 8px;
+  font-style: italic;
+  opacity: 0.85;
+  line-height: 1.35;
+  border-top: 1px dashed var(--border-subtle, rgba(255, 255, 255, 0.08));
+  margin-top: 4px;
+}
+
 .column-list {
   padding: 0 0 4px 24px;
 }

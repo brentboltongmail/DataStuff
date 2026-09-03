@@ -12,29 +12,29 @@ function loadCollapsedGroups(): Record<string, boolean> {
     if (!raw)
       return {
         TABLE: false,
-        VIEW: false,
-        SYNONYM: false,
-        INDEX: false,
-        PACKAGE_BODY: false,
-        GRANT: false,
+        VIEW: true,
+        SYNONYM: true,
+        INDEX: true,
+        PACKAGE_BODY: true,
+        GRANT: true,
       };
     const parsed = JSON.parse(raw) as Partial<Record<string, boolean>>;
     return {
-      TABLE: !!parsed.TABLE,
-      VIEW: !!parsed.VIEW,
-      SYNONYM: !!parsed.SYNONYM,
-      INDEX: !!parsed.INDEX,
-      PACKAGE_BODY: !!parsed.PACKAGE_BODY,
-      GRANT: !!parsed.GRANT,
+      TABLE: parsed.TABLE ?? false,
+      VIEW: parsed.VIEW ?? true,
+      SYNONYM: parsed.SYNONYM ?? true,
+      INDEX: parsed.INDEX ?? true,
+      PACKAGE_BODY: parsed.PACKAGE_BODY ?? true,
+      GRANT: parsed.GRANT ?? true,
     };
   } catch {
     return {
       TABLE: false,
-      VIEW: false,
-      SYNONYM: false,
-      INDEX: false,
-      PACKAGE_BODY: false,
-      GRANT: false,
+      VIEW: true,
+      SYNONYM: true,
+      INDEX: true,
+      PACKAGE_BODY: true,
+      GRANT: true,
     };
   }
 }
@@ -141,8 +141,12 @@ function ObjectBrowser({
     }
   };
 
+  const MAX_VISIBLE_OBJECTS_PER_GROUP = 100;
+
   const renderGroup = (label: string, type: GroupKey, items: DbObject[]) => {
     const groupCollapsed = collapsedGroups[type];
+    const visibleItems = items.slice(0, MAX_VISIBLE_OBJECTS_PER_GROUP);
+    const hasMore = items.length > MAX_VISIBLE_OBJECTS_PER_GROUP;
     return (
       <div className={`object-group${groupCollapsed ? " collapsed" : ""}`} key={type}>
         <button
@@ -164,7 +168,7 @@ function ObjectBrowser({
           <div className="object-empty">None</div>
         ) : (
           <ul className="object-list">
-            {items.map((obj) => (
+            {visibleItems.map((obj) => (
               <li key={obj.name}>
                 <div className="object-row">
                   <button
@@ -218,6 +222,11 @@ function ObjectBrowser({
                 ) : null}
               </li>
             ))}
+            {hasMore && (
+              <li className="object-capped-notice" title="Use the search filter above to find specific objects">
+                Showing first {MAX_VISIBLE_OBJECTS_PER_GROUP} of {items.length.toLocaleString()} {label.toLowerCase()} — use filter above
+              </li>
+            )}
           </ul>
         )}
       </div>

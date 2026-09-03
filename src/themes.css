@@ -5674,16 +5674,18 @@
 .nuclear-atmosphere .top-stripe { top: 0; }
 .nuclear-atmosphere .bottom-stripe { bottom: 0; }
 
-/* Rotating Warning Beacons */
+/* Rotating Warning Beacons — Hardware-accelerated GPU layer */
 .nuclear-atmosphere .warning-beacon {
   position: absolute;
   top: -60px;
   width: 280px;
   height: 280px;
   border-radius: 50%;
-  background: conic-gradient(from 0deg, rgba(239, 68, 68, 0.8) 0deg, transparent 60deg, transparent 300deg, rgba(239, 68, 68, 0.8) 360deg);
-  filter: blur(12px);
+  background: conic-gradient(from 0deg, rgba(239, 68, 68, 0.5) 0deg, rgba(239, 68, 68, 0) 60deg, transparent 300deg, rgba(239, 68, 68, 0.5) 360deg);
+  opacity: 0.85;
   mix-blend-mode: screen;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .nuclear-atmosphere .beacon-left {
@@ -5697,13 +5699,13 @@
 }
 
 @keyframes beacon-rotate-cw {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% { transform: translateZ(0) rotate(0deg); }
+  100% { transform: translateZ(0) rotate(360deg); }
 }
 
 @keyframes beacon-rotate-ccw {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(-360deg); }
+  0% { transform: translateZ(0) rotate(0deg); }
+  100% { transform: translateZ(0) rotate(-360deg); }
 }
 
 /* Central DEFCON 1 Banner */
@@ -5726,8 +5728,8 @@
 }
 
 @keyframes defcon-pulse {
-  0% { opacity: 0.6; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
-  100% { opacity: 1; box-shadow: 0 0 24px rgba(239, 68, 68, 0.95); }
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
 }
 
 /* Ice Theme UI Styling */
@@ -5791,6 +5793,13 @@
 [data-theme="nuclear"] .status-bar,
 [data-theme="nuclear"] .editor-pane {
   background-color: transparent !important;
+}
+
+[data-theme="nuclear"] .editor-pane,
+[data-theme="nuclear"] .results-pane,
+[data-theme="nuclear"] .object-browser {
+  contain: paint;
+  isolation: isolate;
 }
 
 [data-theme="nuclear"] .monaco-editor,
