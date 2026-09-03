@@ -3,6 +3,9 @@
 ## Git Version Control
 - **Always Commit and Push**: At the end of every change or completed task in any repository, automatically stage the changes (`git add`), write a clear descriptive commit message (`git commit -m "..."`), and push the commits to the remote repository (`git push`).
 
+## Build and Install Application
+- **Build and Install DataStuff.app**: At the end of every change or completed task in this repository, always run `npm run install:mac` to build the production bundle, package the Electron app, and install it into `/Applications/DataStuff.app`.
+
 ## Three.js & 3D Coordinate Orientation Rules
 - **Three.js Right-Handed System & Forward Vector (-Z)**: Always remember that Three.js uses a right-handed coordinate system where the standard forward/facing vector is **negative Z (`(0, 0, -1)`)**, NOT positive Z.
   - `Object3D.lookAt()` and cameras always point the local **`-Z` axis** toward the target.
