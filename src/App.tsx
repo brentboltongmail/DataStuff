@@ -4122,10 +4122,20 @@ export default function App() {
               maxRows,
               positionalInjected,
             );
+            const fetchPkColumns = async (tbl: string) => {
+              try {
+                return await Promise.race([
+                  window.oracle.listPrimaryKeys(tbl),
+                  new Promise<string[]>((resolve) => setTimeout(() => resolve([]), 3000)),
+                ]);
+              } catch {
+                return [];
+              }
+            };
             const hasRowId = hasRowIdColumn(next.columns);
             let pkColumns: string[] = [];
             if (!hasRowId) {
-              pkColumns = await window.oracle.listPrimaryKeys(table);
+              pkColumns = await fetchPkColumns(table);
             }
             meta = {
               table,
@@ -4139,8 +4149,18 @@ export default function App() {
               maxRows,
               positionalBinds,
             );
+            const fetchPkColumns = async (tbl: string) => {
+              try {
+                return await Promise.race([
+                  window.oracle.listPrimaryKeys(tbl),
+                  new Promise<string[]>((resolve) => setTimeout(() => resolve([]), 3000)),
+                ]);
+              } catch {
+                return [];
+              }
+            };
             const pkColumns = next.isSelect
-              ? await window.oracle.listPrimaryKeys(table)
+              ? await fetchPkColumns(table)
               : [];
             meta = {
               table,

@@ -57,7 +57,7 @@ export function injectRowId(sql: string): string {
   const cleaned = sql.replace(/;+\s*$/, "").trim();
   if (/\browid\b/i.test(cleaned)) return cleaned;
   if (!canInjectRowId(sql)) return cleaned;
-  return `SELECT ROWID AS "ORA$ROWID", q.* FROM (${cleaned}) q`;
+  return `SELECT ROWID AS "ORA$ROWID", q.* FROM (\n${cleaned}\n) q`;
 }
 
 export function quoteIdent(name: string): string {

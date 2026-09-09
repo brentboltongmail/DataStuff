@@ -637,6 +637,7 @@ public final class OracleBridge {
             + "  AND cons.table_name = ? "
             + "ORDER BY cols.position";
     try (var ps = requireConnection().prepareStatement(sql)) {
+      ps.setQueryTimeout(3);
       ps.setString(1, objectName);
       try (ResultSet rs = ps.executeQuery()) {
         List<String> keys = new ArrayList<>();
