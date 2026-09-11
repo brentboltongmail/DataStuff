@@ -1065,7 +1065,6 @@ body.is-col-resizing .query-tabs-split {
   border-radius: 0 !important;
 }
 
-.sql-tab-close,
 .sql-tab-add {
   border: none;
   background: transparent;
@@ -1076,11 +1075,45 @@ body.is-col-resizing .query-tabs-split {
   font-size: var(--base-font-size);
 }
 
-.sql-tab-close:hover:not(:disabled),
 .sql-tab-add:hover {
   background: var(--hover-tint);
   color: var(--text);
   box-shadow: none;
+}
+
+.sql-tab-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: color-mix(in srgb, var(--text-muted) 15%, transparent);
+  color: var(--text-muted);
+  border-radius: 4px;
+  line-height: 1;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: all 0.15s ease;
+  padding: 0;
+  margin-left: 2px;
+}
+
+.sql-tab:hover .sql-tab-close,
+.sql-tab.active .sql-tab-close {
+  opacity: 1;
+  color: var(--text);
+  background: color-mix(in srgb, var(--text-muted) 28%, transparent);
+}
+
+.sql-tab-close:hover:not(:disabled) {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
+  transform: scale(1.08);
 }
 
 .sql-tab-actions {
