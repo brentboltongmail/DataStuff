@@ -658,12 +658,65 @@ function ResultsGrid({
 
   const headerWrapRef = useRef<HTMLDivElement | null>(null);
   const bodyWrapRef = useRef<HTMLDivElement | null>(null);
+  const [scrollTop, setScrollTop] = useState(0);
+  const [viewportHeight, setViewportHeight] = useState(400);
 
   const handleBodyScroll = useCallback(() => {
-    if (bodyWrapRef.current && headerWrapRef.current) {
-      headerWrapRef.current.scrollLeft = bodyWrapRef.current.scrollLeft;
+    if (bodyWrapRef.current) {
+      if (headerWrapRef.current) {
+        headerWrapRef.current.scrollLeft = bodyWrapRef.current.scrollLeft;
+      }
+      setScrollTop(bodyWrapRef.current.scrollTop);
     }
   }, []);
+
+  useLayoutEffect(() => {
+    const bodyEl = bodyWrapRef.current;
+    if (!bodyEl) return;
+    setViewportHeight(bodyEl.clientHeight || 400);
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setViewportHeight(entry.contentRect.height);
+      }
+    });
+    observer.observe(bodyEl);
+    return () => observer.disconnect();
+  }, []);
+
+  const rowHeightPx = useMemo(() => {
+    switch (density) {
+      case "crammed":
+        return Math.max(13, Math.round(15 * fontScale));
+      case "compact":
+        return Math.max(15, Math.round(18 * fontScale));
+      default:
+        return Math.max(18, Math.round(22 * fontScale));
+    }
+  }, [density, fontScale]);
+
+  const { visibleRows, topSpacerHeight, bottomSpacerHeight } = useMemo(() => {
+    const total = sortedRowIndices.length;
+    if (total === 0) {
+      return { visibleRows: [], topSpacerHeight: 0, bottomSpacerHeight: 0 };
+    }
+    const OVERSCAN = 10;
+    const startIdx = Math.max(0, Math.floor(scrollTop / rowHeightPx) - OVERSCAN);
+    const endIdx = Math.min(total, Math.ceil((scrollTop + viewportHeight) / rowHeightPx) + OVERSCAN);
+
+    const visibleSlice = sortedRowIndices.slice(startIdx, endIdx).map((rowIndex, i) => ({
+      rowIndex,
+      displayIndex: startIdx + i,
+    }));
+
+    const topSpacer = startIdx * rowHeightPx;
+    const bottomSpacer = (total - endIdx) * rowHeightPx;
+
+    return {
+      visibleRows: visibleSlice,
+      topSpacerHeight: topSpacer,
+      bottomSpacerHeight: bottomSpacer,
+    };
+  }, [sortedRowIndices, scrollTop, viewportHeight, rowHeightPx]);
 
   const colGroupMarkup = hasColWidths ? (
     <colgroup>
@@ -818,96 +871,118 @@ function ResultsGrid({
         <table ref={tableRef} className={tableClasses} style={tableStyle}>
           {colGroupMarkup}
           <tbody>
-            {sortedRowIndices.map((rowIndex, displayIndex) => {
+            {topSpacerHeight > 0 && (
+              <tr key="top-spacer" style={{ height: topSpacerHeight }}>
+                <td
+                  colSpan={visibleColumns.length + 1}
+                  style={{ padding: 0, border: "none", background: "transparent" }}
+                />
+              </tr>
+            )}
+            {visibleRows.map(({ rowIndex, displayIndex }) => {
               const row = result.rows[rowIndex];
+              if (!row) return null;
+              const isEven = displayIndex % 2 === 1;
               return (
-                <tr key={rowIndex}>
+                <tr
+                  key={rowIndex}
+                  className={isEven ? "even-row" : "odd-row"}
+                  style={{ height: rowHeightPx }}
+                >
                   <td className="row-num">{displayIndex + 1}</td>
-                {visibleColumns.map(({ col, index: columnIndex }) => {
-                  const cell = displayValue(rowIndex, columnIndex, row[columnIndex]);
-                  const text = formatCell(cell);
-                  const nullCell = isNullCell(cell);
-                  const dirty = !!pendingEdits[cellEditKey(rowIndex, columnIndex)];
-                  const isEditing =
-                    editing?.rowIndex === rowIndex && editing.columnIndex === columnIndex;
-                  const customTitle = getCellTitle?.(
-                    rowIndex,
-                    columnIndex,
-                    col.name,
-                    cell,
-                    text,
-                  );
-                  const title =
-                    customTitle ??
-                    (editable
-                      ? `${text} — double-click to edit; empty or NULL clears`
-                      : text);
+                  {visibleColumns.map(({ col, index: columnIndex }) => {
+                    const cell = displayValue(rowIndex, columnIndex, row[columnIndex]);
+                    const text = formatCell(cell);
+                    const nullCell = isNullCell(cell);
+                    const dirty = !!pendingEdits[cellEditKey(rowIndex, columnIndex)];
+                    const isEditing =
+                      editing?.rowIndex === rowIndex && editing.columnIndex === columnIndex;
+                    const customTitle = getCellTitle?.(
+                      rowIndex,
+                      columnIndex,
+                      col.name,
+                      cell,
+                      text,
+                    );
+                    const title =
+                      customTitle ??
+                      (editable
+                        ? `${text} — double-click to edit; empty or NULL clears`
+                        : text);
 
-                  const w = effectiveColWidths[col.name];
+                    const w = effectiveColWidths[col.name];
 
-                  return (
-                    <td
-                      key={columnIndex}
-                      title={title}
-                      style={
-                        w
-                          ? {
-                              width: w,
-                              minWidth: w,
-                              maxWidth: w,
-                            }
-                          : undefined
-                      }
-                      className={[
-                        nullCell ? "cell-null" : "",
-                        dirty ? "cell-dirty" : "",
-                        editable ? "cell-editable" : "",
-                        isEditing ? "cell-editing" : "",
-                        customTitle ? "cell-has-def" : "",
-                      ]
-                        .filter(Boolean)
-                        .join(" ")}
-                      onDoubleClick={() => beginEdit(rowIndex, columnIndex)}
-                    >
-                      {isEditing ? (
-                        <input
-                          ref={inputRef}
-                          className="cell-editor"
-                          value={draft}
-                          onChange={(event) => setDraft(event.target.value)}
-                          onBlur={commitEdit}
-                          onKeyDown={(event) => {
-                            if (event.key === "Enter") {
-                              event.preventDefault();
-                              commitEdit();
-                            } else if (event.key === "Escape") {
-                              event.preventDefault();
-                              cancelEdit();
-                            }
+                    return (
+                      <td
+                        key={columnIndex}
+                        title={title}
+                        style={
+                          w
+                            ? {
+                                width: w,
+                                minWidth: w,
+                                maxWidth: w,
+                              }
+                            : undefined
+                        }
+                        className={[
+                          nullCell ? "cell-null" : "",
+                          dirty ? "cell-dirty" : "",
+                          editable ? "cell-editable" : "",
+                          isEditing ? "cell-editing" : "",
+                          customTitle ? "cell-has-def" : "",
+                        ]
+                          .filter(Boolean)
+                          .join(" ")}
+                        onDoubleClick={() => beginEdit(rowIndex, columnIndex)}
+                      >
+                        {isEditing ? (
+                          <input
+                            ref={inputRef}
+                            className="cell-editor"
+                            value={draft}
+                            onChange={(event) => setDraft(event.target.value)}
+                            onBlur={commitEdit}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter") {
+                                event.preventDefault();
+                                commitEdit();
+                              } else if (event.key === "Escape") {
+                                event.preventDefault();
+                                cancelEdit();
+                              }
+                            }}
+                          />
+                        ) : (
+                          text
+                        )}
+                        <span
+                          className="col-resize"
+                          title="Drag to resize · double-click to reset"
+                          onPointerDown={(event) => onResizePointerDown(col.name, event)}
+                          onPointerMove={onResizePointerMove}
+                          onPointerUp={onResizePointerUp}
+                          onPointerCancel={endResize}
+                          onDoubleClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            resetColumnWidth(col.name);
                           }}
                         />
-                      ) : (
-                        text
-                      )}
-                      <span
-                        className="col-resize"
-                        title="Drag to resize · double-click to reset"
-                        onPointerDown={(event) => onResizePointerDown(col.name, event)}
-                        onPointerMove={onResizePointerMove}
-                        onPointerUp={onResizePointerUp}
-                        onPointerCancel={endResize}
-                        onDoubleClick={(event) => {
-                          event.preventDefault();
-                          event.stopPropagation();
-                          resetColumnWidth(col.name);
-                        }}
-                      />
-                    </td>
-                  );
-                })}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+            {bottomSpacerHeight > 0 && (
+              <tr key="bottom-spacer" style={{ height: bottomSpacerHeight }}>
+                <td
+                  colSpan={visibleColumns.length + 1}
+                  style={{ padding: 0, border: "none", background: "transparent" }}
+                />
               </tr>
-            );
-          })}
+            )}
           </tbody>
         </table>
       </div>
@@ -916,3 +991,4 @@ function ResultsGrid({
 }
 
 export default memo(ResultsGrid);
+

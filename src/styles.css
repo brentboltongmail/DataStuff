@@ -1931,11 +1931,13 @@ body.is-col-resizing .monaco-editor {
   z-index: 1;
 }
 
-.results-grid tbody tr:nth-child(even) td {
+.results-grid tbody tr:nth-child(even) td,
+.results-grid tbody tr.even-row td {
   background: var(--grid-row-alt);
 }
 
-.results-grid tbody tr:nth-child(even) td.row-num {
+.results-grid tbody tr:nth-child(even) td.row-num,
+.results-grid tbody tr.even-row td.row-num {
   background: #1a1e25;
 }
 
@@ -1962,7 +1964,8 @@ body.is-col-resizing .monaco-editor {
   box-shadow: inset 3px 0 0 #eab308;
 }
 
-.results-grid tbody tr:nth-child(even) td.cell-dirty {
+.results-grid tbody tr:nth-child(even) td.cell-dirty,
+.results-grid tbody tr.even-row td.cell-dirty {
   background: rgba(234, 179, 8, 0.2) !important;
 }
 
