@@ -294,7 +294,15 @@ public final class OracleBridge {
     if (sql == null) {
       throw new IllegalArgumentException("SQL is empty");
     }
-    String cleaned = sql.replaceAll(";+\\s*$", "").trim();
+    String cleaned;
+    if (isPlSqlBlock(sql)) {
+      cleaned = sql.replaceAll("(?s)\\s*/\\s*$", "").trim();
+      if (!cleaned.endsWith(";")) {
+        cleaned += ";";
+      }
+    } else {
+      cleaned = sql.replaceAll(";+\\s*$", "").trim();
+    }
     if (cleaned.isEmpty()) {
       throw new IllegalArgumentException("SQL is empty");
     }
@@ -353,7 +361,15 @@ public final class OracleBridge {
     if (sql == null) {
       throw new IllegalArgumentException("SQL is empty");
     }
-    String cleaned = sql.replaceAll(";+\\s*$", "").trim();
+    String cleaned;
+    if (isPlSqlBlock(sql)) {
+      cleaned = sql.replaceAll("(?s)\\s*/\\s*$", "").trim();
+      if (!cleaned.endsWith(";")) {
+        cleaned += ";";
+      }
+    } else {
+      cleaned = sql.replaceAll(";+\\s*$", "").trim();
+    }
     if (cleaned.isEmpty()) {
       throw new IllegalArgumentException("SQL is empty");
     }
@@ -917,6 +933,13 @@ public final class OracleBridge {
       sb.append(String.format("%02X", b));
     }
     return sb.toString();
+  }
+
+  private static boolean isPlSqlBlock(String sql) {
+    String normalized = sql.replaceFirst("(?s)^\\s*/\\*.*?\\*/\\s*", "")
+                           .replaceAll("(?m)^\\s*--.*$", "")
+                           .trim();
+    return normalized.matches("(?is)^(declare|begin)\\b.*");
   }
 
   private static boolean isSelectLike(String sql) {

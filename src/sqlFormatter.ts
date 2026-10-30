@@ -48,19 +48,71 @@ const JOIN_KEYWORDS = [
 
 const LOGICAL_OPERATORS = ["AND", "OR"];
 
+import { isPlSqlBlock } from "./sqlStatement";
+
 const SUBQUERY_KEYWORDS = ["SELECT", "WITH", "INSERT", "UPDATE", "DELETE"];
+
+/**
+ * Format a PL/SQL block (DECLARE...BEGIN...END or BEGIN...END) with 4-space indentation.
+ */
+export function formatPlSqlBlock(sql: string): string {
+  const lines = sql.split(/\r?\n/);
+  const result: string[] = [];
+  let indent = 0;
+  const INDENT_STR = "    ";
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line) {
+      result.push("");
+      continue;
+    }
+
+    if (line === "/") {
+      result.push("/");
+      continue;
+    }
+
+    if (line.startsWith("--")) {
+      result.push(INDENT_STR.repeat(indent) + line);
+      continue;
+    }
+
+    const stripped = line
+      .replace(/'(?:''|[^'])*'/g, " ")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/--.*$/, " ");
+
+    if (/^\b(BEGIN|EXCEPTION)\b/i.test(stripped)) {
+      if (indent > 0) indent--;
+    } else if (/^\bEND\b/i.test(stripped)) {
+      if (indent > 0) indent--;
+    }
+
+    result.push(INDENT_STR.repeat(indent) + line);
+
+    if (/^\b(DECLARE|BEGIN|EXCEPTION)\b/i.test(stripped)) {
+      indent++;
+    }
+  }
+
+  return result.join("\n");
+}
 
 export function formatSql(sql: string): string {
   if (!sql || !sql.trim()) return sql;
 
   // Split input into individual queries by semicolons or blank line breaks (\n\s*\n+)
-  // respecting string literals ('...') and comments (-- / /* ... */)
-  const queryChunks: { text: string; hasSemicolon: boolean }[] = [];
+  // respecting string literals ('...'), comments (-- / /* ... */), and PL/SQL blocks
+  const queryChunks: { text: string; hasSemicolon: boolean; isPlSql: boolean }[] = [];
   let currentChunk = "";
   let inString = false;
   let stringChar = "";
   let inLineComment = false;
   let inBlockComment = false;
+  let inPlSql = false;
+  let plSqlStarted = false;
+  let plSqlDepth = 0;
 
   for (let i = 0; i < sql.length; i++) {
     const char = sql[i];
@@ -113,10 +165,76 @@ export function formatSql(sql: string): string {
       continue;
     }
 
+    // Detect entrance into a PL/SQL block
+    if (!inPlSql && currentChunk.trim()) {
+      if (isPlSqlBlock(currentChunk)) {
+        inPlSql = true;
+        plSqlStarted = false;
+        plSqlDepth = 0;
+      }
+    }
+
+    if (inPlSql) {
+      // Track block depth with words BEGIN / CASE / END
+      if (/[a-zA-Z]/.test(char) && (i === 0 || !/[a-zA-Z0-9_$#]/.test(sql[i - 1]))) {
+        let k = i;
+        while (k < sql.length && /[a-zA-Z0-9_$#]/.test(sql[k])) k++;
+        const word = sql.slice(i, k).toUpperCase();
+        if (word === "BEGIN" || word === "CASE") {
+          plSqlDepth++;
+          plSqlStarted = true;
+        } else if (word === "END") {
+          plSqlDepth--;
+        }
+      }
+
+      if (char === ";") {
+        currentChunk += ";";
+        if (plSqlStarted && plSqlDepth <= 0) {
+          // Lookahead for optional trailing '/'
+          let lookahead = i + 1;
+          while (
+            lookahead < sql.length &&
+            (sql[lookahead] === " " ||
+              sql[lookahead] === "\t" ||
+              sql[lookahead] === "\r" ||
+              sql[lookahead] === "\n")
+          ) {
+            lookahead++;
+          }
+          if (
+            sql[lookahead] === "/" &&
+            (lookahead + 1 >= sql.length || /\s/.test(sql[lookahead + 1]))
+          ) {
+            currentChunk += "\n/";
+            i = lookahead;
+          }
+
+          queryChunks.push({
+            text: currentChunk.trim(),
+            hasSemicolon: false,
+            isPlSql: true,
+          });
+          currentChunk = "";
+          inPlSql = false;
+          plSqlStarted = false;
+          plSqlDepth = 0;
+        }
+        continue;
+      }
+
+      currentChunk += char;
+      continue;
+    }
+
     // Semicolon query terminator
     if (char === ";") {
       if (currentChunk.trim()) {
-        queryChunks.push({ text: currentChunk.trim(), hasSemicolon: true });
+        queryChunks.push({
+          text: currentChunk.trim(),
+          hasSemicolon: true,
+          isPlSql: false,
+        });
         currentChunk = "";
       }
       continue;
@@ -134,7 +252,11 @@ export function formatSql(sql: string): string {
       }
 
       if (isBlankLine && currentChunk.trim()) {
-        queryChunks.push({ text: currentChunk.trim(), hasSemicolon: false });
+        queryChunks.push({
+          text: currentChunk.trim(),
+          hasSemicolon: false,
+          isPlSql: false,
+        });
         currentChunk = "";
         i = j;
         continue;
@@ -145,12 +267,19 @@ export function formatSql(sql: string): string {
   }
 
   if (currentChunk.trim()) {
-    queryChunks.push({ text: currentChunk.trim(), hasSemicolon: false });
+    queryChunks.push({
+      text: currentChunk.trim(),
+      hasSemicolon: false,
+      isPlSql: inPlSql || isPlSqlBlock(currentChunk.trim()),
+    });
   }
 
   if (queryChunks.length === 0) return sql;
 
   const formattedQueries = queryChunks.map((chunk) => {
+    if (chunk.isPlSql) {
+      return formatPlSqlBlock(chunk.text);
+    }
     const formatted = formatSingleQuery(chunk.text);
     return chunk.hasSemicolon && !formatted.endsWith(";") ? formatted + ";" : formatted;
   });
